@@ -7,7 +7,7 @@ Luồng logic:
 Models -> Services -> Controllers -> DTOs
 
 - Common:
-	- Các hằng số sẽ được khai báo trong Const
+	- Các hằng số sẽ được khai báo trong Const. Lưu ý dùng readonly và viết hoa tên biến, phân tách bằng dấu "_"
 	- Các hàm util sẽ được khai báo trong Utils
 	
 - Controller: chỉ làm nhiệm vụ mapping giữa Route với Logic code, Còn lại các luồng xử lý chính sẽ do Service đảm nhiệm. Không viết gì hơn ngoài việc call service và mapping exception ở trong Controller
