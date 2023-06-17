@@ -1,4 +1,5 @@
 ﻿using JiraSchedulingConnectAppService.DTOs;
+using JiraSchedulingConnectAppService.Exceptions;
 using JiraSchedulingConnectAppService.Models;
 using JiraSchedulingConnectAppService.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -25,9 +26,14 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var allProject = await service.GetAllProject(HttpContext);
                 return Ok(allProject);
             }
+            catch (UnAuthorizedException ex)
+            {
+                var responseMsg = new ResponseMessageDTO(ex.Message);
+                return Unauthorized(responseMsg);
+            }
             catch (Exception ex)
             {
-                var responseMsg = new ResponseMessageDTO<Object>(ex.Message);
+                var responseMsg = new ResponseMessageDTO(ex.Message);
                 return BadRequest(responseMsg);
             }
         }
@@ -39,9 +45,14 @@ namespace JiraSchedulingConnectAppService.Controllers
             {
                 return Ok(project);
             }
+            catch (UnAuthorizedException ex)
+            {
+                var responseMsg = new ResponseMessageDTO(ex.Message);
+                return Unauthorized(responseMsg);
+            }
             catch (Exception ex)
             {
-                var responseMsg = new ResponseMessageDTO<Object>(ex.Message);
+                var responseMsg = new ResponseMessageDTO(ex.Message);
                 return BadRequest(responseMsg);
             }
         }
