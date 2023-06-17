@@ -1,9 +1,7 @@
-using JiraSchedulingConnectAppService.DTOs.Authentication;
+using JiraSchedulingConnectAppService.Exceptions;
 using JiraSchedulingConnectAppService.Models;
 using JiraSchedulingConnectAppService.Services;
 using System.Net.Http.Headers;
-using System.Net.Http;
-using static System.Net.WebRequestMethods;
 using System.Text.Json;
 
 namespace JiraSchedulingConnectAppService.Common
@@ -33,14 +31,14 @@ namespace JiraSchedulingConnectAppService.Common
             return baseUrl;
         }
 
-        private async Task GetNewAccessTokenFromRefreshToken(string cloudId)
+        private async System.Threading.Tasks.Task GetNewAccessTokenFromRefreshToken(string cloudId)
         {
 
             var tokenFromDB = db.AtlassianTokens.FirstOrDefault(e => e.CloudId == cloudId);
             if (tokenFromDB == null)
             {
                 //TODO: Handle token null from db;
-
+                throw new UnAuthorizedException("Atlassian Token Not Found From DB");
             }
             else
             {
