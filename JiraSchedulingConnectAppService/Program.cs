@@ -1,6 +1,8 @@
 using JiraSchedulingConnectAppService.DTOs;
+using JiraSchedulingConnectAppService.Middlewares;
 using JiraSchedulingConnectAppService.Models;
 using JiraSchedulingConnectAppService.Services;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -38,6 +40,10 @@ builder.Services.AddDbContext<JiraDemoContext>(opt => opt.UseSqlServer(
     builder.Configuration.GetConnectionString("DB")
     )
 );
+
+// Register services
+builder.Services.AddTransient<IProjectServices, ProjectsService>();
+
 
 var app = builder.Build();
 
