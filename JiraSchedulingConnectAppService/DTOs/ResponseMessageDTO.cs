@@ -1,16 +1,22 @@
 ﻿namespace JiraSchedulingConnectAppService.DTOs
 {
-    public class ResponseMessageDTO<T>
+    public class ResponseMessageDTO
     {
         private string message;
-        private T? data;
+        private dynamic? data;
 
         public ResponseMessageDTO(string message)
         {
             this.message = message;
         }
 
+        public ResponseMessageDTO(string message, dynamic data)
+        {
+            this.message= message;
+            this.data = data;
+        }
+
         public string Message { get { return message; } set {message = value; } }
-        public T? Data { get { return data; } set { data = value; } }
+        public dynamic? Data { get { return data; } set { data = value; } }
     }
 }
