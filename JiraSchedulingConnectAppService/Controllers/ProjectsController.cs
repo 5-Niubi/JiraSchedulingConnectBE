@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("[controller]/[action]")]
     [Authorize]
     public class ProjectsController : ControllerBase
     {
@@ -19,14 +19,12 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(int page)
+        public IActionResult GetAllProjects(int page)
         {
             try
             {
                 var response =  projectsService.GetAllProject(HttpContext, page);
                 return Ok(response);
-                
-
             }catch(Exception ex)
             {
                 var response = new ResponseMessageDTO(ex.Message);
