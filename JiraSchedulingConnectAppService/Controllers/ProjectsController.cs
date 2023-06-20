@@ -25,6 +25,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             {
                 var response =  projectsService.GetAllProject(HttpContext, page);
                 return Ok(response);
+                
 
             }catch(Exception ex)
             {
