@@ -43,7 +43,7 @@ builder.Services.AddDbContext<JiraDemoContext>(opt => opt.UseSqlServer(
 
 // Register services
 builder.Services.AddTransient<IProjectServices, ProjectsService>();
-
+builder.Services.AddTransient<ISkillsService, SkillsService>();
 
 var app = builder.Build();
 
