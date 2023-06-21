@@ -6,8 +6,11 @@ namespace JiraSchedulingConnectAppService.DTOs
 {
     public class AutoMapperProfile : Profile
     {
-        public AutoMapperProfile() {
+        public AutoMapperProfile()
+        {
             CreateMap<Project, ProjectListHomePageDTO>();
+            CreateMap<ProjectsListCreateProject.Request, Project>();
+            
         }
     }
 }

@@ -21,7 +21,7 @@ public partial class Schedule
 
     public int? Selected { get; set; }
 
-    public int? Since { get; set; }
+    public DateTime? Since { get; set; }
 
     public string? AccountId { get; set; }
 

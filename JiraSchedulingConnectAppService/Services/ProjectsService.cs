@@ -9,17 +9,40 @@ namespace JiraSchedulingConnectAppService.Services
 {
     public class ProjectsService : IProjectServices
     {
-        private JiraDemoContext db;
-        private IMapper mapper;
-        public ProjectsService(JiraDemoContext dbContext, IMapper mapper)
+        private readonly JiraDemoContext db;
+        private readonly IMapper mapper;
+        private readonly HttpContext? httpContext;
+
+        public ProjectsService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             db = dbContext;
             this.mapper = mapper;
+            httpContext = httpContextAccessor.HttpContext;
+
         }
 
-        public PagingResponseDTO<ProjectListHomePageDTO> GetAllProject(HttpContext context, int currentPage)
+        public async System.Threading.Tasks.Task CreateProject(ProjectsListCreateProject.Request projectRequest)
         {
-            var cloudId = JWTManagerService.GetCurrentCloudId(context);
+            try
+            {
+                var jwt = new JWTManagerService(httpContext);
+                var cloudId = jwt.GetCurrentCloudId();
+
+                var project = mapper.Map<Project>(projectRequest);
+                project.CloudId = cloudId;
+                await db.Projects.AddAsync(project);
+                await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+        }
+
+        async public Task<PagingResponseDTO<ProjectListHomePageDTO>> GetAllProject(int currentPage)
+        {
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
 
             var query = db.Projects.Where(e => e.CloudId == cloudId);
 

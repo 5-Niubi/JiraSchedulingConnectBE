@@ -8,6 +8,6 @@
 
         public string? Name { get; set; }
 
-        public int? StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
     }
 }
