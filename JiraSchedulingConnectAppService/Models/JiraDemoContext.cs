@@ -99,7 +99,6 @@ public partial class JiraDemoContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
-                .IsUnicode(false)
                 .HasColumnName("name");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.Unit)
@@ -117,7 +116,6 @@ public partial class JiraDemoContext : DbContext
             entity.Property(e => e.CloudId).HasColumnName("cloud_id");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
-                .IsUnicode(false)
                 .HasColumnName("name");
         });
 
@@ -132,8 +130,7 @@ public partial class JiraDemoContext : DbContext
                 .HasColumnName("account_id");
             entity.Property(e => e.Budget).HasColumnName("budget");
             entity.Property(e => e.BudgetUnit)
-                .HasMaxLength(5)
-                .IsUnicode(false)
+                .HasMaxLength(50)
                 .HasColumnName("budget_unit");
             entity.Property(e => e.CloudId)
                 .HasMaxLength(50)
@@ -148,7 +145,6 @@ public partial class JiraDemoContext : DbContext
                 .HasColumnName("image_avatar");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
-                .IsUnicode(false)
                 .HasColumnName("name");
             entity.Property(e => e.ObjectiveCost).HasColumnName("objective_cost");
             entity.Property(e => e.ObjectiveQuality).HasColumnName("objective_quality");
@@ -169,7 +165,6 @@ public partial class JiraDemoContext : DbContext
                 .HasColumnName("cloud_id");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
-                .IsUnicode(false)
                 .HasColumnName("name");
         });
 
@@ -214,7 +209,6 @@ public partial class JiraDemoContext : DbContext
                 .HasColumnName("cloud_id");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("name");
         });
 
@@ -230,7 +224,6 @@ public partial class JiraDemoContext : DbContext
             entity.Property(e => e.Duration).HasColumnName("duration");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
-                .IsUnicode(false)
                 .HasColumnName("name");
             entity.Property(e => e.ProjectId).HasColumnName("project_id");
 
@@ -336,15 +329,12 @@ public partial class JiraDemoContext : DbContext
                 .HasColumnName("cloud_id");
             entity.Property(e => e.DisplayName)
                 .HasMaxLength(500)
-                .IsUnicode(false)
                 .HasColumnName("display_name");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
-                .IsUnicode(false)
                 .HasColumnName("email");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
-                .IsUnicode(false)
                 .HasColumnName("name");
             entity.Property(e => e.UnitSalary).HasColumnName("unit_salary");
             entity.Property(e => e.WorkingType).HasColumnName("working_type");
