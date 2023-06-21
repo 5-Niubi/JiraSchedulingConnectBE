@@ -4,6 +4,7 @@ using JiraSchedulingConnectAppService.DTOs;
 using JiraSchedulingConnectAppService.DTOs.Projects;
 using JiraSchedulingConnectAppService.Models;
 using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -21,7 +22,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
-        public async System.Threading.Tasks.Task CreateProject(ProjectsListCreateProject.Request projectRequest)
+        public async System.Threading.Tasks.Task<ProjectDetailDTO> CreateProject(ProjectsListCreateProject.Request projectRequest)
         {
             try
             {
@@ -30,8 +31,10 @@ namespace JiraSchedulingConnectAppService.Services
 
                 var project = mapper.Map<Project>(projectRequest);
                 project.CloudId = cloudId;
-                await db.Projects.AddAsync(project);
+                var projectCreatedEntity =  await db.Projects.AddAsync(project);
                 await db.SaveChangesAsync();
+                var projectCreatedDTO = mapper.Map<ProjectDetailDTO>(projectCreatedEntity.Entity);
+                return projectCreatedDTO;
             }
             catch (Exception ex)
             {
@@ -60,6 +63,16 @@ namespace JiraSchedulingConnectAppService.Services
                 Values = projectDTO
             };
             return pagingRespone;
+        }
+
+        async public Task<ProjectDetailDTO> GetProjectDetail(int projectId)
+        {
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+            var projectResult = await db.Projects.Where(e => e.CloudId == cloudId && e.Id == projectId)
+                .FirstOrDefaultAsync();
+            var projectDTO = mapper.Map<ProjectDetailDTO>(projectResult);
+            return projectDTO;
         }
     }
 }

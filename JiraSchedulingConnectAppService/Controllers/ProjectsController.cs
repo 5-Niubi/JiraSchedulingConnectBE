@@ -32,13 +32,27 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetProject(int projectId)
+        {
+            try
+            {
+                var project = await projectsService.GetProjectDetail(projectId);
+                return Ok(project);
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateProject([FromBody] ProjectsListCreateProject.Request projectRequest)
         {
             try
             {
-                await projectsService.CreateProject(projectRequest);
-                return Ok();
+                return Ok(await projectsService.CreateProject(projectRequest));
             }
             catch (Exception ex)
             {
