@@ -4,24 +4,50 @@ using JiraSchedulingConnectAppService.DTOs;
 using JiraSchedulingConnectAppService.DTOs.Projects;
 using JiraSchedulingConnectAppService.Models;
 using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace JiraSchedulingConnectAppService.Services
 {
     public class ProjectsService : IProjectServices
     {
-        private JiraDemoContext db;
-        private IMapper mapper;
-        public ProjectsService(JiraDemoContext dbContext, IMapper mapper)
+        private readonly JiraDemoContext db;
+        private readonly IMapper mapper;
+        private readonly HttpContext? httpContext;
+
+        public ProjectsService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             db = dbContext;
             this.mapper = mapper;
+            httpContext = httpContextAccessor.HttpContext;
+
         }
 
-        public PagingResponseDTO<ProjectListHomePageDTO> GetAllProject(HttpContext context, int currentPage)
+        public async System.Threading.Tasks.Task<ProjectDetailDTO> CreateProject(ProjectsListCreateProject.Request projectRequest)
         {
-            var cloudId = JWTManagerService.GetCurrentCloudId(context);
+            try
+            {
+                var jwt = new JWTManagerService(httpContext);
+                var cloudId = jwt.GetCurrentCloudId();
 
-            var query = db.Projects.Where(e => e.CloudId == cloudId);
+                var project = mapper.Map<Project>(projectRequest);
+                project.CloudId = cloudId;
+                var projectCreatedEntity =  await db.Projects.AddAsync(project);
+                await db.SaveChangesAsync();
+                var projectCreatedDTO = mapper.Map<ProjectDetailDTO>(projectCreatedEntity.Entity);
+                return projectCreatedDTO;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+        }
+
+        async public Task<PagingResponseDTO<ProjectListHomePageDTO>> GetAllProject(int currentPage)
+        {
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
+            var query = db.Projects.Where(e => e.CloudId == cloudId).OrderByDescending(e => e.Id);
 
             var queryPagingResult = Utils.MyQuery<Project>.Paging(query, currentPage);
             var projectsResult = queryPagingResult.Item1.ToList();
@@ -37,6 +63,16 @@ namespace JiraSchedulingConnectAppService.Services
                 Values = projectDTO
             };
             return pagingRespone;
+        }
+
+        async public Task<ProjectDetailDTO> GetProjectDetail(int projectId)
+        {
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+            var projectResult = await db.Projects.Where(e => e.CloudId == cloudId && e.Id == projectId)
+                .FirstOrDefaultAsync();
+            var projectDTO = mapper.Map<ProjectDetailDTO>(projectResult);
+            return projectDTO;
         }
     }
 }

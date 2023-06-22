@@ -24,14 +24,14 @@ namespace JiraSchedulingConnectAppService.Common
 
         }
 
-        private string SetBaseURL(string cloudId)
+        private string SetBaseURL(string? cloudId)
         {
             this.cloudId = cloudId.ToLower();
             this.baseUrl = $"https://api.atlassian.com/ex/jira/{cloudId}";
             return baseUrl;
         }
 
-        private async System.Threading.Tasks.Task GetNewAccessTokenFromRefreshToken(string cloudId)
+        private async System.Threading.Tasks.Task GetNewAccessTokenFromRefreshToken(string? cloudId)
         {
 
             var tokenFromDB = db.AtlassianTokens.FirstOrDefault(e => e.CloudId == cloudId);
@@ -56,7 +56,8 @@ namespace JiraSchedulingConnectAppService.Common
 
         public async Task<HttpResponseMessage> Get(string url, HttpContext context)
         {
-            string? cloudId = JWTManagerService.GetCurrentCloudId(context);
+            var jwt = new JWTManagerService(context);
+            string? cloudId = jwt.GetCurrentCloudId();
             await GetNewAccessTokenFromRefreshToken(cloudId);
             SetBaseURL(cloudId);
             var respone = await client.GetAsync(baseUrl + url);
@@ -65,7 +66,8 @@ namespace JiraSchedulingConnectAppService.Common
 
         public async Task<HttpResponseMessage> Post(string url, dynamic contentObject, HttpContext context)
         {
-            string? cloudId = JWTManagerService.GetCurrentCloudId(context);
+            var jwt = new JWTManagerService(context);
+            string? cloudId = jwt.GetCurrentCloudId();
             await GetNewAccessTokenFromRefreshToken(cloudId);
             SetBaseURL(cloudId);
             var content = new StringContent(JsonSerializer.Serialize(contentObject));
@@ -75,7 +77,8 @@ namespace JiraSchedulingConnectAppService.Common
 
         public async Task<HttpResponseMessage> Put(string url, dynamic contentObject, HttpContext context)
         {
-            string? cloudId = JWTManagerService.GetCurrentCloudId(context);
+            var jwt = new JWTManagerService(context);
+            string? cloudId = jwt.GetCurrentCloudId();
             await GetNewAccessTokenFromRefreshToken(cloudId);
             SetBaseURL(cloudId);
             var content = new StringContent(JsonSerializer.Serialize(contentObject));
@@ -85,7 +88,8 @@ namespace JiraSchedulingConnectAppService.Common
 
         public async Task<HttpResponseMessage> Delete(string url, HttpContext context)
         {
-            string? cloudId = JWTManagerService.GetCurrentCloudId(context);
+            var jwt = new JWTManagerService(context);
+            string? cloudId = jwt.GetCurrentCloudId();
             await GetNewAccessTokenFromRefreshToken(cloudId);
             SetBaseURL(cloudId);
             var respone = await client.DeleteAsync(baseUrl + url);

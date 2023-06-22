@@ -13,11 +13,13 @@ public partial class Project
 
     public string? AccountId { get; set; }
 
-    public int? StartDate { get; set; }
+    public DateTime? StartDate { get; set; }
 
     public double? Budget { get; set; }
 
-    public int? Deadline { get; set; }
+    public string? BudgetUnit { get; set; }
+
+    public DateTime? Deadline { get; set; }
 
     public double? ObjectiveTime { get; set; }
 

@@ -8,7 +8,7 @@ using System.Net.WebSockets;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
     public class SkillsController : ControllerBase
@@ -24,7 +24,6 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                //var response = projectsService.GetAllProject(HttpContext, page);
                 var response = skillsService.GetSkills();
                 return Ok(response);
             }
