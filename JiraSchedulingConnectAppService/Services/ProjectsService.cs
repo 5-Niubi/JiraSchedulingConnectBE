@@ -47,7 +47,7 @@ namespace JiraSchedulingConnectAppService.Services
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
-            var query = db.Projects.Where(e => e.CloudId == cloudId);
+            var query = db.Projects.Where(e => e.CloudId == cloudId).OrderByDescending(e => e.Id);
 
             var queryPagingResult = Utils.MyQuery<Project>.Paging(query, currentPage);
             var projectsResult = queryPagingResult.Item1.ToList();
