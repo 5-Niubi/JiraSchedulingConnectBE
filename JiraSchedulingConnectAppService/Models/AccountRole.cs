@@ -5,11 +5,11 @@ namespace JiraSchedulingConnectAppService.Models;
 
 public partial class AccountRole
 {
-    public int? RoleId { get; set; }
-
     public string? AccountId { get; set; }
 
     public int Id { get; set; }
 
-    public virtual Role? Role { get; set; }
+    public int? TokenId { get; set; }
+
+    public virtual AtlassianToken? Token { get; set; }
 }
