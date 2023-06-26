@@ -31,7 +31,7 @@ namespace JiraSchedulingConnectAppService.Services
 
                 var project = mapper.Map<Project>(projectRequest);
                 project.CloudId = cloudId;
-                var projectCreatedEntity =  await db.Projects.AddAsync(project);
+                var projectCreatedEntity = await db.Projects.AddAsync(project);
                 await db.SaveChangesAsync();
                 var projectCreatedDTO = mapper.Map<ProjectDetailDTO>(projectCreatedEntity.Entity);
                 return projectCreatedDTO;
@@ -42,17 +42,38 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        async public Task<PagingResponseDTO<ProjectListHomePageDTO>> GetAllProject(int currentPage)
+        async public Task<List<ProjectListHomePageDTO>> GetAllProjects(string? projectName)
         {
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
-            var query = db.Projects.Where(e => e.CloudId == cloudId).OrderByDescending(e => e.Id);
+            projectName = projectName ?? string.Empty;
+
+            var query = db.Projects.Where(e => e.CloudId == cloudId
+                && (projectName.Equals(string.Empty) || e.Name.Contains(projectName))
+                )
+                .OrderByDescending(e => e.Id);
+
+            var projectsResult = await query.ToListAsync();
+            var projectDTO = mapper.Map<List<ProjectListHomePageDTO>>(projectsResult);
+
+            return projectDTO;
+        }
+
+        async public Task<PagingResponseDTO<ProjectListHomePageDTO>> GetAllProjectsPaging(int currentPage, string? projectName)
+        {
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
+            projectName = projectName ?? string.Empty;
+
+            var query = db.Projects.Where(e => e.CloudId == cloudId
+                && (projectName.Equals(string.Empty) || e.Name.Contains(projectName))
+                )
+                .OrderByDescending(e => e.Id);
 
             var queryPagingResult = Utils.MyQuery<Project>.Paging(query, currentPage);
-            var projectsResult = queryPagingResult.Item1.ToList();
-
-
+            var projectsResult = await queryPagingResult.Item1.ToListAsync();
             var projectDTO = mapper.Map<List<ProjectListHomePageDTO>>(projectsResult);
 
             var pagingRespone = new PagingResponseDTO<ProjectListHomePageDTO>
