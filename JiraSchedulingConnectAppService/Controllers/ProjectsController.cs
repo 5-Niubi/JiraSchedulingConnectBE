@@ -18,11 +18,26 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllProjects(int page)
+        public async Task<IActionResult> GetAllProjectsPaging(int page, string? projectName)
         {
             try
             {
-                var response = await projectsService.GetAllProject(page);
+                var response = await projectsService.GetAllProjectsPaging(page, projectName);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllProjects(string? projectName)
+        {
+            try
+            {
+                var response = await projectsService.GetAllProjects(projectName);
                 return Ok(response);
             }
             catch (Exception ex)

@@ -60,11 +60,11 @@ public partial class JiraDemoContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("account_id");
-            entity.Property(e => e.RoleId).HasColumnName("role_id");
+            entity.Property(e => e.TokenId).HasColumnName("token_id");
 
-            entity.HasOne(d => d.Role).WithMany(p => p.AccountRoles)
-                .HasForeignKey(d => d.RoleId)
-                .HasConstraintName("FK_account_roles_roles");
+            entity.HasOne(d => d.Token).WithMany(p => p.AccountRoles)
+                .HasForeignKey(d => d.TokenId)
+                .HasConstraintName("FK_account_roles_atlassian_token");
         });
 
         modelBuilder.Entity<AtlassianToken>(entity =>
@@ -78,10 +78,10 @@ public partial class JiraDemoContext : DbContext
                 .HasMaxLength(5000)
                 .IsUnicode(false)
                 .HasColumnName("access_token");
-            entity.Property(e => e.AccountId)
+            entity.Property(e => e.AccountInstalledId)
                 .HasMaxLength(50)
                 .IsUnicode(false)
-                .HasColumnName("account_id");
+                .HasColumnName("account_installed_id");
             entity.Property(e => e.CloudId)
                 .HasMaxLength(50)
                 .IsUnicode(false)
