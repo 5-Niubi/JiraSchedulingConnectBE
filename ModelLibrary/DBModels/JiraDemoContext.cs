@@ -399,6 +399,23 @@ namespace ModelLibrary.DBModels
                     .WithMany(p => p.Tasks)
                     .HasForeignKey(d => d.ProjectId)
                     .HasConstraintName("FK_tasks_projects");
+
+                entity.HasMany(d => d.Functions)
+                    .WithMany(p => p.Tasks)
+                    .UsingEntity<Dictionary<string, object>>(
+                        "TaskFunction",
+                        l => l.HasOne<Function>().WithMany().HasForeignKey("FunctionId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_task_function_function"),
+                        r => r.HasOne<Task>().WithMany().HasForeignKey("TaskId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_task_function_tasks"),
+                        j =>
+                        {
+                            j.HasKey("TaskId", "FunctionId");
+
+                            j.ToTable("task_function");
+
+                            j.IndexerProperty<int>("TaskId").HasColumnName("task_id");
+
+                            j.IndexerProperty<int>("FunctionId").HasColumnName("function_id");
+                        });
             });
 
             modelBuilder.Entity<TaskLabel>(entity =>
@@ -506,23 +523,6 @@ namespace ModelLibrary.DBModels
                     .WithMany(p => p.TaskResources)
                     .HasForeignKey(d => d.TaskId)
                     .HasConstraintName("FK_task_resource_tasks");
-
-                entity.HasMany(d => d.Functions)
-                    .WithMany(p => p.Tasks)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "TaskFunction",
-                        l => l.HasOne<Function>().WithMany().HasForeignKey("FunctionId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_task_function_function"),
-                        r => r.HasOne<TaskResource>().WithMany().HasForeignKey("TaskId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_task_function_task_resource"),
-                        j =>
-                        {
-                            j.HasKey("TaskId", "FunctionId");
-
-                            j.ToTable("task_function");
-
-                            j.IndexerProperty<int>("TaskId").HasColumnName("task_id");
-
-                            j.IndexerProperty<int>("FunctionId").HasColumnName("function_id");
-                        });
             });
 
             modelBuilder.Entity<TasksSkillsRequired>(entity =>

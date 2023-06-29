@@ -12,6 +12,7 @@ namespace ModelLibrary.DBModels
             TaskPrecedenceTasks = new HashSet<TaskPrecedence>();
             TaskResources = new HashSet<TaskResource>();
             TasksSkillsRequireds = new HashSet<TasksSkillsRequired>();
+            Functions = new HashSet<Function>();
         }
 
         public int Id { get; set; }
@@ -29,5 +30,7 @@ namespace ModelLibrary.DBModels
         public virtual ICollection<TaskPrecedence> TaskPrecedenceTasks { get; set; }
         public virtual ICollection<TaskResource> TaskResources { get; set; }
         public virtual ICollection<TasksSkillsRequired> TasksSkillsRequireds { get; set; }
+
+        public virtual ICollection<Function> Functions { get; set; }
     }
 }
