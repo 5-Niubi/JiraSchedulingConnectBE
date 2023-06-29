@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "JiraSchedulingConnectAppService": {
+    "AlgorithmService": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
@@ -8,7 +8,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:5126"
+      "applicationUrl": "http://localhost:5289"
     },
     "IIS Express": {
       "commandName": "IISExpress",
@@ -30,7 +30,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:14849",
+      "applicationUrl": "http://localhost:25719",
       "sslPort": 0
     }
   }

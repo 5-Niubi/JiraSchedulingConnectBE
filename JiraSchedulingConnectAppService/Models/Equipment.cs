@@ -15,5 +15,11 @@ public partial class Equipment
 
     public double? UnitPrice { get; set; }
 
+    public DateTime? CreateDatetime { get; set; }
+
+    public bool? IsDelete { get; set; }
+
+    public DateTime? DeleteDatetime { get; set; }
+
     public virtual ICollection<TaskResource> TaskResources { get; set; } = new List<TaskResource>();
 }

@@ -11,5 +11,11 @@ public partial class Label
 
     public int? CloudId { get; set; }
 
+    public DateTime? CreateDatetime { get; set; }
+
+    public bool? IsDelete { get; set; }
+
+    public DateTime? DeleteDatetime { get; set; }
+
     public virtual ICollection<TaskLabel> TaskLabels { get; set; } = new List<TaskLabel>();
 }

@@ -15,5 +15,13 @@ public partial class AtlassianToken
 
     public string? RefressToken { get; set; }
 
+    public bool? IsDelete { get; set; }
+
+    public DateTime? CreateDatetime { get; set; }
+
+    public bool? IsDelete1 { get; set; }
+
+    public DateTime? DeleteDatetime { get; set; }
+
     public virtual ICollection<AccountRole> AccountRoles { get; set; } = new List<AccountRole>();
 }

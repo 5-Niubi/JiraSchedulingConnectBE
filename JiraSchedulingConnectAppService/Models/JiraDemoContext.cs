@@ -37,8 +37,6 @@ public partial class JiraDemoContext : DbContext
 
     public virtual DbSet<TaskPrecedence> TaskPrecedences { get; set; }
 
-    public virtual DbSet<TaskPrecedence1> TaskPrecedences1 { get; set; }
-
     public virtual DbSet<TaskResource> TaskResources { get; set; }
 
     public virtual DbSet<Workforce> Workforces { get; set; }
@@ -60,6 +58,14 @@ public partial class JiraDemoContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("account_id");
+            entity.Property(e => e.CreateDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("create_datetime");
+            entity.Property(e => e.DeleteDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("delete_datetime");
+            entity.Property(e => e.IsDelete).HasColumnName("isDelete");
+            entity.Property(e => e.IsDelete1).HasColumnName("is_delete");
             entity.Property(e => e.TokenId).HasColumnName("token_id");
 
             entity.HasOne(d => d.Token).WithMany(p => p.AccountRoles)
@@ -86,6 +92,14 @@ public partial class JiraDemoContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("cloud_id");
+            entity.Property(e => e.CreateDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("create_datetime");
+            entity.Property(e => e.DeleteDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("delete_datetime");
+            entity.Property(e => e.IsDelete).HasColumnName("isDelete");
+            entity.Property(e => e.IsDelete1).HasColumnName("is_delete");
             entity.Property(e => e.RefressToken)
                 .HasMaxLength(5000)
                 .IsUnicode(false)
@@ -97,6 +111,13 @@ public partial class JiraDemoContext : DbContext
             entity.ToTable("equipments");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreateDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("create_datetime");
+            entity.Property(e => e.DeleteDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("delete_datetime");
+            entity.Property(e => e.IsDelete).HasColumnName("is_delete");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
@@ -114,6 +135,13 @@ public partial class JiraDemoContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CloudId).HasColumnName("cloud_id");
+            entity.Property(e => e.CreateDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("create_datetime");
+            entity.Property(e => e.DeleteDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("delete_datetime");
+            entity.Property(e => e.IsDelete).HasColumnName("is_delete");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
@@ -136,13 +164,20 @@ public partial class JiraDemoContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("cloud_id");
+            entity.Property(e => e.CreateDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("create_datetime");
             entity.Property(e => e.Deadline)
                 .HasColumnType("datetime")
                 .HasColumnName("deadline");
+            entity.Property(e => e.DeleteDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("delete_datetime");
             entity.Property(e => e.ImageAvatar)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("image_avatar");
+            entity.Property(e => e.IsDelete).HasColumnName("is_delete");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
@@ -163,6 +198,13 @@ public partial class JiraDemoContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("cloud_id");
+            entity.Property(e => e.CreateDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("create_datetime");
+            entity.Property(e => e.DeleteDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("delete_datetime");
+            entity.Property(e => e.IsDelete).HasColumnName("is_delete");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
@@ -182,7 +224,14 @@ public partial class JiraDemoContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("cloud_id");
             entity.Property(e => e.Cost).HasColumnName("cost");
+            entity.Property(e => e.CreateDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("create_datetime");
+            entity.Property(e => e.DeleteDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("delete_datetime");
             entity.Property(e => e.Duration).HasColumnName("duration");
+            entity.Property(e => e.IsDelete).HasColumnName("is_delete");
             entity.Property(e => e.ProjectId).HasColumnName("project_id");
             entity.Property(e => e.Quality).HasColumnName("quality");
             entity.Property(e => e.Selected).HasColumnName("selected");
@@ -207,6 +256,13 @@ public partial class JiraDemoContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("cloud_id");
+            entity.Property(e => e.CreateDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("create_datetime");
+            entity.Property(e => e.DeleteDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("delete_datetime");
+            entity.Property(e => e.IsDelete).HasColumnName("is_delete");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
@@ -221,7 +277,14 @@ public partial class JiraDemoContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("cloud_id");
+            entity.Property(e => e.CreateDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("create_datetime");
+            entity.Property(e => e.DeleteDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("delete_datetime");
             entity.Property(e => e.Duration).HasColumnName("duration");
+            entity.Property(e => e.IsDelete).HasColumnName("is_delete");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
@@ -238,6 +301,13 @@ public partial class JiraDemoContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CloudId).HasColumnName("cloud_id");
+            entity.Property(e => e.CreateDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("create_datetime");
+            entity.Property(e => e.DeleteDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("delete_datetime");
+            entity.Property(e => e.IsDelete).HasColumnName("is_delete");
             entity.Property(e => e.LabelId).HasColumnName("label_id");
             entity.Property(e => e.TaskId).HasColumnName("task_id");
 
@@ -252,30 +322,24 @@ public partial class JiraDemoContext : DbContext
 
         modelBuilder.Entity<TaskPrecedence>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("task_precedence");
-
-            entity.Property(e => e.Id)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("id");
-            entity.Property(e => e.PrecedenceTaskId).HasColumnName("precedence_task_id");
-            entity.Property(e => e.TaskId).HasColumnName("task_id");
-        });
-
-        modelBuilder.Entity<TaskPrecedence1>(entity =>
-        {
             entity.ToTable("task_precedences");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreateDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("create_datetime");
+            entity.Property(e => e.DeleteDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("delete_datetime");
+            entity.Property(e => e.IsDelete).HasColumnName("is_delete");
             entity.Property(e => e.PrecedenceId).HasColumnName("precedence_id");
             entity.Property(e => e.TaskId).HasColumnName("task_id");
 
-            entity.HasOne(d => d.Precedence).WithMany(p => p.TaskPrecedence1Precedences)
+            entity.HasOne(d => d.Precedence).WithMany(p => p.TaskPrecedencePrecedences)
                 .HasForeignKey(d => d.PrecedenceId)
                 .HasConstraintName("FK_task_precedences_tasks1");
 
-            entity.HasOne(d => d.Task).WithMany(p => p.TaskPrecedence1Tasks)
+            entity.HasOne(d => d.Task).WithMany(p => p.TaskPrecedenceTasks)
                 .HasForeignKey(d => d.TaskId)
                 .HasConstraintName("FK_task_precedences_tasks");
         });
@@ -285,6 +349,13 @@ public partial class JiraDemoContext : DbContext
             entity.ToTable("task_resource");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreateDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("create_datetime");
+            entity.Property(e => e.DeleteDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("delete_datetime");
+            entity.Property(e => e.IsDelete).HasColumnName("is_delete");
             entity.Property(e => e.ResourceId).HasColumnName("resource_id");
             entity.Property(e => e.TaskId).HasColumnName("task_id");
             entity.Property(e => e.Type)
@@ -327,12 +398,19 @@ public partial class JiraDemoContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("cloud_id");
+            entity.Property(e => e.CreateDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("create_datetime");
+            entity.Property(e => e.DeleteDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("delete_datetime");
             entity.Property(e => e.DisplayName)
                 .HasMaxLength(500)
                 .HasColumnName("display_name");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
                 .HasColumnName("email");
+            entity.Property(e => e.IsDelete).HasColumnName("is_delete");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
@@ -349,6 +427,13 @@ public partial class JiraDemoContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("cloud_id");
+            entity.Property(e => e.CreateDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("create_datetime");
+            entity.Property(e => e.DeleteDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("delete_datetime");
+            entity.Property(e => e.IsDelete).HasColumnName("is_delete");
             entity.Property(e => e.Level).HasColumnName("level");
             entity.Property(e => e.SkillId).HasColumnName("skill_id");
             entity.Property(e => e.WorkforceId).HasColumnName("workforce_id");

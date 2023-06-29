@@ -25,5 +25,11 @@ public partial class Schedule
 
     public string? AccountId { get; set; }
 
+    public bool? IsDelete { get; set; }
+
+    public DateTime? CreateDatetime { get; set; }
+
+    public DateTime? DeleteDatetime { get; set; }
+
     public virtual Project? Project { get; set; }
 }
