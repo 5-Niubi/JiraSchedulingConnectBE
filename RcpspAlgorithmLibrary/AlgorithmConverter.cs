@@ -1,4 +1,5 @@
 ﻿using ModelLibrary.DBModels;
+using System.Linq;
 
 namespace RcpspAlgorithmLibrary
 {
@@ -89,6 +90,8 @@ namespace RcpspAlgorithmLibrary
             int[,] taskAdjacency = new int[TaskList.Count, TaskList.Count]; // Boolean bin matrix
             int[,] taskSkillWithLevel = new int[TaskList.Count, SkillList.Count]; // Matrix of skill level
             int[,] taskFunction = new int[TaskList.Count, FunctionList.Count]; // Boolean bin matrix
+            int[,] workerSkillWithLevel = new int[WorkerList.Count, SkillList.Count]; // Matrix of skill level
+
 
             for (int i = 0; i < TaskList.Count; i++)
             {
@@ -104,13 +107,19 @@ namespace RcpspAlgorithmLibrary
                     taskSkillWithLevel[i, j] = (int)TaskList[i].TasksSkillsRequireds
                         .Where(e => e.Skill.Id == SkillList[j].Id).FirstOrDefault().Level;
                 }
+                for (int j = 0; j < FunctionList.Count; j++)
+                {
+                    taskFunction[i, j] = TaskList[i].Functions.Contains(FunctionList[j]) ? 1 : 0;
+                }
+            }
+
+            for (int i = 0; i < WorkerList.Count; i++)
+            {
                 for (int j = 0; j < SkillList.Count; j++)
                 {
-                    //taskSkillWithLevel[i, j] = (int)TaskList[i].
-                    //    .Where(e => e.Skill.Id == SkillList[j].Id).FirstOrDefault().Level;
+                    workerSkillWithLevel[i, j] = (int)WorkerList[i].WorkforceSkills
+                        .Where(e => e.SkillId == SkillList[j].Id).FirstOrDefault().Level;                      
                 }
-
-
             }
 
             return;
