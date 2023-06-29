@@ -1,5 +1,5 @@
 using JiraSchedulingConnectAppService.Exceptions;
-using JiraSchedulingConnectAppService.Models;
+using ModelLibrary.DBModels;
 using JiraSchedulingConnectAppService.Services;
 using System.Net.Http.Headers;
 using System.Text.Json;

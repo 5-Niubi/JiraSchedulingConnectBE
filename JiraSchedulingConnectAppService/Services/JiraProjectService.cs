@@ -1,5 +1,5 @@
 ﻿using JiraSchedulingConnectAppService.Common;
-using JiraSchedulingConnectAppService.Models;
+using ModelLibrary.DBModels;
 
 namespace JiraSchedulingConnectAppService.Services
 {

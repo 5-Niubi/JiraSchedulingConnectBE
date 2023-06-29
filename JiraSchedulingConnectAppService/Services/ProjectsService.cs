@@ -2,7 +2,7 @@
 using JiraSchedulingConnectAppService.Common;
 using JiraSchedulingConnectAppService.DTOs;
 using JiraSchedulingConnectAppService.DTOs.Projects;
-using JiraSchedulingConnectAppService.Models;
+using ModelLibrary.DBModels;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
