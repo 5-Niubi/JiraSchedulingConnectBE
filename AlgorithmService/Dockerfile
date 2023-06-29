@@ -2,20 +2,24 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
-EXPOSE 80
+
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["AlgorithmService/AlgorithmService.csproj", "AlgorithmService/"]
-RUN dotnet restore "AlgorithmService/AlgorithmService.csproj"
 COPY . .
-WORKDIR "/src/AlgorithmService"
+RUN dotnet restore "AlgorithmService.csproj"
 RUN dotnet build "AlgorithmService.csproj" -c Release -o /app/build
+
 
 FROM build AS publish
 RUN dotnet publish "AlgorithmService.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
+ENV ASPNETCORE_URLS=http://+:5000
+ENV ASPNETCORE_ENVIRONMENT=Development
 COPY --from=publish /app/publish .
+EXPOSE 5000
+
+
 ENTRYPOINT ["dotnet", "AlgorithmService.dll"]
