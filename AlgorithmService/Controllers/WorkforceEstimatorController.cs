@@ -26,12 +26,7 @@ namespace AlgorithmService.Controllers
         };
                                                     
     
-
-       List<List<int>> TaskDuration = new List<List<int>>()
-        {
-            new List<int> {0, 10, 1, 0}
-        };
-
+       List<int> TaskDuration = new List<int> {0, 10, 1,  3, 1};
 
         private readonly ILogger<WorkforceEstimatorController> _logger;
 
@@ -41,7 +36,7 @@ namespace AlgorithmService.Controllers
         }
 
         [HttpGet(Name = "GetEstimateWorkforce")]
-        public IEnumerable<WeatherForecast> Get()
+        public IEnumerable<EstimatedWorkforce> Get()
         {
             ScheduleEstimator estimator = new ScheduleEstimator(
                 TaskDuration, 
@@ -51,11 +46,12 @@ namespace AlgorithmService.Controllers
             estimator.ForwardMethod();
             List<List<int>> outputs = estimator.Fit();
             
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+
+            return Enumerable.Range(0, outputs.Count).Select(index => new EstimatedWorkforce
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = "ahihi"
+                Id = 123,
+                Skills = outputs[index],
+                NumberOfWorkforce = 2
             })
             .ToArray();
         }
