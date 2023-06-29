@@ -29,6 +29,12 @@ public partial class Project
 
     public string? CloudId { get; set; }
 
+    public bool? IsDelete { get; set; }
+
+    public DateTime? CreateDatetime { get; set; }
+
+    public DateTime? DeleteDatetime { get; set; }
+
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 
     public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();

@@ -13,6 +13,12 @@ public partial class TaskResource
 
     public string? Type { get; set; }
 
+    public DateTime? CreateDatetime { get; set; }
+
+    public bool? IsDelete { get; set; }
+
+    public DateTime? DeleteDatetime { get; set; }
+
     public virtual Equipment? Resource { get; set; }
 
     public virtual Workforce? ResourceNavigation { get; set; }

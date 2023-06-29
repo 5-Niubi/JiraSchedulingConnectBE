@@ -15,13 +15,19 @@ public partial class Task
 
     public int? ProjectId { get; set; }
 
+    public DateTime? CreateDatetime { get; set; }
+
+    public bool? IsDelete { get; set; }
+
+    public DateTime? DeleteDatetime { get; set; }
+
     public virtual Project? Project { get; set; }
 
     public virtual ICollection<TaskLabel> TaskLabels { get; set; } = new List<TaskLabel>();
 
-    public virtual ICollection<TaskPrecedence1> TaskPrecedence1Precedences { get; set; } = new List<TaskPrecedence1>();
+    public virtual ICollection<TaskPrecedence> TaskPrecedencePrecedences { get; set; } = new List<TaskPrecedence>();
 
-    public virtual ICollection<TaskPrecedence1> TaskPrecedence1Tasks { get; set; } = new List<TaskPrecedence1>();
+    public virtual ICollection<TaskPrecedence> TaskPrecedenceTasks { get; set; } = new List<TaskPrecedence>();
 
     public virtual ICollection<TaskResource> TaskResources { get; set; } = new List<TaskResource>();
 }

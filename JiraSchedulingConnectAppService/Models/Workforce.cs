@@ -27,6 +27,12 @@ public partial class Workforce
 
     public int? WorkingType { get; set; }
 
+    public bool? IsDelete { get; set; }
+
+    public DateTime? CreateDatetime { get; set; }
+
+    public DateTime? DeleteDatetime { get; set; }
+
     public virtual ICollection<TaskResource> TaskResources { get; set; } = new List<TaskResource>();
 
     public virtual ICollection<WorkforceSkill> WorkforceSkills { get; set; } = new List<WorkforceSkill>();
