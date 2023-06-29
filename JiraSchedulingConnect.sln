@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlgorithmService", "Algorit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RcpspAlgorithmLibrary", "RcpspAlgorithmLibrary\RcpspAlgorithmLibrary.csproj", "{9A0133E3-D548-48EC-8AF7-B5532FBDBE02}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelLibrary", "ModelLibrary\ModelLibrary.csproj", "{9EB2237C-D25F-4AE0-AACB-DB29444D9714}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{9A0133E3-D548-48EC-8AF7-B5532FBDBE02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A0133E3-D548-48EC-8AF7-B5532FBDBE02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A0133E3-D548-48EC-8AF7-B5532FBDBE02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EB2237C-D25F-4AE0-AACB-DB29444D9714}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EB2237C-D25F-4AE0-AACB-DB29444D9714}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EB2237C-D25F-4AE0-AACB-DB29444D9714}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EB2237C-D25F-4AE0-AACB-DB29444D9714}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

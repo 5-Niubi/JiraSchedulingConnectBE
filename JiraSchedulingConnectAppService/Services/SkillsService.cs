@@ -1,4 +1,4 @@
-﻿using JiraSchedulingConnectAppService.Models;
+﻿using ModelLibrary.DBModels;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 
 namespace JiraSchedulingConnectAppService.Services

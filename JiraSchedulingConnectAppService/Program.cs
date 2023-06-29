@@ -1,11 +1,11 @@
 using JiraSchedulingConnectAppService.DTOs;
 using JiraSchedulingConnectAppService.Middlewares;
-using JiraSchedulingConnectAppService.Models;
 using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using ModelLibrary.DBModels;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
