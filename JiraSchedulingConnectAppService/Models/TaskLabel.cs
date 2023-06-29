@@ -13,6 +13,12 @@ public partial class TaskLabel
 
     public int? CloudId { get; set; }
 
+    public DateTime? CreateDatetime { get; set; }
+
+    public bool? IsDelete { get; set; }
+
+    public DateTime? DeleteDatetime { get; set; }
+
     public virtual Label? Label { get; set; }
 
     public virtual Task? Task { get; set; }
