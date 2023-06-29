@@ -1,0 +1,1 @@
+docker run -p 8000:80 -e ASPNETCORE_URLS=http://+:80 -e ASPNETCORE_ENVIRONMENT=Development  estimate-sv:v1.0.0 
