@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using JiraSchedulingConnectAppService.DTOs.Projects;
-using JiraSchedulingConnectAppService.Models;
+using ModelLibrary.DBModels;
+
 
 namespace JiraSchedulingConnectAppService.DTOs
 {

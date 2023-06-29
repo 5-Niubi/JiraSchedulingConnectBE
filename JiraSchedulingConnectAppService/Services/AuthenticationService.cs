@@ -1,5 +1,5 @@
 ﻿using JiraSchedulingConnectAppService.DTOs.Authentication;
-using JiraSchedulingConnectAppService.Models;
+using ModelLibrary.DBModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Text;
