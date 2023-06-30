@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [JiraDemo]    Script Date: 6/27/2023 16:37:27 ******/
+/****** Object:  Database [JiraDemo]    Script Date: 6/30/2023 13:43:29 ******/
 CREATE DATABASE [JiraDemo]
 GO
 ALTER DATABASE [JiraDemo] SET ANSI_NULL_DEFAULT OFF 
@@ -71,7 +71,7 @@ ALTER DATABASE [JiraDemo] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_
 GO
 USE [JiraDemo]
 GO
-/****** Object:  Table [dbo].[account_roles]    Script Date: 6/27/2023 16:37:27 ******/
+/****** Object:  Table [dbo].[account_roles]    Script Date: 6/30/2023 13:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -80,13 +80,17 @@ CREATE TABLE [dbo].[account_roles](
 	[account_id] [varchar](50) NULL,
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[token_id] [int] NULL,
+	[isDelete] [bit] NULL,
+	[create_datetime] [datetime] NULL,
+	[is_delete] [bit] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_account_roles] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[atlassian_token]    Script Date: 6/27/2023 16:37:27 ******/
+/****** Object:  Table [dbo].[atlassian_token]    Script Date: 6/30/2023 13:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -95,32 +99,70 @@ CREATE TABLE [dbo].[atlassian_token](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[account_installed_id] [varchar](50) NULL,
 	[cloud_id] [varchar](50) NULL,
+	[site] [varchar](500) NULL,
 	[access_token] [varchar](5000) NULL,
 	[refress_token] [varchar](5000) NULL,
+	[create_datetime] [datetime] NULL,
+	[is_delete] [bit] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_access_token] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[equipments]    Script Date: 6/27/2023 16:37:27 ******/
+/****** Object:  Table [dbo].[equipments]    Script Date: 6/30/2023 13:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[equipments](
 	[id] [int] IDENTITY(1,1) NOT NULL,
+	[cloud_id] [nchar](10) NULL,
 	[name] [nvarchar](100) NOT NULL,
 	[quantity] [int] NULL,
 	[unit] [varchar](50) NULL,
 	[unit_price] [float] NULL,
+	[create_datetime] [datetime] NULL,
+	[is_delete] [bit] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_equipments] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[labels]    Script Date: 6/27/2023 16:37:27 ******/
+/****** Object:  Table [dbo].[equipments_function]    Script Date: 6/30/2023 13:43:29 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[equipments_function](
+	[equipment_id] [int] NOT NULL,
+	[function_id] [int] NOT NULL,
+ CONSTRAINT [PK_equipments_function_1] PRIMARY KEY CLUSTERED 
+(
+	[equipment_id] ASC,
+	[function_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[function]    Script Date: 6/30/2023 13:43:29 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[function](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[name] [nvarchar](100) NULL,
+	[cloud_id] [varchar](100) NULL,
+ CONSTRAINT [PK_function] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[labels]    Script Date: 6/30/2023 13:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -129,13 +171,16 @@ CREATE TABLE [dbo].[labels](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[name] [nvarchar](50) NULL,
 	[cloud_id] [int] NULL,
+	[create_datetime] [datetime] NULL,
+	[is_delete] [bit] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_labels] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[projects]    Script Date: 6/27/2023 16:37:27 ******/
+/****** Object:  Table [dbo].[projects]    Script Date: 6/30/2023 13:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -153,13 +198,16 @@ CREATE TABLE [dbo].[projects](
 	[objective_cost] [float] NULL,
 	[objective_quality] [float] NULL,
 	[cloud_id] [varchar](50) NULL,
+	[is_delete] [bit] NULL,
+	[create_datetime] [datetime] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_projects] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[roles]    Script Date: 6/27/2023 16:37:27 ******/
+/****** Object:  Table [dbo].[roles]    Script Date: 6/30/2023 13:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -168,13 +216,16 @@ CREATE TABLE [dbo].[roles](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[cloud_id] [varchar](50) NULL,
 	[name] [nvarchar](50) NULL,
+	[is_delete] [bit] NULL,
+	[create_datetime] [datetime] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_roles] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[schedules]    Script Date: 6/27/2023 16:37:27 ******/
+/****** Object:  Table [dbo].[schedules]    Script Date: 6/30/2023 13:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -190,13 +241,16 @@ CREATE TABLE [dbo].[schedules](
 	[selected] [int] NULL,
 	[since] [datetime] NULL,
 	[account_id] [varchar](50) NULL,
+	[is_delete] [bit] NULL,
+	[create_datetime] [datetime] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_schedules] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[skills]    Script Date: 6/27/2023 16:37:27 ******/
+/****** Object:  Table [dbo].[skills]    Script Date: 6/30/2023 13:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -205,13 +259,32 @@ CREATE TABLE [dbo].[skills](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[name] [nvarchar](255) NULL,
 	[cloud_id] [varchar](50) NULL,
+	[create_datetime] [datetime] NULL,
+	[is_delete] [bit] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_skills] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[task_labels]    Script Date: 6/27/2023 16:37:28 ******/
+/****** Object:  Table [dbo].[task_function]    Script Date: 6/30/2023 13:43:29 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[task_function](
+	[task_id] [int] NOT NULL,
+	[function_id] [int] NOT NULL,
+	[require_time] [int] NULL,
+ CONSTRAINT [PK_task_function] PRIMARY KEY CLUSTERED 
+(
+	[task_id] ASC,
+	[function_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[task_labels]    Script Date: 6/30/2023 13:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -221,39 +294,34 @@ CREATE TABLE [dbo].[task_labels](
 	[task_id] [int] NULL,
 	[label_id] [int] NULL,
 	[cloud_id] [int] NULL,
+	[create_datetime] [datetime] NULL,
+	[is_delete] [bit] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_task_labels] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[task_precedence]    Script Date: 6/27/2023 16:37:28 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[task_precedence](
-	[id] [int] IDENTITY(1,1) NOT NULL,
-	[task_id] [int] NULL,
-	[precedence_task_id] [int] NULL
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[task_precedences]    Script Date: 6/27/2023 16:37:28 ******/
+/****** Object:  Table [dbo].[task_precedences]    Script Date: 6/30/2023 13:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[task_precedences](
-	[id] [int] IDENTITY(1,1) NOT NULL,
-	[task_id] [int] NULL,
-	[precedence_id] [int] NULL,
+	[task_id] [int] NOT NULL,
+	[precedence_id] [int] NOT NULL,
+	[create_datetime] [datetime] NULL,
+	[is_delete] [bit] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_task_precedences] PRIMARY KEY CLUSTERED 
 (
-	[id] ASC
+	[task_id] ASC,
+	[precedence_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[task_resource]    Script Date: 6/27/2023 16:37:28 ******/
+/****** Object:  Table [dbo].[task_resource]    Script Date: 6/30/2023 13:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -263,13 +331,16 @@ CREATE TABLE [dbo].[task_resource](
 	[task_id] [int] NULL,
 	[resource_id] [int] NULL,
 	[type] [varchar](50) NULL,
+	[create_datetime] [datetime] NULL,
+	[is_delete] [bit] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_task_resource] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[tasks]    Script Date: 6/27/2023 16:37:28 ******/
+/****** Object:  Table [dbo].[tasks]    Script Date: 6/30/2023 13:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -280,13 +351,37 @@ CREATE TABLE [dbo].[tasks](
 	[duration] [float] NULL,
 	[cloud_id] [varchar](50) NULL,
 	[project_id] [int] NULL,
+	[create_datetime] [datetime] NULL,
+	[is_delete] [bit] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_tasks] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[workforce]    Script Date: 6/27/2023 16:37:28 ******/
+/****** Object:  Table [dbo].[tasks_skills_required]    Script Date: 6/30/2023 13:43:29 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[tasks_skills_required](
+	[task_id] [int] NOT NULL,
+	[skill_id] [int] NOT NULL,
+	[level] [int] NULL,
+	[cloud_id] [nchar](10) NOT NULL,
+	[create_datetime] [datetime] NULL,
+	[is_delete] [datetime] NULL,
+	[delete_datetime] [datetime] NULL,
+ CONSTRAINT [PK_tasks_skills_1] PRIMARY KEY CLUSTERED 
+(
+	[task_id] ASC,
+	[skill_id] ASC,
+	[cloud_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[workforce]    Script Date: 6/30/2023 13:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -302,27 +397,33 @@ CREATE TABLE [dbo].[workforce](
 	[active] [int] NULL,
 	[cloud_id] [varchar](50) NULL,
 	[unit_salary] [float] NULL,
-	[working_type] [int] NULL,
+	[working_effort] [int] NULL,
+	[is_delete] [bit] NULL,
+	[create_datetime] [datetime] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_workforce] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[workforce_skills]    Script Date: 6/27/2023 16:37:28 ******/
+/****** Object:  Table [dbo].[workforce_skills]    Script Date: 6/30/2023 13:43:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[workforce_skills](
-	[id] [int] IDENTITY(1,1) NOT NULL,
-	[workforce_id] [int] NULL,
-	[skill_id] [int] NULL,
+	[workforce_id] [int] NOT NULL,
+	[skill_id] [int] NOT NULL,
 	[level] [int] NULL,
 	[cloud_id] [varchar](50) NULL,
+	[create_datetime] [datetime] NULL,
+	[is_delete] [bit] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_workforce_skills] PRIMARY KEY CLUSTERED 
 (
-	[id] ASC
+	[workforce_id] ASC,
+	[skill_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
@@ -331,10 +432,30 @@ REFERENCES [dbo].[atlassian_token] ([id])
 GO
 ALTER TABLE [dbo].[account_roles] CHECK CONSTRAINT [FK_account_roles_atlassian_token]
 GO
+ALTER TABLE [dbo].[equipments_function]  WITH CHECK ADD  CONSTRAINT [FK_equipments_function_equipments] FOREIGN KEY([equipment_id])
+REFERENCES [dbo].[equipments] ([id])
+GO
+ALTER TABLE [dbo].[equipments_function] CHECK CONSTRAINT [FK_equipments_function_equipments]
+GO
+ALTER TABLE [dbo].[equipments_function]  WITH CHECK ADD  CONSTRAINT [FK_equipments_function_function] FOREIGN KEY([function_id])
+REFERENCES [dbo].[function] ([id])
+GO
+ALTER TABLE [dbo].[equipments_function] CHECK CONSTRAINT [FK_equipments_function_function]
+GO
 ALTER TABLE [dbo].[schedules]  WITH CHECK ADD  CONSTRAINT [FK_schedules_projects] FOREIGN KEY([project_id])
 REFERENCES [dbo].[projects] ([id])
 GO
 ALTER TABLE [dbo].[schedules] CHECK CONSTRAINT [FK_schedules_projects]
+GO
+ALTER TABLE [dbo].[task_function]  WITH CHECK ADD  CONSTRAINT [FK_task_function_function] FOREIGN KEY([function_id])
+REFERENCES [dbo].[function] ([id])
+GO
+ALTER TABLE [dbo].[task_function] CHECK CONSTRAINT [FK_task_function_function]
+GO
+ALTER TABLE [dbo].[task_function]  WITH CHECK ADD  CONSTRAINT [FK_task_function_tasks] FOREIGN KEY([task_id])
+REFERENCES [dbo].[tasks] ([id])
+GO
+ALTER TABLE [dbo].[task_function] CHECK CONSTRAINT [FK_task_function_tasks]
 GO
 ALTER TABLE [dbo].[task_labels]  WITH CHECK ADD  CONSTRAINT [FK_task_labels_labels] FOREIGN KEY([label_id])
 REFERENCES [dbo].[labels] ([id])
@@ -346,15 +467,15 @@ REFERENCES [dbo].[tasks] ([id])
 GO
 ALTER TABLE [dbo].[task_labels] CHECK CONSTRAINT [FK_task_labels_tasks]
 GO
-ALTER TABLE [dbo].[task_precedences]  WITH CHECK ADD  CONSTRAINT [FK_task_precedences_tasks] FOREIGN KEY([task_id])
+ALTER TABLE [dbo].[task_precedences]  WITH CHECK ADD  CONSTRAINT [FK_task_precedences_tasks2] FOREIGN KEY([task_id])
 REFERENCES [dbo].[tasks] ([id])
 GO
-ALTER TABLE [dbo].[task_precedences] CHECK CONSTRAINT [FK_task_precedences_tasks]
+ALTER TABLE [dbo].[task_precedences] CHECK CONSTRAINT [FK_task_precedences_tasks2]
 GO
-ALTER TABLE [dbo].[task_precedences]  WITH CHECK ADD  CONSTRAINT [FK_task_precedences_tasks1] FOREIGN KEY([precedence_id])
+ALTER TABLE [dbo].[task_precedences]  WITH CHECK ADD  CONSTRAINT [FK_task_precedences_tasks3] FOREIGN KEY([precedence_id])
 REFERENCES [dbo].[tasks] ([id])
 GO
-ALTER TABLE [dbo].[task_precedences] CHECK CONSTRAINT [FK_task_precedences_tasks1]
+ALTER TABLE [dbo].[task_precedences] CHECK CONSTRAINT [FK_task_precedences_tasks3]
 GO
 ALTER TABLE [dbo].[task_resource]  WITH CHECK ADD  CONSTRAINT [FK_task_resource_equipments] FOREIGN KEY([resource_id])
 REFERENCES [dbo].[equipments] ([id])
@@ -375,6 +496,16 @@ ALTER TABLE [dbo].[tasks]  WITH CHECK ADD  CONSTRAINT [FK_tasks_projects] FOREIG
 REFERENCES [dbo].[projects] ([id])
 GO
 ALTER TABLE [dbo].[tasks] CHECK CONSTRAINT [FK_tasks_projects]
+GO
+ALTER TABLE [dbo].[tasks_skills_required]  WITH CHECK ADD  CONSTRAINT [FK_tasks_skills_skills] FOREIGN KEY([skill_id])
+REFERENCES [dbo].[skills] ([id])
+GO
+ALTER TABLE [dbo].[tasks_skills_required] CHECK CONSTRAINT [FK_tasks_skills_skills]
+GO
+ALTER TABLE [dbo].[tasks_skills_required]  WITH CHECK ADD  CONSTRAINT [FK_tasks_skills_tasks] FOREIGN KEY([task_id])
+REFERENCES [dbo].[tasks] ([id])
+GO
+ALTER TABLE [dbo].[tasks_skills_required] CHECK CONSTRAINT [FK_tasks_skills_tasks]
 GO
 ALTER TABLE [dbo].[workforce_skills]  WITH CHECK ADD  CONSTRAINT [FK_workforce_skills_skills] FOREIGN KEY([skill_id])
 REFERENCES [dbo].[skills] ([id])

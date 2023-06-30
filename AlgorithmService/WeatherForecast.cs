@@ -1,4 +1,4 @@
-namespace AlgorithmService
+namespace AlgorithmServiceServer
 {
     public class WeatherForecast
     {

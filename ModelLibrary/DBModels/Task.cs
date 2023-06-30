@@ -7,12 +7,12 @@ namespace ModelLibrary.DBModels
     {
         public Task()
         {
+            TaskFunctions = new HashSet<TaskFunction>();
             TaskLabels = new HashSet<TaskLabel>();
             TaskPrecedencePrecedences = new HashSet<TaskPrecedence>();
             TaskPrecedenceTasks = new HashSet<TaskPrecedence>();
             TaskResources = new HashSet<TaskResource>();
             TasksSkillsRequireds = new HashSet<TasksSkillsRequired>();
-            Functions = new HashSet<Function>();
         }
 
         public int Id { get; set; }
@@ -25,12 +25,11 @@ namespace ModelLibrary.DBModels
         public DateTime? DeleteDatetime { get; set; }
 
         public virtual Project? Project { get; set; }
+        public virtual ICollection<TaskFunction> TaskFunctions { get; set; }
         public virtual ICollection<TaskLabel> TaskLabels { get; set; }
         public virtual ICollection<TaskPrecedence> TaskPrecedencePrecedences { get; set; }
         public virtual ICollection<TaskPrecedence> TaskPrecedenceTasks { get; set; }
         public virtual ICollection<TaskResource> TaskResources { get; set; }
         public virtual ICollection<TasksSkillsRequired> TasksSkillsRequireds { get; set; }
-
-        public virtual ICollection<Function> Functions { get; set; }
     }
 }
