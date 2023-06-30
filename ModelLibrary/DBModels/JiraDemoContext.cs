@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -20,6 +19,7 @@ namespace ModelLibrary.DBModels
         public virtual DbSet<AccountRole> AccountRoles { get; set; } = null!;
         public virtual DbSet<AtlassianToken> AtlassianTokens { get; set; } = null!;
         public virtual DbSet<Equipment> Equipments { get; set; } = null!;
+        public virtual DbSet<EquipmentsFunction> EquipmentsFunctions { get; set; } = null!;
         public virtual DbSet<Function> Functions { get; set; } = null!;
         public virtual DbSet<Label> Labels { get; set; } = null!;
         public virtual DbSet<Project> Projects { get; set; } = null!;
@@ -46,34 +46,8 @@ namespace ModelLibrary.DBModels
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Query Filter
-            //modelBuilder.Entity<Blog>().HasQueryFilter(b => b.Posts.Count > 0);
-            //modelBuilder.Entity<Blog>().HasQueryFilter(b => b.Posts.Count > 0);
-            //modelBuilder.Entity<Blog>().HasQueryFilter(b => b.Posts.Count > 0);
-            //modelBuilder.Entity<Blog>().HasQueryFilter(b => b.Posts.Count > 0);
-            //modelBuilder.Entity<Blog>().HasQueryFilter(b => b.Posts.Count > 0);
-            //modelBuilder.Entity<Blog>().HasQueryFilter(b => b.Posts.Count > 0);
-            //modelBuilder.Entity<Blog>().HasQueryFilter(b => b.Posts.Count > 0);
-            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskResource>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskLabel>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskFunction>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Task>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Skill>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Schedule>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Label>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Equipment>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == false);
-
-            modelBuilder.Entity<AccountRole>(entity =>                                     
-            {                                                                              
+            modelBuilder.Entity<AccountRole>(entity =>
+            {
                 entity.ToTable("account_roles");
 
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -178,23 +152,40 @@ namespace ModelLibrary.DBModels
                     .HasColumnName("unit");
 
                 entity.Property(e => e.UnitPrice).HasColumnName("unit_price");
+            });
 
-                entity.HasMany(d => d.Functions)
-                    .WithMany(p => p.Equipment)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "EquipmentsFunction",
-                        l => l.HasOne<Function>().WithMany().HasForeignKey("FunctionId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_equipments_function_function"),
-                        r => r.HasOne<Equipment>().WithMany().HasForeignKey("EquipmentId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_equipments_function_equipments"),
-                        j =>
-                        {
-                            j.HasKey("EquipmentId", "FunctionId").HasName("PK_equipments_function_1");
+            modelBuilder.Entity<EquipmentsFunction>(entity =>
+            {
+                entity.HasKey(e => new { e.EquipmentId, e.FunctionId })
+                    .HasName("PK_equipments_function_1");
 
-                            j.ToTable("equipments_function");
+                entity.ToTable("equipments_function");
 
-                            j.IndexerProperty<int>("EquipmentId").HasColumnName("equipment_id");
+                entity.Property(e => e.EquipmentId).HasColumnName("equipment_id");
 
-                            j.IndexerProperty<int>("FunctionId").HasColumnName("function_id");
-                        });
+                entity.Property(e => e.FunctionId).HasColumnName("function_id");
+
+                entity.Property(e => e.CreateDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_datetime");
+
+                entity.Property(e => e.DeleteDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("delete_datetime");
+
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
+
+                entity.HasOne(d => d.Equipment)
+                    .WithMany(p => p.EquipmentsFunctions)
+                    .HasForeignKey(d => d.EquipmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_equipments_function_equipments");
+
+                entity.HasOne(d => d.Function)
+                    .WithMany(p => p.EquipmentsFunctions)
+                    .HasForeignKey(d => d.FunctionId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_equipments_function_function");
             });
 
             modelBuilder.Entity<Function>(entity =>
@@ -207,6 +198,16 @@ namespace ModelLibrary.DBModels
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("cloud_id");
+
+                entity.Property(e => e.CreateDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_datetime");
+
+                entity.Property(e => e.DeleteDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("delete_datetime");
+
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(100)
@@ -439,6 +440,16 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.FunctionId).HasColumnName("function_id");
 
+                entity.Property(e => e.CreateDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_datetime");
+
+                entity.Property(e => e.DeleteDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("delete_datetime");
+
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
+
                 entity.Property(e => e.RequireTime).HasColumnName("require_time");
 
                 entity.HasOne(d => d.Function)
@@ -456,11 +467,14 @@ namespace ModelLibrary.DBModels
 
             modelBuilder.Entity<TaskLabel>(entity =>
             {
+                entity.HasKey(e => new { e.TaskId, e.LabelId })
+                    .HasName("PK_task_labels_1");
+
                 entity.ToTable("task_labels");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.TaskId).HasColumnName("task_id");
 
-                entity.Property(e => e.CloudId).HasColumnName("cloud_id");
+                entity.Property(e => e.LabelId).HasColumnName("label_id");
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
@@ -472,18 +486,16 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
-                entity.Property(e => e.LabelId).HasColumnName("label_id");
-
-                entity.Property(e => e.TaskId).HasColumnName("task_id");
-
                 entity.HasOne(d => d.Label)
                     .WithMany(p => p.TaskLabels)
                     .HasForeignKey(d => d.LabelId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_task_labels_labels");
 
                 entity.HasOne(d => d.Task)
                     .WithMany(p => p.TaskLabels)
                     .HasForeignKey(d => d.TaskId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_task_labels_tasks");
             });
 
@@ -522,9 +534,18 @@ namespace ModelLibrary.DBModels
 
             modelBuilder.Entity<TaskResource>(entity =>
             {
+                entity.HasKey(e => new { e.TaskId, e.ResourceId, e.Type });
+
                 entity.ToTable("task_resource");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.TaskId).HasColumnName("task_id");
+
+                entity.Property(e => e.ResourceId).HasColumnName("resource_id");
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("type");
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
@@ -536,46 +557,34 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
-                entity.Property(e => e.ResourceId).HasColumnName("resource_id");
-
-                entity.Property(e => e.TaskId).HasColumnName("task_id");
-
-                entity.Property(e => e.Type)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("type");
-
                 entity.HasOne(d => d.Resource)
                     .WithMany(p => p.TaskResources)
                     .HasForeignKey(d => d.ResourceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_task_resource_equipments");
 
                 entity.HasOne(d => d.ResourceNavigation)
                     .WithMany(p => p.TaskResources)
                     .HasForeignKey(d => d.ResourceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_task_resource_workforce");
 
                 entity.HasOne(d => d.Task)
                     .WithMany(p => p.TaskResources)
                     .HasForeignKey(d => d.TaskId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_task_resource_tasks");
             });
 
             modelBuilder.Entity<TasksSkillsRequired>(entity =>
             {
-                entity.HasKey(e => new { e.TaskId, e.SkillId, e.CloudId })
-                    .HasName("PK_tasks_skills_1");
+                entity.HasKey(e => new { e.TaskId, e.SkillId });
 
                 entity.ToTable("tasks_skills_required");
 
                 entity.Property(e => e.TaskId).HasColumnName("task_id");
 
                 entity.Property(e => e.SkillId).HasColumnName("skill_id");
-
-                entity.Property(e => e.CloudId)
-                    .HasMaxLength(10)
-                    .HasColumnName("cloud_id")
-                    .IsFixedLength();
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
@@ -585,9 +594,7 @@ namespace ModelLibrary.DBModels
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnType("datetime")
-                    .HasColumnName("is_delete");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.Level).HasColumnName("level");
 
@@ -668,11 +675,6 @@ namespace ModelLibrary.DBModels
                 entity.Property(e => e.WorkforceId).HasColumnName("workforce_id");
 
                 entity.Property(e => e.SkillId).HasColumnName("skill_id");
-
-                entity.Property(e => e.CloudId)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("cloud_id");
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")

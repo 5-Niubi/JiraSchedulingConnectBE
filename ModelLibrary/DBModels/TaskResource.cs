@@ -5,16 +5,15 @@ namespace ModelLibrary.DBModels
 {
     public partial class TaskResource
     {
-        public int Id { get; set; }
-        public int? TaskId { get; set; }
-        public int? ResourceId { get; set; }
-        public string? Type { get; set; }
+        public int TaskId { get; set; }
+        public int ResourceId { get; set; }
+        public string Type { get; set; } = null!;
         public DateTime? CreateDatetime { get; set; }
         public bool? IsDelete { get; set; }
         public DateTime? DeleteDatetime { get; set; }
 
-        public virtual Equipment? Resource { get; set; }
-        public virtual Workforce? ResourceNavigation { get; set; }
-        public virtual Task? Task { get; set; }
+        public virtual Equipment Resource { get; set; } = null!;
+        public virtual Workforce ResourceNavigation { get; set; } = null!;
+        public virtual Task Task { get; set; } = null!;
     }
 }
