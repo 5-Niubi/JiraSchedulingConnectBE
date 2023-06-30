@@ -1,4 +1,5 @@
 ﻿using ModelLibrary.DBModels;
+using ModelLibrary.DTOs.AlgorithmController;
 using RcpspAlgorithmLibrary.Models;
 using System.Linq;
 
@@ -94,8 +95,8 @@ namespace RcpspAlgorithmLibrary
             {
                 for (int j = 0; j < FunctionList.Count; j++)
                 {
-                    equipmentFunction[i, j] = EquipmentList[i].Functions
-                        .Where(f => f.Id == FunctionList[j].Id).Count() > 0 ? 1 : 0;
+                    equipmentFunction[i, j] = EquipmentList[i].EquipmentsFunctions
+                        .Where(f => f.FunctionId == FunctionList[j].Id).Count() > 0 ? 1 : 0;
                 }
                 equipmentCost[i] = (int)EquipmentList[i].UnitPrice;
             }
@@ -120,10 +121,23 @@ namespace RcpspAlgorithmLibrary
 
             return output;
         }
-        public void FromOR()
-        {
 
-            return;
+        public OutputFromORDTO FromOR(int[] taskWithWorker, int[] taskWithEquipment, int[] taskStart, int[] taskEnd)
+        {
+            var outPut = new OutputFromORDTO();
+            for (int i = 0; i < taskWithWorker.Length; i++)
+            {
+                var task = new TaskOutput();
+                task.TaskId = TaskList[i].Id;
+                task.WorkerId = WorkerList[taskWithWorker[i]].Id;
+                // TODO: handle taskWithEquipment
+
+                task.StartDate = StartDate.AddDays(taskStart[i]);
+                task.EndDate = StartDate.AddDays(taskEnd[i]);
+                outPut.task.Add(task);
+            }
+
+            return outPut;
         }
     }
 }

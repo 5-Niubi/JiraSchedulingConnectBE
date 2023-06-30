@@ -28,10 +28,16 @@ namespace JiraSchedulingConnectAppService.Services
 
             var contentObject = new InputToORDTO();
             var projectFromDB = db.Projects .Where(p => p.CloudId == jwt.GetCurrentCloudId())
-                .Include(p => p.Tasks)
-                .Include(p => p.);
+                .Include(p => p.Tasks).FirstOrDefault();
+            var workerFromDB = db.Workforces.Where(w => w.CloudId == jwt.GetCurrentCloudId()).ToList();
 
-            contentObject.StartDate
+            contentObject.StartDate = (DateTime) projectFromDB.StartDate;
+            contentObject.Budget = (int) projectFromDB.Budget;
+            contentObject.Deadline = (int) (projectFromDB.Deadline.Value - projectFromDB.StartDate.Value).TotalDays;
+            contentObject.TaskList =  projectFromDB.Tasks.ToList();
+            contentObject.WorkerList = workerFromDB;
+
+
             var content = new StringContent(JsonSerializer.Serialize(contentObject));
             client.PostAsync(baseUrl[0] + "api/Algorithm/TestConverter", content);
         }
