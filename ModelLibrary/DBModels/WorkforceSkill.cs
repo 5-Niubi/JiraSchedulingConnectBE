@@ -8,7 +8,6 @@ namespace ModelLibrary.DBModels
         public int WorkforceId { get; set; }
         public int SkillId { get; set; }
         public int? Level { get; set; }
-        public string? CloudId { get; set; }
         public DateTime? CreateDatetime { get; set; }
         public bool? IsDelete { get; set; }
         public DateTime? DeleteDatetime { get; set; }

@@ -23,7 +23,7 @@ namespace JiraSchedulingConnectAppService.Services
             var baseUrl = config.GetValue<string[]>("Environment:AlgorithmServiceDomains");
 
             var contentObject = new InputToORDTO();
-            contentObject.StartDate = db.Projects.Where(p => p.CloudId == )
+            
 
             var content = new StringContent(JsonSerializer.Serialize(contentObject));
             client.PostAsync(baseUrl[0] + "api/Algorithm/TestConverter", content);
