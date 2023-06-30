@@ -1,5 +1,6 @@
 ﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
 using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using System;
 using System.Text.Json;
@@ -11,20 +12,26 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly IConfiguration config;
         private readonly HttpClient client;
         private readonly JiraDemoContext db;
-        public AlgorithmService(IConfiguration configuration, JiraDemoContext db)
+        private readonly HttpContext http;
+        public AlgorithmService(IConfiguration configuration, JiraDemoContext db, IHttpContextAccessor httpContextAccessor)
         {
             config = configuration;
             this.client = new HttpClient();
             this.db = db;
+            http = httpContextAccessor.HttpContext;
         }
 
         public void TestConverter(int projectId)
         {
             var baseUrl = config.GetValue<string[]>("Environment:AlgorithmServiceDomains");
+            var jwt = new JWTManagerService(http);
 
             var contentObject = new InputToORDTO();
-            
+            var projectFromDB = db.Projects .Where(p => p.CloudId == jwt.GetCurrentCloudId())
+                .Include(p => p.Tasks)
+                .Include(p => p.);
 
+            contentObject.StartDate
             var content = new StringContent(JsonSerializer.Serialize(contentObject));
             client.PostAsync(baseUrl[0] + "api/Algorithm/TestConverter", content);
         }
