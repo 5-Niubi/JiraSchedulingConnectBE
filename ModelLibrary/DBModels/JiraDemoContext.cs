@@ -46,6 +46,25 @@ namespace ModelLibrary.DBModels
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TaskResource>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TaskLabel>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TaskFunction>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Task>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Skill>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Schedule>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Label>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Equipment>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<EquipmentsFunction>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == false);
+
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
