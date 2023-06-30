@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [JiraDemo]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Database [JiraDemo]    Script Date: 6/30/2023 14:01:29 ******/
 CREATE DATABASE [JiraDemo]
 GO
 ALTER DATABASE [JiraDemo] SET ANSI_NULL_DEFAULT OFF 
@@ -71,7 +71,7 @@ ALTER DATABASE [JiraDemo] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_
 GO
 USE [JiraDemo]
 GO
-/****** Object:  Table [dbo].[account_roles]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[account_roles]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -90,7 +90,7 @@ CREATE TABLE [dbo].[account_roles](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[atlassian_token]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[atlassian_token]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -111,7 +111,7 @@ CREATE TABLE [dbo].[atlassian_token](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[equipments]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[equipments]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -132,7 +132,7 @@ CREATE TABLE [dbo].[equipments](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[equipments_function]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[equipments_function]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -140,6 +140,9 @@ GO
 CREATE TABLE [dbo].[equipments_function](
 	[equipment_id] [int] NOT NULL,
 	[function_id] [int] NOT NULL,
+	[is_delete] [bit] NULL,
+	[create_datetime] [datetime] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_equipments_function_1] PRIMARY KEY CLUSTERED 
 (
 	[equipment_id] ASC,
@@ -147,7 +150,7 @@ CREATE TABLE [dbo].[equipments_function](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[function]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[function]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -156,13 +159,16 @@ CREATE TABLE [dbo].[function](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[name] [nvarchar](100) NULL,
 	[cloud_id] [varchar](100) NULL,
+	[is_delete] [bit] NULL,
+	[create_datetime] [datetime] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_function] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[labels]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[labels]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -180,7 +186,7 @@ CREATE TABLE [dbo].[labels](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[projects]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[projects]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -207,7 +213,7 @@ CREATE TABLE [dbo].[projects](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[roles]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[roles]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -225,7 +231,7 @@ CREATE TABLE [dbo].[roles](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[schedules]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[schedules]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -250,7 +256,7 @@ CREATE TABLE [dbo].[schedules](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[skills]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[skills]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -268,7 +274,7 @@ CREATE TABLE [dbo].[skills](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[task_function]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[task_function]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -277,6 +283,9 @@ CREATE TABLE [dbo].[task_function](
 	[task_id] [int] NOT NULL,
 	[function_id] [int] NOT NULL,
 	[require_time] [int] NULL,
+	[is_delete] [bit] NULL,
+	[create_datetime] [datetime] NULL,
+	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_task_function] PRIMARY KEY CLUSTERED 
 (
 	[task_id] ASC,
@@ -284,26 +293,25 @@ CREATE TABLE [dbo].[task_function](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[task_labels]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[task_labels]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[task_labels](
-	[id] [int] IDENTITY(1,1) NOT NULL,
-	[task_id] [int] NULL,
-	[label_id] [int] NULL,
-	[cloud_id] [int] NULL,
+	[task_id] [int] NOT NULL,
+	[label_id] [int] NOT NULL,
 	[create_datetime] [datetime] NULL,
 	[is_delete] [bit] NULL,
 	[delete_datetime] [datetime] NULL,
- CONSTRAINT [PK_task_labels] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_task_labels_1] PRIMARY KEY CLUSTERED 
 (
-	[id] ASC
+	[task_id] ASC,
+	[label_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[task_precedences]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[task_precedences]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -321,26 +329,27 @@ CREATE TABLE [dbo].[task_precedences](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[task_resource]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[task_resource]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[task_resource](
-	[id] [int] IDENTITY(1,1) NOT NULL,
-	[task_id] [int] NULL,
-	[resource_id] [int] NULL,
-	[type] [varchar](50) NULL,
+	[task_id] [int] NOT NULL,
+	[resource_id] [int] NOT NULL,
+	[type] [varchar](50) NOT NULL,
 	[create_datetime] [datetime] NULL,
 	[is_delete] [bit] NULL,
 	[delete_datetime] [datetime] NULL,
  CONSTRAINT [PK_task_resource] PRIMARY KEY CLUSTERED 
 (
-	[id] ASC
+	[task_id] ASC,
+	[resource_id] ASC,
+	[type] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[tasks]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[tasks]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -360,7 +369,7 @@ CREATE TABLE [dbo].[tasks](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[tasks_skills_required]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[tasks_skills_required]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -369,19 +378,17 @@ CREATE TABLE [dbo].[tasks_skills_required](
 	[task_id] [int] NOT NULL,
 	[skill_id] [int] NOT NULL,
 	[level] [int] NULL,
-	[cloud_id] [nchar](10) NOT NULL,
 	[create_datetime] [datetime] NULL,
 	[is_delete] [datetime] NULL,
 	[delete_datetime] [datetime] NULL,
- CONSTRAINT [PK_tasks_skills_1] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_tasks_skills_required] PRIMARY KEY CLUSTERED 
 (
 	[task_id] ASC,
-	[skill_id] ASC,
-	[cloud_id] ASC
+	[skill_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[workforce]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[workforce]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -407,7 +414,7 @@ CREATE TABLE [dbo].[workforce](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[workforce_skills]    Script Date: 6/30/2023 13:43:29 ******/
+/****** Object:  Table [dbo].[workforce_skills]    Script Date: 6/30/2023 14:01:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -416,7 +423,6 @@ CREATE TABLE [dbo].[workforce_skills](
 	[workforce_id] [int] NOT NULL,
 	[skill_id] [int] NOT NULL,
 	[level] [int] NULL,
-	[cloud_id] [varchar](50) NULL,
 	[create_datetime] [datetime] NULL,
 	[is_delete] [bit] NULL,
 	[delete_datetime] [datetime] NULL,
