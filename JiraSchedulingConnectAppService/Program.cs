@@ -46,6 +46,7 @@ builder.Services.AddHttpContextAccessor();
 // Register services
 builder.Services.AddTransient<IProjectServices, ProjectsService>();
 builder.Services.AddTransient<ISkillsService, SkillsService>();
+builder.Services.AddTransient<IAlgorithmService, AlgorithmService>();
 
 var app = builder.Build();
 

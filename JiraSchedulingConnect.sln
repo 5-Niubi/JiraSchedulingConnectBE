@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JiraSchedulingConnectAppSer
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{1A323875-A150-4297-B975-B3697961A095}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlgorithmService", "AlgorithmService\AlgorithmService.csproj", "{5E61BF81-D47C-421A-A943-F9E73DC8515F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlgorithmServiceServer", "AlgorithmService\AlgorithmServiceServer.csproj", "{5E61BF81-D47C-421A-A943-F9E73DC8515F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RcpspAlgorithmLibrary", "RcpspAlgorithmLibrary\RcpspAlgorithmLibrary.csproj", "{9A0133E3-D548-48EC-8AF7-B5532FBDBE02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelLibrary", "ModelLibrary\ModelLibrary.csproj", "{9EB2237C-D25F-4AE0-AACB-DB29444D9714}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelLibrary", "ModelLibrary\ModelLibrary.csproj", "{9EB2237C-D25F-4AE0-AACB-DB29444D9714}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

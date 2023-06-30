@@ -26,6 +26,7 @@ namespace ModelLibrary.DBModels
         public virtual DbSet<Schedule> Schedules { get; set; } = null!;
         public virtual DbSet<Skill> Skills { get; set; } = null!;
         public virtual DbSet<Task> Tasks { get; set; } = null!;
+        public virtual DbSet<TaskFunction> TaskFunctions { get; set; } = null!;
         public virtual DbSet<TaskLabel> TaskLabels { get; set; } = null!;
         public virtual DbSet<TaskPrecedence> TaskPrecedences { get; set; } = null!;
         public virtual DbSet<TaskResource> TaskResources { get; set; } = null!;
@@ -401,6 +402,31 @@ namespace ModelLibrary.DBModels
                     .HasConstraintName("FK_tasks_projects");
             });
 
+            modelBuilder.Entity<TaskFunction>(entity =>
+            {
+                entity.HasKey(e => new { e.TaskId, e.FunctionId });
+
+                entity.ToTable("task_function");
+
+                entity.Property(e => e.TaskId).HasColumnName("task_id");
+
+                entity.Property(e => e.FunctionId).HasColumnName("function_id");
+
+                entity.Property(e => e.RequireTime).HasColumnName("require_time");
+
+                entity.HasOne(d => d.Function)
+                    .WithMany(p => p.TaskFunctions)
+                    .HasForeignKey(d => d.FunctionId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_task_function_function");
+
+                entity.HasOne(d => d.Task)
+                    .WithMany(p => p.TaskFunctions)
+                    .HasForeignKey(d => d.TaskId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_task_function_tasks");
+            });
+
             modelBuilder.Entity<TaskLabel>(entity =>
             {
                 entity.ToTable("task_labels");
@@ -506,23 +532,6 @@ namespace ModelLibrary.DBModels
                     .WithMany(p => p.TaskResources)
                     .HasForeignKey(d => d.TaskId)
                     .HasConstraintName("FK_task_resource_tasks");
-
-                entity.HasMany(d => d.Functions)
-                    .WithMany(p => p.Tasks)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "TaskFunction",
-                        l => l.HasOne<Function>().WithMany().HasForeignKey("FunctionId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_task_function_function"),
-                        r => r.HasOne<TaskResource>().WithMany().HasForeignKey("TaskId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_task_function_task_resource"),
-                        j =>
-                        {
-                            j.HasKey("TaskId", "FunctionId");
-
-                            j.ToTable("task_function");
-
-                            j.IndexerProperty<int>("TaskId").HasColumnName("task_id");
-
-                            j.IndexerProperty<int>("FunctionId").HasColumnName("function_id");
-                        });
             });
 
             modelBuilder.Entity<TasksSkillsRequired>(entity =>

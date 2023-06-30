@@ -7,15 +7,16 @@ namespace ModelLibrary.DBModels
     {
         public Function()
         {
+            TaskFunctions = new HashSet<TaskFunction>();
             Equipment = new HashSet<Equipment>();
-            Tasks = new HashSet<TaskResource>();
         }
 
         public int Id { get; set; }
         public string? Name { get; set; }
         public string? CloudId { get; set; }
 
+        public virtual ICollection<TaskFunction> TaskFunctions { get; set; }
+
         public virtual ICollection<Equipment> Equipment { get; set; }
-        public virtual ICollection<TaskResource> Tasks { get; set; }
     }
 }
