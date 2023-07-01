@@ -8,7 +8,6 @@ namespace ModelLibrary.DBModels
         public Task()
         {
             TaskFunctions = new HashSet<TaskFunction>();
-            TaskLabels = new HashSet<TaskLabel>();
             TaskPrecedencePrecedences = new HashSet<TaskPrecedence>();
             TaskPrecedenceTasks = new HashSet<TaskPrecedence>();
             TaskResources = new HashSet<TaskResource>();
@@ -20,13 +19,14 @@ namespace ModelLibrary.DBModels
         public double? Duration { get; set; }
         public string? CloudId { get; set; }
         public int? ProjectId { get; set; }
+        public int? MilestoneId { get; set; }
         public DateTime? CreateDatetime { get; set; }
         public bool? IsDelete { get; set; }
         public DateTime? DeleteDatetime { get; set; }
 
+        public virtual Milestone? Milestone { get; set; }
         public virtual Project? Project { get; set; }
         public virtual ICollection<TaskFunction> TaskFunctions { get; set; }
-        public virtual ICollection<TaskLabel> TaskLabels { get; set; }
         public virtual ICollection<TaskPrecedence> TaskPrecedencePrecedences { get; set; }
         public virtual ICollection<TaskPrecedence> TaskPrecedenceTasks { get; set; }
         public virtual ICollection<TaskResource> TaskResources { get; set; }

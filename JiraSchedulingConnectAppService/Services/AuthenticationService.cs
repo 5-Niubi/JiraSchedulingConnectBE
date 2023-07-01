@@ -63,7 +63,7 @@ namespace JiraSchedulingConnectAppService.Services
                     tokenFromDB.RefressToken = reponseTokenFirstPhase.refresh_token;
                 }
                 db.SaveChanges();
-
+                await db.Database.CommitTransactionAsync();
                 // Hand saking with forge client
                 var request = new HttpRequestMessage(HttpMethod.Post, stateContextObject.triggerUrl);
                 var webTriggerRequestDTO = new WebTriggerCallbackBodyDTO.Request
@@ -142,6 +142,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             var request = new HttpRequestMessage(HttpMethod.Get, "https://api.atlassian.com/oauth/token/accessible-resources");
             request.Headers.Add("Authorization", $"Bearer {accessToken}");
+            
             var response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
