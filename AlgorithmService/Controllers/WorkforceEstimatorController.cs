@@ -38,6 +38,11 @@ namespace AlgorithmService.Controllers
         [HttpGet(Name = "GetEstimateWorkforce")]
         public IEnumerable<EstimatedWorkforce> Get()
         {
+
+            // TODO
+            // Get data from relate tables: Task
+            // Encode to matrix TaskDuration, TaskExper, TaskAdjacency
+
             ScheduleEstimator estimator = new ScheduleEstimator(
                 TaskDuration, 
                 TaskExper, 
@@ -47,6 +52,9 @@ namespace AlgorithmService.Controllers
             List<List<int>> outputs = estimator.Fit();
             
 
+            // TODO
+            // Store output to Database
+            
             return Enumerable.Range(0, outputs.Count).Select(index => new EstimatedWorkforce
             {
                 Id = 123,
@@ -54,6 +62,8 @@ namespace AlgorithmService.Controllers
                 NumberOfWorkforce = 2
             })
             .ToArray();
+
+
         }
     }
 }
