@@ -1,5 +1,5 @@
-﻿using JiraSchedulingConnectAppService.DTOs;
-using JiraSchedulingConnectAppService.DTOs.Projects;
+﻿using ModelLibrary.DTOs;
+using ModelLibrary.DTOs.Projects;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,4 +1,4 @@
-﻿namespace JiraSchedulingConnectAppService.DTOs.Authentication
+﻿namespace ModelLibrary.DTOs.Authentication
 {
     public class AccessiableResourceResponseDTO
     {

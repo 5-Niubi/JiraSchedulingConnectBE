@@ -1,5 +1,4 @@
-using JiraSchedulingConnectAppService.DTOs;
-using JiraSchedulingConnectAppService.Middlewares;
+using ModelLibrary.DTOs;
 using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

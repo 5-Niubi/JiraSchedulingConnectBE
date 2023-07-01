@@ -1,4 +1,4 @@
-﻿namespace JiraSchedulingConnectAppService.DTOs
+﻿namespace ModelLibrary.DTOs
 {
     public class CreateProjectDTO
     {
