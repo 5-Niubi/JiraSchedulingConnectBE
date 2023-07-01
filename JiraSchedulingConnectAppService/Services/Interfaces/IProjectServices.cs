@@ -1,5 +1,5 @@
-﻿using JiraSchedulingConnectAppService.DTOs.Projects;
-using JiraSchedulingConnectAppService.DTOs;
+﻿using ModelLibrary.DTOs;
+using ModelLibrary.DTOs.Projects;
 
 namespace JiraSchedulingConnectAppService.Services.Interfaces
 {

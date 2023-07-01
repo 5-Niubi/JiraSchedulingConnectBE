@@ -1,7 +1,6 @@
-﻿using JiraSchedulingConnectAppService.DTOs.Authentication;
+﻿using ModelLibrary.DTOs.Authentication;
 using ModelLibrary.DBModels;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using System.Text;
 using System.Text.Json;
 

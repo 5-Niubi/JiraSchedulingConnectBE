@@ -1,12 +1,12 @@
-﻿using JiraSchedulingConnectAppService.Common;
+﻿
 
-namespace JiraSchedulingConnectAppService.DTOs
+namespace ModelLibrary.DTOs
 {
     public class PagingResponseDTO<T>
     {
         public PagingResponseDTO()
         {
-            this.PageSize = Const.PAGING.NUMBER_RECORD_PAGE;
+            this.PageSize = 15;
         }
 
         public int MaxResults { get; set; }

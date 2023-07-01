@@ -1,10 +1,7 @@
-﻿using JiraSchedulingConnectAppService.DTOs;
-using JiraSchedulingConnectAppService.DTOs.Authentication;
-using ModelLibrary.DBModels;
+﻿using ModelLibrary.DBModels;
 using JiraSchedulingConnectAppService.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
-using System.Text.Json;
+using ModelLibrary.DTOs;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {

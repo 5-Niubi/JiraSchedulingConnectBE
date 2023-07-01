@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using JiraSchedulingConnectAppService.DTOs.Projects;
+using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DBModels;
 
-
-namespace JiraSchedulingConnectAppService.DTOs
+namespace ModelLibrary.DTOs
 {
     public class AutoMapperProfile : Profile
     {
@@ -12,7 +11,6 @@ namespace JiraSchedulingConnectAppService.DTOs
             CreateMap<Project, ProjectListHomePageDTO>();
             CreateMap<ProjectsListCreateProject.Request, Project>();
             CreateMap<Project, ProjectDetailDTO>();
-
         }
     }
 }
