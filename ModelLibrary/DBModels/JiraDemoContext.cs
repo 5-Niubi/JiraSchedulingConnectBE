@@ -21,14 +21,13 @@ namespace ModelLibrary.DBModels
         public virtual DbSet<Equipment> Equipments { get; set; } = null!;
         public virtual DbSet<EquipmentsFunction> EquipmentsFunctions { get; set; } = null!;
         public virtual DbSet<Function> Functions { get; set; } = null!;
-        public virtual DbSet<Label> Labels { get; set; } = null!;
+        public virtual DbSet<Milestone> Milestones { get; set; } = null!;
         public virtual DbSet<Project> Projects { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Schedule> Schedules { get; set; } = null!;
         public virtual DbSet<Skill> Skills { get; set; } = null!;
         public virtual DbSet<Task> Tasks { get; set; } = null!;
         public virtual DbSet<TaskFunction> TaskFunctions { get; set; } = null!;
-        public virtual DbSet<TaskLabel> TaskLabels { get; set; } = null!;
         public virtual DbSet<TaskPrecedence> TaskPrecedences { get; set; } = null!;
         public virtual DbSet<TaskResource> TaskResources { get; set; } = null!;
         public virtual DbSet<TasksSkillsRequired> TasksSkillsRequireds { get; set; } = null!;
@@ -46,25 +45,6 @@ namespace ModelLibrary.DBModels
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskResource>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskLabel>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskFunction>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Task>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Skill>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Schedule>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Label>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Equipment>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<EquipmentsFunction>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == false);
-
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
@@ -145,9 +125,9 @@ namespace ModelLibrary.DBModels
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CloudId)
-                    .HasMaxLength(10)
-                    .HasColumnName("cloud_id")
-                    .IsFixedLength();
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("cloud_id");
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
@@ -183,6 +163,11 @@ namespace ModelLibrary.DBModels
                 entity.Property(e => e.EquipmentId).HasColumnName("equipment_id");
 
                 entity.Property(e => e.FunctionId).HasColumnName("function_id");
+
+                entity.Property(e => e.CloudId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("cloud_id");
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
@@ -233,13 +218,11 @@ namespace ModelLibrary.DBModels
                     .HasColumnName("name");
             });
 
-            modelBuilder.Entity<Label>(entity =>
+            modelBuilder.Entity<Milestone>(entity =>
             {
-                entity.ToTable("labels");
+                entity.ToTable("milestones");
 
                 entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.CloudId).HasColumnName("cloud_id");
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
@@ -252,8 +235,15 @@ namespace ModelLibrary.DBModels
                 entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.Name)
-                    .HasMaxLength(50)
+                    .HasMaxLength(255)
                     .HasColumnName("name");
+
+                entity.Property(e => e.ProjectId).HasColumnName("project_id");
+
+                entity.HasOne(d => d.Project)
+                    .WithMany(p => p.Milestones)
+                    .HasForeignKey(d => d.ProjectId)
+                    .HasConstraintName("FK_milestones_projects");
             });
 
             modelBuilder.Entity<Project>(entity =>
@@ -437,11 +427,18 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
+                entity.Property(e => e.MilestoneId).HasColumnName("milestone_id");
+
                 entity.Property(e => e.Name)
                     .HasMaxLength(100)
                     .HasColumnName("name");
 
                 entity.Property(e => e.ProjectId).HasColumnName("project_id");
+
+                entity.HasOne(d => d.Milestone)
+                    .WithMany(p => p.Tasks)
+                    .HasForeignKey(d => d.MilestoneId)
+                    .HasConstraintName("FK_tasks_milestones");
 
                 entity.HasOne(d => d.Project)
                     .WithMany(p => p.Tasks)
@@ -482,40 +479,6 @@ namespace ModelLibrary.DBModels
                     .HasForeignKey(d => d.TaskId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_task_function_tasks");
-            });
-
-            modelBuilder.Entity<TaskLabel>(entity =>
-            {
-                entity.HasKey(e => new { e.TaskId, e.LabelId })
-                    .HasName("PK_task_labels_1");
-
-                entity.ToTable("task_labels");
-
-                entity.Property(e => e.TaskId).HasColumnName("task_id");
-
-                entity.Property(e => e.LabelId).HasColumnName("label_id");
-
-                entity.Property(e => e.CreateDatetime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("create_datetime");
-
-                entity.Property(e => e.DeleteDatetime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("delete_datetime");
-
-                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
-
-                entity.HasOne(d => d.Label)
-                    .WithMany(p => p.TaskLabels)
-                    .HasForeignKey(d => d.LabelId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_task_labels_labels");
-
-                entity.HasOne(d => d.Task)
-                    .WithMany(p => p.TaskLabels)
-                    .HasForeignKey(d => d.TaskId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_task_labels_tasks");
             });
 
             modelBuilder.Entity<TaskPrecedence>(entity =>
@@ -694,6 +657,11 @@ namespace ModelLibrary.DBModels
                 entity.Property(e => e.WorkforceId).HasColumnName("workforce_id");
 
                 entity.Property(e => e.SkillId).HasColumnName("skill_id");
+
+                entity.Property(e => e.CloudId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("cloud_id");
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")

@@ -64,13 +64,13 @@ namespace RcpspAlgorithmLibrary
                 for (int j = 0; j < TaskList.Count; j++)
                 {
                     taskAdjacency[i, j] = (TaskList[i]
-                        .TaskPrecedenceTasks.Where(e => e.PrecedenceId == TaskList[j].Id).Count() > 0) ? 1 : 0;
+                        .TaskPrecedenceTasks.Where(e => e.TaskId == TaskList[j].Id).Count() > 0) ? 1 : 0;
                 }
 
                 for (int j = 0; j < SkillList.Count; j++)
                 {
-                    taskSkillWithLevel[i, j] = (int)TaskList[i].TasksSkillsRequireds
-                        .Where(e => e.Skill.Id == SkillList[j].Id).FirstOrDefault().Level;
+                    taskSkillWithLevel[i, j] = (int) TaskList[i].TasksSkillsRequireds
+                        .Where(e => e.SkillId == SkillList[j].Id).FirstOrDefault().Level;
                 }
                 for (int j = 0; j < FunctionList.Count; j++)
                 {

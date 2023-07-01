@@ -7,6 +7,7 @@ namespace ModelLibrary.DBModels
     {
         public Project()
         {
+            Milestones = new HashSet<Milestone>();
             Schedules = new HashSet<Schedule>();
             Tasks = new HashSet<Task>();
         }
@@ -27,6 +28,7 @@ namespace ModelLibrary.DBModels
         public DateTime? CreateDatetime { get; set; }
         public DateTime? DeleteDatetime { get; set; }
 
+        public virtual ICollection<Milestone> Milestones { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<Task> Tasks { get; set; }
     }

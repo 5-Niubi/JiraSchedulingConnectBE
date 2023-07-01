@@ -43,6 +43,7 @@ builder.Services.AddDbContext<JiraDemoContext>(opt => opt.UseSqlServer(
 builder.Services.AddHttpContextAccessor();
 
 // Register services
+builder.Services.AddTransient<IAPIMicroserviceService, APIMicroserviceService>();
 builder.Services.AddTransient<IProjectServices, ProjectsService>();
 builder.Services.AddTransient<ISkillsService, SkillsService>();
 builder.Services.AddTransient<IAlgorithmService, AlgorithmService>();
