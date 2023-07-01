@@ -1,6 +1,7 @@
 ﻿using ModelLibrary.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -8,13 +9,18 @@ namespace JiraSchedulingConnectAppService.Controllers
     [ApiController]
     public class AlgorithmController : ControllerBase
     {
+        private readonly IAlgorithmService algorithmService;
+        public AlgorithmController(IAlgorithmService algorithmService)
+        {
+            this.algorithmService = algorithmService;
+        }
+
         [HttpGet]
-        public IActionResult GetTestConverter()
+        public async Task<IActionResult> GetTestConverter(int projectId)
         {
             try
             {
-                
-                return Ok();
+                return Ok(await algorithmService.TestConverter(projectId));
             }
             catch (Exception ex)
             {

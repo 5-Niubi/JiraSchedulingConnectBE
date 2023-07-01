@@ -46,6 +46,7 @@ namespace ModelLibrary.DBModels
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
@@ -145,9 +146,9 @@ namespace ModelLibrary.DBModels
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CloudId)
-                    .HasMaxLength(10)
-                    .HasColumnName("cloud_id")
-                    .IsFixedLength();
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("cloud_id");
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")

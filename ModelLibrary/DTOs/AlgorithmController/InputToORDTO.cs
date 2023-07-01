@@ -13,5 +13,9 @@ namespace AlgorithmServiceServer.DTOs.AlgorithmController
         public List<Equipment> EquipmentList { get; set; }
         public List<Skill> SkillList { get; set; }
         public List<Function> FunctionList { get; set; }
+
+
+
+        
     }
 }
