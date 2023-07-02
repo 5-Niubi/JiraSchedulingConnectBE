@@ -1,4 +1,5 @@
 ﻿using ModelLibrary.DBModels;
+using ModelLibrary.DTOs.AlgorithmController;
 
 namespace AlgorithmServiceServer.DTOs.AlgorithmController
 {
