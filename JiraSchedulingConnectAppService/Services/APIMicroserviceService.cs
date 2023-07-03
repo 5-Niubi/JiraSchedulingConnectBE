@@ -18,9 +18,9 @@ namespace JiraSchedulingConnectAppService.Services
 
             client = new HttpClient();
             var bearer = http.Request.Headers["Authorization"];
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("", bearer);
-
-            baseUrl = config.GetValue<string[]>("Environment:AlgorithmServiceDomains")[0];
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearer);
+            var baseUrlList = config.GetSection("Environment:AlgorithmServiceDomains").Get<string[]>();
+            baseUrl = baseUrlList[0];
         }
 
 

@@ -1,4 +1,5 @@
 ﻿using ModelLibrary.DBModels;
+using ModelLibrary.DTOs.AlgorithmController;
 
 namespace AlgorithmServiceServer.DTOs.AlgorithmController
 {
@@ -13,9 +14,5 @@ namespace AlgorithmServiceServer.DTOs.AlgorithmController
         public List<Equipment> EquipmentList { get; set; }
         public List<Skill> SkillList { get; set; }
         public List<Function> FunctionList { get; set; }
-
-
-
-        
     }
 }

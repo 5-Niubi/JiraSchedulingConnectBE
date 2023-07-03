@@ -10,7 +10,7 @@ namespace ModelLibrary.DTOs.AlgorithmController
     {
         public int TaskId { get; set; }
         public int WorkerId { get; set; }
-        public int EquipmentId { get; set; }
+        public List<int> EquipmentId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
     }
