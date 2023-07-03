@@ -1,6 +1,7 @@
 ﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.AlgorithmController;
+using System.Text.Json;
 
 namespace RcpspAlgorithmLibrary
 {
@@ -35,6 +36,7 @@ namespace RcpspAlgorithmLibrary
             this.EquipmentList = inputToOR.EquipmentList;
             this.SkillList = inputToOR.SkillList;
             this.FunctionList = inputToOR.FunctionList;
+            this.Deadline = inputToOR.Deadline;
         }
 
         public OutputToORDTO ToOR()
@@ -46,8 +48,7 @@ namespace RcpspAlgorithmLibrary
             int[][] taskFunctionWithTime = new int[TaskList.Count][];
 
             int[][] workerSkillWithLevel = new int[WorkerList.Count][]; // Matrix of skill level
-            // TODO: workerEffort
-
+            double[][] workerEffort = new double[WorkerList.Count][];
             int[] workerSalary = new int[WorkerList.Count];
             int[][] equipmentFunction = new int[EquipmentList.Count][];
             int[] equipmentCost = new int[EquipmentList.Count];
@@ -78,7 +79,7 @@ namespace RcpspAlgorithmLibrary
                         .Where(tf => tf.FunctionId == FunctionList[j].Id).Count() > 0 ? 1 : 0;
                     var functionRequired = TaskList[i].TaskFunctions
                         .Where(tf => tf.FunctionId == FunctionList[j].Id).FirstOrDefault();
-                    taskFunctionWithTime[i][j] = 
+                    taskFunctionWithTime[i][j] =
                         (int)(functionRequired == null ? 0 : functionRequired.RequireTime);
                 }
             }
@@ -93,12 +94,26 @@ namespace RcpspAlgorithmLibrary
                         .Where(e => e.SkillId == SkillList[j].Id).FirstOrDefault();
                     workerSkillWithLevel[i][j] = (int)(workForceSkill == null ? 0 : workForceSkill.Level);
                 }
+                double[] workingEffort = 
+                    JsonSerializer.Deserialize<double[]>(WorkerList[i].WorkingEffort);
+                workerEffort[i] = new double[Deadline];
+
+                int k = 0;
+                for (int j = 0; j < Deadline; j++)
+                {
+                    workerEffort[i][j] = workingEffort[k++];
+                    // reset k
+                    if (k >= workingEffort.Length)
+                    {
+                        k = 0;
+                    }
+                }
                 workerSalary[i] = (int)WorkerList[i].UnitSalary;
             }
 
             for (int i = 0; i < EquipmentList.Count; i++)
             {
-                equipmentFunction[i] = new int[ FunctionList.Count];
+                equipmentFunction[i] = new int[FunctionList.Count];
                 for (int j = 0; j < FunctionList.Count; j++)
                 {
                     equipmentFunction[i][j] = EquipmentList[i].EquipmentsFunctions
@@ -125,12 +140,13 @@ namespace RcpspAlgorithmLibrary
             output.TaskDuration = taskDuration;
             output.TaskAdjacency = taskAdjacency;
             output.TaskExper = taskSkillWithLevel;
-            output.TaskFunction = taskFunction ;
+            output.TaskFunction = taskFunction;
             output.TaskFunctionTime = taskFunctionWithTime;
             output.WorkerExper = workerSkillWithLevel;
             output.WorkerSalary = workerSalary;
             output.EquipmentFunction = equipmentFunction;
             output.EquipmentCost = equipmentCost;
+            output.WorkerEffort = workerEffort;
 
             output.taskSimilarityGenerateInput = taskSimilarityGenerateInput;
 

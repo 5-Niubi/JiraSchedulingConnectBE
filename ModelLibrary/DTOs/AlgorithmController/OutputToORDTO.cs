@@ -22,6 +22,7 @@ namespace ModelLibrary.DTOs.AlgorithmController
         public int[] WorkerSalary { get; set; }
         public int[][] EquipmentFunction { get; set; }
         public int[] EquipmentCost { get; set; }
+        public double[][] WorkerEffort { get; set; }
 
         //public List<ModelLibrary.DBModels.Task> TaskList { get; set; }
         //public List<Workforce> WorkerList { get; set; }
