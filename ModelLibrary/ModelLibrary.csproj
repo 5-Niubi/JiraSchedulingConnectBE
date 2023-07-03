@@ -19,4 +19,10 @@
     <ProjectReference Include="..\UtilsLibrary\UtilsLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="DTOs\Parameters\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DTOs\Parameters\" />
+  </ItemGroup>
 </Project>

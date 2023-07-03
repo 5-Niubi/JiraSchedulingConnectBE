@@ -34,10 +34,10 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateWorkforce([FromBody] WorkforceDTO workforce) {
+        public async Task<IActionResult> CreateWorkforce([FromBody] WorkforceDTO.Request workforceRequest) {
             try
             {
-                return Ok(await WorkforcesService.CreateWorkforce(workforce));
+                return Ok(await WorkforcesService.CreateWorkforce(workforceRequest));
             }
             catch (Exception ex)
             {
@@ -49,11 +49,11 @@ namespace JiraSchedulingConnectAppService.Controllers
         public async Task<IActionResult> DeleteWorkforce(string id) {
             try
             {
-                var w = WorkforcesService.GetWorkforceById(id);
-                if(w == null) {
+                var workforceDTORequest = WorkforcesService.GetWorkforceById(id);
+                if(workforceDTORequest == null) {
                     return BadRequest("Cannot found this workforce!");
                 }
-                await WorkforcesService.DeleteWorkforce(await w);
+                await WorkforcesService.DeleteWorkforce(await workforceDTORequest);
                 return Ok("Delete success");
             }
             catch (Exception ex)
@@ -63,14 +63,14 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPut("id")]
-        public async Task<IActionResult> UpdateWorkforce(string id, WorkforceDTO workforce) {
+        public async Task<IActionResult> UpdateWorkforce(string id, WorkforceDTO.Request workforceRequest) {
             try
             {
                 var w1 = WorkforcesService.GetWorkforceById(id);
                 if(w1 == null) {
                     return BadRequest("Cannot found this workforce!");
                 }
-                await WorkforcesService.UpdateWorkforce(workforce);
+                await WorkforcesService.UpdateWorkforce(workforceRequest);
                 return Ok("Update success");
             }
             catch (Exception ex)
