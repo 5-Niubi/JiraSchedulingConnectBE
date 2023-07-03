@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-
-namespace ModelLibrary.DBModels
+namespace ModelLibrary.DTOs
 {
-    public partial class Workforce
-    {
-        public Workforce()
-        {
-            TaskResources = new HashSet<TaskResource>();
-            WorkforceSkills = new HashSet<WorkforceSkill>();
-        }
-
+	public class WorkforceDTO
+	{
         public int Id { get; set; }
         public string? AccountId { get; set; }
         public string? Email { get; set; }
@@ -25,8 +17,6 @@ namespace ModelLibrary.DBModels
         public bool? IsDelete { get; set; }
         public DateTime? CreateDatetime { get; set; }
         public DateTime? DeleteDatetime { get; set; }
-
-        public virtual ICollection<TaskResource> TaskResources { get; set; }
-        public virtual ICollection<WorkforceSkill> WorkforceSkills { get; set; }
     }
 }
+
