@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ModelLibrary\ModelLibrary.csproj" />
-    <ProjectReference Include="..\UtilsLibrary\UtilsLibrary.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.19" />
   </ItemGroup>
 
 </Project>

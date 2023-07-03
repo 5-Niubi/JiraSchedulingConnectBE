@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RcpspAlgorithmLibrary", "Rc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelLibrary", "ModelLibrary\ModelLibrary.csproj", "{9EB2237C-D25F-4AE0-AACB-DB29444D9714}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilsLibrary", "..\UtilsLibrary\UtilsLibrary.csproj", "{DC7C51C0-BE4D-47C3-818A-5A5D1A5D405F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtilsLibrary", "UtilsLibrary\UtilsLibrary.csproj", "{6BD34E9D-5C2F-49AE-B2C6-BA5B601DC589}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,10 @@ Global
 		{9EB2237C-D25F-4AE0-AACB-DB29444D9714}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EB2237C-D25F-4AE0-AACB-DB29444D9714}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EB2237C-D25F-4AE0-AACB-DB29444D9714}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DC7C51C0-BE4D-47C3-818A-5A5D1A5D405F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC7C51C0-BE4D-47C3-818A-5A5D1A5D405F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DC7C51C0-BE4D-47C3-818A-5A5D1A5D405F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DC7C51C0-BE4D-47C3-818A-5A5D1A5D405F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BD34E9D-5C2F-49AE-B2C6-BA5B601DC589}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BD34E9D-5C2F-49AE-B2C6-BA5B601DC589}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BD34E9D-5C2F-49AE-B2C6-BA5B601DC589}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BD34E9D-5C2F-49AE-B2C6-BA5B601DC589}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
