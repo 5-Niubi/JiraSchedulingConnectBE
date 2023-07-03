@@ -47,8 +47,6 @@ builder.Services.AddTransient<IAPIMicroserviceService, APIMicroserviceService>()
 builder.Services.AddTransient<IProjectServices, ProjectsService>();
 builder.Services.AddTransient<ISkillsService, SkillsService>();
 builder.Services.AddTransient<IAlgorithmService, AlgorithmService>();
-builder.Services.AddTransient<IWorkforcesService, WorkforcesService>();
-
 
 var app = builder.Build();
 
