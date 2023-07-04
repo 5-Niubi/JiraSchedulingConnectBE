@@ -1,22 +1,22 @@
 ﻿using System.Collections.Concurrent;
 
 
-namespace RcpspEstimator
+namespace RcpEstimator
 {
     public class ScheduleEstimator
     {
         const int START_TASK = 0;
         public int NumOfTasks = 0;
 
-        public List<int> TaskDuration = new List<int>();
-        public List<List<int>> TaskAdjacency = new List<List<int>>();
-        public List<List<int>> TaskExper = new List<List<int>>();
+        public int[] TaskDuration;
+        public int[][] TaskAdjacency;
+        public int[][] TaskExper;
 
-        public List<List<int>> TaskOfStartFinishTime = new List<List<int>>();
-        public List<List<int>> TaskSortedUnitTime = new List<List<int>>();
-        public List<int> StortedUnitTimeList = new List<int>();
+        public int[][] TaskOfStartFinishTime;
+        public int[][] TaskSortedUnitTime;
+        public List<int> StortedUnitTimeList;
 
-        public ScheduleEstimator(List<int> TaskDuration, List<List<int>> TaskExper, List<List<int>> TaskAdjacency)
+        public ScheduleEstimator(int[] TaskDuration, int[][] TaskExper, int[][] TaskAdjacency)
         {
             this.TaskExper = TaskExper;
             this.TaskAdjacency = TaskAdjacency;
@@ -29,18 +29,18 @@ namespace RcpspEstimator
         {
 
             // size of task
-            NumOfTasks = this.TaskAdjacency[0].Count;
+            NumOfTasks = this.TaskAdjacency.Length;
 
             // matrix task x start_finish
-            TaskOfStartFinishTime = Enumerable.Repeat(new List<int>(), this.NumOfTasks).Select(x => Enumerable.Repeat(0, 2).ToList()).ToList();
+            TaskOfStartFinishTime = new int[this.NumOfTasks][];
 
         }
 
-        private bool isVailableWorkforce(List<int> taskUnitTime, List<int> workForcefUnitTime)
+        private bool isVailableWorkforce(int[] taskUnitTime,int[] workForcefUnitTime)
         {
             bool isAvailable = true;
             Parallel.ForEach(
-                    Partitioner.Create(0, workForcefUnitTime.Count),
+                    Partitioner.Create(0, workForcefUnitTime.Length),
                     (range) =>
                     {
                         for (int i = range.Item1; i < range.Item2; i++)
@@ -58,10 +58,10 @@ namespace RcpspEstimator
         }
 
 
-        private int mappingScore(List<int> keySkills, List<int> querySkills)
+        private int mappingScore(int[] keySkills, int[] querySkills)
         {
             int overallScore = 0;
-            for (int i = 0; i < querySkills.Count; i++)
+            for (int i = 0; i < querySkills.Length; i++)
             {
                 if (keySkills[i] > 0 & querySkills[i] > 0)
                 {
@@ -73,7 +73,7 @@ namespace RcpspEstimator
             return overallScore;
         }
 
-        private List<int> getAvailableWorkforceIndexes(List<int> taskUnitTime, List<List<int>> assignedWorkForceOfUnitTime)
+        private List<int> getAvailableWorkforceIndexes(int[] taskUnitTime, List<int[]> assignedWorkForceOfUnitTime)
         {
             List<int> workforceIndexes = new List<int>();
 
@@ -97,7 +97,7 @@ namespace RcpspEstimator
         }
 
 
-        private int getBestWorkforceIndex(List<int> requiredSkills, List<int> indexes, List<List<int>> workforceOfSkill)
+        private int getBestWorkforceIndex(int[] requiredSkills, List<int> indexes, List<int[]> workforceOfSkill)
         {
 
             List<int> scores = Enumerable.Repeat(0, indexes.Count).ToList();
@@ -126,10 +126,10 @@ namespace RcpspEstimator
             int maxIndex = scores.IndexOf(maxScore);
             return indexes[maxIndex];
         }
-        public List<int> mergeHighSkill(List<int> workforceSkills, List<int> requiredSkills)
+        public int[] mergeHighSkill(int[] workforceSkills, int[] requiredSkills)
         {
-            List<int> mergedWorkforceSkills = Enumerable.Repeat(0, workforceSkills.Count).ToList();
-            for (int i = 0; i < workforceSkills.Count; i++)
+            int[] mergedWorkforceSkills = new int[workforceSkills.Length];
+            for (int i = 0; i < workforceSkills.Length; i++)
             {
                 if (workforceSkills[i] < requiredSkills[i])
                 {
@@ -145,12 +145,12 @@ namespace RcpspEstimator
             return mergedWorkforceSkills;
         }
 
-        public List<List<int>> Fit()
+        public List<int[]> Fit()
         {
 
             List<List<int>> assignedWorkforceOfTask = new List<List<int>>();
-            List<List<int>> assignedWorkforceOfSkill = new List<List<int>>();
-            List<List<int>> assignedWorkForceOfUnitTime = new List<List<int>>();
+            List<int[]> assignedWorkforceOfSkill = new List<int[]>();
+            List<int[]> assignedWorkForceOfUnitTime = new List<int[]>();
 
             Queue<int> queue = new Queue<int>();
             queue.Enqueue(START_TASK);
@@ -166,7 +166,7 @@ namespace RcpspEstimator
                     visited[v] = true;
 
                     int bestIndex = -1;
-                    List<int> taskUnitTime = TaskSortedUnitTime[v];
+                    int[] taskUnitTime = TaskSortedUnitTime[v];
                     if (assignedWorkForceOfUnitTime.Count > 0)
                     {
                         // Kiểm tra xem những workforce chưa được assign trong khoảng [startTime, finishTime]
@@ -182,10 +182,10 @@ namespace RcpspEstimator
                     }
 
                     // Nếu có thì update workForceOfUnitTime, workforceOfTasks, skillOfWorkforces
-                    if (bestIndex != -1)
+                    if (bestIndex != -1 & TaskDuration[v] != 0)
                     {
                         // Cập nhật workForceOfUnitTime
-                        for (int i = 0; i < taskUnitTime.Count; i++)
+                        for (int i = 0; i < taskUnitTime.Length; i++)
                         {
                             if (taskUnitTime[i] == 1)
                             {
@@ -200,13 +200,11 @@ namespace RcpspEstimator
                     }
 
                     // Nếu không có workforce nào thì tạo mới
-                    if (bestIndex == -1)
+                    if (bestIndex == -1 & TaskDuration[v] != 0 )
                     {
 
                         // Thêm mới row assignedUnitTime vào workForceOfUnitTime cho một workforce mới
-                        List<int> assignedUnitTime = Enumerable.Repeat(0, this.StortedUnitTimeList.Count).ToList();
                         List<int> assignedTask = Enumerable.Repeat(0, this.NumOfTasks).ToList();
-                        List<int> skillWorkforce = Enumerable.Repeat(0, this.TaskExper[0].Count).ToList();
 
                         // Thêm mới row vào assignedUnitTime
                         assignedWorkForceOfUnitTime.Add(taskUnitTime);
@@ -221,7 +219,7 @@ namespace RcpspEstimator
                 }
 
                 // cuối cùng, thực hiện enque các node ở level tiếp theo         
-                for (int j = 0; j < this.TaskAdjacency[v].Count; j++)
+                for (int j = 0; j < this.TaskAdjacency[v].Length; j++)
                 {
                     if (this.TaskAdjacency[j][v] == 1 & queue.Contains(j) == false)
                     {
@@ -233,12 +231,10 @@ namespace RcpspEstimator
 
                 }
 
+                
+
             }
 
-            for (int i = 0; i < assignedWorkforceOfSkill.Count; i++)
-            {
-                Console.WriteLine("[" + string.Join(",", assignedWorkforceOfSkill[i]) + "]");
-            }
 
             return assignedWorkforceOfSkill;
 
@@ -257,8 +253,13 @@ namespace RcpspEstimator
 
             while (queue.Count > 0)
             {
+                
+
                 int v = queue.Dequeue();
                 bool isVisitedAllPredencors = true;
+                if (this.TaskOfStartFinishTime[v] == null) {
+                    this.TaskOfStartFinishTime[v] = new int[2];
+                }
                 int ES = this.TaskOfStartFinishTime[v][0];
                 int EF = this.TaskOfStartFinishTime[v][1];
                 int duration = TaskDuration[v];
@@ -294,13 +295,9 @@ namespace RcpspEstimator
                 // Cập nhật finish time của task hiện tại =  start time + duration - 1
                 if (isVisitedAllPredencors == true & visited[v] == false)
                 {
-                    if (v != 0)
-                    {
-                        // here
-                    }
+
                     visited[v] = true; // thêm task đó vào visited 
 
-                    // if (v != START_TASK){
                     EF = ES + duration;
                     // Cập nhật EF = ES cho Start task và finish task 
                     if (duration == 0)
@@ -311,7 +308,6 @@ namespace RcpspEstimator
                     {
                         EF = ES + duration - 1; // Cập nhật early finish  
                     }
-                    // }
 
                     if (!unitTimes.Contains(EF))
                     {
@@ -329,7 +325,7 @@ namespace RcpspEstimator
                 this.TaskOfStartFinishTime[v][1] = EF;
 
                 // cuối cùng, thực hiện enque các node ở level tiếp theo
-                for (int i = 0; i < this.TaskAdjacency[v].Count; i++)
+                for (int i = 0; i < this.TaskAdjacency[v].Length; i++)
                 {
                     if (this.TaskAdjacency[i][v] == 1)
                     {
@@ -350,18 +346,15 @@ namespace RcpspEstimator
             unitTimes.Sort();
             this.StortedUnitTimeList = unitTimes;
 
+
+          
+
             // setup matrix task x unit time
-            setupTaskOfUnitTime();
-        }
+            TaskSortedUnitTime = new int[this.NumOfTasks][];
 
-        private void setupTaskOfUnitTime()
-        {
-
-            // matrix task x start_finish
-            TaskSortedUnitTime = Enumerable.Repeat(new List<int>(), this.NumOfTasks).Select(x => Enumerable.Repeat(0, this.StortedUnitTimeList.Count).ToList()).ToList();
-
-            for (int i = 0; i < this.TaskAdjacency.Count; i++)
+            for (int i = 0; i < this.TaskAdjacency.Length; i++)
             {
+                TaskSortedUnitTime[i] = new int[this.StortedUnitTimeList.Count];
                 for (int j = 0; j < this.StortedUnitTimeList.Count; j++)
                 {
                     if (this.StortedUnitTimeList[j] >= this.TaskOfStartFinishTime[i][0] & this.StortedUnitTimeList[j] <= this.TaskOfStartFinishTime[i][1])
@@ -372,6 +365,8 @@ namespace RcpspEstimator
                 }
             }
         }
+
+    
 
     }
 }
