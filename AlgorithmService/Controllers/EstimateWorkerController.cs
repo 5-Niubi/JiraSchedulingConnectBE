@@ -1,4 +1,5 @@
 ﻿using AlgorithmServiceServer.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
 
@@ -7,6 +8,7 @@ namespace AlgorithmServiceServer.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
+    [Authorize]
     public class WorkforceEstimatorController : ControllerBase
     {
 
