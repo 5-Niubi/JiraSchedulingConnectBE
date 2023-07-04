@@ -12,7 +12,6 @@ namespace AlgorithmServiceServer
     }
 
 
-
     public class EstimatedResultDTO
 
     {

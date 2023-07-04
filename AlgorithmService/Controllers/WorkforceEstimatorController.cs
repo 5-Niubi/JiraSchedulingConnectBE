@@ -1,6 +1,6 @@
-﻿using AlgorithmServiceServer.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
+using AlgorithmServiceServer.Services.Interfaces;
 
 namespace AlgorithmServiceServer.Controllers
 
@@ -11,16 +11,13 @@ namespace AlgorithmServiceServer.Controllers
     {
 
 
-        private readonly IEstimateWorkerService estimateWorkerService;
-        public WorkforceEstimatorController(IEstimateWorkerService estimateWorkerService)
+        private readonly IEstimateWorkforceService estimateWorkforceService;
+        private readonly ILogger<WorkforceEstimatorController> _logger;
+        public WorkforceEstimatorController(IEstimateWorkforceService estimateWorkforceService, ILogger<WorkforceEstimatorController> logger)
         {
-            this.estimateWorkerService = estimateWorkerService;
-
+            this.estimateWorkforceService = estimateWorkforceService;
+            _logger = logger;
         }
-
-
-
-
 
         [HttpGet]
         async public Task<IActionResult> GetEstimateWorkforce(int projectId)
@@ -28,7 +25,7 @@ namespace AlgorithmServiceServer.Controllers
             try
             {
 
-                return Ok(await estimateWorkerService.Execute(projectId));
+                return Ok(await estimateWorkforceService.Execute(projectId));
 
             }
             catch (Exception ex)
