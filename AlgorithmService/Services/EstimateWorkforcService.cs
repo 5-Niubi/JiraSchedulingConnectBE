@@ -1,15 +1,21 @@
-﻿
+﻿using System;
+using System.Numerics;
 using AlgorithmServiceServer.DTOs.AlgorithmController;
 using AlgorithmServiceServer.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using ModelLibrary.DBModels;
-using RcpEstimator;
-using RcpspAlgorithmLibrary;
 
+using AlgorithmServiceServer.DTOs.AlgorithmController;
+using AlgorithmServiceServer.Services.Interfaces;
+using ModelLibrary.DBModels;
+using ModelLibrary.DTOs.AlgorithmController;
+using Microsoft.EntityFrameworkCore;
+using RcpspAlgorithmLibrary;
+using UtilsLibrary;
+using RcpEstimator;
+using System.Drawing;
 
 namespace AlgorithmServiceServer.Services
 {
-    public class EstimateWorkerService : IEstimateWorkerService
+    public class EstimateWorkforcService : IEstimateWorkforceService
     {
 
         private readonly JiraDemoContext db;
@@ -17,77 +23,21 @@ namespace AlgorithmServiceServer.Services
         private List<int> TaskDuration;
         private List<List<int>> TaskExper;
         private List<List<int>> TaskAdjacency;
-        public EstimateWorkerService(JiraDemoContext db, IHttpContextAccessor httpAccessor)
+        public EstimateWorkforcService(JiraDemoContext db, IHttpContextAccessor httpAccessor)
         {
             this.db = db;
             http = httpAccessor.HttpContext;
         }
 
-        public List<int> GetTaskDuration(int projectId)
-        {
-            List<int> TaskDuration = new List<int>();
-
-            // TODO
-            // Get data from relate tables: Task
-            // Encode to matrix TaskDuration, TaskExper, TaskAdjacency
-
-            TaskDuration = new List<int> { 0, 10, 1, 3, 0 };
-
-
-
-            return TaskDuration;
-        }
-
-
-        public List<List<int>> GetTaskExper(int projectId)
-        {
-            List<List<int>> TaskExper = new List<List<int>>();
-            TaskExper = new List<List<int>>()
-                        {
-                            new List<int> {0,0,0},
-                            new List<int> {1,0,2},
-                            new List<int> {3,0,3},
-                            new List<int> {2,0,4},
-                            new List<int> {0,0,0}
-                        };
-
-
-            return TaskExper;
-        }
-
-        public List<List<int>> GetTaskAdjacency(int projectId)
-        {
-            List<List<int>> TaskAdjacency = new List<List<int>>();
-            TaskAdjacency = new List<List<int>>()
-                                                {
-                                                    new List<int> {0, 0, 0, 0, 0},
-                                                    new List<int> {1, 0, 0, 0, 0},
-                                                    new List<int> {0, 1, 0, 0, 0},
-                                                    new List<int> {0, 1, 0, 0, 0},
-                                                    new List<int> {0, 0, 1, 1, 0}
-                                                };
-
-
-            return TaskAdjacency;
-        }
+       
 
         public void PrepareDataFromDB(int projectId)
         {
 
 
             var taskFromDB = db.Tasks.Where(t => t.ProjectId == projectId)
-                .Include(t => t.TaskPrecedencePrecedences).Include(t => t.TasksSkillsRequireds);
+                .Include(t => t.TaskPrecedenceTasks).Include(t => t.TasksSkillsRequireds);
 
-            // TODO: Create list unique skills project's map with Id skill database's
-            // TODO: Create list unique tasks project's map with Id task database's
-
-            // TODO: Create TaskAdjacency
-
-            // TODO: Create TaskDuration
-
-            // TODO: Create TaskExper
-
-            // TODO: Create TaskMistone
 
             int taskSize = taskFromDB.Count();
 
@@ -102,7 +52,7 @@ namespace AlgorithmServiceServer.Services
                 var taskId = task.Id;
                 var milestoneId = task.MilestoneId;
                 var tasksSkillsRequireds = task.TasksSkillsRequireds;
-                var taskPrecedences = task.TaskPrecedencePrecedences;
+                var taskPrecedences = task.TaskPrecedenceTasks;
             }
         }
 

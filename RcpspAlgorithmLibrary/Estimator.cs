@@ -3,6 +3,8 @@
 
 namespace RcpEstimator
 {
+
+
     public class ScheduleEstimator
     {
         const int START_TASK = 0;
@@ -58,18 +60,31 @@ namespace RcpEstimator
         }
 
 
-        private int mappingScore(int[] keySkills, int[] querySkills)
+        private double mappingScore(int[] keySkills, int[] querySkills)
+
+        // sử dụng simarility score
+
+
         {
-            int overallScore = 0;
+
+            int dotProduct = 0;
+            double lengthSquared1 = 0;
+            double lengthSquared2 = 0;
+
+
+
             for (int i = 0; i < querySkills.Length; i++)
             {
-                if (keySkills[i] > 0 & querySkills[i] > 0)
-                {
-                    overallScore += 1;
-                }
+                dotProduct += querySkills[i] * keySkills[i];
+                lengthSquared1 += Math.Pow(querySkills[i], 2);
+                lengthSquared2 += Math.Pow(keySkills[i], 2);
 
             }
 
+
+            double overallScore = dotProduct / (lengthSquared1 * lengthSquared2);
+
+            // Nếu 2 thằng chỉ có 1 skill và giống nhau -> overallScore 
             return overallScore;
         }
 
@@ -100,7 +115,7 @@ namespace RcpEstimator
         private int getBestWorkforceIndex(int[] requiredSkills, List<int> indexes, List<int[]> workforceOfSkill)
         {
 
-            List<int> scores = Enumerable.Repeat(0, indexes.Count).ToList();
+            List<double> scores = Enumerable.Repeat(0.0, indexes.Count).ToList();
 
             // Perform element-wise addition
             Parallel.ForEach(
@@ -109,16 +124,16 @@ namespace RcpEstimator
                 {
                     for (int i = range.Item1; i < range.Item2; i++)
                     {
-                        int score = mappingScore(requiredSkills, workforceOfSkill[indexes[i]]);
+                        double score = mappingScore(requiredSkills, workforceOfSkill[indexes[i]]);
                         scores[i] = score;
                     }
 
                 });
 
 
-            int maxScore = scores.Max();
+            double maxScore = scores.Max();
 
-            if (maxScore < 2)
+            if (maxScore == 0)
             {
                 return -1;
             }

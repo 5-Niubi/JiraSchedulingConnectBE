@@ -1,6 +1,7 @@
-﻿using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using ModelLibrary.DTOs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ModelLibrary.DTOs;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {

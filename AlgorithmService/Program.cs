@@ -41,7 +41,7 @@ builder.Services.AddHttpContextAccessor();
 
 // Register services
 builder.Services.AddTransient<IAccessDataToComputeService, AccessDataToComputeService>();
-builder.Services.AddTransient<IEstimateWorkerService, EstimateWorkerService>();
+builder.Services.AddTransient<IEstimateWorkforceService, EstimateWorkforcService>();
 
 var app = builder.Build();
 
