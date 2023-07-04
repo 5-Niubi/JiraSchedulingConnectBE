@@ -5,8 +5,6 @@ namespace ModelLibrary.DBModels
 {
     public partial class Task
     {
-        public object TaskPrecesdences;
-
         public Task()
         {
             TaskFunctions = new HashSet<TaskFunction>();

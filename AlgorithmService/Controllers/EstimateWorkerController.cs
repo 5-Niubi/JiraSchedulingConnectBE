@@ -12,11 +12,10 @@ namespace AlgorithmServiceServer.Controllers
 
 
         private readonly IEstimateWorkerService estimateWorkerService;
-        private readonly ILogger<WeatherForecastController> _logger;
-        public WorkforceEstimatorController(IEstimateWorkerService estimateWorkerService, ILogger<WeatherForecastController> logger)
+        public WorkforceEstimatorController(IEstimateWorkerService estimateWorkerService)
         {
             this.estimateWorkerService = estimateWorkerService;
-            _logger = logger;
+
         }
 
 
