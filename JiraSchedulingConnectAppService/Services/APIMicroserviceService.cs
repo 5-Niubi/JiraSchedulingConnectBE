@@ -18,7 +18,6 @@ namespace JiraSchedulingConnectAppService.Services
             http = httpAccessor.HttpContext;
             client = new HttpClient();
 
-            
             var bearer = http.Request.Headers["Authorization"];
             Regex pattern = new Regex(@"Bearer (?<token>[\w.]+)");
             Match match = pattern.Match(bearer);

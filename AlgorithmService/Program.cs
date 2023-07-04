@@ -1,9 +1,5 @@
-using AlgorithmServiceServer.Services;
-using AlgorithmServiceServer.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using System.Text;
 
@@ -13,7 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -28,10 +23,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddDbContext<JiraDemoContext>(opt => opt.UseSqlServer(
-    builder.Configuration.GetConnectionString("DB")
-    )
-);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -41,6 +32,7 @@ builder.Services.AddHttpContextAccessor();
 
 // Register services
 builder.Services.AddTransient<IAccessDataToComputeService, AccessDataToComputeService>();
+builder.Services.AddTransient<IEstimateWorkerService, EstimateWorkerService>();
 
 var app = builder.Build();
 

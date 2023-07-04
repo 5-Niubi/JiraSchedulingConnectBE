@@ -1,4 +1,5 @@
-﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
+﻿using AlgorithmServiceServer;
+using AlgorithmServiceServer.DTOs.AlgorithmController;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
@@ -23,6 +24,24 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<string> TestConverter(int projectId)
         {
+           
+            var response = await apiMicro.Get($"/api/Algorithm?projectId={projectId}");
+            dynamic responseContent;
+            if (response.IsSuccessStatusCode)
+            {
+                responseContent = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                throw new Exception("Error");
+            }
+            return responseContent;
+
+        }
+
+
+        public async Task<EstimatedResultDTO> EstimateWorkforce(int projectId)
+        {
             //var jwt = new JWTManagerService(http);
             //var contentObject = new InputToORDTO();
 
@@ -43,11 +62,11 @@ namespace JiraSchedulingConnectAppService.Services
             //contentObject.EquipmentList = equipmentsFromDB;
 
             //var content = new StringContent(JsonSerializer.Serialize(null));
-            var response = await apiMicro.Get($"/api/Algorithm?projectId={projectId}");
+            var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforce?projectId={projectId}");
             dynamic responseContent;
             if (response.IsSuccessStatusCode)
             {
-                responseContent = await response.Content.ReadAsStringAsync();
+                responseContent = await response.Content.ReadFromJsonAsync<EstimatedResultDTO>();
             }
             else
             {
@@ -56,6 +75,5 @@ namespace JiraSchedulingConnectAppService.Services
             return responseContent;
 
         }
-
     }
 }
