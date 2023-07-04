@@ -13,6 +13,8 @@ namespace ModelLibrary.DTOs
             CreateMap<Project, ProjectDetailDTO>();
             CreateMap<WorkforceDTO.Request, Workforce>();
             CreateMap<Workforce, WorkforceDTO.Response>();
+            CreateMap<EquipmentDTO.Request, Equipment>();
+            CreateMap<Equipment, EquipmentDTO.Response>();
         }
     }
 }

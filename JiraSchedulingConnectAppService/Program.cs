@@ -48,6 +48,7 @@ builder.Services.AddTransient<IProjectServices, ProjectsService>();
 builder.Services.AddTransient<ISkillsService, SkillsService>();
 builder.Services.AddTransient<IAlgorithmService, AlgorithmService>();
 builder.Services.AddTransient<IWorkforcesService, WorkforcesService>();
+builder.Services.AddTransient<IEquipmentService, EquipmentsService>();
 
 
 var app = builder.Build();
