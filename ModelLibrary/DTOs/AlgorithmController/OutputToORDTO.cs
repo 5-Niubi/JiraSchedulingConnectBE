@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ModelLibrary.DTOs.AlgorithmController
+﻿namespace ModelLibrary.DTOs.AlgorithmController
 {
     public class OutputToORDTO
     {
         public int Deadline { get; set; }
         public int Budget { get; set; }
+
         public int NumOfTasks { get; set; }
         public int NumOfWorkers { get; set; }
         public int NumOfSkills { get; set; }
@@ -18,19 +13,21 @@ namespace ModelLibrary.DTOs.AlgorithmController
 
         public int[] TaskDuration { get; set; }
         public int[][] TaskAdjacency { get; set; }
-
-        // Từ các thuộc tính của task, xử lý để ra matrix các task cùng độ tương đồng
-        public int[][] TaskSimilarity { get; set; }
-        public int[][   ] TaskExper { get; set; }
+        public int[][] TaskExper { get; set; }
         public int[][] TaskFunction { get; set; }
         public int[][] TaskFunctionTime { get; set; }
         public int[][] WorkerExper { get; set; }
-        public int[][] WorkerEffort { get; set; }
         public int[] WorkerSalary { get; set; }
         public int[][] EquipmentFunction { get; set; }
-        public int[] EquipmentCost
-        {
-            get; set;
-        }
+        public int[] EquipmentCost { get; set; }
+        public double[][] WorkerEffort { get; set; }
+
+        //public List<ModelLibrary.DBModels.Task> TaskList { get; set; }
+        //public List<Workforce> WorkerList { get; set; }
+        //public List<Equipment> EquipmentList { get; set; }
+        //public List<Skill> SkillList { get; set; }
+        //public List<Function> FunctionList { get; set; }
+
+        public TaskSimilarityGenerateInputToORDTO taskSimilarityGenerateInput { get; set; }
     }
 }

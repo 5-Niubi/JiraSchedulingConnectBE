@@ -32,7 +32,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
         async Task<HttpResponseMessage> IAPIMicroserviceService.Get(string url)
-        {     
+        {
             var respone = await client.GetAsync(url);
 
             return respone;

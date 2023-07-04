@@ -18,7 +18,8 @@ namespace JiraSchedulingConnectAppService.Services
             if (response.IsSuccessStatusCode)
             {
                 responseContent = await response.Content.ReadAsStringAsync();
-            }else
+            }
+            else
             {
                 throw new Exception("Error");
             }

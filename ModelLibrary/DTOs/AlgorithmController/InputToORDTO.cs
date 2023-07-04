@@ -16,6 +16,6 @@ namespace AlgorithmServiceServer.DTOs.AlgorithmController
 
 
 
-        
+
     }
 }

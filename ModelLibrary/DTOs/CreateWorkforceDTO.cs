@@ -1,8 +1,7 @@
-﻿using System;
-namespace ModelLibrary.DTOs
+﻿namespace ModelLibrary.DTOs
 {
-	public class WorkforceDTO
-	{
+    public class WorkforceDTO
+    {
         public int Id { get; set; }
         public string? AccountId { get; set; }
         public string? Email { get; set; }

@@ -1,11 +1,8 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
-using ModelLibrary.DTOs.Projects;
 
 namespace JiraSchedulingConnectAppService.Services
 {

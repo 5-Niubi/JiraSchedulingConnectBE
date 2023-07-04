@@ -1,22 +1,17 @@
-﻿using System;
-using System.Numerics;
+﻿
 using AlgorithmServiceServer.DTOs.AlgorithmController;
 using AlgorithmServiceServer.Services.Interfaces;
-using AlgorithmServiceServer.DTOs.AlgorithmController;
-using AlgorithmServiceServer.Services.Interfaces;
-using ModelLibrary.DBModels;
-using ModelLibrary.DTOs.AlgorithmController;
 using Microsoft.EntityFrameworkCore;
-using RcpspAlgorithmLibrary;
-using UtilsLibrary;
+using ModelLibrary.DBModels;
 using RcpEstimator;
-using System.Drawing;
+using RcpspAlgorithmLibrary;
+
 
 namespace AlgorithmServiceServer.Services
 {
     public class EstimateWorkerService : IEstimateWorkerService
     {
-       
+
         private readonly JiraDemoContext db;
         private readonly HttpContext http;
         private List<int> TaskDuration;
@@ -28,7 +23,8 @@ namespace AlgorithmServiceServer.Services
             http = httpAccessor.HttpContext;
         }
 
-        public List<int> GetTaskDuration(int projectId) {
+        public List<int> GetTaskDuration(int projectId)
+        {
             List<int> TaskDuration = new List<int>();
 
             // TODO
@@ -37,7 +33,7 @@ namespace AlgorithmServiceServer.Services
 
             TaskDuration = new List<int> { 0, 10, 1, 3, 0 };
 
-            
+
 
             return TaskDuration;
         }
@@ -59,7 +55,7 @@ namespace AlgorithmServiceServer.Services
             return TaskExper;
         }
 
-        public  List<List<int>> GetTaskAdjacency(int projectId)
+        public List<List<int>> GetTaskAdjacency(int projectId)
         {
             List<List<int>> TaskAdjacency = new List<List<int>>();
             TaskAdjacency = new List<List<int>>()
@@ -75,17 +71,18 @@ namespace AlgorithmServiceServer.Services
             return TaskAdjacency;
         }
 
-        public void PrepareDataFromDB(int projectId) {
+        public void PrepareDataFromDB(int projectId)
+        {
 
-         
+
             var taskFromDB = db.Tasks.Where(t => t.ProjectId == projectId)
-                .Include(t => t.TaskPrecesdences).Include(t => t.TasksSkillsRequireds);
+                .Include(t => t.TaskPrecedencePrecedences).Include(t => t.TasksSkillsRequireds);
 
             // TODO: Create list unique skills project's map with Id skill database's
             // TODO: Create list unique tasks project's map with Id task database's
 
             // TODO: Create TaskAdjacency
-             
+
             // TODO: Create TaskDuration
 
             // TODO: Create TaskExper
@@ -99,20 +96,22 @@ namespace AlgorithmServiceServer.Services
 
             TaskExper = Enumerable.Repeat(Enumerable.Repeat(0, taskSize).ToList(), taskSize).ToList();
 
-            foreach (var task in taskFromDB) {
+            foreach (var task in taskFromDB)
+            {
                 var duration = task.Duration;
                 var taskId = task.Id;
                 var milestoneId = task.MilestoneId;
                 var tasksSkillsRequireds = task.TasksSkillsRequireds;
-                var taskPrecedences = task.TaskPrecesdences;
+                var taskPrecedences = task.TaskPrecedencePrecedences;
             }
         }
 
-       
 
-        public async Task<EstimatedResultDTO> Execute(int projectId) {
-            
-            
+
+        public async Task<EstimatedResultDTO> Execute(int projectId)
+        {
+
+
 
             List<int> WorkforceOutputList;
 
@@ -120,7 +119,7 @@ namespace AlgorithmServiceServer.Services
             var cloudId = "ea48ddc7-ed56-4d60-9b55-02667724849d"; // DEBUG
             var inputTo = new InputToORDTO();
 
-            
+
 
             var projectFromDB = await db.Projects
                 .Where(p => p.CloudId == cloudId)
@@ -142,13 +141,13 @@ namespace AlgorithmServiceServer.Services
             var TaskDuration = outputToEstimator.TaskDuration;
             var TaskExper = outputToEstimator.TaskExper;
             var TaskAdjacency = outputToEstimator.TaskAdjacency;
-      
+
 
             ScheduleEstimator estimator = new ScheduleEstimator(TaskDuration, TaskExper, TaskAdjacency);
             estimator.ForwardMethod();
             List<int[]> ResultMatrix = estimator.Fit();
 
-            
+
             return converter.FromEs(ResultMatrix);
 
         }

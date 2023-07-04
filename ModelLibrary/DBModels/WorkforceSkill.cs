@@ -11,7 +11,6 @@ namespace ModelLibrary.DBModels
         public DateTime? CreateDatetime { get; set; }
         public bool? IsDelete { get; set; }
         public DateTime? DeleteDatetime { get; set; }
-        public string? CloudId { get; set; }
 
         public virtual Skill Skill { get; set; } = null!;
         public virtual Workforce Workforce { get; set; } = null!;

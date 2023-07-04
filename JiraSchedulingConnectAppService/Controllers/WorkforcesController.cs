@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 
 namespace JiraSchedulingConnectAppService.Controllers
@@ -34,7 +28,8 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateWorkforce([FromBody] WorkforceDTO workforce) {
+        public async Task<IActionResult> CreateWorkforce([FromBody] WorkforceDTO workforce)
+        {
             try
             {
                 return Ok(await WorkforcesService.CreateWorkforce(workforce));
@@ -46,11 +41,13 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpDelete("id")]
-        public async Task<IActionResult> DeleteWorkforce(string id) {
+        public async Task<IActionResult> DeleteWorkforce(string id)
+        {
             try
             {
                 var w = WorkforcesService.GetWorkforceById(id);
-                if(w == null) {
+                if (w == null)
+                {
                     return BadRequest("Cannot found this workforce!");
                 }
                 await WorkforcesService.DeleteWorkforce(await w);
@@ -63,11 +60,13 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPut("id")]
-        public async Task<IActionResult> UpdateWorkforce(string id, WorkforceDTO workforce) {
+        public async Task<IActionResult> UpdateWorkforce(string id, WorkforceDTO workforce)
+        {
             try
             {
                 var w1 = WorkforcesService.GetWorkforceById(id);
-                if(w1 == null) {
+                if (w1 == null)
+                {
                     return BadRequest("Cannot found this workforce!");
                 }
                 await WorkforcesService.UpdateWorkforce(workforce);

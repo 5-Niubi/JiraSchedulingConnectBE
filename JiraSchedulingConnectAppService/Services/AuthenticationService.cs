@@ -1,6 +1,6 @@
-﻿using ModelLibrary.DTOs.Authentication;
+﻿using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
-using Microsoft.EntityFrameworkCore;
+using ModelLibrary.DTOs.Authentication;
 using System.Text;
 using System.Text.Json;
 
@@ -142,7 +142,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             var request = new HttpRequestMessage(HttpMethod.Get, "https://api.atlassian.com/oauth/token/accessible-resources");
             request.Headers.Add("Authorization", $"Bearer {accessToken}");
-            
+
             var response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 

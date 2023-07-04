@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace JiraSchedulingConnectAppService.Models;
+﻿namespace JiraSchedulingConnectAppService.Models;
 
 public partial class TaskResource
 {

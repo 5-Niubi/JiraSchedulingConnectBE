@@ -1,10 +1,6 @@
 ﻿using AlgorithmServiceServer;
-using AlgorithmServiceServer.DTOs.AlgorithmController;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
-using ModelLibrary.DTOs.AlgorithmController;
-using System.Text.Json;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -14,7 +10,7 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly JiraDemoContext db;
         private readonly HttpContext http;
         private readonly IAPIMicroserviceService apiMicro;
-        public AlgorithmService( JiraDemoContext db, IHttpContextAccessor httpContextAccessor, IAPIMicroserviceService apiMicro)
+        public AlgorithmService(JiraDemoContext db, IHttpContextAccessor httpContextAccessor, IAPIMicroserviceService apiMicro)
         {
             this.client = new HttpClient();
             this.db = db;
@@ -24,7 +20,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<string> TestConverter(int projectId)
         {
-           
+
             var response = await apiMicro.Get($"/api/Algorithm?projectId={projectId}");
             dynamic responseContent;
             if (response.IsSuccessStatusCode)
@@ -33,7 +29,7 @@ namespace JiraSchedulingConnectAppService.Services
             }
             else
             {
-                throw new Exception("Error");
+                throw new Exception(response.StatusCode.ToString());
             }
             return responseContent;
 
