@@ -1,11 +1,10 @@
-﻿using ModelLibrary.DTOs;
-using Microsoft.AspNetCore.Http;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using JiraSchedulingConnectAppService.Services.Interfaces;
+using ModelLibrary.DTOs;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class AlgorithmController : ControllerBase
     {
@@ -21,6 +20,21 @@ namespace JiraSchedulingConnectAppService.Controllers
             try
             {
                 return Ok(await algorithmService.TestConverter(projectId));
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetEstimateWorkforce(int projectId)
+        {
+            try
+            {
+
+                return Ok(await algorithmService.EstimateWorkforce(projectId));
             }
             catch (Exception ex)
             {

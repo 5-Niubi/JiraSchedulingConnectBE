@@ -1,9 +1,10 @@
-﻿using ModelLibrary.DTOs.AlgorithmController;
+﻿using AlgorithmServiceServer;
 
 namespace JiraSchedulingConnectAppService.Services.Interfaces
 {
     public interface IAlgorithmService
     {
-        public Task<OutputFromORDTO> TestConverter(int projectId);
+        public Task<string> TestConverter(int projectId);
+        public Task<EstimatedResultDTO> EstimateWorkforce(int projectId);
     }
 }

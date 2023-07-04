@@ -1,8 +1,8 @@
 ﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
 using AlgorithmServiceServer.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.AlgorithmController;
-using Microsoft.EntityFrameworkCore;
 using RcpspAlgorithmLibrary;
 using UtilsLibrary;
 
@@ -27,12 +27,14 @@ namespace AlgorithmServiceServer.Services
                 .Where(p => p.CloudId == cloudId)
                 .Include(p => p.Tasks)
                 .FirstOrDefaultAsync();
+
             var taskFromDB = db.Tasks.Where(t => t.ProjectId == projectId)
                 .Include(t => t.TasksSkillsRequireds).ToList();
             var workerFromDB = db.Workforces.Where(w => w.CloudId == cloudId)
                 .Include(w => w.WorkforceSkills)
                 .ToList();
             var skillFromDB = db.Skills.Where(s => s.CloudId == cloudId).ToList();
+
             var functionFromDB = db.Functions.Where(f => f.CloudId == cloudId).ToList();
             var equipmentsFromDB = db.Equipments.Where(e => e.CloudId == cloudId)
                 .Include(eq => eq.EquipmentsFunctions)
