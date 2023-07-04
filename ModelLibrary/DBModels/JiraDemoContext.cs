@@ -44,25 +44,6 @@ namespace ModelLibrary.DBModels
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
-            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskResource>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskFunction>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Task>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Skill>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Schedule>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Milestone>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Equipment>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<EquipmentsFunction>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == false);
-
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
@@ -76,16 +57,15 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("isDelete");
+
+                entity.Property(e => e.IsDelete1).HasColumnName("is_delete");
 
                 entity.Property(e => e.TokenId).HasColumnName("token_id");
 
@@ -118,16 +98,13 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.RefressToken)
                     .HasMaxLength(5000)
@@ -153,16 +130,13 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(100)
@@ -189,18 +163,20 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.FunctionId).HasColumnName("function_id");
 
+                entity.Property(e => e.CloudId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("cloud_id");
+
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.HasOne(d => d.Equipment)
                     .WithMany(p => p.EquipmentsFunctions)
@@ -228,16 +204,13 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(100)
@@ -252,16 +225,13 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(255)
@@ -299,8 +269,7 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.Deadline)
                     .HasColumnType("datetime")
@@ -315,9 +284,7 @@ namespace ModelLibrary.DBModels
                     .IsUnicode(false)
                     .HasColumnName("image_avatar");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(100)
@@ -347,16 +314,13 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(50)
@@ -374,12 +338,16 @@ namespace ModelLibrary.DBModels
                     .IsUnicode(false)
                     .HasColumnName("account_id");
 
+                entity.Property(e => e.CloudId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("cloud_id");
+
                 entity.Property(e => e.Cost).HasColumnName("cost");
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
@@ -387,9 +355,7 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.Duration).HasColumnName("duration");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.ProjectId).HasColumnName("project_id");
 
@@ -424,16 +390,13 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(255)
@@ -453,8 +416,7 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
@@ -462,9 +424,7 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.Duration).HasColumnName("duration");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.MilestoneId).HasColumnName("milestone_id");
 
@@ -497,16 +457,13 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.RequireTime).HasColumnName("require_time");
 
@@ -535,16 +492,13 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.HasOne(d => d.Precedence)
                     .WithMany(p => p.TaskPrecedencePrecedences)
@@ -576,16 +530,13 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.HasOne(d => d.Resource)
                     .WithMany(p => p.TaskResources)
@@ -618,16 +569,13 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.Level).HasColumnName("level");
 
@@ -674,8 +622,7 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
@@ -689,9 +636,7 @@ namespace ModelLibrary.DBModels
                     .HasMaxLength(100)
                     .HasColumnName("email");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(100)
@@ -699,12 +644,7 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.UnitSalary).HasColumnName("unit_salary");
 
-                entity.Property(e => e.WorkingEffort)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("working_effort");
-
-                entity.Property(e => e.WorkingType).HasColumnName("working_type");
+                entity.Property(e => e.WorkingEffort).HasColumnName("working_effort");
             });
 
             modelBuilder.Entity<WorkforceSkill>(entity =>
@@ -717,18 +657,20 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.SkillId).HasColumnName("skill_id");
 
+                entity.Property(e => e.CloudId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("cloud_id");
+
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
                 entity.Property(e => e.Level).HasColumnName("level");
 

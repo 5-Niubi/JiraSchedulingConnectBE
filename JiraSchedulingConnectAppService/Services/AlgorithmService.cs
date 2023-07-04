@@ -24,27 +24,27 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<OutputFromORDTO> TestConverter(int projectId)
         {
-            //var jwt = new JWTManagerService(http);
-            //var contentObject = new InputToORDTO();
+            var jwt = new JWTManagerService(http);
+            var contentObject = new InputToORDTO();
 
-            //var projectFromDB = db.Projects .Where(p => p.CloudId == jwt.GetCurrentCloudId())
-            //    .Include(p => p.Tasks).FirstOrDefault();
-            //var workerFromDB = db.Workforces.Where(w => w.CloudId == jwt.GetCurrentCloudId()).ToList();
-            //var skillFromDB = db.Skills.Where(s => s.CloudId == jwt.GetCurrentCloudId()).ToList();
-            //var functionFromDB = db.Functions.Where(f => f.CloudId == jwt.GetCurrentCloudId()).ToList();
-            //var equipmentsFromDB = db.Equipments.Where(e => e.CloudId == jwt.GetCurrentCloudId()).ToList();
+            var projectFromDB = db.Projects .Where(p => p.CloudId == jwt.GetCurrentCloudId())
+                .Include(p => p.Tasks).FirstOrDefault();
+            var workerFromDB = db.Workforces.Where(w => w.CloudId == jwt.GetCurrentCloudId()).ToList();
+            var skillFromDB = db.Skills.Where(s => s.CloudId == jwt.GetCurrentCloudId()).ToList();
+            var functionFromDB = db.Functions.Where(f => f.CloudId == jwt.GetCurrentCloudId()).ToList();
+            var equipmentsFromDB = db.Equipments.Where(e => e.CloudId == jwt.GetCurrentCloudId()).ToList();
 
-            //contentObject.StartDate = (DateTime) projectFromDB.StartDate;
-            //contentObject.Budget = (int) projectFromDB.Budget;
-            //contentObject.Deadline = (int) (projectFromDB.Deadline.Value.Subtract(projectFromDB.StartDate.Value).TotalDays);
-            //contentObject.TaskList =  projectFromDB.Tasks.ToList();
-            //contentObject.WorkerList = workerFromDB;
-            //contentObject.SkillList = skillFromDB;
-            //contentObject.FunctionList = functionFromDB;
-            //contentObject.EquipmentList = equipmentsFromDB;
+            contentObject.StartDate = (DateTime) projectFromDB.StartDate;
+            contentObject.Budget = (int) projectFromDB.Budget;
+            contentObject.Deadline = (int) (projectFromDB.Deadline.Value.Subtract(projectFromDB.StartDate.Value).TotalDays);
+            contentObject.TaskList =  projectFromDB.Tasks.ToList();
+            contentObject.WorkerList = workerFromDB;
+            contentObject.SkillList = skillFromDB;
+            contentObject.FunctionList = functionFromDB;
+            contentObject.EquipmentList = equipmentsFromDB;
 
-            //var content = new StringContent(JsonSerializer.Serialize(null));
-            var response = await apiMicro.Get($"/api/Algorithm/TestConverter?projectId={projectId}");
+            var content = new StringContent(JsonSerializer.Serialize(contentObject));
+            var response = await apiMicro.Post("/api/Algorithm/TestConverter", content);
             dynamic responseContent;
             if (response.IsSuccessStatusCode)
             {

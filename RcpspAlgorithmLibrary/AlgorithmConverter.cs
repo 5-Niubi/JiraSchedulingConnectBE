@@ -1,7 +1,7 @@
-﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
-using ModelLibrary.DBModels;
+﻿using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.AlgorithmController;
-using System.Text.Json;
+using RcpspAlgorithmLibrary.Models;
+using System.Linq;
 
 namespace RcpspAlgorithmLibrary
 {
@@ -23,113 +23,85 @@ namespace RcpspAlgorithmLibrary
         public List<Skill> SkillList { get; private set; }
         public List<Function> FunctionList { get; private set; }
 
-        public AlgorithmConverter(InputToORDTO inputToOR)
+        public AlgorithmConverter(DateTime startDate, int deadLine, int budget,
+             List<ModelLibrary.DBModels.Task> taskList,
+             List<Workforce> workerList,
+             List<Equipment> equipmentList,
+             List<Skill> skillList,
+             List<Function> functionList)
         {
-            NumOfTasks = inputToOR.TaskList.Count;
-            NumOfWorkers = inputToOR.WorkerList.Count;
-            NumOfSkills = inputToOR.SkillList.Count;
-            NumOfEquipments = inputToOR.EquipmentList.Count;
-            NumOfFunctions = inputToOR.FunctionList.Count;
+            NumOfTasks = taskList.Count;
+            NumOfWorkers = workerList.Count;
+            NumOfSkills = skillList.Count;
+            NumOfEquipments = equipmentList.Count;
+            NumOfFunctions = functionList.Count;
 
-            this.TaskList = inputToOR.TaskList;
-            this.WorkerList = inputToOR.WorkerList;
-            this.EquipmentList = inputToOR.EquipmentList;
-            this.SkillList = inputToOR.SkillList;
-            this.FunctionList = inputToOR.FunctionList;
-            this.Deadline = inputToOR.Deadline;
+            this.TaskList = taskList;
+            this.WorkerList = workerList;
+            this.EquipmentList = equipmentList;
+            this.SkillList = skillList;
+            this.FunctionList = functionList;
         }
 
-        public OutputToORDTO ToOR()
+        public CoverterOutput.ToOR ToOR()
         {
             int[] taskDuration = new int[TaskList.Count];
-            int[][] taskAdjacency = new int[TaskList.Count][]; // Boolean bin matrix
-            int[][] taskSkillWithLevel = new int[TaskList.Count][]; // Matrix of skill level
-            int[][] taskFunction = new int[TaskList.Count][]; // Boolean bin matrix
-            int[][] taskFunctionWithTime = new int[TaskList.Count][];
+            int[,] taskAdjacency = new int[TaskList.Count, TaskList.Count]; // Boolean bin matrix
+            int[,] taskSkillWithLevel = new int[TaskList.Count, SkillList.Count]; // Matrix of skill level
+            int[,] taskFunction = new int[TaskList.Count, FunctionList.Count]; // Boolean bin matrix
+            int[,] taskFunctionWithTime = new int[TaskList.Count, FunctionList.Count];
+            //TODO: Task Similarity
 
-            int[][] workerSkillWithLevel = new int[WorkerList.Count][]; // Matrix of skill level
-            double[][] workerEffort = new double[WorkerList.Count][];
+            int[,] workerSkillWithLevel = new int[WorkerList.Count, SkillList.Count]; // Matrix of skill level
+            // TODO: workerEffort
+
             int[] workerSalary = new int[WorkerList.Count];
-            int[][] equipmentFunction = new int[EquipmentList.Count][];
+            int[,] equipmentFunction = new int[EquipmentList.Count, FunctionList.Count];
             int[] equipmentCost = new int[EquipmentList.Count];
             for (int i = 0; i < TaskList.Count; i++)
             {
-                taskAdjacency[i] = new int[TaskList.Count];
                 taskDuration[i] = (int)TaskList[i].Duration;
                 for (int j = 0; j < TaskList.Count; j++)
                 {
-                    taskAdjacency[i][j] = (TaskList[i]
-                        .TaskPrecedenceTasks.Where(e => e.TaskId == TaskList[j].Id)
-                        .Count() > 0) ? 1 : 0;
+                    taskAdjacency[i, j] = (TaskList[i]
+                        .TaskPrecedenceTasks.Where(e => e.TaskId == TaskList[j].Id).Count() > 0) ? 1 : 0;
                 }
 
-                taskSkillWithLevel[i] = new int[SkillList.Count];
                 for (int j = 0; j < SkillList.Count; j++)
                 {
-                    var skillReq = TaskList[i].TasksSkillsRequireds
-                        .Where(e => e.SkillId == SkillList[j].Id).FirstOrDefault();
-                    taskSkillWithLevel[i][j] = (int)(skillReq == null ? 0 : skillReq.Level);
+                    taskSkillWithLevel[i, j] = (int) TaskList[i].TasksSkillsRequireds
+                        .Where(e => e.SkillId == SkillList[j].Id).FirstOrDefault().Level;
                 }
-
-                taskFunction[i] = new int[FunctionList.Count];
-                taskFunctionWithTime[i] = new int[FunctionList.Count];
                 for (int j = 0; j < FunctionList.Count; j++)
                 {
-                    taskFunction[i][j] = TaskList[i].TaskFunctions
+                    taskFunction[i, j] = TaskList[i].TaskFunctions
                         .Where(tf => tf.FunctionId == FunctionList[j].Id).Count() > 0 ? 1 : 0;
-                    var functionRequired = TaskList[i].TaskFunctions
-                        .Where(tf => tf.FunctionId == FunctionList[j].Id).FirstOrDefault();
-                    taskFunctionWithTime[i][j] =
-                        (int)(functionRequired == null ? 0 : functionRequired.RequireTime);
+                    taskFunctionWithTime[i, j] = (int)TaskList[i].TaskFunctions
+                        .Where(tf => tf.FunctionId == FunctionList[j].Id).FirstOrDefault()?.RequireTime;
                 }
             }
 
             for (int i = 0; i < WorkerList.Count; i++)
             {
-
-                workerSkillWithLevel[i] = new int[SkillList.Count];
                 for (int j = 0; j < SkillList.Count; j++)
                 {
-                    var workForceSkill = WorkerList[i].WorkforceSkills
-                        .Where(e => e.SkillId == SkillList[j].Id).FirstOrDefault();
-                    workerSkillWithLevel[i][j] = (int)(workForceSkill == null ? 0 : workForceSkill.Level);
-                }
-                double[] workingEffort = 
-                    JsonSerializer.Deserialize<double[]>(WorkerList[i].WorkingEffort);
-                workerEffort[i] = new double[Deadline];
-
-                int k = 0;
-                for (int j = 0; j < Deadline; j++)
-                {
-                    workerEffort[i][j] = workingEffort[k++];
-                    // reset k
-                    if (k >= workingEffort.Length)
-                    {
-                        k = 0;
-                    }
+                    workerSkillWithLevel[i, j] = (int)WorkerList[i].WorkforceSkills
+                        .Where(e => e.SkillId == SkillList[j].Id).FirstOrDefault().Level;
                 }
                 workerSalary[i] = (int)WorkerList[i].UnitSalary;
             }
 
             for (int i = 0; i < EquipmentList.Count; i++)
             {
-                equipmentFunction[i] = new int[FunctionList.Count];
                 for (int j = 0; j < FunctionList.Count; j++)
                 {
-                    equipmentFunction[i][j] = EquipmentList[i].EquipmentsFunctions
+                    equipmentFunction[i, j] = EquipmentList[i].EquipmentsFunctions
                         .Where(f => f.FunctionId == FunctionList[j].Id).Count() > 0 ? 1 : 0;
                 }
                 equipmentCost[i] = (int)EquipmentList[i].UnitPrice;
             }
 
-            var taskSimilarityGenerateInput = new TaskSimilarityGenerateInputToORDTO();
-            taskSimilarityGenerateInput.TaskCount = TaskList.Count;
-            taskSimilarityGenerateInput.SkillCount = SkillList.Count;
-            taskSimilarityGenerateInput.FunctionCount = FunctionList.Count;
-            taskSimilarityGenerateInput.TaskSkillWithLevel = taskSkillWithLevel;
-            taskSimilarityGenerateInput.TaskFunctionWithTime = taskFunctionWithTime;
-
-            var output = new OutputToORDTO();
+            var output = new CoverterOutput.ToOR();
             output.Deadline = Deadline;
             output.Budget = Budget;
             output.NumOfTasks = NumOfTasks;
@@ -146,9 +118,6 @@ namespace RcpspAlgorithmLibrary
             output.WorkerSalary = workerSalary;
             output.EquipmentFunction = equipmentFunction;
             output.EquipmentCost = equipmentCost;
-            output.WorkerEffort = workerEffort;
-
-            output.taskSimilarityGenerateInput = taskSimilarityGenerateInput;
 
             return output;
         }
@@ -161,15 +130,13 @@ namespace RcpspAlgorithmLibrary
                 var task = new TaskOutput();
                 task.TaskId = TaskList[i].Id;
                 task.WorkerId = WorkerList[taskWithWorker[i]].Id;
+                // TODO: handle taskWithEquipment
+
                 task.StartDate = StartDate.AddDays(taskStart[i]);
                 task.EndDate = StartDate.AddDays(taskEnd[i]);
                 outPut.task.Add(task);
             }
-            for (int i = 0; i < taskWithEquipment.Length; i++)
-            {
-                outPut.task[i % EquipmentList.Count]
-                    .EquipmentId.Add(EquipmentList[taskWithEquipment[i]].Id);
-            }
+
             return outPut;
         }
     }
