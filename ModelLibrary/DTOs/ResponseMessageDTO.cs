@@ -12,11 +12,11 @@
 
         public ResponseMessageDTO(string message, dynamic data)
         {
-            this.message= message;
+            this.message = message;
             this.data = data;
         }
 
-        public string Message { get { return message; } set {message = value; } }
+        public string Message { get { return message; } set { message = value; } }
         public dynamic? Data { get { return data; } set { data = value; } }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System.Globalization;
-using System.Net;
-
-namespace JiraSchedulingConnectAppService.Middlewares
+﻿namespace JiraSchedulingConnectAppService.Middlewares
 {
     public class AuthenicationMiddleware
     {

@@ -1,6 +1,4 @@
-﻿using ModelLibrary.DBModels;
-
-namespace ModelLibrary.DTOs.AlgorithmController
+﻿namespace ModelLibrary.DTOs.AlgorithmController
 {
     public class OutputToEstimatorDTO
     {
@@ -11,7 +9,7 @@ namespace ModelLibrary.DTOs.AlgorithmController
         public int[] TaskDuration { get; set; }
         public int[][] TaskAdjacency { get; set; }
         public int[][] TaskExper { get; set; }
-        
+
 
     }
 }

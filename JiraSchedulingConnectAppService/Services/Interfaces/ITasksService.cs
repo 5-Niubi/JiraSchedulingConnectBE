@@ -1,8 +1,7 @@
-﻿using System;
-namespace JiraSchedulingConnectAppService.Services.Interfaces
+﻿namespace JiraSchedulingConnectAppService.Services.Interfaces
 {
-	public interface ITasksService
-	{
-	}
+    public interface ITasksService
+    {
+    }
 }
 

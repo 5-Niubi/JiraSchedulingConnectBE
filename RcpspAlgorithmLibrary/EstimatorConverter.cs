@@ -2,13 +2,12 @@
 using AlgorithmServiceServer.DTOs.AlgorithmController;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.AlgorithmController;
-using System.Text.Json;
 
 namespace RcpspAlgorithmLibrary
 {
     public class EstimatorConverter
     {
-     
+
         public int NumOfTasks { get; private set; }
         public int NumOfSkills { get; private set; }
 
@@ -19,7 +18,7 @@ namespace RcpspAlgorithmLibrary
         {
             NumOfTasks = InputToEstimator.TaskList.Count;
             NumOfSkills = InputToEstimator.SkillList.Count;
-         
+
 
             this.TaskList = InputToEstimator.TaskList;
             this.SkillList = InputToEstimator.SkillList;
@@ -31,24 +30,26 @@ namespace RcpspAlgorithmLibrary
             int[] taskDuration = new int[TaskList.Count];
             int[][] taskAdjacency = new int[TaskList.Count][]; // Boolean bin matrix
             int[][] taskSkillWithLevel = new int[TaskList.Count][]; // Matrix of skill level
-     
+
             for (int i = 0; i < TaskList.Count; i++)
             {
-            
+
                 taskAdjacency[i] = new int[TaskList.Count];
                 taskDuration[i] = (int)TaskList[i].Duration;
 
                 for (int j = 0; j < TaskList.Count; j++)
                 {
-                    if (j != i) {
+                    if (j != i)
+                    {
                         taskAdjacency[i][j] = (TaskList[i]
                         .TaskPrecedenceTasks.Where(e => e.PrecedenceId == TaskList[j].Id)
                         .Count() > 0) ? 1 : 0;
                     }
-                    else {
+                    else
+                    {
                         taskAdjacency[i][j] = 0;
                     }
-                    
+
                 }
 
                 taskSkillWithLevel[i] = new int[SkillList.Count];
@@ -59,10 +60,10 @@ namespace RcpspAlgorithmLibrary
                     taskSkillWithLevel[i][j] = (int)(skillReq == null ? 0 : skillReq.Level);
                 }
 
-  
+
             }
 
-         
+
 
             var taskSimilarityGenerateInput = new TaskSimilarityGenerateInputToORDTO();
             taskSimilarityGenerateInput.TaskCount = TaskList.Count;
@@ -70,13 +71,13 @@ namespace RcpspAlgorithmLibrary
             taskSimilarityGenerateInput.TaskSkillWithLevel = taskSkillWithLevel;
 
             var output = new OutputToEstimatorDTO();
-  
+
             output.NumOfTasks = NumOfTasks;
             output.NumOfSkills = NumOfSkills;
             output.TaskDuration = taskDuration;
             output.TaskAdjacency = taskAdjacency;
             output.TaskExper = taskSkillWithLevel;
-            
+
 
             return output;
         }
@@ -122,17 +123,19 @@ namespace RcpspAlgorithmLibrary
 
                 // mapping skill index with skill database
                 List<SkillOutputFromEstimatorDTO> SkillOutputList = new List<SkillOutputFromEstimatorDTO>();
-                for(int  i = 0; i < SkillLevelList.Count; i++) {
+                for (int i = 0; i < SkillLevelList.Count; i++)
+                {
 
                     var skillLevel = SkillLevelList[i];
-                    if (skillLevel > 0) {
+                    if (skillLevel > 0)
+                    {
                         var skillOutput = new SkillOutputFromEstimatorDTO();
                         skillOutput.Id = SkillList[i].Id;
                         skillOutput.Name = SkillList[i].Name;
                         skillOutput.Level = skillLevel;
                         SkillOutputList.Add(skillOutput);
                     }
-                    
+
 
                 }
 

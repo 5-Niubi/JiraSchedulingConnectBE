@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DBModels;
+using ModelLibrary.DTOs.Projects;
 
 namespace ModelLibrary.DTOs
 {

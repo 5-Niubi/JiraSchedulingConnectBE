@@ -1,5 +1,4 @@
-﻿using System;
-using ModelLibrary.DTOs.AlgorithmController;
+﻿using ModelLibrary.DTOs.AlgorithmController;
 
 namespace AlgorithmServiceServer
 {

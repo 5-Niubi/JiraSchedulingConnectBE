@@ -36,7 +36,7 @@ namespace RcpEstimator
 
         }
 
-        private bool isVailableWorkforce(int[] taskUnitTime,int[] workForcefUnitTime)
+        private bool isVailableWorkforce(int[] taskUnitTime, int[] workForcefUnitTime)
         {
             bool isAvailable = true;
             Parallel.ForEach(
@@ -200,7 +200,7 @@ namespace RcpEstimator
                     }
 
                     // Nếu không có workforce nào thì tạo mới
-                    if (bestIndex == -1 & TaskDuration[v] != 0 )
+                    if (bestIndex == -1 & TaskDuration[v] != 0)
                     {
 
                         // Thêm mới row assignedUnitTime vào workForceOfUnitTime cho một workforce mới
@@ -231,7 +231,7 @@ namespace RcpEstimator
 
                 }
 
-                
+
 
             }
 
@@ -253,11 +253,12 @@ namespace RcpEstimator
 
             while (queue.Count > 0)
             {
-                
+
 
                 int v = queue.Dequeue();
                 bool isVisitedAllPredencors = true;
-                if (this.TaskOfStartFinishTime[v] == null) {
+                if (this.TaskOfStartFinishTime[v] == null)
+                {
                     this.TaskOfStartFinishTime[v] = new int[2];
                 }
                 int ES = this.TaskOfStartFinishTime[v][0];
@@ -347,7 +348,7 @@ namespace RcpEstimator
             this.StortedUnitTimeList = unitTimes;
 
 
-          
+
 
             // setup matrix task x unit time
             TaskSortedUnitTime = new int[this.NumOfTasks][];
@@ -366,7 +367,7 @@ namespace RcpEstimator
             }
         }
 
-    
+
 
     }
 }
