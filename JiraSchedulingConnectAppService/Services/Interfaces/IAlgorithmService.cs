@@ -4,6 +4,6 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
 {
     public interface IAlgorithmService
     {
-        public Task<OutputFromORDTO> TestConverter(int projectId);
+        public Task<string> TestConverter(int projectId);
     }
 }

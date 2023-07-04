@@ -23,6 +23,7 @@ namespace ModelLibrary.DBModels
         public virtual DbSet<Function> Functions { get; set; } = null!;
         public virtual DbSet<Milestone> Milestones { get; set; } = null!;
         public virtual DbSet<Project> Projects { get; set; } = null!;
+        public virtual DbSet<ProjectResource> ProjectResources { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Schedule> Schedules { get; set; } = null!;
         public virtual DbSet<Skill> Skills { get; set; } = null!;
@@ -45,19 +46,19 @@ namespace ModelLibrary.DBModels
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            // Filter query common
             modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<TaskResource>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<ProjectResource>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<TaskFunction>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Task>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Skill>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Schedule>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Milestone>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Equipment>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<EquipmentsFunction>().HasQueryFilter(e => e.IsDelete == false);
@@ -335,6 +336,54 @@ namespace ModelLibrary.DBModels
                     .HasColumnName("start_date");
             });
 
+            modelBuilder.Entity<ProjectResource>(entity =>
+            {
+                entity.ToTable("project_resource");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreateDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.DeleteDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("delete_datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.IsDelete)
+                    .HasColumnName("is_delete")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.ProjectId).HasColumnName("project_id");
+
+                entity.Property(e => e.ResourceId).HasColumnName("resource_id");
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("type");
+
+                entity.HasOne(d => d.Project)
+                    .WithMany(p => p.ProjectResources)
+                    .HasForeignKey(d => d.ProjectId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_project_resource_projects");
+
+                entity.HasOne(d => d.Resource)
+                    .WithMany(p => p.ProjectResources)
+                    .HasForeignKey(d => d.ResourceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_project_resource_equipments");
+
+                entity.HasOne(d => d.ResourceNavigation)
+                    .WithMany(p => p.ProjectResources)
+                    .HasForeignKey(d => d.ResourceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_project_resource_workforce");
+            });
+
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.ToTable("roles");
@@ -562,43 +611,29 @@ namespace ModelLibrary.DBModels
 
             modelBuilder.Entity<TaskResource>(entity =>
             {
-                entity.HasKey(e => new { e.TaskId, e.ResourceId, e.Type });
+                entity.HasKey(e => new { e.TaskId, e.ProjectResourceId });
 
                 entity.ToTable("task_resource");
 
                 entity.Property(e => e.TaskId).HasColumnName("task_id");
 
-                entity.Property(e => e.ResourceId).HasColumnName("resource_id");
-
-                entity.Property(e => e.Type)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("type");
+                entity.Property(e => e.ProjectResourceId).HasColumnName("project_resource_id");
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_datetime")
-                    .HasDefaultValueSql("(getdate())");
+                    .HasColumnName("create_datetime");
 
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
-                entity.Property(e => e.IsDelete)
-                    .HasColumnName("is_delete")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
 
-                entity.HasOne(d => d.Resource)
+                entity.HasOne(d => d.ProjectResource)
                     .WithMany(p => p.TaskResources)
-                    .HasForeignKey(d => d.ResourceId)
+                    .HasForeignKey(d => d.ProjectResourceId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_task_resource_equipments");
-
-                entity.HasOne(d => d.ResourceNavigation)
-                    .WithMany(p => p.TaskResources)
-                    .HasForeignKey(d => d.ResourceId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_task_resource_workforce");
+                    .HasConstraintName("FK_task_resource_project_resource");
 
                 entity.HasOne(d => d.Task)
                     .WithMany(p => p.TaskResources)

@@ -28,6 +28,7 @@ namespace JiraSchedulingConnectAppService.Common
         {
             this.cloudId = cloudId.ToLower();
             this.baseUrl = $"https://api.atlassian.com/ex/jira/{cloudId}";
+            //client.BaseAddress = new Uri(baseUrl) ;
             return baseUrl;
         }
 
