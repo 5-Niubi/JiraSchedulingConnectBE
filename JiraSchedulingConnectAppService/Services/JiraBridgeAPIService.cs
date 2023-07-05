@@ -15,7 +15,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         private string cloudId = "";
 
-        public JiraBridgeAPIService(JiraDemoContext db, IHttpContextAccessor httpAccess
+        public JiraBridgeAPIService(JiraDemoContext db, IHttpContextAccessor httpAccess,
             IAuthenticationService authenticationService)
         {
             this.client = new HttpClient();
@@ -87,5 +87,4 @@ namespace JiraSchedulingConnectAppService.Services
             return respone;
         }
     }
-}
 }

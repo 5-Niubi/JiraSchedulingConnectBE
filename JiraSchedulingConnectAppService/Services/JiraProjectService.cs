@@ -1,19 +1,20 @@
 ﻿using JiraSchedulingConnectAppService.Common;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 using ModelLibrary.DBModels;
 
 namespace JiraSchedulingConnectAppService.Services
 {
     public class JiraProjectService
     {
-        private readonly APICommon api;
+        private readonly IJiraBridgeAPIService jiraApi;
 
-        public JiraProjectService(JiraDemoContext db, IConfiguration config)
+        public JiraProjectService(IJiraBridgeAPIService jiraApi)
         {
-            api = new APICommon(db, config);
+            this.jiraApi = jiraApi;
         }
         public async Task<string> GetAllProject(HttpContext context)
         {
-            var response = await api.Get("/rest/api/3/project/search", context);
+            var response = await jiraApi.Get("/rest/api/3/project/search");
             string responseContent = string.Empty;
             if (response.IsSuccessStatusCode)
             {
