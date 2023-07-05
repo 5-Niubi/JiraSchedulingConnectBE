@@ -1,40 +1,42 @@
-using JiraSchedulingConnectAppService.Exceptions;
-using JiraSchedulingConnectAppService.Services;
+﻿using UtilsLibrary.Exceptions;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 using ModelLibrary.DBModels;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
-namespace JiraSchedulingConnectAppService.Common
+namespace JiraSchedulingConnectAppService.Services
 {
-    public class APICommon
+    public class JiraBridgeAPIService : IJiraBridgeAPIService
     {
         private readonly HttpClient client;
-        private readonly AuthenticationService authenticationService;
+        private readonly IAuthenticationService authenticationService;
         private readonly JiraDemoContext db;
+        private readonly HttpContext http;
 
         private string cloudId = "";
-        private string baseUrl = "";
 
-
-        public APICommon(JiraDemoContext db, IConfiguration config)
+        public JiraBridgeAPIService(JiraDemoContext db, IHttpContextAccessor httpAccess
+            IAuthenticationService authenticationService)
         {
             this.client = new HttpClient();
-            this.authenticationService = new AuthenticationService(db, config);
+            this.authenticationService = authenticationService;
             this.db = db;
+            this.http = httpAccess.HttpContext;
 
+            var jwt = new JWTManagerService(http);
+            cloudId = jwt.GetCurrentCloudId();
+            SetBaseURL();
         }
 
-        private string SetBaseURL(string? cloudId)
+        private void SetBaseURL()
         {
             this.cloudId = cloudId.ToLower();
-            this.baseUrl = $"https://api.atlassian.com/ex/jira/{cloudId}";
-            //client.BaseAddress = new Uri(baseUrl) ;
-            return baseUrl;
+            string baseUrl = $"https://api.atlassian.com/ex/jira/{cloudId}";
+            client.BaseAddress = new Uri(baseUrl);
         }
 
         private async System.Threading.Tasks.Task GetNewAccessTokenFromRefreshToken(string? cloudId)
         {
-
             var tokenFromDB = db.AtlassianTokens.FirstOrDefault(e => e.CloudId == cloudId);
             if (tokenFromDB == null)
             {
@@ -55,46 +57,35 @@ namespace JiraSchedulingConnectAppService.Common
             await db.SaveChangesAsync();
         }
 
-        public async Task<HttpResponseMessage> Get(string url, HttpContext context)
+        async public Task<HttpResponseMessage> Get(string url)
         {
-            var jwt = new JWTManagerService(context);
-            string? cloudId = jwt.GetCurrentCloudId();
             await GetNewAccessTokenFromRefreshToken(cloudId);
-            SetBaseURL(cloudId);
-            var respone = await client.GetAsync(baseUrl + url);
+            var respone = await client.GetAsync(url);
             return respone;
         }
 
-        public async Task<HttpResponseMessage> Post(string url, dynamic contentObject, HttpContext context)
+        async public Task<HttpResponseMessage> Post(string url, dynamic contentObject)
         {
-            var jwt = new JWTManagerService(context);
-            string? cloudId = jwt.GetCurrentCloudId();
             await GetNewAccessTokenFromRefreshToken(cloudId);
-            SetBaseURL(cloudId);
             var content = new StringContent(JsonSerializer.Serialize(contentObject));
-            var respone = await client.PostAsync(baseUrl + url, content);
+            var respone = await client.PostAsync(url, content);
             return respone;
         }
 
-        public async Task<HttpResponseMessage> Put(string url, dynamic contentObject, HttpContext context)
+        async public Task<HttpResponseMessage> Put(string url, dynamic contentObject)
         {
-            var jwt = new JWTManagerService(context);
-            string? cloudId = jwt.GetCurrentCloudId();
             await GetNewAccessTokenFromRefreshToken(cloudId);
-            SetBaseURL(cloudId);
             var content = new StringContent(JsonSerializer.Serialize(contentObject));
-            var respone = await client.PutAsync(baseUrl + url, content);
+            var respone = await client.PutAsync(url, content);
             return respone;
         }
 
-        public async Task<HttpResponseMessage> Delete(string url, HttpContext context)
+        async public Task<HttpResponseMessage> Delete(string url)
         {
-            var jwt = new JWTManagerService(context);
-            string? cloudId = jwt.GetCurrentCloudId();
             await GetNewAccessTokenFromRefreshToken(cloudId);
-            SetBaseURL(cloudId);
-            var respone = await client.DeleteAsync(baseUrl + url);
+            var respone = await client.DeleteAsync(url);
             return respone;
         }
     }
+}
 }

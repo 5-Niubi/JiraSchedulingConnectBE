@@ -48,6 +48,8 @@ builder.Services.AddTransient<IProjectServices, ProjectsService>();
 builder.Services.AddTransient<ISkillsService, SkillsService>();
 builder.Services.AddTransient<IAlgorithmService, AlgorithmService>();
 builder.Services.AddTransient<IWorkforcesService, WorkforcesService>();
+builder.Services.AddTransient<IJiraBridgeAPIService, JiraBridgeAPIService>();
+builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 
 
 var app = builder.Build();
