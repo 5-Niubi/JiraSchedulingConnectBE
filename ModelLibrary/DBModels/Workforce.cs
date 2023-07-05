@@ -7,7 +7,7 @@ namespace ModelLibrary.DBModels
     {
         public Workforce()
         {
-            ProjectResources = new HashSet<ProjectResource>();
+            ParameterResources = new HashSet<ParameterResource>();
             WorkforceSkills = new HashSet<WorkforceSkill>();
         }
 
@@ -27,7 +27,7 @@ namespace ModelLibrary.DBModels
         public DateTime? CreateDatetime { get; set; }
         public DateTime? DeleteDatetime { get; set; }
 
-        public virtual ICollection<ProjectResource> ProjectResources { get; set; }
+        public virtual ICollection<ParameterResource> ParameterResources { get; set; }
         public virtual ICollection<WorkforceSkill> WorkforceSkills { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Authentication;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Text.Json;
 
 namespace JiraSchedulingConnectAppService.Services
 {
-    public class AuthenticationService
+    public class AuthenticationService : IAuthenticationService
     {
         private readonly HttpClient client;
         private readonly JiraDemoContext db;
@@ -25,7 +26,6 @@ namespace JiraSchedulingConnectAppService.Services
             db.Database.BeginTransaction();
             try
             {
-
                 string stateStr = Encoding.UTF8.GetString(Convert.FromBase64String(state));
                 var stateContextObject = JsonSerializer.Deserialize<StateContextObjectCallback>(stateStr);
 
@@ -89,7 +89,7 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        async public Task<RepsoneAccessToken?> InitialAcess(string code)
+        async private Task<RepsoneAccessToken?> InitialAcess(string code)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.atlassian.com/oauth/token");
             var domain = config.GetValue<string>("Environment:SelfDomain");
@@ -137,7 +137,7 @@ namespace JiraSchedulingConnectAppService.Services
             return reponseAccessToken;
         }
 
-        async public Task<AccessiableResourceResponseDTO[]?> GetUserAccessiableResource(string accessToken)
+        async private Task<AccessiableResourceResponseDTO[]?> GetUserAccessiableResource(string accessToken)
         {
 
             var request = new HttpRequestMessage(HttpMethod.Get, "https://api.atlassian.com/oauth/token/accessible-resources");
