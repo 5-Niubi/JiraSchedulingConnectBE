@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
+using UtilsLibrary.Exceptions;
 
 namespace AlgorithmServiceServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
     public class AlgorithmController : ControllerBase
@@ -15,6 +16,13 @@ namespace AlgorithmServiceServer.Controllers
         {
             this.accessData = accessData;
         }
+
+        [HttpGet]
+        async public Task<IActionResult> Index()
+        {
+            return NotFound();
+        }
+
         [HttpGet]
         async public Task<IActionResult> GetTestConverter(int projectId)
         {
@@ -22,6 +30,11 @@ namespace AlgorithmServiceServer.Controllers
             {
                 return Ok(await accessData.GetDataToCompute(projectId));
 
+            }
+            catch (NotFoundException ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return NotFound(response);
             }
             catch (Exception ex)
             {

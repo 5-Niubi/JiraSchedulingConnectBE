@@ -21,7 +21,7 @@ namespace JiraSchedulingConnectAppService.Services
         public async Task<string> TestConverter(int projectId)
         {
 
-            var response = await apiMicro.Get($"/api/Algorithm?projectId={projectId}");
+            var response = await apiMicro.Get($"/api/Algorithm/GetTestConverter?projectId={projectId}");
             dynamic responseContent;
             if (response.IsSuccessStatusCode)
             {

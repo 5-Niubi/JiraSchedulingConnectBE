@@ -5,6 +5,7 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.AlgorithmController;
 using RcpspAlgorithmLibrary;
 using UtilsLibrary;
+using UtilsLibrary.Exceptions;
 
 namespace AlgorithmServiceServer.Services
 {
@@ -24,10 +25,14 @@ namespace AlgorithmServiceServer.Services
             var inputTo = new InputToORDTO();
 
             var projectFromDB = await db.Projects
-                .Where(p => p.CloudId == cloudId)
+                .Where(p => p.CloudId == cloudId && p.Id == projectId)
                 .Include(p => p.Tasks)
+                .ThenInclude(t => t.TaskPrecedenceTasks)
                 .FirstOrDefaultAsync();
-
+            if(projectFromDB == null)
+            {
+                throw new NotFoundException($"Can not find project with id: {projectId}");
+            }
             var taskFromDB = db.Tasks.Where(t => t.ProjectId == projectId)
                 .Include(t => t.TasksSkillsRequireds).ToList();
             var workerFromDB = db.Workforces.Where(w => w.CloudId == cloudId)
