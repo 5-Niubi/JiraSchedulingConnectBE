@@ -12,15 +12,15 @@
         public int NumOfFunctions { get; set; }
 
         public int[] TaskDuration { get; set; }
-        public int[][] TaskAdjacency { get; set; }
-        public int[][] TaskExper { get; set; }
-        public int[][] TaskFunction { get; set; }
-        public int[][] TaskFunctionTime { get; set; }
-        public int[][] WorkerExper { get; set; }
+        public int[,] TaskAdjacency { get; set; }
+        public int[,] TaskExper { get; set; }
+        public int[,] TaskFunction { get; set; }
+        public int[,] TaskFunctionTime { get; set; }
+        public int[,] WorkerExper { get; set; }
         public int[] WorkerSalary { get; set; }
-        public int[][] EquipmentFunction { get; set; }
+        public int[,] EquipmentFunction { get; set; }
         public int[] EquipmentCost { get; set; }
-        public double[][] WorkerEffort { get; set; }
+        public double[,] WorkerEffort { get; set; }
 
         //public List<ModelLibrary.DBModels.Task> TaskList { get; set; }
         //public List<Workforce> WorkerList { get; set; }

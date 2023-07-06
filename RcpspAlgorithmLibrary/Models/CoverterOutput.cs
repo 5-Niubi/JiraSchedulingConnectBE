@@ -2,7 +2,6 @@
 {
     public class CoverterOutput
     {
-
         public class ToOR
         {
             public int Deadline { get; set; }
@@ -37,7 +36,6 @@
                 public List<int> taskStartTime = new List<int>();
                 public List<int> taskEndTime = new List<int>();
             }
-
         }
     }
 }
