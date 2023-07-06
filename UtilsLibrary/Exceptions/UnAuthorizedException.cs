@@ -1,4 +1,4 @@
-﻿namespace JiraSchedulingConnectAppService.Exceptions
+﻿namespace UtilsLibrary.Exceptions
 {
     public class UnAuthorizedException : Exception
     {

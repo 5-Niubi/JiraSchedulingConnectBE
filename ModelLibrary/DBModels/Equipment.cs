@@ -8,7 +8,7 @@ namespace ModelLibrary.DBModels
         public Equipment()
         {
             EquipmentsFunctions = new HashSet<EquipmentsFunction>();
-            ProjectResources = new HashSet<ProjectResource>();
+            ParameterResources = new HashSet<ParameterResource>();
         }
 
         public int Id { get; set; }
@@ -22,6 +22,6 @@ namespace ModelLibrary.DBModels
         public DateTime? DeleteDatetime { get; set; }
 
         public virtual ICollection<EquipmentsFunction> EquipmentsFunctions { get; set; }
-        public virtual ICollection<ProjectResource> ProjectResources { get; set; }
+        public virtual ICollection<ParameterResource> ParameterResources { get; set; }
     }
 }
