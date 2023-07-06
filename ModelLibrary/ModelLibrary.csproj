@@ -19,4 +19,10 @@
     <ProjectReference Include="..\UtilsLibrary\UtilsLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="DTOs\Skills\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DTOs\Skills\" />
+  </ItemGroup>
 </Project>

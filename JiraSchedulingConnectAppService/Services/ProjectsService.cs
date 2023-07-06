@@ -31,6 +31,17 @@ namespace JiraSchedulingConnectAppService.Services
 
                 var project = mapper.Map<Project>(projectRequest);
                 project.CloudId = cloudId;
+
+                // Check Name project's exited
+                // if not exited -> insert
+                // else throw error
+                var existingProject = await db.Projects.FirstOrDefaultAsync(p => p.Name == project.Name && p.CloudId == cloudId);
+
+                if (existingProject != null)
+                {
+                    throw new Exception("Project name already exists."); // Or handle the situation accordingly
+                }
+
                 var projectCreatedEntity = await db.Projects.AddAsync(project);
                 await db.SaveChangesAsync();
                 var projectCreatedDTO = mapper.Map<ProjectDetailDTO>(projectCreatedEntity.Entity);
@@ -41,6 +52,7 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new Exception(ex.Message, ex);
             }
         }
+
 
         async public Task<List<ProjectListHomePageDTO>> GetAllProjects(string? projectName)
         {
