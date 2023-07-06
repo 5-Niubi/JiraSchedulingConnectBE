@@ -2,7 +2,8 @@
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using ModelLibrary.DBModels;
 using System.Net.Http.Headers;
-using System.Text.Json;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -25,14 +26,15 @@ namespace JiraSchedulingConnectAppService.Services
 
             var jwt = new JWTManagerService(http);
             cloudId = jwt.GetCurrentCloudId();
+
             SetBaseURL();
         }
 
         private void SetBaseURL()
         {
             this.cloudId = cloudId.ToLower();
-            string baseUrl = $"https://api.atlassian.com/ex/jira/{cloudId}";
-            client.BaseAddress = new Uri(baseUrl);
+            string baseUrl = $"https://api.atlassian.com/ex/jira/{cloudId}/";
+            client.BaseAddress = new Uri(baseUrl, UriKind.Absolute);
         }
 
         private async System.Threading.Tasks.Task GetNewAccessTokenFromRefreshToken(string? cloudId)
@@ -61,22 +63,32 @@ namespace JiraSchedulingConnectAppService.Services
         {
             await GetNewAccessTokenFromRefreshToken(cloudId);
             var respone = await client.GetAsync(url);
+            respone.EnsureSuccessStatusCode();
             return respone;
         }
 
         async public Task<HttpResponseMessage> Post(string url, dynamic contentObject)
         {
+            SetBaseURL();
+
             await GetNewAccessTokenFromRefreshToken(cloudId);
-            var content = new StringContent(JsonSerializer.Serialize(contentObject));
+            var contentObjJson = JsonConvert.SerializeObject(contentObject);
+            var content = new StringContent(contentObjJson, 
+                Encoding.UTF8, "application/json");
             var respone = await client.PostAsync(url, content);
+            respone.EnsureSuccessStatusCode();
+
             return respone;
         }
 
         async public Task<HttpResponseMessage> Put(string url, dynamic contentObject)
         {
             await GetNewAccessTokenFromRefreshToken(cloudId);
-            var content = new StringContent(JsonSerializer.Serialize(contentObject));
+            var content = new StringContent(JsonConvert.SerializeObject(contentObject), 
+                Encoding.UTF8, "application/json");
             var respone = await client.PutAsync(url, content);
+            respone.EnsureSuccessStatusCode();
+
             return respone;
         }
 
@@ -84,6 +96,8 @@ namespace JiraSchedulingConnectAppService.Services
         {
             await GetNewAccessTokenFromRefreshToken(cloudId);
             var respone = await client.DeleteAsync(url);
+            respone.EnsureSuccessStatusCode();
+
             return respone;
         }
     }

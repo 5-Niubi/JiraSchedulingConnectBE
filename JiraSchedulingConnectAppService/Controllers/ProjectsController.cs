@@ -74,5 +74,7 @@ namespace JiraSchedulingConnectAppService.Controllers
                 return BadRequest(response);
             }
         }
+
+        
     }
 }

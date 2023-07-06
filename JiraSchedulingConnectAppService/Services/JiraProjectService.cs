@@ -1,6 +1,4 @@
-﻿using JiraSchedulingConnectAppService.Common;
-using JiraSchedulingConnectAppService.Services.Interfaces;
-using ModelLibrary.DBModels;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -12,7 +10,7 @@ namespace JiraSchedulingConnectAppService.Services
         {
             this.jiraApi = jiraApi;
         }
-        public async Task<string> GetAllProject(HttpContext context)
+        public async Task<string> GetAllProject()
         {
             var response = await jiraApi.Get("/rest/api/3/project/search");
             string responseContent = string.Empty;
