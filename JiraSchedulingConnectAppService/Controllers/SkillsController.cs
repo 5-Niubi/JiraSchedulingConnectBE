@@ -87,5 +87,41 @@ namespace JiraSchedulingConnectAppService.Controllers
                 return BadRequest(ex);
             }
         }
+
+
+        [HttpPost("{id}")]
+        async public Task<IActionResult> DeleteSkill(int id)
+        {
+            try
+            {
+               
+
+                // validate exited & unique skill name
+                var exitedSkill = await SkillsService.GetSkillId(id);
+
+                if (exitedSkill == null)
+                {
+                    return BadRequest("Cannot found this skill!");
+                }
+
+                // update skill name
+                var response = await SkillsService.DeleteSkill(id);
+
+                if(response == true) {
+                    return Ok("Update success");
+                }
+
+                else {
+                    return BadRequest("Have proble when delete");
+                }
+                
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
     }
 }

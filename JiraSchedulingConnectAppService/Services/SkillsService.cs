@@ -78,12 +78,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
-        //public Task<SkillDTO> DeleteSkill()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-
+    
 
         public async Task<SkillDTO> CreateSkill(SkillsListCreateSkill.Request skillRequest)
         {
@@ -94,18 +89,6 @@ namespace JiraSchedulingConnectAppService.Services
 
                 var skill = mapper.Map<ModelLibrary.DBModels.Skill>(skillRequest);
                 skill.CloudId = cloudId;
-
-
-                // Check Name skill's exited
-                // if not exited -> insert
-                // else throw error
-                var existingSkill = await db.Skills.FirstOrDefaultAsync(s => s.Name == skill.Name && s.CloudId == cloudId);
-
-                if (existingSkill != null)
-                {
-                    throw new Exception("Skill name already exists."); // Or handle the situation accordingly
-                }
-
 
                 var SkillCreatedEntity = await db.Skills.AddAsync(skill);
                 await db.SaveChangesAsync();
@@ -153,6 +136,31 @@ namespace JiraSchedulingConnectAppService.Services
             var skillDTO = mapper.Map<SkillDTO>(result);
 
             return skillDTO;
+        }
+
+        public async Task<bool> DeleteSkill(int Id)
+        {
+            try
+            {
+                var jwt = new JWTManagerService(httpContext);
+                var cloudId = jwt.GetCurrentCloudId();
+
+                var skill = await db.Skills.FirstOrDefaultAsync(s => s.Id == Id && s.CloudId == cloudId);
+                skill.IsDelete = false;
+
+                // Update
+                db.Update(skill);
+                await db.SaveChangesAsync();;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            
+
         }
     }
 }
