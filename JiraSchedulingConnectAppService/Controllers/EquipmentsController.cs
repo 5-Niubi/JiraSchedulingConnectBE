@@ -12,7 +12,7 @@ using ModelLibrary.DTOs;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class EquipmentsController : ControllerBase
     {

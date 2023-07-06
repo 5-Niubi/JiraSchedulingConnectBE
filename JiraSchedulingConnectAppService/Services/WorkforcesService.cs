@@ -22,11 +22,19 @@ namespace JiraSchedulingConnectAppService.Services
         }
         public async Task<List<WorkforceDTO.Response>> GetAllWorkforces()
         {
-            var jwt = new JWTManagerService(httpContext);
-            var cloudId = jwt.GetCurrentCloudId();
-            var query = await db.Workforces.ToListAsync();
-            var queryDTOResponse = mapper.Map<List<WorkforceDTO.Response>>(query);
-            return queryDTOResponse;
+            try
+            {
+                var jwt = new JWTManagerService(httpContext);
+                var cloudId = jwt.GetCurrentCloudId();
+                var query = await db.Workforces.ToListAsync();
+                var queryDTOResponse = mapper.Map<List<WorkforceDTO.Response>>(query);
+                return queryDTOResponse;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception();
+            }
+
         }
 
         public async Task<WorkforceDTO.Response> CreateWorkforce(WorkforceDTO.Request? workforceRequest)
