@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Projects;
+using ModelLibrary.DTOs.Skills;
 
 namespace ModelLibrary.DTOs
 {
@@ -12,6 +13,9 @@ namespace ModelLibrary.DTOs
             CreateMap<ProjectsListCreateProject.Request, Project>();
             CreateMap<Project, ProjectDetailDTO>();
             CreateMap<WorkforceDTO, Workforce>();
+            CreateMap<Skill, SkillDTO>();
+            CreateMap<SkillDTO, Skill>();
+            CreateMap<SkillsListCreateSkill.Request, Skill>();
         }
     }
 }
