@@ -12,12 +12,21 @@ namespace AlgorithmServiceServer
     }
 
 
+    public class WorkforceWithMilestoneDTO
+    {
+
+        public int Id { get; set; }
+        public List<WorkforceOutputFromEsDTO> WorkforceOutputList { get; set; }
+
+    }
+
 
     public class EstimatedResultDTO
 
     {
         public int Id { get; set; }
-        public List<WorkforceOutputFromEsDTO> WorkforceOutputList { get; set; }
+
+        public List<WorkforceWithMilestoneDTO> WorkforceWithMilestoneList { get; set; }
 
 
     }

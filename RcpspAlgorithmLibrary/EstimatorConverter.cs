@@ -2,6 +2,7 @@
 using AlgorithmServiceServer.DTOs.AlgorithmController;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.AlgorithmController;
+using System.Text.Json;
 
 namespace RcpspAlgorithmLibrary
 {
@@ -27,62 +28,65 @@ namespace RcpspAlgorithmLibrary
 
         public OutputToEstimatorDTO ToEs()
         {
-            int[] taskDuration = new int[TaskList.Count];
-            int[][] taskAdjacency = new int[TaskList.Count][]; // Boolean bin matrix
-            int[][] taskSkillWithLevel = new int[TaskList.Count][]; // Matrix of skill level
+            int[] TaskDuration = new int[TaskList.Count];
+            int[][] TaskAdjacency = new int[TaskList.Count][]; // Boolean bin matrix
+            int[][] TaskSkillWithLevel = new int[TaskList.Count][]; // Matrix of skill level
+            int[] TaskMilestone = new int[TaskList.Count];
 
             for (int i = 0; i < TaskList.Count; i++)
             {
 
-                taskAdjacency[i] = new int[TaskList.Count];
-                taskDuration[i] = (int)TaskList[i].Duration;
+                TaskAdjacency[i] = new int[TaskList.Count];
+                TaskDuration[i] = (int) TaskList[i].Duration;
 
                 for (int j = 0; j < TaskList.Count; j++)
                 {
                     if (j != i)
                     {
-                        taskAdjacency[i][j] = (TaskList[i]
+                        TaskAdjacency[i][j] = (TaskList[i]
                         .TaskPrecedenceTasks.Where(e => e.PrecedenceId == TaskList[j].Id)
                         .Count() > 0) ? 1 : 0;
                     }
                     else
                     {
-                        taskAdjacency[i][j] = 0;
+                        TaskAdjacency[i][j] = 0;
                     }
 
                 }
 
-                taskSkillWithLevel[i] = new int[SkillList.Count];
+                TaskSkillWithLevel[i] = new int[SkillList.Count];
                 for (int j = 0; j < SkillList.Count; j++)
                 {
                     var skillReq = TaskList[i].TasksSkillsRequireds
                         .Where(e => e.SkillId == SkillList[j].Id).FirstOrDefault();
-                    taskSkillWithLevel[i][j] = (int)(skillReq == null ? 0 : skillReq.Level);
+                    TaskSkillWithLevel[i][j] = (int)(skillReq == null ? 0 : skillReq.Level);
                 }
+
+                //milestone
+                TaskMilestone[i] = (int) TaskList[i].MilestoneId;
 
 
             }
 
 
 
-            var taskSimilarityGenerateInput = new TaskSimilarityGenerateInputToORDTO();
-            taskSimilarityGenerateInput.TaskCount = TaskList.Count;
-            taskSimilarityGenerateInput.SkillCount = SkillList.Count;
-            taskSimilarityGenerateInput.TaskSkillWithLevel = taskSkillWithLevel;
+          
 
             var output = new OutputToEstimatorDTO();
 
             output.NumOfTasks = NumOfTasks;
             output.NumOfSkills = NumOfSkills;
-            output.TaskDuration = taskDuration;
-            output.TaskAdjacency = taskAdjacency;
-            output.TaskExper = taskSkillWithLevel;
+            output.TaskDuration = TaskDuration;
+            output.TaskAdjacency = TaskAdjacency;
+            output.TaskExper = TaskSkillWithLevel;
+            output.TaskMilestone = TaskMilestone;
+
 
 
             return output;
         }
 
-        public EstimatedResultDTO FromEs(List<int[]> WorkforceWithSkill)
+        public WorkforceWithMilestoneDTO FromEs(List<int[]> WorkforceWithSkill)
         {
 
 
@@ -149,9 +153,9 @@ namespace RcpspAlgorithmLibrary
             }
 
 
-            var estimatedResultDTO = new EstimatedResultDTO();
-            estimatedResultDTO.WorkforceOutputList = WorkforceOutputList;
-            return estimatedResultDTO;
+            var workforceWithMilestoneDTO = new WorkforceWithMilestoneDTO();
+            workforceWithMilestoneDTO.WorkforceOutputList = WorkforceOutputList;
+            return workforceWithMilestoneDTO;
         }
     }
 }
