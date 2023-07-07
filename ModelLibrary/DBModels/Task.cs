@@ -7,7 +7,6 @@
             TaskFunctions = new HashSet<TaskFunction>();
             TaskPrecedencePrecedences = new HashSet<TaskPrecedence>();
             TaskPrecedenceTasks = new HashSet<TaskPrecedence>();
-            TaskResources = new HashSet<TaskResource>();
             TasksSkillsRequireds = new HashSet<TasksSkillsRequired>();
         }
 
@@ -26,7 +25,6 @@
         public virtual ICollection<TaskFunction> TaskFunctions { get; set; }
         public virtual ICollection<TaskPrecedence> TaskPrecedencePrecedences { get; set; }
         public virtual ICollection<TaskPrecedence> TaskPrecedenceTasks { get; set; }
-        public virtual ICollection<TaskResource> TaskResources { get; set; }
         public virtual ICollection<TasksSkillsRequired> TasksSkillsRequireds { get; set; }
     }
 }

@@ -28,7 +28,6 @@ namespace ModelLibrary.DBModels
         public virtual DbSet<Task> Tasks { get; set; } = null!;
         public virtual DbSet<TaskFunction> TaskFunctions { get; set; } = null!;
         public virtual DbSet<TaskPrecedence> TaskPrecedences { get; set; } = null!;
-        public virtual DbSet<TaskResource> TaskResources { get; set; } = null!;
         public virtual DbSet<TasksSkillsRequired> TasksSkillsRequireds { get; set; } = null!;
         public virtual DbSet<Workforce> Workforces { get; set; } = null!;
         public virtual DbSet<WorkforceSkill> WorkforceSkills { get; set; } = null!;
@@ -276,11 +275,9 @@ namespace ModelLibrary.DBModels
 
             modelBuilder.Entity<Parameter>(entity =>
             {
-                entity.HasKey(e => e.Int);
-
                 entity.ToTable("parameter");
 
-                entity.Property(e => e.Int).HasColumnName("int");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Budget).HasColumnName("budget");
 
@@ -475,7 +472,7 @@ namespace ModelLibrary.DBModels
                     .HasColumnName("is_delete")
                     .HasDefaultValueSql("((0))");
 
-                entity.Property(e => e.ProjectId).HasColumnName("project_id");
+                entity.Property(e => e.ParameterId).HasColumnName("parameter_id");
 
                 entity.Property(e => e.Quality).HasColumnName("quality");
 
@@ -489,10 +486,10 @@ namespace ModelLibrary.DBModels
                     .HasColumnType("text")
                     .HasColumnName("tasks");
 
-                entity.HasOne(d => d.Project)
+                entity.HasOne(d => d.Parameter)
                     .WithMany(p => p.Schedules)
-                    .HasForeignKey(d => d.ProjectId)
-                    .HasConstraintName("FK_schedules_projects");
+                    .HasForeignKey(d => d.ParameterId)
+                    .HasConstraintName("FK__schedules__param__607251E5");
             });
 
             modelBuilder.Entity<Skill>(entity =>
@@ -641,39 +638,6 @@ namespace ModelLibrary.DBModels
                     .HasForeignKey(d => d.TaskId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_task_precedences_tasks2");
-            });
-
-            modelBuilder.Entity<TaskResource>(entity =>
-            {
-                entity.HasKey(e => new { e.TaskId, e.ParameterResourceId });
-
-                entity.ToTable("task_resource");
-
-                entity.Property(e => e.TaskId).HasColumnName("task_id");
-
-                entity.Property(e => e.ParameterResourceId).HasColumnName("parameter_resource_id");
-
-                entity.Property(e => e.CreateDatetime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("create_datetime");
-
-                entity.Property(e => e.DeleteDatetime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("delete_datetime");
-
-                entity.Property(e => e.IsDelete).HasColumnName("is_delete");
-
-                entity.HasOne(d => d.ParameterResource)
-                    .WithMany(p => p.TaskResources)
-                    .HasForeignKey(d => d.ParameterResourceId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_task_resource_project_resource");
-
-                entity.HasOne(d => d.Task)
-                    .WithMany(p => p.TaskResources)
-                    .HasForeignKey(d => d.TaskId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_task_resource_tasks");
             });
 
             modelBuilder.Entity<TasksSkillsRequired>(entity =>

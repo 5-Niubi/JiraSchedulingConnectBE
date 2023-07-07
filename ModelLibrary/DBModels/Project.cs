@@ -6,7 +6,6 @@
         {
             Milestones = new HashSet<Milestone>();
             Parameters = new HashSet<Parameter>();
-            Schedules = new HashSet<Schedule>();
             Tasks = new HashSet<Task>();
         }
 
@@ -28,7 +27,6 @@
 
         public virtual ICollection<Milestone> Milestones { get; set; }
         public virtual ICollection<Parameter> Parameters { get; set; }
-        public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<Task> Tasks { get; set; }
     }
 }

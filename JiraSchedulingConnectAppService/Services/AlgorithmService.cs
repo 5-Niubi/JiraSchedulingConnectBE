@@ -10,7 +10,8 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly JiraDemoContext db;
         private readonly HttpContext http;
         private readonly IAPIMicroserviceService apiMicro;
-        public AlgorithmService(JiraDemoContext db, IHttpContextAccessor httpContextAccessor, IAPIMicroserviceService apiMicro)
+        public AlgorithmService(JiraDemoContext db,
+            IHttpContextAccessor httpContextAccessor, IAPIMicroserviceService apiMicro)
         {
             this.client = new HttpClient();
             this.db = db;
@@ -18,10 +19,11 @@ namespace JiraSchedulingConnectAppService.Services
             this.apiMicro = apiMicro;
         }
 
-        public async Task<string> TestConverter(int projectId)
+        public async Task<string> TestConverter(int projectId, int parameterId)
         {
 
-            var response = await apiMicro.Get($"/api/Algorithm/GetTestConverter?projectId={projectId}");
+            var response = await apiMicro
+                .Get($"/api/Algorithm/GetTestConverter?projectId={projectId}&parameterId={parameterId}");
             dynamic responseContent;
             if (response.IsSuccessStatusCode)
             {
