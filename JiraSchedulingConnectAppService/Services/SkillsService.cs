@@ -33,20 +33,25 @@ namespace JiraSchedulingConnectAppService.Services
 
 
 
-        public async Task<ModelLibrary.DBModels.Skill> GetSkillId(int Id)
+        public async Task<SkillDTO> GetSkillId(int Id)
         {
-            ModelLibrary.DBModels.Skill skill = new ModelLibrary.DBModels.Skill();
+            //ModelLibrary.DBModels.Skill skill = new ModelLibrary.DBModels.Skill();
             try
             {
                 var jwt = new JWTManagerService(httpContext);
                 var cloudId = jwt.GetCurrentCloudId();
-                skill = await db.Skills.SingleOrDefaultAsync(s => s.Id == Id && s.CloudId == cloudId && s.IsDelete == false);
+
+                var skillResult = await db.Skills.SingleOrDefaultAsync(s => s.Id == Id && s.CloudId == cloudId && s.IsDelete == false);
+
+                var skillDTO = mapper.Map<SkillDTO>(skillResult);
+                return skillDTO;
+
             }
             catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
-            return skill;
+            
 
       
         }
@@ -167,7 +172,7 @@ namespace JiraSchedulingConnectAppService.Services
                 var cloudId = jwt.GetCurrentCloudId();
 
                 // validate skill
-                var skill = await db.Skills.FirstOrDefaultAsync(s => s.Id == Id && s.CloudId == cloudId);
+                var skill = await db.Skills.FirstOrDefaultAsync(s => s.Id == Id && s.CloudId == cloudId && s.IsDelete == true);
                 if(skill == null) {
                     throw new Exception(NotFoundMessage);
                 }

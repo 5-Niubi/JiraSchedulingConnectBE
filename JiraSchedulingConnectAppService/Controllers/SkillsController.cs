@@ -64,8 +64,10 @@ namespace JiraSchedulingConnectAppService.Controllers
 
                 // update skill name
                 var result = await SkillsService.UpdateNameSkill(id, skill);
+
                 var response = new ResponseMessageDTO(SuccessMessage);
                 response.Data = result;
+
                 return Ok(response);
 
             }
