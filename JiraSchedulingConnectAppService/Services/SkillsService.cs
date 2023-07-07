@@ -58,8 +58,8 @@ namespace JiraSchedulingConnectAppService.Services
                 var jwt = new JWTManagerService(httpContext);
                 var cloudId = jwt.GetCurrentCloudId();
 
-                var skill = await db.Skills.FirstOrDefaultAsync(s => s.Id == Id && s.CloudId == cloudId);
-                var exitedName = await db.Skills.FirstOrDefaultAsync(s => s.Name == skillDTO.Name && s.CloudId == cloudId);
+                var skill = await db.Skills.FirstOrDefaultAsync(s => s.Id == Id && s.CloudId == cloudId && s.IsDelete == false);
+                var exitedName = await db.Skills.FirstOrDefaultAsync(s => s.Name == skillDTO.Name && s.CloudId == cloudId && s.IsDelete == false);
 
                 // Validate exited skill
                 if (skill == null) {
@@ -101,7 +101,7 @@ namespace JiraSchedulingConnectAppService.Services
                 var jwt = new JWTManagerService(httpContext);
                 var cloudId = jwt.GetCurrentCloudId();
 
-                var exitedName = await db.Skills.FirstOrDefaultAsync(s => s.Name == skillRequest.Name && s.CloudId == cloudId);
+                var exitedName = await db.Skills.FirstOrDefaultAsync(s => s.Name == skillRequest.Name && s.CloudId == cloudId && s.IsDelete == false);
 
                 // Validate unique name skill
                 if (exitedName != null)
@@ -153,7 +153,7 @@ namespace JiraSchedulingConnectAppService.Services
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
-            var result = await db.Skills.SingleOrDefaultAsync(s => s.Name.ToLower() == skillName.ToLower() && s.CloudId == cloudId);
+            var result = await db.Skills.SingleOrDefaultAsync(s => s.Name.ToLower() == skillName.ToLower() && s.CloudId == cloudId && s.IsDelete == false);
 
             var skillDTO = mapper.Map<SkillDTO>(result);
 
@@ -169,14 +169,14 @@ namespace JiraSchedulingConnectAppService.Services
                 var cloudId = jwt.GetCurrentCloudId();
 
                 // validate skill
-                var skill = await db.Skills.FirstOrDefaultAsync(s => s.Id == Id && s.CloudId == cloudId && s.IsDelete == true);
+                var skill = await db.Skills.FirstOrDefaultAsync(s => s.Id == Id && s.CloudId == cloudId && s.IsDelete == false);
                 if(skill == null) {
                     throw new Exception(NotFoundMessage);
                 }
 
 
                 // Update status isdelete
-                skill.IsDelete = false;
+                skill.IsDelete = true;
                 db.Update(skill);
                 await db.SaveChangesAsync();
 
