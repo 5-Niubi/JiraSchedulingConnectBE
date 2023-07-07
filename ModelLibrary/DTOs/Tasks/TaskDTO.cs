@@ -1,8 +1,7 @@
-﻿using System;
-namespace ModelLibrary.DTOs.Tasks
+﻿namespace ModelLibrary.DTOs.Tasks
 {
-	public struct TaskDTO
-	{
-	}
+    public struct TaskDTO
+    {
+    }
 }
 

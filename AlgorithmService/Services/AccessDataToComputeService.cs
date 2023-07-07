@@ -20,7 +20,7 @@ namespace AlgorithmServiceServer.Services
             http = httpAccessor.HttpContext;
         }
 
-        public async Task< List<OutputFromORDTO>> GetDataToCompute(int projectId)
+        public async Task<List<OutputFromORDTO>> GetDataToCompute(int projectId)
         {
             var cloudId = new JWTManagerService(http).GetCurrentCloudId();
             var inputTo = new InputToORDTO();
@@ -30,7 +30,7 @@ namespace AlgorithmServiceServer.Services
                 .Include(p => p.Tasks)
                 .ThenInclude(t => t.TaskPrecedenceTasks)
                 .FirstOrDefaultAsync();
-            if(projectFromDB == null)
+            if (projectFromDB == null)
             {
                 throw new NotFoundException($"Can not find project with id: {projectId}");
             }
@@ -64,10 +64,10 @@ namespace AlgorithmServiceServer.Services
             var algorithmOutputRaws = ga.Run();
 
             var algorithmOutputConverted = new List<OutputFromORDTO>();
-            foreach ( var algOutRaw in algorithmOutputRaws)
+            foreach (var algOutRaw in algorithmOutputRaws)
             {
-               var algOutConverted =  converter.FromOR(algOutRaw.Genes,
-                   new int[0], algOutRaw.TaskBegin, algOutRaw.TaskFinish);
+                var algOutConverted = converter.FromOR(algOutRaw.Genes,
+                    new int[0], algOutRaw.TaskBegin, algOutRaw.TaskFinish);
                 algorithmOutputConverted.Add(algOutConverted);
             }
 

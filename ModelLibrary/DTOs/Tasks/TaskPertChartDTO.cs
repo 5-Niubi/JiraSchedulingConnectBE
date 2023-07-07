@@ -1,11 +1,10 @@
-﻿using System;
-namespace ModelLibrary.DTOs.Tasks
+﻿namespace ModelLibrary.DTOs.Tasks
 {
-	public class TaskPertChartDTO
-	{
-		public TaskPertChartDTO()
-		{
-		}
-	}
+    public class TaskPertChartDTO
+    {
+        public TaskPertChartDTO()
+        {
+        }
+    }
 }
 

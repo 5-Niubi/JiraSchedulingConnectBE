@@ -1,6 +1,12 @@
-﻿namespace RcpspAlgorithmLibrary.GA
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace RcpspAlgorithmLibrary.GA
+
 {
-    internal class Population
+    public class Population
     {
         private Chromosome[] chromosomes = new Chromosome[GAHelper.NUM_OF_POPULATION];
 
@@ -13,7 +19,7 @@
         {
             for (int c = 0; c < GAHelper.NUM_OF_POPULATION; ++c)
             {
-                chromosomes[c] = new Chromosome(data.NumOfTasks).InitializeChromosome(data);
+                chromosomes[c] = new Chromosome(data).InitializeChromosome(data);
             }
             SortChromosomesByFitness(data);
             return this;

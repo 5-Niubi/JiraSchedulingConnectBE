@@ -1,11 +1,10 @@
-﻿using System;
-namespace JiraSchedulingConnectAppService.Controllers
+﻿namespace JiraSchedulingConnectAppService.Controllers
 {
-	public class TasksController
-	{
-		public TasksController()
-		{
-		}
-	}
+    public class TasksController
+    {
+        public TasksController()
+        {
+        }
+    }
 }
 

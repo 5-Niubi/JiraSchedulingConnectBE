@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
-using JiraSchedulingConnectAppService.Models;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using ModelLibrary.DBModels;
-using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Skills;
 
 namespace JiraSchedulingConnectAppService.Services
@@ -40,7 +36,7 @@ namespace JiraSchedulingConnectAppService.Services
             }
             return skill;
 
-      
+
         }
 
 
@@ -58,19 +54,20 @@ namespace JiraSchedulingConnectAppService.Services
 
                 skill.Name = skillDTO.Name;
 
-                if (skill.IsDelete == true) {
+                if (skill.IsDelete == true)
+                {
                     skill.IsDelete = false;
                 }
 
                 // Update
                 db.Update(skill);
                 var response = await db.SaveChangesAsync();
-                
+
                 return skillDTO;
 
 
             }
-            
+
             catch (Exception ex)
             {
                 throw new Exception(ex.Message, ex);
@@ -78,12 +75,13 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
-    
+
 
         public async Task<SkillDTO> CreateSkill(SkillsListCreateSkill.Request skillRequest)
         {
 
-            try {
+            try
+            {
                 var jwt = new JWTManagerService(httpContext);
                 var cloudId = jwt.GetCurrentCloudId();
 
@@ -96,7 +94,8 @@ namespace JiraSchedulingConnectAppService.Services
                 var skillDeatailDTO = mapper.Map<SkillDTO>(SkillCreatedEntity.Entity);
                 return skillDeatailDTO;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 throw new Exception(ex.Message, ex);
             }
 
@@ -150,7 +149,7 @@ namespace JiraSchedulingConnectAppService.Services
 
                 // Update
                 db.Update(skill);
-                await db.SaveChangesAsync();;
+                await db.SaveChangesAsync(); ;
 
                 return true;
             }
@@ -159,7 +158,7 @@ namespace JiraSchedulingConnectAppService.Services
                 return false;
             }
 
-            
+
 
         }
     }
