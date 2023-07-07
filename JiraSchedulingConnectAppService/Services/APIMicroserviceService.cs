@@ -20,7 +20,7 @@ namespace JiraSchedulingConnectAppService.Services
             client = new HttpClient();
 
             var bearer = http.Request.Headers["Authorization"];
-            bearer = bearer.IsNullOrEmpty()? "Bearer " :  bearer;
+            bearer = bearer.IsNullOrEmpty() ? "Bearer " : bearer;
             Regex pattern = new Regex(@"Bearer (?<token>[\w.]+)");
             Match match = pattern.Match(bearer);
             string token = match.Groups["token"].Value;
@@ -31,7 +31,6 @@ namespace JiraSchedulingConnectAppService.Services
             baseUrl = baseUrlList[0];
             client.BaseAddress = new Uri(baseUrl);
         }
-
 
         async Task<HttpResponseMessage> IAPIMicroserviceService.Get(string url)
         {

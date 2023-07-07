@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ModelLibrary.DBModels
+﻿namespace ModelLibrary.DBModels
 {
     public partial class Project
     {
         public Project()
         {
             Milestones = new HashSet<Milestone>();
-            ProjectResources = new HashSet<ProjectResource>();
+            Parameters = new HashSet<Parameter>();
             Schedules = new HashSet<Schedule>();
             Tasks = new HashSet<Task>();
         }
@@ -30,7 +27,7 @@ namespace ModelLibrary.DBModels
         public DateTime? DeleteDatetime { get; set; }
 
         public virtual ICollection<Milestone> Milestones { get; set; }
-        public virtual ICollection<ProjectResource> ProjectResources { get; set; }
+        public virtual ICollection<Parameter> Parameters { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<Task> Tasks { get; set; }
     }

@@ -1,17 +1,9 @@
-﻿using System;
-using System.Numerics;
-using AlgorithmServiceServer.DTOs.AlgorithmController;
+﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
 using AlgorithmServiceServer.Services.Interfaces;
-
-using AlgorithmServiceServer.DTOs.AlgorithmController;
-using AlgorithmServiceServer.Services.Interfaces;
-using ModelLibrary.DBModels;
-using ModelLibrary.DTOs.AlgorithmController;
 using Microsoft.EntityFrameworkCore;
-using RcpspAlgorithmLibrary;
-using UtilsLibrary;
+using ModelLibrary.DBModels;
 using RcpEstimator;
-using System.Drawing;
+using RcpspAlgorithmLibrary;
 
 namespace AlgorithmServiceServer.Services
 {
@@ -27,7 +19,7 @@ namespace AlgorithmServiceServer.Services
             http = httpAccessor.HttpContext;
         }
 
-       
+
 
         public void PrepareDataFromDB(int projectId)
         {
@@ -39,7 +31,7 @@ namespace AlgorithmServiceServer.Services
 
             int taskSize = taskFromDB.Count();
 
-            
+
 
             foreach (var task in taskFromDB)
             {
@@ -80,7 +72,7 @@ namespace AlgorithmServiceServer.Services
             var converter = new EstimatorConverter(inputToEstimator);
             var outputToEstimator = converter.ToEs();
 
-            
+
             var TaskDuration = outputToEstimator.TaskDuration;
             var TaskExper = outputToEstimator.TaskExper;
             var TaskAdjacency = outputToEstimator.TaskAdjacency;
@@ -95,9 +87,10 @@ namespace AlgorithmServiceServer.Services
 
 
             // Post processing
-            var estimatedResultDTO  = new EstimatedResultDTO();
+            var estimatedResultDTO = new EstimatedResultDTO();
             List<WorkforceWithMilestoneDTO> WorkforceWithMilestoneList = new List<WorkforceWithMilestoneDTO>();
-            foreach(int milestoneId in Results.Keys) {
+            foreach (int milestoneId in Results.Keys)
+            {
                 List<int[]> result = Results[milestoneId];
                 WorkforceWithMilestoneList.Add(converter.FromEs(result));
             }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
+using ModelLibrary.DTOs.Skills;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -10,18 +11,18 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Authorize]
     public class SkillsController : ControllerBase
     {
-        private readonly ISkillsService skillsService;
+        private readonly ISkillsService SkillsService;
         public SkillsController(ISkillsService skillsService)
         {
-            this.skillsService = skillsService;
+            this.SkillsService = skillsService;
         }
 
         [HttpGet]
-        async public Task<IActionResult> GetSkills()
+        async public Task<IActionResult> GetSkills(string? Name)
         {
             try
             {
-                var response = skillsService.GetSkills();
+                var response = await SkillsService.GetSkills(Name);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -30,5 +31,92 @@ namespace JiraSchedulingConnectAppService.Controllers
                 return BadRequest(response);
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateSkill([FromBody] SkillsListCreateSkill.Request skillRequest)
+        {
+            try
+            {
+                return Ok(await SkillsService.CreateSkill(skillRequest));
+            }
+
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+
+        [HttpPut("{id}")]
+        async public Task<IActionResult> UpdateNameSkill(int id, [FromBody] SkillDTO skill)
+        {
+            try
+            {
+                // validate input
+                if (skill.Name == string.Empty)
+                {
+                    return BadRequest("Name not empty");
+                }
+                // validate exited & unique skill name
+                var exitedSkill = await SkillsService.GetSkillId(id);
+                var exitedName = await SkillsService.GetSkillName(skill.Name);
+
+                if (exitedSkill == null)
+                {
+                    return BadRequest("Cannot found this skill!");
+                }
+
+                else if (exitedName != null)
+                {
+                    return BadRequest("Skill Name must unique!");
+                }
+                // update skill name
+                var response = await SkillsService.UpdateNameSkill(id, skill);
+
+                return Ok("Update success");
+
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+
+        [HttpPost("{id}")]
+        async public Task<IActionResult> DeleteSkill(int id)
+        {
+            try
+            {
+                // validate exited & unique skill name
+                var exitedSkill = await SkillsService.GetSkillId(id);
+
+                if (exitedSkill == null)
+                {
+                    return BadRequest("Cannot found this skill!");
+                }
+
+                // update skill name
+                var response = await SkillsService.DeleteSkill(id);
+
+                if (response == true)
+                {
+                    return Ok("Update success");
+                }
+
+                else
+                {
+                    return BadRequest("Have proble when delete");
+                }
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
     }
 }
