@@ -59,7 +59,6 @@ namespace JiraSchedulingConnectAppService.Controllers
             try
             {
 
-
                 // update skill name
                 var result = await SkillsService.UpdateNameSkill(id, skill);
 

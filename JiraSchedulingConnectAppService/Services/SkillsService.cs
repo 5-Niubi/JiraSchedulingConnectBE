@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using ModelLibrary.DBModels;
-using ModelLibrary.DTOs;
-using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Skills;
 
 
@@ -50,8 +47,6 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new Exception(e.Message);
             }
             
-
-
         }
 
 
@@ -82,6 +77,7 @@ namespace JiraSchedulingConnectAppService.Services
                 // Update
                 db.Update(skill);
                 await db.SaveChangesAsync();
+
 
 
                 return skillDTO;
@@ -183,6 +179,7 @@ namespace JiraSchedulingConnectAppService.Services
                 skill.IsDelete = false;
                 db.Update(skill);
                 await db.SaveChangesAsync();
+
 
                 return true;
 
