@@ -1,38 +1,46 @@
-﻿namespace RcpspAlgorithmLibrary.GA
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace RcpspAlgorithmLibrary.GA
+
 {
-    internal class Chromosome
+    public class Chromosome
     {
-        private bool isFitnessChanged = true;
-        private double fitness = 0;
-        
-
-        // -- Su dung phan nay ---
-        private int[] taskBegin = new int[505];
-        private int[] taskFinish = new int[505];
+        private bool isFitnessChanged;
         private int[] genes;
+        private double fitness;
+        private int totalSalary;
+        private int totalExper;
+        private int timeFinish;
+        private int[] taskBegin;
+        private int[] taskFinish;
+        private int[] workerStart;
+        private int[] workerFinish;
 
-        private int totalSalary = 0; // Tong chi phi toi uu
-        private int totalExper = 0; // Tong chat luong du an
-        private int timeFinish = 0;
-        // -----
-
-
-        private int[] workerStart = new int[505];
-        private int[] workerFinish = new int[505];
-
-        public Chromosome(int len)
+        public Chromosome(Data data)
         {
-            genes = new int[len];
+            genes = new int[data.NumOfTasks];
+            taskBegin = new int[data.NumOfTasks];
+            taskFinish = new int[data.NumOfTasks];
+            workerStart = new int[data.NumOfWorkers];
+            workerFinish = new int[data.NumOfWorkers];
+            fitness = 0;
+            totalSalary = 0;
+            totalExper = 0;
+            timeFinish = 0;
+            isFitnessChanged = true;
         }
 
         public Chromosome InitializeChromosome(Data data)
         {
             Random rand = new Random();
-            for (int i = 0; i < data.NumOfTasks; ++i)
+            for (int t = 0; t < data.NumOfTasks; ++t)
             {
-                int x = data.SuitableWorkers.ElementAt(i).Count;
-                int c = (int)(rand.NextDouble() * x);
-                genes[i] = data.SuitableWorkers.ElementAt(i).ElementAt(c);
+                int taskWorkers = data.SuitableWorkers.ElementAt(t).Count;
+                int workerIdx = (int)(rand.NextDouble() * taskWorkers);
+                genes[t] = data.SuitableWorkers.ElementAt(t).ElementAt(workerIdx);
             }
             return this;
         }
@@ -52,95 +60,96 @@
         public void RecalculateFitness(Data data)
         {
             List<int> noPredecessors = new List<int>();
-            int[] lastMan = new int[505];
-            int[] timeTask = new int[505];
-            int[] totalWorkerEffort = new int[505];
-            int[] workerTask = new int[505];
-            for (int w = 1; w <= data.NumOfWorkers; ++w)
+            int[] lastMan = new int[data.NumOfWorkers];
+            int[] timeTask = new int[data.NumOfTasks];
+            int[] totalWorkerEffort = new int[data.NumOfWorkers];
+            int[] workerTask = new int[data.NumOfTasks];
+            for (int w = 0; w < data.NumOfWorkers; ++w)
             {
                 workerStart[w] = 0;
                 workerFinish[w] = 0;
                 lastMan[w] = 0;
                 totalWorkerEffort[w] = 0;
             }
-            for (int t = 1; t <= data.NumOfTasks; ++t)
+            for (int t = 0; t < data.NumOfTasks; ++t)
             {
                 timeTask[t] = 0;
-                workerTask[t] = genes[t - 1];
+                workerTask[t] = genes[t];
             }
-            int[] DEG = new int[505];
-            for (int t = 1; t <= data.NumOfTasks; ++t)
+            int[] dependencies = new int[data.NumOfTasks];
+            for (int t1 = 0; t1 < data.NumOfTasks; ++t1)
             {
-                for (int j = 1; j <= data.NumOfTasks; ++j)
+                for (int t2 = 0; t2 < data.NumOfTasks; ++t2)
                 {
-                    if (data.TaskAdjacency[t, j] == 1)
+                    if (data.TaskAdjacency[t1, t2] == 1)
                     {
-                        DEG[j]++;
+                        dependencies[t2]++;
                     }
                 }
             }
-            for (int i = 1; i <= data.NumOfTasks; ++i)
+            for (int t = 0; t < data.NumOfTasks; ++t)
             {
-                if (DEG[i] == 0) noPredecessors.Add(i);
+                if (dependencies[t] == 0) noPredecessors.Add(t);
             }
 
             while (noPredecessors.Count > 0)
             {
-                int x = noPredecessors.ElementAt(0);
+                int np = noPredecessors.ElementAt(0);
                 noPredecessors.RemoveAt(0);
-                int y = genes[x - 1];
-                totalExper += data.TaskExperByWorker[x, y];
+                int wt = genes[np];
+                totalExper += data.TaskExperByWorker[np, wt];
                 int start = 0;
-                for (int i = 1; i <= data.NumOfTasks; ++i)
+                for (int t = 0; t < data.NumOfTasks; ++t)
                 {
-                    if (data.TaskAdjacency[i, x] == 1)
+                    if (data.TaskAdjacency[t, np] == 1)
                     {
-                        start = Math.Max(start, timeTask[i]);
+                        start = Math.Max(start, timeTask[t]);
                     }
                 }
-                start = Math.Max(start, lastMan[y]);
+                start = Math.Max(start, lastMan[wt]);
                 if (start == 0) start = 1;
                 int end = start;
-                double cc = data.TaskDuration[x];
-                double maxDec = 0;
-                for (int i = 1; i < data.NumOfTasks; ++i)
+                double actualEffort = data.TaskDuration[np];
+                double similarityAssign = 0;
+                //
+                for (int i = 0; i < data.NumOfTasks; ++i)
                 {
-                    if (workerTask[i] == y)
+                    if (workerTask[i] == wt)
                     {
-                        maxDec = Math.Max(maxDec, data.TaskSimilarity[i, x]);
+                        similarityAssign = Math.Max(similarityAssign, data.TaskSimilarity[i, np]);
                     }
                 }
-                if (maxDec > 0.75) cc *= 0.7;
-                else if (maxDec > 0.5) cc *= 0.8;
-                else if (maxDec > 0.25) cc *= 0.9;
+                if (similarityAssign > 0.75) actualEffort *= 0.7;
+                else if (similarityAssign > 0.5) actualEffort *= 0.8;
+                else if (similarityAssign > 0.25) actualEffort *= 0.9;
                 while (end <= data.Deadline)
                 {
-                    cc -= (data.WorkerEffort[y, end]);
+                    actualEffort -= (data.WorkerEffort[wt, end]);
                     end++;
-                    if (cc <= 0) break;
+                    if (actualEffort <= 0) break;
                 }
-                if (cc > 0)
+                if (actualEffort > 0)
                 {
-                    end += (int)(cc + 0.9);
+                    end += (int)(actualEffort + 0.9);
                 }
-                lastMan[y] = end;
-                timeTask[x] = end;
-                if (workerStart[y] == 0) workerStart[y] = start;
-                workerFinish[y] = Math.Max(workerFinish[y], end);
-                totalWorkerEffort[y] += (end - start);
-                for (int i = 1; i <= data.NumOfTasks; ++i)
+                lastMan[wt] = end;
+                timeTask[np] = end;
+                if (workerStart[wt] == 0) workerStart[wt] = start;
+                workerFinish[wt] = Math.Max(workerFinish[wt], end);
+                totalWorkerEffort[wt] += (end - start);
+                for (int i = 0; i < data.NumOfTasks; ++i)
                 {
-                    if (data.TaskAdjacency[x, i] == 1)
+                    if (data.TaskAdjacency[np, i] == 1)
                     {
-                        DEG[i]--;
-                        if (DEG[i] == 0) noPredecessors.Add(i);
+                        dependencies[i]--;
+                        if (dependencies[i] == 0) noPredecessors.Add(i);
                     }
                 }
-                taskBegin[x] = start;
-                taskFinish[x] = end;
+                taskBegin[np] = start;
+                taskFinish[np] = end;
                 timeFinish = Math.Max(timeFinish, end);
             }
-            for (int w = 1; w <= data.NumOfWorkers; ++w)
+            for (int w = 0; w < data.NumOfWorkers; ++w)
             {
                 totalSalary += data.WorkerSalary[w] * totalWorkerEffort[w];
             }

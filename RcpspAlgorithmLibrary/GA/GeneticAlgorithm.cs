@@ -1,6 +1,7 @@
 ﻿namespace RcpspAlgorithmLibrary.GA
+
 {
-    internal class GeneticAlgorithm
+    public class GeneticAlgorithm
     {
         public Population Evolve(Population population, Data data)
         {
@@ -13,11 +14,11 @@
             {
                 crossoverPopulation.Chromosomes[e] = population.Chromosomes[e];
             }
-            for (int x = GAHelper.NUM_OF_ELITE_CHOMOSOMES; x < population.Chromosomes.Length; ++x)
+            for (int e1 = GAHelper.NUM_OF_ELITE_CHOMOSOMES; e1 < population.Chromosomes.Length; ++e1)
             {
                 Chromosome chromosome1 = SelectTournamentPopulation(population, data).Chromosomes[0];
                 Chromosome chromosome2 = SelectTournamentPopulation(population, data).Chromosomes[0];
-                crossoverPopulation.Chromosomes[x] = CrossoverChromosome(chromosome1, chromosome2, data);
+                crossoverPopulation.Chromosomes[e1] = CrossoverChromosome(chromosome1, chromosome2, data);
             }
             return crossoverPopulation;
         }
@@ -41,7 +42,7 @@
         private Chromosome CrossoverChromosome(Chromosome chromosome1, Chromosome chromosome2, Data data)
         {
             Random rand = new Random();
-            Chromosome crossChromosome = new Chromosome(data.NumOfTasks);
+            Chromosome crossChromosome = new Chromosome(data);
             for (int e = 0; e < chromosome1.Genes.Length; ++e)
             {
                 if (rand.NextDouble() < 0.5) crossChromosome.Genes[e] = chromosome1.Genes[e];
@@ -53,16 +54,16 @@
         private Chromosome MutateChromosome(Chromosome chromosome, Data data)
         {
             Random rand = new Random();
-            Chromosome mutateChromosome = new Chromosome(data.NumOfTasks);
-            for (int x = 0; x < chromosome.Genes.Length; ++x)
+            Chromosome mutateChromosome = new Chromosome(data);
+            for (int wt = 0; wt < chromosome.Genes.Length; ++wt)
             {
                 if (rand.NextDouble() < GAHelper.MUTATION_RATE)
                 {
-                    int z = data.SuitableWorkers.ElementAt(x).Count;
+                    int z = data.SuitableWorkers.ElementAt(wt).Count;
                     int c = (int)(rand.NextDouble() * z);
-                    mutateChromosome.Genes[x] = data.SuitableWorkers.ElementAt(x).ElementAt(c);
+                    mutateChromosome.Genes[wt] = data.SuitableWorkers.ElementAt(wt).ElementAt(c);
                 }
-                else mutateChromosome.Genes[x] = chromosome.Genes[x];
+                else mutateChromosome.Genes[wt] = chromosome.Genes[wt];
             }
             return mutateChromosome;
         }

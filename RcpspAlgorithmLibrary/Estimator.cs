@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 
 namespace RcpEstimator
@@ -169,14 +168,14 @@ namespace RcpEstimator
         }
 
 
-        
+
         private List<int[]> FitByMilestone(int MilestoneId)
         {
 
 
             List<int> SubTaskList = GroupedTaskMilestone[MilestoneId];
 
-            List<int[]> AssignedWorkforceWithUnitTime =  new List<int[]>();
+            List<int[]> AssignedWorkforceWithUnitTime = new List<int[]>();
             List<int[]> AssignedWorkforceOfSkill = new List<int[]>();
             List<List<int>> AssignedWorkforceOfTask = new List<List<int>>();
 
@@ -185,18 +184,21 @@ namespace RcpEstimator
 
 
             // Them vao queue nhung task dau tien trong milestone
-            foreach(int i in SubTaskList)
+            foreach (int i in SubTaskList)
             {
                 bool isStartTask = true;
-                foreach (int j in SubTaskList) {
-                    if (TaskAdjacency[i][j] == 1) {
+                foreach (int j in SubTaskList)
+                {
+                    if (TaskAdjacency[i][j] == 1)
+                    {
                         isStartTask = false;
                         break;
                     }
 
                 }
 
-                if (isStartTask) {
+                if (isStartTask)
+                {
                     queue.Enqueue(i);
                 }
 
@@ -204,9 +206,11 @@ namespace RcpEstimator
 
 
             int count = 0;
-            while (queue.Count > 0) {
+            while (queue.Count > 0)
+            {
                 count += 1;
-                if (count == 12) {
+                if (count == 12)
+                {
                     int f = 1;
                 }
                 int v = queue.Dequeue();
@@ -270,11 +274,12 @@ namespace RcpEstimator
                 // cuối cùng, thực hiện enque các node ở level tiếp theo         
                 for (int j = 0; j < SubTaskList.Count; j++)
                 {
-                    if(j == 10 & v == 15) {
+                    if (j == 10 & v == 15)
+                    {
                         int d = 10;
                     }
                     var taskIndex = SubTaskList[j];
-                    if (this.TaskAdjacency[taskIndex][v] == 1 & queue.Contains(taskIndex) == false )
+                    if (this.TaskAdjacency[taskIndex][v] == 1 & queue.Contains(taskIndex) == false)
                     {
                         if (visited[taskIndex] == false)
                         {
@@ -285,7 +290,7 @@ namespace RcpEstimator
                 }
 
 
-                
+
 
 
             }
@@ -302,9 +307,10 @@ namespace RcpEstimator
 
             Dictionary<int, List<int[]>> AssignedWorkforceByMilestone = new Dictionary<int, List<int[]>>();
 
-            foreach(int milestoneId in this.GroupedTaskMilestone.Keys) {
+            foreach (int milestoneId in this.GroupedTaskMilestone.Keys)
+            {
                 AssignedWorkforceByMilestone[milestoneId] = FitByMilestone(milestoneId);
-                
+
             }
             //List<List<int>> assignedWorkforceOfTask = new List<List<int>>();
             //List<int[]> assignedWorkforceOfSkill = new List<int[]>();
@@ -404,7 +410,7 @@ namespace RcpEstimator
 
             GroupedTaskMilestone = new Dictionary<int, List<int>>();
             var unitTimes = new List<int>();
-            
+
 
             // BFS
             bool[] visited = new bool[NumOfTasks];
@@ -488,16 +494,18 @@ namespace RcpEstimator
                     // Add task into group task by milestone
                     var milestoneId = this.TaskMilestone[v];
 
-                    if (GroupedTaskMilestone.ContainsKey(milestoneId)) {
+                    if (GroupedTaskMilestone.ContainsKey(milestoneId))
+                    {
                         this.GroupedTaskMilestone[milestoneId].Add(v);
                     }
-                    else {
+                    else
+                    {
                         this.GroupedTaskMilestone[milestoneId] = new List<int>() { v };
                     }
-                    
+
                 }
 
-                
+
 
                 // cuối cùng, thực hiện enque các node ở level tiếp theo
                 for (int i = 0; i < this.TaskAdjacency[v].Length; i++)

@@ -2,7 +2,6 @@
 using AlgorithmServiceServer.DTOs.AlgorithmController;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.AlgorithmController;
-using System.Text.Json;
 
 namespace RcpspAlgorithmLibrary
 {
@@ -37,7 +36,7 @@ namespace RcpspAlgorithmLibrary
             {
 
                 TaskAdjacency[i] = new int[TaskList.Count];
-                TaskDuration[i] = (int) TaskList[i].Duration;
+                TaskDuration[i] = (int)TaskList[i].Duration;
 
                 for (int j = 0; j < TaskList.Count; j++)
                 {
@@ -63,14 +62,14 @@ namespace RcpspAlgorithmLibrary
                 }
 
                 //milestone
-                TaskMilestone[i] = (int) TaskList[i].MilestoneId;
+                TaskMilestone[i] = (int)TaskList[i].MilestoneId;
 
 
             }
 
 
 
-          
+
 
             var output = new OutputToEstimatorDTO();
 

@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using JiraSchedulingConnectAppService.Models;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
@@ -53,7 +51,7 @@ namespace JiraSchedulingConnectAppService.Services
             }
             
 
-      
+
         }
 
 
@@ -84,11 +82,12 @@ namespace JiraSchedulingConnectAppService.Services
                 // Update
                 db.Update(skill);
                 await db.SaveChangesAsync();
-                
+
+
                 return skillDTO;
 
             }
-            
+
             catch (Exception ex)
             {
                 throw new Exception(ex.Message, ex);
@@ -96,12 +95,13 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
-    
+
 
         public async Task<SkillDTO> CreateSkill(SkillsListCreateSkill.Request skillRequest)
         {
 
-            try {
+            try
+            {
                 var jwt = new JWTManagerService(httpContext);
                 var cloudId = jwt.GetCurrentCloudId();
 
@@ -122,7 +122,8 @@ namespace JiraSchedulingConnectAppService.Services
                 var skillDeatailDTO = mapper.Map<SkillDTO>(SkillCreatedEntity.Entity);
                 return skillDeatailDTO;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 throw new Exception(ex.Message, ex);
             }
 
@@ -182,6 +183,7 @@ namespace JiraSchedulingConnectAppService.Services
                 skill.IsDelete = false;
                 db.Update(skill);
                 await db.SaveChangesAsync();
+
                 return true;
 
             }
@@ -190,7 +192,7 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new Exception(ex.Message, ex);
             }
 
-            
+
 
         }
     }

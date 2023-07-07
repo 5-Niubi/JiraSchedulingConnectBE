@@ -1,6 +1,6 @@
 ﻿namespace ModelLibrary.DTOs.Skills
 {
-	public class SkillsListCreateSkill
+    public class SkillsListCreateSkill
     {
         public class Request
         {

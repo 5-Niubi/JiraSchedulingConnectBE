@@ -1,10 +1,4 @@
 ﻿using ModelLibrary.DTOs.AlgorithmController;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace RcpspAlgorithmLibrary.GA
 {
@@ -60,9 +54,9 @@ namespace RcpspAlgorithmLibrary.GA
 
         public List<AlgorithmRawOutput> Run()
         {
-  
+
             // Bat dau xu ly
-            manAbleDo = GAHelper.SuitableWorker(K, R, numOfTask,  numOfPeople, numOfSkill);
+            manAbleDo = GAHelper.SuitableWorker(K, R, numOfTask, numOfPeople, numOfSkill);
             Exper = GAHelper.TaskExperByWorker(K, R, numOfTask, numOfPeople, numOfSkill);
 
             Data d = new Data(numOfTask, numOfSkill, numOfPeople, durationTime,
@@ -95,7 +89,7 @@ namespace RcpspAlgorithmLibrary.GA
                 output.Genes = individual.Genes;
                 output.TotalExper = individual.TotalExper;
                 output.TotalSalary = individual.TotalSalary;
-               
+
 
                 outputList.Add(output);
             }

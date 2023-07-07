@@ -10,7 +10,7 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
         public Task<TaskDTO> DeleteTask(TaskDTO task);
         public Task<TaskDetailDTO> GetTaskDetail(int Id);
         public Task<List<TaskPertChartDTO>> GetTasksForPertChartProcessing(int projectId);
-        
+
     }
 }
 

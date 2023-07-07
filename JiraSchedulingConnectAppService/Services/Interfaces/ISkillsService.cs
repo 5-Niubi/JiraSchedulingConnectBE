@@ -9,8 +9,9 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
         public Task<SkillDTO> GetSkillName(string? skillName);
 
         public Task<List<SkillDTO>> GetSkills(string? skillName);
-        
+
         public Task<SkillDTO> GetSkillId(int Id);
+
 
         public Task<SkillDTO> UpdateNameSkill(int Id, SkillDTO skill);
 

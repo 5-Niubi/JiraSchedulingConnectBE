@@ -1,10 +1,7 @@
-﻿using JiraSchedulingConnectAppService.Services;
-using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
-using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Skills;
 
 namespace JiraSchedulingConnectAppService.Controllers
@@ -62,6 +59,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             try
             {
 
+
                 // update skill name
                 var result = await SkillsService.UpdateNameSkill(id, skill);
 
@@ -84,9 +82,10 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                // delete skill name
+
                 await SkillsService.DeleteSkill(id);
                 return Ok(new ResponseMessageDTO(SuccessMessage));
+
 
             }
             catch (Exception ex)

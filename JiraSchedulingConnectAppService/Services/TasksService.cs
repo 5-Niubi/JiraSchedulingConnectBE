@@ -1,11 +1,10 @@
-﻿using System;
-namespace JiraSchedulingConnectAppService.Services
+﻿namespace JiraSchedulingConnectAppService.Services
 {
-	public class TasksService
-	{
-		public TasksService()
-		{
-		}
-	}
+    public class TasksService
+    {
+        public TasksService()
+        {
+        }
+    }
 }
 

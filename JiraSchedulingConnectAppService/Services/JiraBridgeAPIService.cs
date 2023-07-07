@@ -1,9 +1,9 @@
-﻿using UtilsLibrary.Exceptions;
-using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using ModelLibrary.DBModels;
-using System.Net.Http.Headers;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 using System.Text;
+using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -69,14 +69,11 @@ namespace JiraSchedulingConnectAppService.Services
 
         async public Task<HttpResponseMessage> Post(string url, dynamic contentObject)
         {
-            SetBaseURL();
-
             await GetNewAccessTokenFromRefreshToken(cloudId);
             var contentObjJson = JsonConvert.SerializeObject(contentObject);
-            var content = new StringContent(contentObjJson, 
+            var content = new StringContent(contentObjJson,
                 Encoding.UTF8, "application/json");
             var respone = await client.PostAsync(url, content);
-            respone.EnsureSuccessStatusCode();
 
             return respone;
         }
@@ -84,7 +81,7 @@ namespace JiraSchedulingConnectAppService.Services
         async public Task<HttpResponseMessage> Put(string url, dynamic contentObject)
         {
             await GetNewAccessTokenFromRefreshToken(cloudId);
-            var content = new StringContent(JsonConvert.SerializeObject(contentObject), 
+            var content = new StringContent(JsonConvert.SerializeObject(contentObject),
                 Encoding.UTF8, "application/json");
             var respone = await client.PutAsync(url, content);
             respone.EnsureSuccessStatusCode();
@@ -96,7 +93,6 @@ namespace JiraSchedulingConnectAppService.Services
         {
             await GetNewAccessTokenFromRefreshToken(cloudId);
             var respone = await client.DeleteAsync(url);
-            respone.EnsureSuccessStatusCode();
 
             return respone;
         }
