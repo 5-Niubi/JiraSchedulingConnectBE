@@ -1,10 +1,7 @@
-﻿using JiraSchedulingConnectAppService.Services;
-using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
-using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Skills;
 
 namespace JiraSchedulingConnectAppService.Controllers
@@ -57,10 +54,10 @@ namespace JiraSchedulingConnectAppService.Controllers
             try
             {
                 // validate input
-                if(skill.Name == string.Empty) {
+                if (skill.Name == string.Empty)
+                {
                     return BadRequest("Name not empty");
                 }
-
                 // validate exited & unique skill name
                 var exitedSkill = await SkillsService.GetSkillId(id);
                 var exitedName = await SkillsService.GetSkillName(skill.Name);
@@ -74,8 +71,6 @@ namespace JiraSchedulingConnectAppService.Controllers
                 {
                     return BadRequest("Skill Name must unique!");
                 }
-
-
                 // update skill name
                 var response = await SkillsService.UpdateNameSkill(id, skill);
 
@@ -84,7 +79,8 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
             }
         }
 
@@ -94,8 +90,6 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-               
-
                 // validate exited & unique skill name
                 var exitedSkill = await SkillsService.GetSkillId(id);
 
@@ -107,19 +101,20 @@ namespace JiraSchedulingConnectAppService.Controllers
                 // update skill name
                 var response = await SkillsService.DeleteSkill(id);
 
-                if(response == true) {
+                if (response == true)
+                {
                     return Ok("Update success");
                 }
 
-                else {
+                else
+                {
                     return BadRequest("Have proble when delete");
                 }
-                
-
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
             }
         }
 

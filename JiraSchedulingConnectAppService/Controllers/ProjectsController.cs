@@ -75,6 +75,6 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-        
+
     }
 }

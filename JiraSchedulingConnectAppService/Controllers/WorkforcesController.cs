@@ -40,7 +40,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-        [HttpDelete("id")]
+        [HttpDelete]
         public async Task<IActionResult> DeleteWorkforce(string id)
         {
             try
@@ -59,7 +59,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-        [HttpPut("id")]
+        [HttpPut]
         public async Task<IActionResult> UpdateWorkforce(string id, WorkforceDTO workforce)
         {
             try

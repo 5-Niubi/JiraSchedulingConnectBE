@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
-using AlgorithmServiceServer.Services.Interfaces;
 
 namespace AlgorithmServiceServer.Controllers
 

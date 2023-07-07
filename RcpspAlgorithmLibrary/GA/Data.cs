@@ -1,6 +1,7 @@
 ﻿namespace RcpspAlgorithmLibrary.GA
+
 {
-    internal class Data
+    public class Data
     {
         public int Budget;
         public int Deadline;
@@ -37,18 +38,18 @@
 
         public void Setup() // get the limit max of sumsalary , deadline , exper ;
         {
-            for (int w = 1; w <= NumOfWorkers; ++w) MaxSalary = Math.Max(MaxSalary, WorkerSalary[w]);
-            for (int t = 1; t <= NumOfTasks; ++t)
+            for (int w = 0; w < NumOfWorkers; ++w) MaxSalary = Math.Max(MaxSalary, WorkerSalary[w]);
+            for (int t = 0; t < NumOfTasks; ++t)
             {
                 MaxDeadline += TaskDuration[t];
             }
             MaxDeadline += Deadline;
             MaxSalary *= MaxDeadline;
             MaxSalary *= NumOfWorkers;
-            for (int t = 1; t <= NumOfTasks; ++t)
+            for (int t = 0; t < NumOfTasks; ++t)
             {
                 int taskExper = 0;
-                for (int j = 1; j <= NumOfWorkers; ++j)
+                for (int j = 0; j < NumOfWorkers; ++j)
                 {
                     taskExper = Math.Max(taskExper, TaskExperByWorker[t, j]);
                 }

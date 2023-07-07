@@ -1,8 +1,8 @@
 ﻿namespace RcpspAlgorithmLibrary.GA
 {
-    internal class GAHelper
+    public class GAHelper
     {
-        public static int NUM_OF_POPULATION = 110;
+        public static int NUM_OF_POPULATION = 100;
         public static int NUM_OF_GENARATION = 500;
         public static int NUM_OF_ELITE_CHOMOSOMES = 10;
         public static int TOURNAMET_SELECTION_SIZE = 10;
@@ -11,52 +11,54 @@
         public static List<List<int>> SuitableWorker(int[,] workerExper, int[,] taskExper, int numOfTasks, int numOfWorkers, int numOfSkills)
         {
             List<List<int>> suitableWorkers = new List<List<int>>();
-            for (int i = 1; i <= numOfTasks; ++i)
+            for (int t = 0; t < numOfTasks; ++t)
             {
-                List<int> lst = new List<int>();
-                for (int j = 1; j <= numOfWorkers; ++j)
+                List<int> taskWorkers = new List<int>();
+                for (int w = 0; w < numOfWorkers; ++w)
                 {
                     bool ok = true;
-                    for (int k = 1; k <= numOfSkills; ++k)
+                    for (int s = 0; s < numOfSkills; ++s)
                     {
-                        if (taskExper[i, k] > workerExper[j, k])
+                        if (taskExper[t, s] > workerExper[w, s])
                         {
                             ok = false;
+                            break;
                         }
                     }
                     if (ok == true)
                     {
-                        lst.Add(j);
+                        taskWorkers.Add(w);
                     }
                 }
-                suitableWorkers.Add(lst);
+                suitableWorkers.Add(taskWorkers);
             }
             return suitableWorkers;
         }
 
-        public static int[,] TaskExperByWorker(int[,] K, int[,] R, int n, int m, int s)
+        public static int[,] TaskExperByWorker(int[,] workerExper, int[,] taskExper, int numOfTasks, int numOfWorkers, int numOfSkills)
         {
             int[,] Exper = new int[505, 505];
-            for (int i = 1; i <= n; ++i)
+            for (int t = 0; t < numOfTasks; ++t)
             {
-                for (int j = 1; j <= m; ++j)
+                for (int w = 0; w < numOfWorkers; ++w)
                 {
                     bool ok = true;
-                    int cur = 0;
-                    for (int k = 1; k <= s; ++k)
+                    int exper = 0;
+                    for (int s = 0; s < numOfSkills; ++s)
                     {
-                        if (R[i, k] > K[j, k])
+                        if (taskExper[t, s] > workerExper[w, s])
                         {
                             ok = false;
+                            break;
                         }
-                        else if (R[i, k] > 0)
+                        else if (taskExper[t, s] > 0)
                         {
-                            cur += K[j, k];
+                            exper += workerExper[w, s];
                         }
                     }
                     if (ok == true)
                     {
-                        Exper[i, j] = cur;
+                        Exper[t, w] = exper;
                     }
                 }
             }
