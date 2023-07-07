@@ -4,13 +4,21 @@ using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
+using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Skills;
+
+
+
 
 namespace JiraSchedulingConnectAppService.Services
 {
     public class SkillsService : ISkillsService
     {
+
+        public const string NotFoundMessage = "Skill Not Found!!!";
+        public const string NotUniqueSkillNameMessage = "Skill Name Must Unique!!!";
+
         private readonly ModelLibrary.DBModels.JiraDemoContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
@@ -49,25 +57,30 @@ namespace JiraSchedulingConnectAppService.Services
 
             try
             {
-
                 var jwt = new JWTManagerService(httpContext);
                 var cloudId = jwt.GetCurrentCloudId();
 
                 var skill = await db.Skills.FirstOrDefaultAsync(s => s.Id == Id && s.CloudId == cloudId);
+                var exitedName = await db.Skills.FirstOrDefaultAsync(s => s.Name == skillDTO.Name && s.CloudId == cloudId);
 
+                // Validate exited skill
+                if (skill == null) {
+                    throw new Exception(NotFoundMessage);
+                }
+
+                // Validate unique name skill
+                if (exitedName != null)
+                {
+                    throw new Exception(NotUniqueSkillNameMessage);
+                }
 
                 skill.Name = skillDTO.Name;
 
-                if (skill.IsDelete == true) {
-                    skill.IsDelete = false;
-                }
-
                 // Update
                 db.Update(skill);
-                var response = await db.SaveChangesAsync();
+                await db.SaveChangesAsync();
                 
                 return skillDTO;
-
 
             }
             
@@ -86,6 +99,14 @@ namespace JiraSchedulingConnectAppService.Services
             try {
                 var jwt = new JWTManagerService(httpContext);
                 var cloudId = jwt.GetCurrentCloudId();
+
+                var exitedName = await db.Skills.FirstOrDefaultAsync(s => s.Name == skillRequest.Name && s.CloudId == cloudId);
+
+                // Validate unique name skill
+                if (exitedName != null)
+                {
+                    throw new Exception(NotUniqueSkillNameMessage);
+                }
 
                 var skill = mapper.Map<ModelLibrary.DBModels.Skill>(skillRequest);
                 skill.CloudId = cloudId;
@@ -108,7 +129,6 @@ namespace JiraSchedulingConnectAppService.Services
         {
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
-
 
             skillName = skillName ?? string.Empty;
 
@@ -140,23 +160,29 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<bool> DeleteSkill(int Id)
         {
+
             try
             {
                 var jwt = new JWTManagerService(httpContext);
                 var cloudId = jwt.GetCurrentCloudId();
 
+                // validate skill
                 var skill = await db.Skills.FirstOrDefaultAsync(s => s.Id == Id && s.CloudId == cloudId);
+                if(skill == null) {
+                    throw new Exception(NotFoundMessage);
+                }
+
+
+                // Update status isdelete
                 skill.IsDelete = false;
-
-                // Update
                 db.Update(skill);
-                await db.SaveChangesAsync();;
-
+                await db.SaveChangesAsync();
                 return true;
+
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message, ex);
             }
 
             
