@@ -9,7 +9,6 @@ namespace ModelLibrary.DBModels
         {
             EquipmentsFunctions = new HashSet<EquipmentsFunction>();
             ParameterResources = new HashSet<ParameterResource>();
-            ScheduleTaskResources = new HashSet<ScheduleTaskResource>();
         }
 
         public int Id { get; set; }
@@ -24,6 +23,5 @@ namespace ModelLibrary.DBModels
 
         public virtual ICollection<EquipmentsFunction> EquipmentsFunctions { get; set; }
         public virtual ICollection<ParameterResource> ParameterResources { get; set; }
-        public virtual ICollection<ScheduleTaskResource> ScheduleTaskResources { get; set; }
     }
 }

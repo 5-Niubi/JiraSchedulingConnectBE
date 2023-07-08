@@ -66,7 +66,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateWorkforce(string id,[FromBody] WorkforceDTO workforce)
+        public async Task<IActionResult> UpdateWorkforce(string id, [FromBody] WorkforceDTO workforce)
         {
             try
             {

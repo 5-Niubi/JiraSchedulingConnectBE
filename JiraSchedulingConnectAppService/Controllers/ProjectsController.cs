@@ -67,7 +67,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                var projectCreated =  await projectsService.CreateProject(projectRequest);
+                var projectCreated = await projectsService.CreateProject(projectRequest);
                 return Ok(projectCreated);
             }
             catch (Exception ex)

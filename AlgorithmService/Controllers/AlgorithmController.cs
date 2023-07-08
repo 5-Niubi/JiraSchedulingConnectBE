@@ -29,7 +29,6 @@ namespace AlgorithmServiceServer.Controllers
             try
             {
                 return Ok(await accessData.GetDataToCompute(projectId, parameterId));
-
             }
             catch (NotFoundException ex)
             {

@@ -87,7 +87,7 @@ namespace AlgorithmServiceServer.Services
                         new int[0], algOutRaw.TaskBegin, algOutRaw.TaskFinish);
                     algorithmOutputConverted.Add(algOutConverted);
 
-                    
+
                     InsertScheduleIntoDB(parameterId, algOutConverted, scheduleResultDTOs);
                 }
                 db.SaveChanges();

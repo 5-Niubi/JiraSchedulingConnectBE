@@ -12,7 +12,7 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Authorize]
     public class SkillsController : ControllerBase
     {
-        
+
         private readonly ISkillsService skillsService;
         public SkillsController(ISkillsService skillsService)
         {
