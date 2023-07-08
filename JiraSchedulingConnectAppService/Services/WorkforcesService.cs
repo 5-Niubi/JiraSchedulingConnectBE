@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
@@ -34,7 +35,6 @@ namespace JiraSchedulingConnectAppService.Services
             {
                 throw new Exception();
             }
-
         }
 
         public async Task<WorkforceDTO.Response> CreateWorkforce(WorkforceDTO.Request? workforceRequest)
@@ -57,27 +57,30 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        public async Task<WorkforceDTO.Request> GetWorkforceById(string workforce_id)
+        public async Task<WorkforceDTO.Response> GetWorkforceById(string workforce_id)
         {
-            Workforce workforce = new Workforce();
             try
             {
-                workforce = await db.Workforces.SingleOrDefaultAsync(x => x.Id.ToString() == workforce_id);
+                var workforce = await db.Workforces.Where(e => e.Id.ToString() == workforce_id).FirstOrDefaultAsync();
+                var workforceResponse = mapper.Map<WorkforceDTO.Response>(workforce);
+                return workforceResponse;
             }
             catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
-            var workforceDTORequest = mapper.Map<WorkforceDTO.Request>(workforce);
-            return workforceDTORequest;
         }
 
-        public async System.Threading.Tasks.Task DeleteWorkforce(WorkforceDTO.Request workforceRequest)
+        public async System.Threading.Tasks.Task DeleteWorkforce(string? workforce_id)
         {
             try
             {
-                var workforce = await db.Workforces.SingleOrDefaultAsync(x => x.Id == workforceRequest.Id);
-                db.Workforces.Remove(workforce);
+                var workforce = await db.Workforces.SingleOrDefaultAsync(x => x.Id.ToString() == workforce_id);
+                if(workforce != null) {
+                    workforce.IsDelete = true;
+                    workforce.DeleteDatetime = DateTime.Now;
+                    db.Workforces.Update(workforce);
+                }
                 await db.SaveChangesAsync();
             }
             catch (Exception e)

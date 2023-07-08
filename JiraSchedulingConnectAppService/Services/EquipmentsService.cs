@@ -40,12 +40,14 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        public async System.Threading.Tasks.Task DeleteEquipment(EquipmentDTO.Request equipmentRequest)
+        public async System.Threading.Tasks.Task DeleteEquipment(string equipment_id)
         {
             try
             {
-                var equipment = await db.Equipments.SingleOrDefaultAsync(x => x.Id == equipmentRequest.Id);
-                db.Equipments.Remove(equipment);
+                var equipment = await db.Equipments.Where(e => e.Id.ToString() == equipment_id).FirstOrDefaultAsync();
+                equipment.IsDelete = true;
+                equipment.DeleteDatetime = DateTime.Now;
+                db.Equipments.Update(equipment);
                 await db.SaveChangesAsync();
             }
             catch (Exception e)
@@ -63,19 +65,18 @@ namespace JiraSchedulingConnectAppService.Services
             return queryDTOResponse;
         }
 
-        public async Task<EquipmentDTO.Request> GetEquipmentById(string equipment_id)
+        public async Task<EquipmentDTO.Response> GetEquipmentById(string equipment_id)
         {
-            Equipment equipment = new Equipment();
             try
             {
-                equipment = await db.Equipments.SingleOrDefaultAsync(x => x.Id.ToString() == equipment_id);
+                var equipment = await db.Equipments.Where(e => e.Id.ToString() == equipment_id).FirstOrDefaultAsync();
+                var equipmentResponse = mapper.Map<EquipmentDTO.Response>(equipment);
+                return equipmentResponse;
             }
             catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
-            var euipmentDTORequest = mapper.Map<EquipmentDTO.Request>(equipment);
-            return euipmentDTORequest;
         }
 
         public async Task<EquipmentDTO.Response> UpdateEquipment(EquipmentDTO.Request equipmentRequest)

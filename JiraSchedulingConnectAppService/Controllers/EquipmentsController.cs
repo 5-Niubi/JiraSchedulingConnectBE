@@ -32,14 +32,15 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
             }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetEquipmentById(string id)
         {
-            var response = EquipmentService.GetEquipmentById(id);
+            var response = await EquipmentService.GetEquipmentById(id);
             if (response == null)
             {
                 return NotFound();
@@ -60,9 +61,10 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var equipment = EquipmentService.GetEquipmentById(id);
                 return Ok(equipment);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return BadRequest(e);
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
             }
         }
 
@@ -75,7 +77,8 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception();
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
             }
         }
 
@@ -89,12 +92,13 @@ namespace JiraSchedulingConnectAppService.Controllers
                 {
                     return NotFound();
                 }
-                await EquipmentService.DeleteEquipment(await equipmentDTORequest);
+                await EquipmentService.DeleteEquipment(id);
                 return Ok("Delete success");
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
             }
         }
     }
