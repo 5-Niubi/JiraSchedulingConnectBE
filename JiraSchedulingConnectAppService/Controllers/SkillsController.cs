@@ -11,6 +11,10 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Authorize]
     public class SkillsController : ControllerBase
     {
+
+        public const string SuccessMessage = "Success!!!";
+
+
         private readonly ISkillsService SkillsService;
         public SkillsController(ISkillsService skillsService)
         {
@@ -37,7 +41,8 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                return Ok(await SkillsService.CreateSkill(skillRequest));
+                var response = await SkillsService.CreateSkill(skillRequest);
+                return Ok(response);
             }
 
             catch (Exception ex)
@@ -53,28 +58,14 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                // validate input
-                if (skill.Name == string.Empty)
-                {
-                    return BadRequest("Name not empty");
-                }
-                // validate exited & unique skill name
-                var exitedSkill = await SkillsService.GetSkillId(id);
-                var exitedName = await SkillsService.GetSkillName(skill.Name);
 
-                if (exitedSkill == null)
-                {
-                    return BadRequest("Cannot found this skill!");
-                }
-
-                else if (exitedName != null)
-                {
-                    return BadRequest("Skill Name must unique!");
-                }
                 // update skill name
-                var response = await SkillsService.UpdateNameSkill(id, skill);
+                var result = await SkillsService.UpdateNameSkill(id, skill);
 
-                return Ok("Update success");
+                var response = new ResponseMessageDTO(SuccessMessage);
+                response.Data = result;
+
+                return Ok(response);
 
             }
             catch (Exception ex)
@@ -85,31 +76,16 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
 
-        [HttpPost("{id}")]
+        [HttpDelete("{id}")]
         async public Task<IActionResult> DeleteSkill(int id)
         {
             try
             {
-                // validate exited & unique skill name
-                var exitedSkill = await SkillsService.GetSkillId(id);
 
-                if (exitedSkill == null)
-                {
-                    return BadRequest("Cannot found this skill!");
-                }
+                await SkillsService.DeleteSkill(id);
+                return Ok(new ResponseMessageDTO(SuccessMessage));
 
-                // update skill name
-                var response = await SkillsService.DeleteSkill(id);
 
-                if (response == true)
-                {
-                    return Ok("Update success");
-                }
-
-                else
-                {
-                    return BadRequest("Have proble when delete");
-                }
             }
             catch (Exception ex)
             {
