@@ -1,4 +1,5 @@
 ﻿using ModelLibrary.DBModels;
+using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Skills;
 
 namespace JiraSchedulingConnectAppService.Services.Interfaces
@@ -9,7 +10,10 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
 
         public Task<List<SkillDTO>> GetSkills(string? skillName);
 
-        public Task<Skill> GetSkillId(int Id);
+
+        public Task<SkillDTO> GetSkillId(int Id);
+
+
 
         public Task<SkillDTO> UpdateNameSkill(int Id, SkillDTO skill);
 
