@@ -12,5 +12,17 @@
         {
             public static int NUMBER_RECORD_PAGE = 10;
         }
+
+        public static class RESOURCE_TYPE
+        {
+            public static string WORKFORCE = "workforce";
+            public static string EQUIPMENT = "equipment";
+        }
+
+        public static class MESSAGE
+        {
+            public const string SUCCESS = "Success!!!";
+            public const string PROJECT_NAME_EXIST = "Project name already exists.";
+        }
     }
 }

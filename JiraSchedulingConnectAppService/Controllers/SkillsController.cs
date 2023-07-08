@@ -1,4 +1,5 @@
-﻿using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Common;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
@@ -11,18 +12,19 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Authorize]
     public class SkillsController : ControllerBase
     {
-        private readonly ISkillsService SkillsService;
+
+        private readonly ISkillsService skillsService;
         public SkillsController(ISkillsService skillsService)
         {
-            this.SkillsService = skillsService;
+            this.skillsService = skillsService;
         }
 
         [HttpGet]
-        async public Task<IActionResult> GetSkills(string? Name)
+        async public Task<IActionResult> GetSkills(string? name)
         {
             try
             {
-                var response = await SkillsService.GetSkills(Name);
+                var response = await skillsService.GetSkills(name);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -37,7 +39,8 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                return Ok(await SkillsService.CreateSkill(skillRequest));
+                var response = await skillsService.CreateSkill(skillRequest);
+                return Ok(response);
             }
 
             catch (Exception ex)
@@ -48,34 +51,17 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut]
         async public Task<IActionResult> UpdateNameSkill(int id, [FromBody] SkillDTO skill)
         {
             try
             {
-                // validate input
-                if (skill.Name == string.Empty)
-                {
-                    return BadRequest("Name not empty");
-                }
-                // validate exited & unique skill name
-                var exitedSkill = await SkillsService.GetSkillId(id);
-                var exitedName = await SkillsService.GetSkillName(skill.Name);
-
-                if (exitedSkill == null)
-                {
-                    return BadRequest("Cannot found this skill!");
-                }
-
-                else if (exitedName != null)
-                {
-                    return BadRequest("Skill Name must unique!");
-                }
                 // update skill name
-                var response = await SkillsService.UpdateNameSkill(id, skill);
+                var result = await skillsService.UpdateNameSkill(id, skill);
+                var response = new ResponseMessageDTO(Const.MESSAGE.SUCCESS);
+                response.Data = result;
 
-                return Ok("Update success");
-
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -84,32 +70,13 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-
-        [HttpPost("{id}")]
+        [HttpDelete]
         async public Task<IActionResult> DeleteSkill(int id)
         {
             try
             {
-                // validate exited & unique skill name
-                var exitedSkill = await SkillsService.GetSkillId(id);
-
-                if (exitedSkill == null)
-                {
-                    return BadRequest("Cannot found this skill!");
-                }
-
-                // update skill name
-                var response = await SkillsService.DeleteSkill(id);
-
-                if (response == true)
-                {
-                    return Ok("Update success");
-                }
-
-                else
-                {
-                    return BadRequest("Have proble when delete");
-                }
+                await skillsService.DeleteSkill(id);
+                return Ok();
             }
             catch (Exception ex)
             {

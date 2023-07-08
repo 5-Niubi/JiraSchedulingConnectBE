@@ -1,4 +1,5 @@
 ﻿using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Projects;
@@ -7,7 +8,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class ProjectsController : ControllerBase
     {
         private IProjectServices projectsService;
@@ -62,11 +63,12 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProject([FromBody] ProjectsListCreateProject.Request projectRequest)
+        public async Task<IActionResult> CreateProject([FromBody] ProjectsListCreateProject projectRequest)
         {
             try
             {
-                return Ok(await projectsService.CreateProject(projectRequest));
+                var projectCreated = await projectsService.CreateProject(projectRequest);
+                return Ok(projectCreated);
             }
             catch (Exception ex)
             {

@@ -24,12 +24,11 @@ namespace AlgorithmServiceServer.Controllers
         }
 
         [HttpGet]
-        async public Task<IActionResult> GetTestConverter(int projectId)
+        async public Task<IActionResult> GetTestConverter(int projectId, int parameterId)
         {
             try
             {
-                return Ok(await accessData.GetDataToCompute(projectId));
-
+                return Ok(await accessData.GetDataToCompute(projectId, parameterId));
             }
             catch (NotFoundException ex)
             {
