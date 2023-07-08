@@ -48,7 +48,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetWorkforceById(string id)
         {
-            var response = await WorkforcesService.GetWorkforceById(id);
+            var response = await workforcesService.GetWorkforceById(id);
             if (response == null)
             {
                 return NotFound();
@@ -65,7 +65,7 @@ namespace JiraSchedulingConnectAppService.Controllers
                 {
                     return BadRequest("Cannot found this workforce!");
                 }
-                await workforcesService.DeleteWorkforce(await w);
+                await workforcesService.DeleteWorkforce(id);
                 return Ok("Delete success");
             }
             catch (Exception ex)
