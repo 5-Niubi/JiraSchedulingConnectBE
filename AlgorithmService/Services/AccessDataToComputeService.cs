@@ -8,7 +8,6 @@ using ModelLibrary.DTOs.Algorithm;
 using Newtonsoft.Json;
 using RcpspAlgorithmLibrary;
 using RcpspAlgorithmLibrary.GA;
-using System.Reflection.Metadata;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 

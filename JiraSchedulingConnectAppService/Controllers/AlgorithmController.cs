@@ -1,4 +1,5 @@
 ﻿using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
 
@@ -6,6 +7,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class AlgorithmController : ControllerBase
     {
         private readonly IAlgorithmService algorithmService;

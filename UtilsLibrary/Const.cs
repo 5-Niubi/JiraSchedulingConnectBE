@@ -18,5 +18,10 @@
             public static string WORKFORCE = "workforce";
             public static string EQUIPMENT = "equipment";
         }
+
+        public static class MESSAGE
+        {
+            public const string SUCCESS = "Success!!!";
+        }
     }
 }
