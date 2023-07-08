@@ -22,6 +22,7 @@
         public static class MESSAGE
         {
             public const string SUCCESS = "Success!!!";
+            public const string PROJECT_NAME_EXIST = "Project name already exists.";
         }
     }
 }
