@@ -18,11 +18,13 @@ namespace ModelLibrary.DTOs
 
             CreateMap<Skill, SkillDTO>();
             CreateMap<SkillDTO, Skill>();
+            CreateMap<SkillsListCreateSkill.Request, Skill>();
+
 
             CreateMap<TasksListCreateTask.Request, DBModels.Task>();
             CreateMap<DBModels.Task, TaskDetailDTO>();
+            CreateMap<TaskDetailDTO, DBModels.Task>();
 
-            CreateMap<SkillsListCreateSkill.Request, Skill>();
             CreateMap<Schedule, ScheduleResultSolutionDTO>();
         }
     }

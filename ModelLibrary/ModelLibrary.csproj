@@ -24,9 +24,11 @@
   <ItemGroup>
     <None Remove="DTOs\Skills\" />
     <None Remove="DTOs\Tasks\" />
+    <None Remove="DTOs\PertSchedule\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DTOs\Skills\" />
     <Folder Include="DTOs\Tasks\" />
+    <Folder Include="DTOs\PertSchedule\" />
   </ItemGroup>
 </Project>

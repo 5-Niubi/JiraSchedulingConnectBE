@@ -17,10 +17,10 @@ namespace JiraSchedulingConnectAppService.Controllers
 
     {
         private readonly ITasksService TasksService;
-        public TasksController(TasksService tasksService)
+        public TasksController(ITasksService tasksService)
             
         {
-            TasksService = tasksService;
+            this.TasksService = tasksService;
         }
 
 
@@ -40,6 +40,22 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetTaskDetail(int Id)
+        {
+
+
+            try
+            {
+                var response = await TasksService.GetTaskDetail(Id);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> Index()

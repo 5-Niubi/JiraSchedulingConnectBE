@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Threading.Tasks;
 using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -20,9 +21,9 @@ namespace JiraSchedulingConnectAppService.Services
 
         public TasksService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
-            db = dbContext;
+            this.db = dbContext;
             this.mapper = mapper;
-            httpContext = httpContextAccessor.HttpContext;
+            this.httpContext = httpContextAccessor.HttpContext;
         }
 
         public  async Task<TaskDetailDTO> CreateTask(TasksListCreateTask.Request taskRequest)
@@ -67,25 +68,49 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        public Task<bool> DeleteTask(int Id)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<bool> DeleteTask(int Id)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public Task<TaskDetailDTO> GetTaskDetail(int Id)
+        public async Task<TaskDetailDTO> GetTaskDetail(int Id)
         {
-            throw new NotImplementedException();
+
+            var task = await db.Tasks.FirstOrDefaultAsync(
+                    t => t.Id == Id
+                    && t.IsDelete == false);
+
+            if(task == null) {
+                throw new Exception(NotFoundMessage);
+            }
+            var taskDetaiDTO = mapper.Map<TaskDetailDTO>(task);
+
+            return taskDetaiDTO;
+
+
         }
 
         public Task<List<TaskPertChartDTO>> GetTasksForPertChartProcessing(int projectId)
         {
-            throw new NotImplementedException();
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
+
+            var query = db.Tasks.Where(t => t.CloudId == cloudId
+                && t.ProjectId == projectId & t.IsDelete == false
+                )
+                .OrderByDescending(e => e.Id);
+
+            var projectsResult = await query.ToListAsync();
+            var projectDTO = mapper.Map<List<ProjectListHomePageDTO>>(projectsResult);
+
+            return taskDetaiDTO;
         }
 
-        public Task<TaskDetailDTO> UpdateTask(TasksListCreateTask.Request task)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<TaskDetailDTO> UpdateTask(TasksListCreateTask.Request task)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }
 
