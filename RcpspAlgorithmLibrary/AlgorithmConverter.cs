@@ -1,12 +1,16 @@
 ﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
+using AutoMapper;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
+using ModelLibrary.DTOs.Algorithm.ScheduleResult;
 using System.Text.Json;
 
 namespace RcpspAlgorithmLibrary
 {
     public class AlgorithmConverter
     {
+        private readonly IMapper mapper;
+
         public DateTime StartDate { get; private set; }
         public int Deadline { get; private set; }
         public int Budget { get; private set; }
@@ -23,8 +27,10 @@ namespace RcpspAlgorithmLibrary
         public List<Skill> SkillList { get; private set; }
         public List<Function> FunctionList { get; private set; }
 
-        public AlgorithmConverter(InputToORDTO inputToOR)
+        public AlgorithmConverter(InputToORDTO inputToOR, IMapper mapper)
         {
+            this.mapper = mapper;
+
             NumOfTasks = inputToOR.TaskList.Count;
             NumOfWorkers = inputToOR.WorkerList.Count;
             NumOfSkills = inputToOR.SkillList.Count;
@@ -164,18 +170,18 @@ namespace RcpspAlgorithmLibrary
             var outPut = new OutputFromORDTO();
             for (int i = 0; i < taskWithWorker.Length; i++)
             {
-                var task = new TaskOutput();
-                task.TaskId = TaskList[i].Id;
-                task.WorkerId = WorkerList[taskWithWorker[i]].Id;
-                task.StartDate = StartDate.AddDays(taskStart[i]);
-                task.EndDate = StartDate.AddDays(taskEnd[i]);
-                outPut.Tasks.Add(task);
+                var task = new TaskScheduleResultDTO();
+                task.id = TaskList[i].Id;
+                task.workforce = mapper.Map<WorkforceScheduleResultDTO>(WorkerList[taskWithWorker[i]]);
+                task.startDate = StartDate.AddDays(taskStart[i]);
+                task.endDate = StartDate.AddDays(taskEnd[i]);
+                outPut.tasks.Add(task);
             }
-            for (int i = 0; i < taskWithEquipment.Length; i++)
-            {
-                outPut.Tasks[i % EquipmentList.Count]
-                    .EquipmentId.Add(EquipmentList[taskWithEquipment[i]].Id);
-            }
+            //for (int i = 0; i < taskWithEquipment.Length; i++)
+            //{
+            //    outPut.tasks[i % EquipmentList.Count]
+            //        .equipmentId.Add(EquipmentList[taskWithEquipment[i]].Id);
+            //}
             return outPut;
         }
     }

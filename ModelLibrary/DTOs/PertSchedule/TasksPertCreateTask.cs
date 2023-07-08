@@ -5,12 +5,18 @@ namespace ModelLibrary.DTOs.PertSchedule
 {
 	public class TasksPertCreateTask
 	{
-        public string Name { get; set; }
-        public double Duration { get; set; }
-        public int MilestoneId { get; set; }
+        public class Request {
 
-        public List<int> Skills { get; set; }
-        public List<int> Precedences { get; set; }
+            public int ProjectId { get; set; }
+            public string Name { get; set; }
+            public double Duration { get; set; }
+            public int MilestoneId { get; set; }
+
+            public List<int>? RequiredSkillsId { get; set; }
+            public List<int>? RequiredSkillsLevel { get; set; }
+            public List<int>? PrecedencesId { get; set; }
+        }
+        
     }
 }
 

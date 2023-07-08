@@ -1,5 +1,6 @@
 ﻿using System;
 using ModelLibrary.DTOs.Skills;
+using ModelLibrary.DTOs.Tasks;
 
 namespace ModelLibrary.DTOs.PertSchedule
 {
@@ -10,10 +11,12 @@ namespace ModelLibrary.DTOs.PertSchedule
         public double? Duration { get; set; }
         public int? MilestoneId { get; set; }
 
-        public List<SkillDTO>? RequiredSkills { get; set; }
-
         public DateTime? CreateDatetime { get; set; }
         public DateTime? DeleteDatetime { get; set; }
+
+        public List<int>? RequiredSkills { get; set; }
+        public List<int>? PredenceTasks { get; set; }
+
     }
 }
 

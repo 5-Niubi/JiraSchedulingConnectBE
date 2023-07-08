@@ -23,7 +23,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
-        public async System.Threading.Tasks.Task<ProjectDetailDTO> CreateProject(ProjectsListCreateProject.Request projectRequest)
+        public async System.Threading.Tasks.Task<ProjectDetailDTO> CreateProject(ProjectsListCreateProject projectRequest)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace JiraSchedulingConnectAppService.Services
                 if (existingProject != null)
                 {
                     // Or handle the situation accordingly
-                    throw new DuplicateException(Const.MESSAGE.PROJECT_NAME_EXIST); 
+                    throw new DuplicateException(Const.MESSAGE.PROJECT_NAME_EXIST);
                 }
 
                 var projectCreatedEntity = await db.Projects.AddAsync(project);

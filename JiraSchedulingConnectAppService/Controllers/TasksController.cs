@@ -4,6 +4,7 @@ using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
+using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Skills;
 using ModelLibrary.DTOs.Tasks;
 
@@ -25,7 +26,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateTask([FromBody] TasksListCreateTask.Request taskRequest)
+        public async Task<IActionResult> CreateTask([FromBody] TasksPertCreateTask.Request taskRequest)
         {
             try
             {
