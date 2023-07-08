@@ -1,7 +1,7 @@
 ﻿using AlgorithmServiceServer;
 using AlgorithmServiceServer.DTOs.AlgorithmController;
 using ModelLibrary.DBModels;
-using ModelLibrary.DTOs.AlgorithmController;
+using ModelLibrary.DTOs.Algorithm;
 
 namespace RcpspAlgorithmLibrary
 {

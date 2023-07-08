@@ -1,4 +1,4 @@
-﻿namespace ModelLibrary.DTOs.AlgorithmController
+﻿namespace ModelLibrary.DTOs.Algorithm
 {
     public class TaskOutput
     {
@@ -16,6 +16,5 @@
         public int TimeFinish { get; set; }
 
         public List<TaskOutput>? Tasks { get; set; }
-
     }
 }

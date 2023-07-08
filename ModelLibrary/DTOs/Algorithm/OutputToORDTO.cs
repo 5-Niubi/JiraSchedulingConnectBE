@@ -1,4 +1,4 @@
-﻿namespace ModelLibrary.DTOs.AlgorithmController
+﻿namespace ModelLibrary.DTOs.Algorithm
 {
     public class OutputToORDTO
     {

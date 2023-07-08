@@ -1,10 +1,14 @@
-﻿namespace ModelLibrary.DBModels
+﻿using System;
+using System.Collections.Generic;
+
+namespace ModelLibrary.DBModels
 {
     public partial class Workforce
     {
         public Workforce()
         {
             ParameterResources = new HashSet<ParameterResource>();
+            ScheduleTaskResources = new HashSet<ScheduleTaskResource>();
             WorkforceSkills = new HashSet<WorkforceSkill>();
         }
 
@@ -25,6 +29,7 @@
         public DateTime? DeleteDatetime { get; set; }
 
         public virtual ICollection<ParameterResource> ParameterResources { get; set; }
+        public virtual ICollection<ScheduleTaskResource> ScheduleTaskResources { get; set; }
         public virtual ICollection<WorkforceSkill> WorkforceSkills { get; set; }
     }
 }

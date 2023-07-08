@@ -1,13 +1,17 @@
-﻿namespace ModelLibrary.DBModels
+﻿using System;
+using System.Collections.Generic;
+
+namespace ModelLibrary.DBModels
 {
     public partial class Parameter
     {
         public Parameter()
         {
             ParameterResources = new HashSet<ParameterResource>();
+            Schedules = new HashSet<Schedule>();
         }
 
-        public int Int { get; set; }
+        public int Id { get; set; }
         public int? ProjectId { get; set; }
         public int? Budget { get; set; }
         public int? ObjectiveTime { get; set; }
@@ -19,5 +23,6 @@
 
         public virtual Project? Project { get; set; }
         public virtual ICollection<ParameterResource> ParameterResources { get; set; }
+        public virtual ICollection<Schedule> Schedules { get; set; }
     }
 }

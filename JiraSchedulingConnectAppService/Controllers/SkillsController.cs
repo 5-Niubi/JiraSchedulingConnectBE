@@ -1,4 +1,5 @@
-﻿using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Common;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
@@ -11,10 +12,7 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Authorize]
     public class SkillsController : ControllerBase
     {
-
-        public const string SuccessMessage = "Success!!!";
-
-
+        
         private readonly ISkillsService SkillsService;
         public SkillsController(ISkillsService skillsService)
         {
@@ -53,20 +51,17 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut]
         async public Task<IActionResult> UpdateNameSkill(int id, [FromBody] SkillDTO skill)
         {
             try
             {
-
                 // update skill name
                 var result = await SkillsService.UpdateNameSkill(id, skill);
-
-                var response = new ResponseMessageDTO(SuccessMessage);
+                var response = new ResponseMessageDTO(Const.MESSAGE.SUCCESS);
                 response.Data = result;
 
                 return Ok(response);
-
             }
             catch (Exception ex)
             {
@@ -75,17 +70,13 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-
-        [HttpDelete("{id}")]
+        [HttpDelete]
         async public Task<IActionResult> DeleteSkill(int id)
         {
             try
             {
-
                 await SkillsService.DeleteSkill(id);
-                return Ok(new ResponseMessageDTO(SuccessMessage));
-
-
+                return Ok();
             }
             catch (Exception ex)
             {

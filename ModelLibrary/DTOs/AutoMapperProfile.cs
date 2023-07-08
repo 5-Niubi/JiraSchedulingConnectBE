@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ModelLibrary.DBModels;
+using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Skills;
 
@@ -16,6 +17,7 @@ namespace ModelLibrary.DTOs
             CreateMap<Skill, SkillDTO>();
             CreateMap<SkillDTO, Skill>();
             CreateMap<SkillsListCreateSkill.Request, Skill>();
+            CreateMap<Schedule, ScheduleResultSolutionDTO>();
         }
     }
 }
