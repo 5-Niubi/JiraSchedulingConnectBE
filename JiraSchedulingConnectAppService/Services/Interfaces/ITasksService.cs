@@ -5,9 +5,9 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
     public interface ITasksService
     {
 
-        public Task<TaskDTO> CreateTask(TaskDTO task);
-        public Task<TaskDTO> UpdateTask(TaskDTO task);
-        public Task<TaskDTO> DeleteTask(TaskDTO task);
+        public Task<TaskDetailDTO> CreateTask(TasksListCreateTask.Request taskRequest);
+        public Task<TaskDetailDTO> UpdateTask(TasksListCreateTask.Request task);
+        public Task<bool> DeleteTask(int Id);
         public Task<TaskDetailDTO> GetTaskDetail(int Id);
         public Task<List<TaskPertChartDTO>> GetTasksForPertChartProcessing(int projectId);
 

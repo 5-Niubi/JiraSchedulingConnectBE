@@ -2,6 +2,7 @@
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Skills;
+using ModelLibrary.DTOs.Tasks;
 
 namespace ModelLibrary.DTOs
 {
@@ -13,8 +14,13 @@ namespace ModelLibrary.DTOs
             CreateMap<ProjectsListCreateProject.Request, Project>();
             CreateMap<Project, ProjectDetailDTO>();
             CreateMap<WorkforceDTO, Workforce>();
+
             CreateMap<Skill, SkillDTO>();
             CreateMap<SkillDTO, Skill>();
+
+            CreateMap<TasksListCreateTask.Request, DBModels.Task>();
+            CreateMap<DBModels.Task, TaskDetailDTO>();
+
             CreateMap<SkillsListCreateSkill.Request, Skill>();
         }
     }
