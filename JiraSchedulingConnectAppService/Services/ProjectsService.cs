@@ -41,7 +41,7 @@ namespace JiraSchedulingConnectAppService.Services
                 if (existingProject != null)
                 {
                     // Or handle the situation accordingly
-                    throw new DuplicateException("Project name already exists."); 
+                    throw new DuplicateException(Const.MESSAGE.PROJECT_NAME_EXIST); 
                 }
 
                 var projectCreatedEntity = await db.Projects.AddAsync(project);
