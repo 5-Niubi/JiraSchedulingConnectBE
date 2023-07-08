@@ -134,7 +134,8 @@ namespace JiraSchedulingConnectAppService.Services
 
             skillName = skillName ?? string.Empty;
 
-            var query = db.Skills.Where(t => t.CloudId == cloudId && (t.Name.Contains(skillName) || t.Name.Equals(string.Empty)))
+            var query = db.Skills.Where(t => t.CloudId == cloudId 
+            && (t.Name.Contains(skillName) || t.Name.Equals(string.Empty)))
             .OrderByDescending(e => e.Id);
 
             var skillsResult = await query.ToListAsync();

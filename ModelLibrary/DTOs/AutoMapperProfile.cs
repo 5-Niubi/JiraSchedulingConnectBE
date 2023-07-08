@@ -11,7 +11,7 @@ namespace ModelLibrary.DTOs
         public AutoMapperProfile()
         {
             CreateMap<Project, ProjectListHomePageDTO>();
-            CreateMap<ProjectsListCreateProject.Request, Project>();
+            CreateMap<ProjectsListCreateProject, Project>();
             CreateMap<Project, ProjectDetailDTO>();
             CreateMap<WorkforceDTO, Workforce>();
             CreateMap<Skill, SkillDTO>();

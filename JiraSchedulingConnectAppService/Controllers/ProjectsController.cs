@@ -63,11 +63,12 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProject([FromBody] ProjectsListCreateProject.Request projectRequest)
+        public async Task<IActionResult> CreateProject([FromBody] ProjectsListCreateProject projectRequest)
         {
             try
             {
-                return Ok(await projectsService.CreateProject(projectRequest));
+                var projectCreated =  await projectsService.CreateProject(projectRequest);
+                return Ok(projectCreated);
             }
             catch (Exception ex)
             {

@@ -23,7 +23,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
-        public async System.Threading.Tasks.Task<ProjectDetailDTO> CreateProject(ProjectsListCreateProject.Request projectRequest)
+        public async System.Threading.Tasks.Task<ProjectDetailDTO> CreateProject(ProjectsListCreateProject projectRequest)
         {
             try
             {
