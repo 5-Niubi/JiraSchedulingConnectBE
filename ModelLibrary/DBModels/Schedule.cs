@@ -1,7 +1,15 @@
-﻿namespace ModelLibrary.DBModels
+﻿using System;
+using System.Collections.Generic;
+
+namespace ModelLibrary.DBModels
 {
     public partial class Schedule
     {
+        public Schedule()
+        {
+            ScheduleTasks = new HashSet<ScheduleTask>();
+        }
+
         public int Id { get; set; }
         public int? ParameterId { get; set; }
         public int? Duration { get; set; }
@@ -16,5 +24,6 @@
         public DateTime? DeleteDatetime { get; set; }
 
         public virtual Parameter? Parameter { get; set; }
+        public virtual ICollection<ScheduleTask> ScheduleTasks { get; set; }
     }
 }

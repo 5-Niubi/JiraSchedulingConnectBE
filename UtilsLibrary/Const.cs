@@ -12,5 +12,11 @@
         {
             public static int NUMBER_RECORD_PAGE = 10;
         }
+
+        public static class RESOURCE_TYPE
+        {
+            public static string WORKFORCE = "workforce";
+            public static string EQUIPMENT = "equipment";
+        }
     }
 }

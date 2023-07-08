@@ -37,8 +37,5 @@ namespace AlgorithmServiceServer.Controllers
                 return BadRequest(response);
             }
         }
-
-
-
     }
 }

@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ModelLibrary.DBModels
 {
@@ -24,6 +27,8 @@ namespace ModelLibrary.DBModels
         public virtual DbSet<Project> Projects { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Schedule> Schedules { get; set; } = null!;
+        public virtual DbSet<ScheduleTask> ScheduleTasks { get; set; } = null!;
+        public virtual DbSet<ScheduleTaskResource> ScheduleTaskResources { get; set; } = null!;
         public virtual DbSet<Skill> Skills { get; set; } = null!;
         public virtual DbSet<Task> Tasks { get; set; } = null!;
         public virtual DbSet<TaskFunction> TaskFunctions { get; set; } = null!;
@@ -43,24 +48,28 @@ namespace ModelLibrary.DBModels
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskResource>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskFunction>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Task>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Skill>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Schedule>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == false);
+
+            modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Equipment>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<EquipmentsFunction>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Milestone>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Parameter>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<ParameterResource>().HasQueryFilter(e => e.IsDelete == false);
-
+            modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Schedule>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<ScheduleTask>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<ScheduleTaskResource>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Skill>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Task>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TaskFunction>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TaskResource>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
@@ -490,6 +499,97 @@ namespace ModelLibrary.DBModels
                     .WithMany(p => p.Schedules)
                     .HasForeignKey(d => d.ParameterId)
                     .HasConstraintName("FK__schedules__param__607251E5");
+            });
+
+            modelBuilder.Entity<ScheduleTask>(entity =>
+            {
+                entity.ToTable("schedule_task");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.CreateDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.DeleteDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("delete_datetime");
+
+                entity.Property(e => e.Enddate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("enddate");
+
+                entity.Property(e => e.IsDelete)
+                    .HasColumnName("is_delete")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.ScheduleId).HasColumnName("schedule_id");
+
+                entity.Property(e => e.Startdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("startdate");
+
+                entity.Property(e => e.TaskId).HasColumnName("task_id");
+
+                entity.HasOne(d => d.Schedule)
+                    .WithMany(p => p.ScheduleTasks)
+                    .HasForeignKey(d => d.ScheduleId)
+                    .HasConstraintName("FK_schedule_task_schedules");
+
+                entity.HasOne(d => d.Task)
+                    .WithMany(p => p.ScheduleTasks)
+                    .HasForeignKey(d => d.TaskId)
+                    .HasConstraintName("FK_schedule_task_tasks");
+            });
+
+            modelBuilder.Entity<ScheduleTaskResource>(entity =>
+            {
+                entity.HasKey(e => new { e.ScheduleTaskId, e.ResourceId, e.Type });
+
+                entity.ToTable("schedule_task_resource");
+
+                entity.Property(e => e.ScheduleTaskId).HasColumnName("schedule_task_id");
+
+                entity.Property(e => e.ResourceId).HasColumnName("resource_id");
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("type");
+
+                entity.Property(e => e.CreateDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.DeleteDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("delete_datetime");
+
+                entity.Property(e => e.IsDelete)
+                    .HasColumnName("is_delete")
+                    .HasDefaultValueSql("((0))");
+
+                entity.HasOne(d => d.Resource)
+                    .WithMany(p => p.ScheduleTaskResources)
+                    .HasForeignKey(d => d.ResourceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_schedule_task_resource_equipments");
+
+                entity.HasOne(d => d.ResourceNavigation)
+                    .WithMany(p => p.ScheduleTaskResources)
+                    .HasForeignKey(d => d.ResourceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_schedule_task_resource_workforce");
+
+                entity.HasOne(d => d.ScheduleTask)
+                    .WithMany(p => p.ScheduleTaskResources)
+                    .HasForeignKey(d => d.ScheduleTaskId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_schedule_task_resource_schedule_task");
             });
 
             modelBuilder.Entity<Skill>(entity =>

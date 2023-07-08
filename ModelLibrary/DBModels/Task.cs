@@ -1,9 +1,13 @@
-﻿namespace ModelLibrary.DBModels
+﻿using System;
+using System.Collections.Generic;
+
+namespace ModelLibrary.DBModels
 {
     public partial class Task
     {
         public Task()
         {
+            ScheduleTasks = new HashSet<ScheduleTask>();
             TaskFunctions = new HashSet<TaskFunction>();
             TaskPrecedencePrecedences = new HashSet<TaskPrecedence>();
             TaskPrecedenceTasks = new HashSet<TaskPrecedence>();
@@ -22,6 +26,7 @@
 
         public virtual Milestone? Milestone { get; set; }
         public virtual Project? Project { get; set; }
+        public virtual ICollection<ScheduleTask> ScheduleTasks { get; set; }
         public virtual ICollection<TaskFunction> TaskFunctions { get; set; }
         public virtual ICollection<TaskPrecedence> TaskPrecedencePrecedences { get; set; }
         public virtual ICollection<TaskPrecedence> TaskPrecedenceTasks { get; set; }
