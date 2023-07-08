@@ -1,4 +1,7 @@
-﻿namespace ModelLibrary.DBModels
+﻿using System;
+using System.Collections.Generic;
+
+namespace ModelLibrary.DBModels
 {
     public partial class Equipment
     {
@@ -6,6 +9,7 @@
         {
             EquipmentsFunctions = new HashSet<EquipmentsFunction>();
             ParameterResources = new HashSet<ParameterResource>();
+            ScheduleTaskResources = new HashSet<ScheduleTaskResource>();
         }
 
         public int Id { get; set; }
@@ -20,5 +24,6 @@
 
         public virtual ICollection<EquipmentsFunction> EquipmentsFunctions { get; set; }
         public virtual ICollection<ParameterResource> ParameterResources { get; set; }
+        public virtual ICollection<ScheduleTaskResource> ScheduleTaskResources { get; set; }
     }
 }

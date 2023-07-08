@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Projects;
+using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -39,7 +40,8 @@ namespace JiraSchedulingConnectAppService.Services
 
                 if (existingProject != null)
                 {
-                    throw new Exception("Project name already exists."); // Or handle the situation accordingly
+                    // Or handle the situation accordingly
+                    throw new DuplicateException(Const.MESSAGE.PROJECT_NAME_EXIST); 
                 }
 
                 var projectCreatedEntity = await db.Projects.AddAsync(project);

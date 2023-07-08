@@ -1,9 +1,9 @@
-﻿using ModelLibrary.DTOs.AlgorithmController;
+﻿using ModelLibrary.DTOs.Algorithm;
 
 namespace AlgorithmServiceServer.Services.Interfaces
 {
     public interface IAccessDataToComputeService
     {
-        public Task<List<OutputFromORDTO>> GetDataToCompute(int projectId);
+        public Task<List<ScheduleResultSolutionDTO>> GetDataToCompute(int projectId, int parameterId);
     }
 }

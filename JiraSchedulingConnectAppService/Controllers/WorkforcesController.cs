@@ -1,4 +1,5 @@
 using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
 
@@ -6,6 +7,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class WorkforcesController : ControllerBase
     {
         private IWorkforcesService WorkforcesService;
@@ -13,6 +15,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             this.WorkforcesService = workforcesService;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAllWorkforces()
         {
@@ -23,7 +26,8 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
             }
         }
 
@@ -36,7 +40,8 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
             }
         }
 
@@ -55,12 +60,13 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
             }
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateWorkforce(string id, WorkforceDTO workforce)
+        public async Task<IActionResult> UpdateWorkforce(string id,[FromBody] WorkforceDTO workforce)
         {
             try
             {
@@ -74,7 +80,8 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
             }
         }
     }

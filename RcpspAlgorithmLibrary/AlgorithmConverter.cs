@@ -1,6 +1,6 @@
 ﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
 using ModelLibrary.DBModels;
-using ModelLibrary.DTOs.AlgorithmController;
+using ModelLibrary.DTOs.Algorithm;
 using System.Text.Json;
 
 namespace RcpspAlgorithmLibrary

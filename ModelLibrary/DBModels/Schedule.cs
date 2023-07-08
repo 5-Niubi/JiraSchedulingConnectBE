@@ -1,12 +1,20 @@
-﻿namespace ModelLibrary.DBModels
+﻿using System;
+using System.Collections.Generic;
+
+namespace ModelLibrary.DBModels
 {
     public partial class Schedule
     {
+        public Schedule()
+        {
+            ScheduleTasks = new HashSet<ScheduleTask>();
+        }
+
         public int Id { get; set; }
-        public int? ProjectId { get; set; }
-        public double? Duration { get; set; }
-        public double? Cost { get; set; }
-        public double? Quality { get; set; }
+        public int? ParameterId { get; set; }
+        public int? Duration { get; set; }
+        public int? Cost { get; set; }
+        public int? Quality { get; set; }
         public string? Tasks { get; set; }
         public int? Selected { get; set; }
         public DateTime? Since { get; set; }
@@ -15,6 +23,7 @@
         public DateTime? CreateDatetime { get; set; }
         public DateTime? DeleteDatetime { get; set; }
 
-        public virtual Project? Project { get; set; }
+        public virtual Parameter? Parameter { get; set; }
+        public virtual ICollection<ScheduleTask> ScheduleTasks { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using ModelLibrary.DTOs.AlgorithmController;
+﻿using ModelLibrary.DTOs.Algorithm;
 
 namespace RcpspAlgorithmLibrary.GA
 {

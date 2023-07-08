@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ModelLibrary.DBModels;
+using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Skills;
 using ModelLibrary.DTOs.Tasks;
@@ -22,6 +23,7 @@ namespace ModelLibrary.DTOs
             CreateMap<DBModels.Task, TaskDetailDTO>();
 
             CreateMap<SkillsListCreateSkill.Request, Skill>();
+            CreateMap<Schedule, ScheduleResultSolutionDTO>();
         }
     }
 }
