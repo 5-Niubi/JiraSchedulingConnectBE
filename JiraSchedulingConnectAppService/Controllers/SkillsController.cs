@@ -12,19 +12,19 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Authorize]
     public class SkillsController : ControllerBase
     {
-        
-        private readonly ISkillsService SkillsService;
+
+        private readonly ISkillsService skillsService;
         public SkillsController(ISkillsService skillsService)
         {
-            this.SkillsService = skillsService;
+            this.skillsService = skillsService;
         }
 
         [HttpGet]
-        async public Task<IActionResult> GetSkills(string? Name)
+        async public Task<IActionResult> GetSkills(string? name)
         {
             try
             {
-                var response = await SkillsService.GetSkills(Name);
+                var response = await skillsService.GetSkills(name);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -39,7 +39,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                var response = await SkillsService.CreateSkill(skillRequest);
+                var response = await skillsService.CreateSkill(skillRequest);
                 return Ok(response);
             }
 
@@ -57,7 +57,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             try
             {
                 // update skill name
-                var result = await SkillsService.UpdateNameSkill(id, skill);
+                var result = await skillsService.UpdateNameSkill(id, skill);
                 var response = new ResponseMessageDTO(Const.MESSAGE.SUCCESS);
                 response.Data = result;
 
@@ -75,7 +75,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                await SkillsService.DeleteSkill(id);
+                await skillsService.DeleteSkill(id);
                 return Ok();
             }
             catch (Exception ex)

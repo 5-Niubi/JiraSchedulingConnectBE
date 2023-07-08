@@ -10,10 +10,10 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Authorize]
     public class WorkforcesController : ControllerBase
     {
-        private IWorkforcesService WorkforcesService;
+        private IWorkforcesService workforcesService;
         public WorkforcesController(IWorkforcesService workforcesService)
         {
-            this.WorkforcesService = workforcesService;
+            this.workforcesService = workforcesService;
         }
 
         [HttpGet]
@@ -21,7 +21,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                var response = await WorkforcesService.GetAllWorkforces();
+                var response = await workforcesService.GetAllWorkforces();
                 return Ok(response);
             }
             catch (Exception ex)
@@ -36,7 +36,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                return Ok(await WorkforcesService.CreateWorkforce(workforce));
+                return Ok(await workforcesService.CreateWorkforce(workforce));
             }
             catch (Exception ex)
             {
@@ -50,12 +50,12 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                var w = WorkforcesService.GetWorkforceById(id);
+                var w = workforcesService.GetWorkforceById(id);
                 if (w == null)
                 {
                     return BadRequest("Cannot found this workforce!");
                 }
-                await WorkforcesService.DeleteWorkforce(await w);
+                await workforcesService.DeleteWorkforce(await w);
                 return Ok("Delete success");
             }
             catch (Exception ex)
@@ -66,16 +66,16 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateWorkforce(string id,[FromBody] WorkforceDTO workforce)
+        public async Task<IActionResult> UpdateWorkforce(string id, [FromBody] WorkforceDTO workforce)
         {
             try
             {
-                var w1 = WorkforcesService.GetWorkforceById(id);
+                var w1 = workforcesService.GetWorkforceById(id);
                 if (w1 == null)
                 {
                     return BadRequest("Cannot found this workforce!");
                 }
-                await WorkforcesService.UpdateWorkforce(workforce);
+                await workforcesService.UpdateWorkforce(workforce);
                 return Ok("Update success");
             }
             catch (Exception ex)

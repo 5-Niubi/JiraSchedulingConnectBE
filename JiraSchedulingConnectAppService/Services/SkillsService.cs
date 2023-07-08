@@ -46,7 +46,7 @@ namespace JiraSchedulingConnectAppService.Services
             {
                 throw new Exception(e.Message);
             }
-            
+
         }
 
 
@@ -62,7 +62,8 @@ namespace JiraSchedulingConnectAppService.Services
                 var exitedName = await db.Skills.FirstOrDefaultAsync(s => s.Name == skillDTO.Name && s.CloudId == cloudId && s.IsDelete == false);
 
                 // Validate exited skill
-                if (skill == null) {
+                if (skill == null)
+                {
                     throw new Exception(NotFoundMessage);
                 }
 
@@ -134,7 +135,8 @@ namespace JiraSchedulingConnectAppService.Services
 
             skillName = skillName ?? string.Empty;
 
-            var query = db.Skills.Where(t => t.CloudId == cloudId && (t.Name.Contains(skillName) || t.Name.Equals(string.Empty)))
+            var query = db.Skills.Where(t => t.CloudId == cloudId
+            && (t.Name.Contains(skillName) || t.Name.Equals(string.Empty)))
             .OrderByDescending(e => e.Id);
 
             var skillsResult = await query.ToListAsync();
@@ -170,7 +172,8 @@ namespace JiraSchedulingConnectAppService.Services
 
                 // validate skill
                 var skill = await db.Skills.FirstOrDefaultAsync(s => s.Id == Id && s.CloudId == cloudId && s.IsDelete == false);
-                if(skill == null) {
+                if (skill == null)
+                {
                     throw new Exception(NotFoundMessage);
                 }
 

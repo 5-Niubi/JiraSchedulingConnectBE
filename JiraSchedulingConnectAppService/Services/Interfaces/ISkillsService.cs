@@ -1,6 +1,4 @@
-﻿using ModelLibrary.DBModels;
-using ModelLibrary.DTOs;
-using ModelLibrary.DTOs.Skills;
+﻿using ModelLibrary.DTOs.Skills;
 
 namespace JiraSchedulingConnectAppService.Services.Interfaces
 {

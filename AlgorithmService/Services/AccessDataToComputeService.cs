@@ -1,7 +1,6 @@
 ﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
 using AlgorithmServiceServer.Services.Interfaces;
 using AutoMapper;
-using JiraSchedulingConnectAppService.Common;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
@@ -69,7 +68,7 @@ namespace AlgorithmServiceServer.Services
             inputTo.FunctionList = functionFromDB;
             inputTo.EquipmentList = equipmentsFromDB;
 
-            var converter = new AlgorithmConverter(inputTo);
+            var converter = new AlgorithmConverter(inputTo, mapper);
 
             var outputToAlgorithm = converter.ToOR();
             var ga = new GAExecution();
@@ -88,7 +87,7 @@ namespace AlgorithmServiceServer.Services
                         new int[0], algOutRaw.TaskBegin, algOutRaw.TaskFinish);
                     algorithmOutputConverted.Add(algOutConverted);
 
-                    // 
+
                     InsertScheduleIntoDB(parameterId, algOutConverted, scheduleResultDTOs);
                 }
                 db.SaveChanges();
@@ -110,32 +109,32 @@ namespace AlgorithmServiceServer.Services
             // Insert result into Schedules table
             var schedule = new Schedule();
             schedule.ParameterId = parameterId;
-            schedule.Duration = algOutConverted.TimeFinish;
-            schedule.Cost = algOutConverted.TotalSalary;
-            schedule.Quality = algOutConverted.TotalExper;
+            schedule.Duration = algOutConverted.timeFinish;
+            schedule.Cost = algOutConverted.totalSalary;
+            schedule.Quality = algOutConverted.totalExper;
 
-            schedule.Tasks = JsonConvert.SerializeObject(algOutConverted.Tasks);
+            schedule.Tasks = JsonConvert.SerializeObject(algOutConverted.tasks);
 
             var scheduleSolution = (await db.Schedules.AddAsync(schedule)).Entity;
             var scheduleSolutionDTO = mapper.Map<ScheduleResultSolutionDTO>(scheduleSolution);
 
-            foreach (var task in algOutConverted.Tasks)
-            {
-                var scheduleTask = new ScheduleTask();
-                scheduleTask.Startdate = task.StartDate;
-                scheduleTask.Enddate = task.EndDate;
-                scheduleTask.ScheduleId = scheduleSolution.Id;
-                scheduleTask.TaskId = task.TaskId;
+            //foreach (var task in algOutConverted.tasks)
+            //{
+            //    var scheduleTask = new ScheduleTask();
+            //    scheduleTask.Startdate = task.startDate;
+            //    scheduleTask.Enddate = task.endDate;
+            //    scheduleTask.ScheduleId = scheduleSolution.Id;
+            //    scheduleTask.TaskId = task.id;
 
-                scheduleTask = (await db.ScheduleTasks.AddAsync(scheduleTask)).Entity;
-                var taskResource = new ScheduleTaskResource();
-                taskResource.ScheduleTaskId = scheduleTask.Id;
-                taskResource.ResourceId = task.WorkerId;
-                taskResource.Type = Const.RESOURCE_TYPE.WORKFORCE;
+            //    scheduleTask = (await db.ScheduleTasks.AddAsync(scheduleTask)).Entity;
+            //    var taskResource = new ScheduleTaskResource();
+            //    taskResource.ScheduleTaskId = scheduleTask.Id;
+            //    taskResource.ResourceId = task.workerId;
+            //    taskResource.Type = Const.RESOURCE_TYPE.WORKFORCE;
 
-                // Peding Equipment
-                await db.ScheduleTaskResources.AddAsync(taskResource);
-            }
+            //    // Pending Equipment
+            //    await db.ScheduleTaskResources.AddAsync(taskResource);
+            //}
             scheduleResultDTOs.Add(scheduleSolutionDTO);
         }
     }
