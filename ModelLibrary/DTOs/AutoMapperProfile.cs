@@ -16,7 +16,6 @@ namespace ModelLibrary.DTOs
             CreateMap<Project, ProjectListHomePageDTO>();
             CreateMap<ProjectsListCreateProject, Project>();
             CreateMap<Project, ProjectDetailDTO>();
-            CreateMap<WorkforceDTO, Workforce>();
 
             CreateMap<WorkforceDTO.Request, Workforce>();
             CreateMap<Workforce, WorkforceDTO.Request>();
