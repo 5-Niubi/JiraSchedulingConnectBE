@@ -20,7 +20,7 @@ namespace ModelLibrary.DTOs
 
             CreateMap<Skill, SkillDTO>();
             CreateMap<SkillDTO, Skill>();
-            CreateMap<SkillsListCreateSkill.Request, Skill>();
+            CreateMap<SkillCreatedRequest, Skill>();
            
     
             
