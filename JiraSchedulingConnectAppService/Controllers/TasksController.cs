@@ -26,7 +26,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateTask([FromBody] TasksPertCreateTask.Request taskRequest)
+        public async Task<IActionResult> CreateTask([FromBody] TasksPertCreateTask.TaskRequest taskRequest)
         {
             try
             {
@@ -44,7 +44,6 @@ namespace JiraSchedulingConnectAppService.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTaskDetail(int Id)
         {
-
 
             try
             {

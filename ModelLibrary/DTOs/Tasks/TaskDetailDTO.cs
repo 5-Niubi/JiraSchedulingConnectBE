@@ -1,4 +1,5 @@
-﻿using ModelLibrary.DTOs.Skills;
+﻿using ModelLibrary.DTOs.PertSchedule;
+using ModelLibrary.DTOs.Skills;
 
 namespace ModelLibrary.DTOs.Tasks
 {
@@ -16,9 +17,8 @@ namespace ModelLibrary.DTOs.Tasks
         public bool? IsDelete { get; set; }
 
 
-        public List<int>? PrecedencesId { get; set; }
-        public List<int>? RequiredSkillsId { get; set; }
-        public List<int>? RequiredSkillsLevel { get; set; }
+        public List<PrecedenceDTO>? Precedences { get; set; }
+        public List<SkillRequiredDTO>? SkillRequireds { get; set; }
 
     }
 }

@@ -9,10 +9,11 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Tasks;
+using static ModelLibrary.DTOs.PertSchedule.TasksPertCreateTask;
 
 namespace JiraSchedulingConnectAppService.Services
 {
-    public class TasksService: ITasksService
+    public class TasksService : ITasksService
     {
         public const string NotFoundMessage = "Task Not Found!";
         public const string NotUniqueTaskNameMessage = "Task Name Must Unique!";
@@ -32,14 +33,14 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
-        private async Task<bool> _ValidatePrecedenceTask(List<int> PrecedencesId, int? ProjectId ) {
-            var exitedPrecedences = await db.Tasks.Where(
-            t => PrecedencesId.Contains(t.Id)
-                & t.ProjectId == ProjectId
-                & t.IsDelete == false
-                ).ToListAsync();
+        private async Task<bool> _ValidatePrecedenceTask(List<PrecedenceRequest> Precedences, int? ProjectId) {
 
-            if (PrecedencesId.Count != exitedPrecedences.Count)
+            var precedenceIds = new HashSet<int>(Precedences.Select(p => p.PrecedenceId));
+            var exitedPrecedences = await db.Tasks
+                .Where(t => precedenceIds.Contains(t.Id) & t.ProjectId == ProjectId & t.IsDelete==false)
+                .ToListAsync();
+
+            if (exitedPrecedences.Count != Precedences.Count)
             {
                 throw new Exception(PredenceNotExitedMessage);
             }
@@ -48,51 +49,71 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
+        private async Task<bool> _ValidateMilestoneTask(int MilestoneId, int ProjectId)
+        {
+            // validate milestone task  project's 
+            var existingMilestone = await db.Milestones.FirstOrDefaultAsync(
+                t => t.Id == MilestoneId
+                & t.ProjectId == ProjectId
+                );
+
+            if (existingMilestone == null)
+            {
+                throw new Exception(MilestoneNotValidMessage);
+            }
+            return true;
+        }
+        
 
 
-
-        private async Task<bool> _ValidateSkillsRequired(List<int> RequiredSkillsId, List<int> RequiredSkillsLevel, string cloudId) {
+        private async Task<bool> _ValidateSkillsRequired(List<SkillRequest> RequiredSkills, string cloudId) {
 
         
 
             //validate exited on database
-            var exitedSkills = await db.Skills.Where(
-                    s => RequiredSkillsId.Contains(s.Id)
-                    & s.CloudId == cloudId
-                    & s.IsDelete == false
+            var RequiredSkillsId = new HashSet<int>(RequiredSkills.Select(p => p.SkillId));
+            var exitedSkills = await db.Skills
+                .Where(s => RequiredSkillsId.Contains(s.Id) & s.CloudId == cloudId & s.IsDelete == false)
+                .ToListAsync();
 
-                    )
-                    .ToListAsync();
+
 
             if (exitedSkills.Count != RequiredSkillsId.Count)
             {
                 throw new Exception(RequiredSkillNotValidMessage);
             }
 
+
+
             // validate level skill
-            foreach(int level in RequiredSkillsLevel) {
-                if(level < 1 || level > 5){
+            foreach (var skill in RequiredSkills)
+            {
+                if (skill.Level < 1 || skill.Level > 5)
+                {
                     throw new Exception(RequiredSkillNotValidMessage);
                 }
             }
+
             return true;
        
         }
 
 
+        public async Task<List<TasksSkillsRequired>> CreateTaskSkillRequired(
+            int TaskId,
+            List<SkillRequest> RequiredSkills) {
 
-        private async Task<List<TasksSkillsRequired>> _CreateTaskSkillRequired(int TaskId, List<int> RequiredSkillsId, List<int> RequiredSkillsLevel) {
             // define required skills task
             List<TasksSkillsRequired> TaskskillsRequiredList = new List<TasksSkillsRequired>();
 
-            for (int i = 0; i< RequiredSkillsId.Count; i++)
+            for (int i = 0; i< RequiredSkills.Count; i++)
             {
-                var skillReqDTO = new TasksSkillsRequired();
-                skillReqDTO.SkillId = RequiredSkillsId[i];
-                skillReqDTO.Level = RequiredSkillsLevel[i];
-                skillReqDTO.TaskId = TaskId;
+                var taskSkillRequired = new TasksSkillsRequired();
+                taskSkillRequired.SkillId = RequiredSkills[i].SkillId;
+                taskSkillRequired.Level = RequiredSkills[i].Level;
+                taskSkillRequired.TaskId = TaskId;
 
-                TaskskillsRequiredList.Add(skillReqDTO);
+                TaskskillsRequiredList.Add(taskSkillRequired);
 
             }
 
@@ -105,27 +126,20 @@ namespace JiraSchedulingConnectAppService.Services
 
 
 
-        private async Task<List<int>> _CreatePrecedenceTasks(int TaskId, List<int> PrecedencesId)
+        private async Task<List<TaskPrecedence>> CreateTaskPrecedenceTasks(List<PrecedenceRequest> precedencesDTO)
         {
-            // define task precendence tasks
-            var taskPrecedences = PrecedencesId.Select(
-                precedenceId => new TaskPrecedence
-                {
-                    TaskId = TaskId,
-                    PrecedenceId = precedenceId
-                });
 
 
-
+            var taskPrecedenceTasks = mapper.Map<List<TaskPrecedence>>(precedencesDTO);
             // insert task predences task
-            db.TaskPrecedences.AddRange(taskPrecedences);
+            db.TaskPrecedences.AddRange(taskPrecedenceTasks);
             await db.SaveChangesAsync();
 
-            return PrecedencesId;
+            return taskPrecedenceTasks;
         }
 
 
-        public  async Task<TaskDetailDTO> CreateTask(TasksPertCreateTask.Request taskRequest)
+        public  async Task<TaskDetailDTO> CreateTask(TasksPertCreateTask.TaskRequest taskRequest)
         {
 
             try
@@ -146,52 +160,51 @@ namespace JiraSchedulingConnectAppService.Services
                     throw new Exception(NotUniqueTaskNameMessage); 
                 }
 
-                // validate exited name task  project's 
-                var existingMilestone = await db.Milestones.FirstOrDefaultAsync(
-                    t => t.Id == taskRequest.MilestoneId
-                    & t.ProjectId == taskRequest.ProjectId
-                    );
 
-                if (existingMilestone == null)
-                {
-                    throw new Exception(MilestoneNotValidMessage);
-                }
-
-
+                // validate milestone task
+                await _ValidateMilestoneTask(taskRequest.MilestoneId, taskRequest.ProjectId);
 
                 // validate exited predences in this project
-                await _ValidatePrecedenceTask(taskRequest.PrecedencesId, taskRequest.ProjectId);
+                await _ValidatePrecedenceTask(taskRequest.Precedences, taskRequest.ProjectId);
 
                 // validate required skills task's
-                await _ValidateSkillsRequired(taskRequest.RequiredSkillsId, taskRequest.RequiredSkillsLevel, cloudId) ;
+                await _ValidateSkillsRequired(taskRequest.SkillRequireds, cloudId) ;
 
                 // validate is DAG graph
                 // TODO 
 
-   
-                // define task
-                var task = mapper.Map<ModelLibrary.DBModels.Task>(taskRequest);
 
+                // define task
+
+                // TODO mapper list object in class
+                var task = mapper.Map<ModelLibrary.DBModels.Task>(taskRequest);
+                var precedences = mapper.Map<List<TaskPrecedence>>(taskRequest.Precedences);
+                var requiredSkills = mapper.Map<List<TasksSkillsRequired>>(taskRequest.SkillRequireds);
+                task.TaskPrecedenceTasks = precedences;
+                task.TasksSkillsRequireds = requiredSkills;
                 task.CloudId = cloudId;
-                task.IsDelete = false;
 
                 // insert task
                 var taskCreatedEntity = await db.Tasks.AddAsync(task);
                 await db.SaveChangesAsync();
 
-                var taskCreatedDTO = mapper.Map<TaskDetailDTO>(taskCreatedEntity.Entity);
+                
+
+                //taskCreatedDTO.Precedences = taskRequest.Precedences;
+                //taskCreatedDTO.SkillRequireds = taskRequest.SkillRequireds;
+
 
                 // create task skill required
-                _CreateTaskSkillRequired(taskCreatedDTO.Id, taskRequest.RequiredSkillsId, taskRequest.RequiredSkillsLevel);
-
+                CreateTaskSkillRequired(taskCreatedEntity.Entity.Id, taskRequest.SkillRequireds);
 
                 // create precedence tasks
-                _CreatePrecedenceTasks(taskCreatedDTO.Id, taskCreatedDTO.PrecedencesId);
+                CreateTaskPrecedenceTasks(taskRequest.Precedences);
 
 
-                taskCreatedDTO.PrecedencesId = taskRequest.RequiredSkillsId;
-                taskCreatedDTO.RequiredSkillsId = taskRequest.RequiredSkillsLevel;
-                taskCreatedDTO.PrecedencesId = taskRequest.PrecedencesId;
+                // TODO mapper list object in class    
+                var taskCreatedDTO = mapper.Map<TaskDetailDTO>(taskCreatedEntity.Entity);
+                taskCreatedDTO.SkillRequireds = mapper.Map<List<SkillRequiredDTO>>(taskCreatedEntity.Entity.TasksSkillsRequireds);
+                taskCreatedDTO.Precedences = mapper.Map<List<PrecedenceDTO>>(taskCreatedEntity.Entity.TaskPrecedenceTasks);
 
                 return taskCreatedDTO;
             }
@@ -209,16 +222,20 @@ namespace JiraSchedulingConnectAppService.Services
         public async Task<TaskDetailDTO> GetTaskDetail(int Id)
         {
 
-            var task = await db.Tasks.FirstOrDefaultAsync(
+            var task = await db.Tasks
+                .Include(t => t.TaskPrecedenceTasks)
+                .Include(t => t.TasksSkillsRequireds)
+                .FirstOrDefaultAsync(
                     t => t.Id == Id
                     && t.IsDelete == false);
 
             if(task == null) {
                 throw new Exception(NotFoundMessage);
             }
-            var taskDetaiDTO = mapper.Map<TaskDetailDTO>(task);
-
-            return taskDetaiDTO;
+            var taskDetailDTO = mapper.Map<TaskDetailDTO>(task);
+            taskDetailDTO.SkillRequireds = mapper.Map<List<SkillRequiredDTO>>(task.TasksSkillsRequireds);
+            taskDetailDTO.Precedences = mapper.Map<List<PrecedenceDTO>>(task.TaskPrecedenceTasks);
+            return taskDetailDTO;
 
 
         }
@@ -228,24 +245,9 @@ namespace JiraSchedulingConnectAppService.Services
             throw new NotImplementedException();
         }
 
+
+
         
-
-        //public Task<List<TaskPertDetailDTO>> GetTasksForPertChartProcessing(int projectId)
-        //{
-        //    var jwt = new JWTManagerService(httpContext);
-        //    var cloudId = jwt.GetCurrentCloudId();
-
-
-        //    var query = db.Tasks.Where(t => t.CloudId == cloudId
-        //        && t.ProjectId == projectId & t.IsDelete == false
-        //        )
-        //        .OrderByDescending(e => e.Id);
-
-        //    var taskDetaisResult = await query.ToListAsync();
-        //    var taskDetaiDTO = mapper.Map<List<TaskPertDetailDTO>>(projectsResult);
-
-        //    return taskDetaiDTO;
-        //}
 
         //public Task<TaskDetailDTO> UpdateTask(TasksListCreateTask.Request task)
         //{
