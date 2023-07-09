@@ -32,7 +32,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateWorkforce([FromBody] WorkforceDTO workforce)
+        public async Task<IActionResult> CreateWorkforce([FromBody] WorkforceDTO.Request workforce)
         {
             try
             {
@@ -45,9 +45,19 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteWorkforce(string id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetWorkforceById(string id)
         {
+            var response = await workforcesService.GetWorkforceById(id);
+            if (response == null)
+            {
+                return NotFound();
+            }
+            return Ok(response);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteWorkforce(string id) {
             try
             {
                 var w = workforcesService.GetWorkforceById(id);
@@ -55,7 +65,7 @@ namespace JiraSchedulingConnectAppService.Controllers
                 {
                     return BadRequest("Cannot found this workforce!");
                 }
-                await workforcesService.DeleteWorkforce(await w);
+                await workforcesService.DeleteWorkforce(id);
                 return Ok("Delete success");
             }
             catch (Exception ex)
@@ -66,7 +76,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateWorkforce(string id, [FromBody] WorkforceDTO workforce)
+        public async Task<IActionResult> UpdateWorkforce(string id, [FromBody] WorkforceDTO.Request workforce)
         {
             try
             {

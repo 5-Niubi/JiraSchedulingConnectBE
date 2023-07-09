@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
+using ModelLibrary.DTOs.Projects;
+using Newtonsoft.Json.Linq;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -18,19 +21,35 @@ namespace JiraSchedulingConnectAppService.Services
             this.mapper = mapper;
             httpContext = httpContextAccessor.HttpContext;
         }
-
-        public async Task<WorkforceDTO> CreateWorkforce(WorkforceDTO? workforce)
+        public async Task<List<WorkforceDTO.Response>> GetAllWorkforces()
         {
             try
             {
                 var jwt = new JWTManagerService(httpContext);
                 var cloudId = jwt.GetCurrentCloudId();
+                var query = await db.Workforces.ToListAsync();
+                var queryDTOResponse = mapper.Map<List<WorkforceDTO.Response>>(query);
+                return queryDTOResponse;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception();
+            }
+        }
 
-                var w1 = mapper.Map<Workforce>(workforce);
-                w1.CloudId = cloudId;
-                var projectCreatedEntity = await db.Workforces.AddAsync(w1);
+        public async Task<WorkforceDTO.Response> CreateWorkforce(WorkforceDTO.Request? workforceRequest)
+        {
+            try
+            {
+                var jwt = new JWTManagerService(httpContext);
+                var cloudId = jwt.GetCurrentCloudId();
+                var workforce = mapper.Map<Workforce>(workforceRequest);
+                workforce.CloudId = cloudId;
+
+                await db.Workforces.AddAsync(workforce);
                 await db.SaveChangesAsync();
-                return workforce;
+                var workforceDTOResponse = mapper.Map<WorkforceDTO.Response>(workforce);
+                return workforceDTOResponse;
             }
             catch (Exception e)
             {
@@ -38,14 +57,13 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        public async System.Threading.Tasks.Task DeleteWorkforce(Workforce w)
+        public async Task<WorkforceDTO.Response> GetWorkforceById(string workforce_id)
         {
             try
             {
-                var w1 = await db.Workforces.SingleOrDefaultAsync(x => x.Id == w.Id);
-                db.Workforces.Remove(w1);
-                await db.SaveChangesAsync();
-
+                var workforce = await db.Workforces.Where(e => e.Id.ToString() == workforce_id).FirstOrDefaultAsync();
+                var workforceResponse = mapper.Map<WorkforceDTO.Response>(workforce);
+                return workforceResponse;
             }
             catch (Exception e)
             {
@@ -53,38 +71,33 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        public async Task<List<Workforce>> GetAllWorkforces()
+        public async System.Threading.Tasks.Task DeleteWorkforce(string? workforce_id)
         {
-            var jwt = new JWTManagerService(httpContext);
-            var cloudId = jwt.GetCurrentCloudId();
-
-            var query = await db.Workforces.ToListAsync();
-
-            return query;
-        }
-
-        public async Task<Workforce> GetWorkforceById(string workforce_id)
-        {
-            Workforce workforce = new Workforce();
             try
             {
-                workforce = await db.Workforces.SingleOrDefaultAsync(x => x.Id.ToString() == workforce_id);
+                var workforce = await db.Workforces.SingleOrDefaultAsync(x => x.Id.ToString() == workforce_id);
+                if(workforce != null) {
+                    workforce.IsDelete = true;
+                    workforce.DeleteDatetime = DateTime.Now;
+                    db.Workforces.Update(workforce);
+                }
+                await db.SaveChangesAsync();
             }
             catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
-            return workforce;
         }
 
-        public async Task<WorkforceDTO> UpdateWorkforce(WorkforceDTO w)
+        public async Task<WorkforceDTO.Response> UpdateWorkforce(WorkforceDTO.Request workforceRequest)
         {
             try
             {
-                var w1 = mapper.Map<Workforce>(w);
-                db.Update(w1);
+                var workforce = mapper.Map<Workforce>(workforceRequest);
+                db.Update(workforce);
                 await db.SaveChangesAsync();
-                return w;
+                var workforceDTOResponse = mapper.Map<WorkforceDTO.Response>(workforce);
+                return workforceDTOResponse;
             }
             catch (Exception e)
             {
