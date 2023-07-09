@@ -26,7 +26,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateTask([FromBody] TasksPertCreateTask.TaskRequest taskRequest)
+        public async Task<IActionResult> CreateTask([FromBody] TaskCreatedRequest taskRequest)
         {
             try
             {
@@ -58,10 +58,50 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetTasksPertChart(int ProjectId)
+        {
+
+            try
+            {
+                var response = await TasksService.GetTasksPertChart(ProjectId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateTask(TaskUpdatedRequest taskRequest)
+        {
+
+            try
+            {
+                var resopnse = await TasksService.UpdateTask(taskRequest);
+                return Ok(resopnse);
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             return NoContent();
         }
+
+
+
+
+
+        
 
     }
 }
