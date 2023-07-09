@@ -2,6 +2,6 @@
 {
     public interface IExportService
     {
-        public Task ToJira();
+        public Task<string> ToJira(int scheduleId, string projectJiraId);
     }
 }

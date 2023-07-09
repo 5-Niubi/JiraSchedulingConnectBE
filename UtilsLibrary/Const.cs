@@ -23,6 +23,8 @@
         {
             public const string SUCCESS = "Success!!!";
             public const string PROJECT_NAME_EXIST = "Project name already exists.";
+            public const string JIRA_API_ERROR = "Error when make a request to JIRA";
+            public const string NOTFOUND_SCHEDULE = "Not found schedule";
         }
     }
 }

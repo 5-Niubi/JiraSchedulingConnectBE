@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
+using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -16,12 +17,18 @@ namespace JiraSchedulingConnectAppService.Controllers
             this.exportService = exportService;
         }
         [HttpGet]
-        async public Task<IActionResult> ExportToJira()
+        async public Task<IActionResult> ExportToJira(int scheduleId, string projectJiraId)
         {
             try
             {
-                await exportService.ToJira();
-                return Ok();
+                var response = await exportService.ToJira(scheduleId, projectJiraId);
+                return Ok(response);
+            }
+            catch (JiraAPIException ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                response.Data = ex.jiraResponse;
+                return BadRequest(response);
             }
             catch (Exception ex)
             {
