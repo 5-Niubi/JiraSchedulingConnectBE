@@ -1,4 +1,5 @@
-﻿using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Common;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 using ModelLibrary.DBModels;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
@@ -64,6 +65,11 @@ namespace JiraSchedulingConnectAppService.Services
             await GetNewAccessTokenFromRefreshToken(cloudId);
             var respone = await client.GetAsync(url);
             respone.EnsureSuccessStatusCode();
+            if (!respone.IsSuccessStatusCode)
+            {
+                throw new JiraAPIException(await respone.Content.ReadAsStringAsync(),
+                    Const.MESSAGE.JIRA_API_ERROR);
+            }
             return respone;
         }
 
@@ -74,7 +80,11 @@ namespace JiraSchedulingConnectAppService.Services
             var content = new StringContent(contentObjJson,
                 Encoding.UTF8, "application/json");
             var respone = await client.PostAsync(url, content);
-
+            if (!respone.IsSuccessStatusCode)
+            {
+                throw new JiraAPIException(await respone.Content.ReadAsStringAsync(),
+                    Const.MESSAGE.JIRA_API_ERROR);
+            }
             return respone;
         }
 
@@ -84,8 +94,11 @@ namespace JiraSchedulingConnectAppService.Services
             var content = new StringContent(JsonConvert.SerializeObject(contentObject),
                 Encoding.UTF8, "application/json");
             var respone = await client.PutAsync(url, content);
-            respone.EnsureSuccessStatusCode();
-
+            if (!respone.IsSuccessStatusCode)
+            {
+                throw new JiraAPIException(await respone.Content.ReadAsStringAsync(),
+                    Const.MESSAGE.JIRA_API_ERROR);
+            }
             return respone;
         }
 
@@ -93,7 +106,11 @@ namespace JiraSchedulingConnectAppService.Services
         {
             await GetNewAccessTokenFromRefreshToken(cloudId);
             var respone = await client.DeleteAsync(url);
-
+            if (!respone.IsSuccessStatusCode)
+            {
+                throw new JiraAPIException(await respone.Content.ReadAsStringAsync(),
+                    Const.MESSAGE.JIRA_API_ERROR);
+            }
             return respone;
         }
     }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ModelLibrary.DBModels
+﻿namespace ModelLibrary.DBModels
 {
     public partial class ParameterResource
     {
