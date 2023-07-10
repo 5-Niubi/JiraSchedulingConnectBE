@@ -13,11 +13,11 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
 
 
 
-        public Task<SkillDTO> UpdateNameSkill(int Id, SkillDTO skill);
+        public Task<SkillDTO> UpdateNameSkill(SkillDTO skill);
 
         public Task<bool> DeleteSkill(int Id);
 
-        public Task<SkillDTO> CreateSkill(SkillsListCreateSkill.Request skillRequest);
+        public Task<SkillDTO> CreateSkill(SkillCreatedRequest skillRequest);
 
     }
 }

@@ -35,7 +35,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateSkill([FromBody] SkillsListCreateSkill.Request skillRequest)
+        public async Task<IActionResult> CreateSkill([FromBody] SkillCreatedRequest skillRequest)
         {
             try
             {
@@ -52,12 +52,13 @@ namespace JiraSchedulingConnectAppService.Controllers
 
 
         [HttpPut]
-        async public Task<IActionResult> UpdateNameSkill(int id, [FromBody] SkillDTO skill)
+        async public Task<IActionResult> UpdateNameSkill( [FromBody] SkillDTO skill)
         {
             try
             {
+
                 // update skill name
-                var result = await skillsService.UpdateNameSkill(id, skill);
+                var result = await skillsService.UpdateNameSkill(skill);
                 var response = new ResponseMessageDTO(Const.MESSAGE.SUCCESS);
                 response.Data = result;
 

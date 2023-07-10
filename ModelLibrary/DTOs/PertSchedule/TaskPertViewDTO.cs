@@ -1,21 +1,15 @@
-﻿using ModelLibrary.DTOs.PertSchedule;
+﻿using System;
 using ModelLibrary.DTOs.Skills;
+using ModelLibrary.DTOs.Tasks;
 
-namespace ModelLibrary.DTOs.Tasks
+namespace ModelLibrary.DTOs.PertSchedule
 {
-    public struct TaskDetailDTO
+	public class TaskPertViewDTO
     {
         public int Id { get; set; }
         public string? Name { get; set; }
         public double? Duration { get; set; }
-
-
-
-        public string? CloudId { get; set; }
-        public int? ProjectId { get; set; }
         public int? MilestoneId { get; set; }
-        public bool? IsDelete { get; set; }
-
 
         public List<PrecedenceDTO>? Precedences { get; set; }
         public List<SkillRequiredDTO>? SkillRequireds { get; set; }
