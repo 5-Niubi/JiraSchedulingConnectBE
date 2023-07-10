@@ -19,7 +19,6 @@ namespace RcpspAlgorithmLibrary
             NumOfTasks = InputToEstimator.TaskList.Count;
             NumOfSkills = InputToEstimator.SkillList.Count;
 
-
             this.TaskList = InputToEstimator.TaskList;
             this.SkillList = InputToEstimator.SkillList;
 

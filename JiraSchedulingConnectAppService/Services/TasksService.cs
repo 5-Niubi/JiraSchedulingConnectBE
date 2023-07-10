@@ -257,8 +257,12 @@ namespace JiraSchedulingConnectAppService.Services
 
             }
 
+
             // update exited skill required task
-            db.UpdateRange(task.TasksSkillsRequireds);
+            var skillRequiredsToUpdate = task.TasksSkillsRequireds.Select(newS => new TasksSkillsRequired { TaskId = task.Id, SkillId = newS.SkillId, Level = newS.Level })
+            .ToList();
+
+            db.UpdateRange(skillRequiredsToUpdate);
             await db.SaveChangesAsync();
 
             // add new skill required task

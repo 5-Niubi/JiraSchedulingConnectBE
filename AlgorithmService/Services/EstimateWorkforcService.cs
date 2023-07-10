@@ -59,9 +59,15 @@ namespace AlgorithmServiceServer.Services
                 .Include(p => p.Tasks)
                 .FirstOrDefaultAsync();
 
-            var skillFromDB = db.Skills.Where(s => s.CloudId == cloudId).ToList();
-            var taskFromDB = db.Tasks.Where(t => t.ProjectId == projectId)
-                .Include(t => t.TaskPrecedenceTasks).Include(t => t.TasksSkillsRequireds).ToList();
+            var skillFromDB = db.Skills
+                .Where(s => s.CloudId == cloudId)
+                .ToList();
+
+            var taskFromDB = db.Tasks
+                .Where(t => t.ProjectId == projectId)
+                .Include(t => t.TaskPrecedenceTasks)
+                .Include(t => t.TasksSkillsRequireds)
+                .ToList();
 
 
             var inputToEstimator = new InputToEstimatorDTO();

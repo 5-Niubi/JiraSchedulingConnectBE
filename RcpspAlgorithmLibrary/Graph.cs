@@ -1,4 +1,4 @@
-﻿namespace RcpspEstimator
+﻿namespace RcpspAlgorithmLibrary
 {
     public class DirectedGraph
     {
