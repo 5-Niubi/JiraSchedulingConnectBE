@@ -24,28 +24,20 @@ namespace AlgorithmServiceServer.Services
             this.mapper = mapper;
         }
 
-        public async Task<List<ScheduleResultSolutionDTO>> GetDataToCompute(int projectId, int parameterId)
+        public async Task<List<ScheduleResultSolutionDTO>> GetDataToCompute(int parameterId)
         {
             var cloudId = new JWTManagerService(http).GetCurrentCloudId();
             var inputTo = new InputToORDTO();
-
-            var projectFromDB = await db.Projects
-                .Where(p => p.CloudId == cloudId && p.Id == projectId)
-                .Include(p => p.Tasks)
-                .ThenInclude(t => t.TaskPrecedenceTasks)
-                .FirstOrDefaultAsync();
-            if (projectFromDB == null)
-            {
-                throw new NotFoundException($"Can not find project with id: {projectId}");
-            }
-            var taskFromDB = db.Tasks.Where(t => t.ProjectId == projectId)
-                .Include(t => t.TasksSkillsRequireds).ToList();
-
-            var parameterLatest = db.Parameters.Where(p => p.Id == parameterId).FirstOrDefault();
+            var parameterLatest = db.Parameters.Where(p => p.Id == parameterId)
+                .Include(p => p.Project).FirstOrDefault();
             if (parameterLatest == null)
             {
                 throw new NotFoundException($"Can not find parameter with id: {parameterId}");
             }
+            var projectFromDB = parameterLatest.Project;
+            var taskFromDB = db.Tasks.Where(t => t.ProjectId == parameterLatest.ProjectId)
+               .Include(t => t.TasksSkillsRequireds).Include(t => t.TaskPrecedenceTasks).ToList();
+
 
             var workerFromDB = db.Workforces.Where(w => w.CloudId == cloudId)
                 .Include(w => w.WorkforceSkills)
@@ -62,7 +54,7 @@ namespace AlgorithmServiceServer.Services
                 .Subtract(projectFromDB.StartDate.Value).TotalDays;
 
             inputTo.Budget = (int)parameterLatest.Budget;
-            inputTo.TaskList = projectFromDB.Tasks.ToList();
+            inputTo.TaskList = taskFromDB.ToList();
             inputTo.WorkerList = workerFromDB;
             inputTo.SkillList = skillFromDB;
             inputTo.FunctionList = functionFromDB;

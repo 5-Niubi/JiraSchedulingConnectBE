@@ -53,6 +53,7 @@ builder.Services.AddTransient<IEquipmentService, EquipmentsService>();
 builder.Services.AddTransient<IJiraBridgeAPIService, JiraBridgeAPIService>();
 builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 builder.Services.AddTransient<IExportService, ExportService>();
+builder.Services.AddTransient<IThreadService, ThreadService>();
 
 
 var app = builder.Build();

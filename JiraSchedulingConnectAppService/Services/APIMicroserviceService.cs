@@ -1,8 +1,10 @@
-﻿using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Common;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -35,7 +37,11 @@ namespace JiraSchedulingConnectAppService.Services
         async Task<HttpResponseMessage> IAPIMicroserviceService.Get(string url)
         {
             var respone = await client.GetAsync(url);
-
+            if (!respone.IsSuccessStatusCode)
+            {
+                throw new MicroServiceAPIException(await respone.Content.ReadAsStringAsync(),
+                    Const.MESSAGE.MICROSERVICE_API_ERROR);
+            }
             return respone;
         }
 
@@ -43,8 +49,12 @@ namespace JiraSchedulingConnectAppService.Services
         {
             var content = new StringContent(JsonSerializer.Serialize(contentObject));
             var respone = await client.PostAsync(url, content);
+            if (!respone.IsSuccessStatusCode)
+            {
+                throw new MicroServiceAPIException(await respone.Content.ReadAsStringAsync(),
+                    Const.MESSAGE.MICROSERVICE_API_ERROR);
+            }
             return respone;
-            throw new NotImplementedException();
         }
     }
 }
