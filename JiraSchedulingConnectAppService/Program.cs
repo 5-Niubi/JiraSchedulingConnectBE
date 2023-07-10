@@ -49,6 +49,7 @@ builder.Services.AddTransient<ISkillsService, SkillsService>();
 builder.Services.AddTransient<ITasksService, TasksService>();
 builder.Services.AddTransient<IAlgorithmService, AlgorithmService>();
 builder.Services.AddTransient<IWorkforcesService, WorkforcesService>();
+builder.Services.AddTransient<IEquipmentService, EquipmentsService>();
 builder.Services.AddTransient<IJiraBridgeAPIService, JiraBridgeAPIService>();
 builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 builder.Services.AddTransient<IExportService, ExportService>();

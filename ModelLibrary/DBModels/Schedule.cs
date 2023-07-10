@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ModelLibrary.DBModels
+﻿namespace ModelLibrary.DBModels
 {
     public partial class Schedule
     {
@@ -11,6 +8,7 @@ namespace ModelLibrary.DBModels
         public int? Cost { get; set; }
         public int? Quality { get; set; }
         public string? Tasks { get; set; }
+        public string? CloudId { get; set; }
         public int? Selected { get; set; }
         public DateTime? Since { get; set; }
         public string? AccountId { get; set; }

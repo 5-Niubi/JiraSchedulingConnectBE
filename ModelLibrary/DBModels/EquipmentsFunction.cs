@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ModelLibrary.DBModels
+﻿namespace ModelLibrary.DBModels
 {
     public partial class EquipmentsFunction
     {
@@ -10,6 +7,7 @@ namespace ModelLibrary.DBModels
         public bool? IsDelete { get; set; }
         public DateTime? CreateDatetime { get; set; }
         public DateTime? DeleteDatetime { get; set; }
+        public string? CloudId { get; set; }
 
         public virtual Equipment Equipment { get; set; } = null!;
         public virtual Function Function { get; set; } = null!;
