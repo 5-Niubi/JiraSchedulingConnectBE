@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Skills;
 
 
@@ -50,7 +51,7 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
-        public async Task<SkillDTO> UpdateNameSkill(int Id, SkillDTO skillDTO)
+        public async Task<SkillDTO> UpdateNameSkill(SkillDTO skillDTO)
         {
 
             try
@@ -58,7 +59,9 @@ namespace JiraSchedulingConnectAppService.Services
                 var jwt = new JWTManagerService(httpContext);
                 var cloudId = jwt.GetCurrentCloudId();
 
-                var skill = await db.Skills.FirstOrDefaultAsync(s => s.Id == Id && s.CloudId == cloudId && s.IsDelete == false);
+                var skill = mapper.Map<Skill>(skillDTO);
+
+                var exitedskill = await db.Skills.FirstOrDefaultAsync(s => s.Id == skill.Id && s.CloudId == cloudId && s.IsDelete == false);
                 var exitedName = await db.Skills.FirstOrDefaultAsync(s => s.Name == skillDTO.Name && s.CloudId == cloudId && s.IsDelete == false);
 
                 // Validate exited skill
@@ -73,10 +76,10 @@ namespace JiraSchedulingConnectAppService.Services
                     throw new Exception(NotUniqueSkillNameMessage);
                 }
 
-                skill.Name = skillDTO.Name;
+                exitedskill.Name = skillDTO.Name;
 
                 // Update
-                db.Update(skill);
+                db.Update(exitedskill);
                 await db.SaveChangesAsync();
 
 
@@ -94,7 +97,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
 
-        public async Task<SkillDTO> CreateSkill(SkillsListCreateSkill.Request skillRequest)
+        public async Task<SkillDTO> CreateSkill(SkillCreatedRequest skillRequest)
         {
 
             try
@@ -182,8 +185,6 @@ namespace JiraSchedulingConnectAppService.Services
                 skill.IsDelete = true;
                 db.Update(skill);
                 await db.SaveChangesAsync();
-
-
                 return true;
 
             }

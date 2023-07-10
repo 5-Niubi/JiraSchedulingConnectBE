@@ -46,6 +46,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IAPIMicroserviceService, APIMicroserviceService>();
 builder.Services.AddTransient<IProjectServices, ProjectsService>();
 builder.Services.AddTransient<ISkillsService, SkillsService>();
+builder.Services.AddTransient<ITasksService, TasksService>();
 builder.Services.AddTransient<IAlgorithmService, AlgorithmService>();
 builder.Services.AddTransient<IWorkforcesService, WorkforcesService>();
 builder.Services.AddTransient<IEquipmentService, EquipmentsService>();

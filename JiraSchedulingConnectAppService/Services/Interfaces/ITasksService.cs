@@ -1,15 +1,17 @@
-﻿using ModelLibrary.DTOs.Tasks;
+﻿using ModelLibrary.DBModels;
+using ModelLibrary.DTOs.PertSchedule;
+using ModelLibrary.DTOs.Tasks;
 
 namespace JiraSchedulingConnectAppService.Services.Interfaces
 {
     public interface ITasksService
     {
 
-        public Task<TaskDTO> CreateTask(TaskDTO task);
-        public Task<TaskDTO> UpdateTask(TaskDTO task);
-        public Task<TaskDTO> DeleteTask(TaskDTO task);
-        public Task<TaskDetailDTO> GetTaskDetail(int Id);
-        public Task<List<TaskPertChartDTO>> GetTasksForPertChartProcessing(int projectId);
+        public Task<TaskPertViewDTO> CreateTask(TaskCreatedRequest taskRequest);
+        public Task<TaskPertViewDTO> UpdateTask(TaskUpdatedRequest taskRequest);
+        //public Task<bool> DeleteTask(int Id);
+        public Task<TaskPertViewDTO> GetTaskDetail(int Id);
+        public Task<List<TaskPertViewDTO>> GetTasksPertChart(int projectId);
 
     }
 }
