@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
+using System.Dynamic;
+using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -11,17 +13,24 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class AlgorithmController : ControllerBase
     {
         private readonly IAlgorithmService algorithmService;
+
         public AlgorithmController(IAlgorithmService algorithmService)
         {
             this.algorithmService = algorithmService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTestConverter(int projectId, int parameterId)
+        public async Task<IActionResult> GetTestConverter( int parameterId)
         {
             try
+            {              
+                return Ok(algorithmService.TestConverter(parameterId));
+            }
+            catch (MicroServiceAPIException ex)
             {
-                return Ok(await algorithmService.TestConverter(projectId, parameterId));
+                var response = new ResponseMessageDTO(ex.Message);
+                response.Data = ex.mircoserviceResponse;
+                return BadRequest(response);
             }
             catch (Exception ex)
             {

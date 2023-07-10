@@ -1,4 +1,7 @@
-﻿namespace ModelLibrary.DBModels
+﻿using System;
+using System.Collections.Generic;
+
+namespace ModelLibrary.DBModels
 {
     public partial class AtlassianToken
     {
