@@ -98,7 +98,7 @@ namespace AlgorithmServiceServer.Services
             foreach (int milestoneId in Results.Keys)
             {
                 List<int[]> result = Results[milestoneId];
-                WorkforceWithMilestoneList.Add(converter.FromEs(result));
+                WorkforceWithMilestoneList.Add(converter.FromEs(milestoneId, result));
             }
 
             estimatedResultDTO.WorkforceWithMilestoneList = WorkforceWithMilestoneList;

@@ -84,7 +84,7 @@ namespace RcpspAlgorithmLibrary
             return output;
         }
 
-        public WorkforceWithMilestoneDTO FromEs(List<int[]> WorkforceWithSkill)
+        public WorkforceWithMilestoneDTO FromEs(int Id, List<int[]> WorkforceWithSkill)
         {
 
 
@@ -152,6 +152,7 @@ namespace RcpspAlgorithmLibrary
 
 
             var workforceWithMilestoneDTO = new WorkforceWithMilestoneDTO();
+            workforceWithMilestoneDTO.Id = Id;
             workforceWithMilestoneDTO.WorkforceOutputList = WorkforceOutputList;
             return workforceWithMilestoneDTO;
         }
