@@ -4,6 +4,7 @@ using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
+using ModelLibrary.DTOs.Parameters;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -20,7 +21,7 @@ namespace JiraSchedulingConnectAppService.Services
             httpContext = httpContextAccessor.HttpContext;
         }
 
-        public async Task<EquipmentDTO.Response> CreateEquipment(EquipmentDTO.Request equipmentRequest)
+        public async Task<EquipmentDTOResponse> CreateEquipment(EquipmentDTORequest equipmentRequest)
         {
             try
             {
@@ -31,7 +32,7 @@ namespace JiraSchedulingConnectAppService.Services
 
                 await db.Equipments.AddAsync(equipment);
                 await db.SaveChangesAsync();
-                var equipmentDTOResponse = mapper.Map<EquipmentDTO.Response>(equipment);
+                var equipmentDTOResponse = mapper.Map<EquipmentDTOResponse>(equipment);
                 return equipmentDTOResponse;
             }
             catch (Exception e)
@@ -56,21 +57,21 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        public async Task<List<EquipmentDTO.Response>> GetAllEquipments()
+        public async Task<List<EquipmentDTOResponse>> GetAllEquipments()
         {
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
             var query = await db.Equipments.ToListAsync();
-            var queryDTOResponse = mapper.Map<List<EquipmentDTO.Response>>(query);
+            var queryDTOResponse = mapper.Map<List<EquipmentDTOResponse>>(query);
             return queryDTOResponse;
         }
 
-        public async Task<EquipmentDTO.Response> GetEquipmentById(string equipment_id)
+        public async Task<EquipmentDTOResponse> GetEquipmentById(string equipment_id)
         {
             try
             {
                 var equipment = await db.Equipments.Where(e => e.Id.ToString() == equipment_id).FirstOrDefaultAsync();
-                var equipmentResponse = mapper.Map<EquipmentDTO.Response>(equipment);
+                var equipmentResponse = mapper.Map<EquipmentDTOResponse>(equipment);
                 return equipmentResponse;
             }
             catch (Exception e)
@@ -79,14 +80,14 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        public async Task<EquipmentDTO.Response> UpdateEquipment(EquipmentDTO.Request equipmentRequest)
+        public async Task<EquipmentDTOResponse> UpdateEquipment(EquipmentDTORequest equipmentRequest)
         {
             try
             {
                 var equipment = mapper.Map<Equipment>(equipmentRequest);
                 db.Update(equipment);
                 await db.SaveChangesAsync();
-                var equipmentDTOResponse = mapper.Map<EquipmentDTO.Response>(equipment);
+                var equipmentDTOResponse = mapper.Map<EquipmentDTOResponse>(equipment);
                 return equipmentDTOResponse;
             }
             catch (Exception e)
