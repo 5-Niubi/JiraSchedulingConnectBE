@@ -1,35 +1,30 @@
-﻿using AlgorithmServiceServer.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
 using UtilsLibrary.Exceptions;
 
-namespace AlgorithmServiceServer.Controllers
-{   
+namespace JiraSchedulingConnectAppService.Controllers
+{
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    public class AlgorithmController : ControllerBase
+    public class ThreadController : ControllerBase
     {
-        private readonly IAccessDataToComputeService accessData;
-        public AlgorithmController(IAccessDataToComputeService accessData)
-        {
-            this.accessData = accessData;
-        }
+
+        private readonly IThreadService threadService;
+        public ThreadController(IThreadService threadService) { this.threadService = threadService; }
 
         [HttpGet]
-        async public Task<IActionResult> Index()
-        {
-            return NotFound();
-        }
-
-        [HttpGet]
-        async public Task<IActionResult> GetTestConverter(int parameterId)
+        public  IActionResult GetThreadResult(int threadId)
         {
             try
             {
-                return Ok(await accessData.GetDataToCompute(parameterId));
+                return Ok(threadService.GetThreadResult(threadId));
             }
+
             catch (NotFoundException ex)
             {
                 var response = new ResponseMessageDTO(ex.Message);

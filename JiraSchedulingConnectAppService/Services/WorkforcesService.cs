@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
+using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.Projects;
 using Newtonsoft.Json.Linq;
 
@@ -21,14 +22,14 @@ namespace JiraSchedulingConnectAppService.Services
             this.mapper = mapper;
             httpContext = httpContextAccessor.HttpContext;
         }
-        public async Task<List<WorkforceDTO.Response>> GetAllWorkforces()
+        public async Task<List<WorkforceDTOResponse>> GetAllWorkforces()
         {
             try
             {
                 var jwt = new JWTManagerService(httpContext);
                 var cloudId = jwt.GetCurrentCloudId();
                 var query = await db.Workforces.ToListAsync();
-                var queryDTOResponse = mapper.Map<List<WorkforceDTO.Response>>(query);
+                var queryDTOResponse = mapper.Map<List<WorkforceDTOResponse>>(query);
                 return queryDTOResponse;
             }
             catch (Exception ex)
@@ -37,7 +38,7 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        public async Task<WorkforceDTO.Response> CreateWorkforce(WorkforceDTO.Request? workforceRequest)
+        public async Task<WorkforceDTOResponse> CreateWorkforce(WorkforceDTORequest? workforceRequest)
         {
             try
             {
@@ -48,7 +49,7 @@ namespace JiraSchedulingConnectAppService.Services
 
                 await db.Workforces.AddAsync(workforce);
                 await db.SaveChangesAsync();
-                var workforceDTOResponse = mapper.Map<WorkforceDTO.Response>(workforce);
+                var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(workforce);
                 return workforceDTOResponse;
             }
             catch (Exception e)
@@ -57,12 +58,12 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        public async Task<WorkforceDTO.Response> GetWorkforceById(string workforce_id)
+        public async Task<WorkforceDTOResponse> GetWorkforceById(string workforce_id)
         {
             try
             {
                 var workforce = await db.Workforces.Where(e => e.Id.ToString() == workforce_id).FirstOrDefaultAsync();
-                var workforceResponse = mapper.Map<WorkforceDTO.Response>(workforce);
+                var workforceResponse = mapper.Map<WorkforceDTOResponse>(workforce);
                 return workforceResponse;
             }
             catch (Exception e)
@@ -89,14 +90,14 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        public async Task<WorkforceDTO.Response> UpdateWorkforce(WorkforceDTO.Request workforceRequest)
+        public async Task<WorkforceDTOResponse> UpdateWorkforce(WorkforceDTORequest workforceRequest)
         {
             try
             {
                 var workforce = mapper.Map<Workforce>(workforceRequest);
                 db.Update(workforce);
                 await db.SaveChangesAsync();
-                var workforceDTOResponse = mapper.Map<WorkforceDTO.Response>(workforce);
+                var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(workforce);
                 return workforceDTOResponse;
             }
             catch (Exception e)

@@ -1,4 +1,6 @@
-﻿namespace RcpspAlgorithmLibrary.GA
+﻿using UtilsLibrary.Exceptions;
+
+namespace RcpspAlgorithmLibrary.GA
 {
     public class GAHelper
     {
@@ -30,6 +32,7 @@
                         taskWorkers.Add(w);
                     }
                 }
+                if(taskWorkers.Count == 0) throw new NoSuitableWorkerException("No Suitable Worker Was Found!");
                 suitableWorkers.Add(taskWorkers);
             }
             return suitableWorkers;

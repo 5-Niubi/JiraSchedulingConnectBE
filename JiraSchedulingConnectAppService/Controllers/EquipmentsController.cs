@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
+using ModelLibrary.DTOs.Parameters;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -37,24 +38,24 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         public async Task<IActionResult> GetEquipmentById(string id)
         {
-            var response = await EquipmentService.GetEquipmentById(id);
-            if (response == null)
+            try
             {
-                return NotFound();
+                var response = await EquipmentService.GetEquipmentById(id);
+                return Ok(response);
             }
-            return Ok(response);
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEquipment(string id, EquipmentDTO.Request equipmentRequest)
+        [HttpPut]
+        public async Task<IActionResult> UpdateEquipment(string id, EquipmentDTORequest equipmentRequest)
         {
-            if (id != equipmentRequest.Id.ToString())
-            {
-                return BadRequest();
-            }
             try
             {
                 await EquipmentService.UpdateEquipment(equipmentRequest);
@@ -69,7 +70,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateEquipment([FromBody]EquipmentDTO.Request equipmentRequest)
+        public async Task<IActionResult> CreateEquipment([FromBody]EquipmentDTORequest equipmentRequest)
         {
             try
             {
@@ -82,16 +83,12 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public async Task<IActionResult> DeleteEquipment(string id)
         {
             try
             {
                 var equipmentDTORequest = EquipmentService.GetEquipmentById(id);
-                if (equipmentDTORequest == null)
-                {
-                    return NotFound();
-                }
                 await EquipmentService.DeleteEquipment(id);
                 return Ok("Delete success");
             }
