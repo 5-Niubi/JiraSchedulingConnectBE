@@ -22,7 +22,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                var response = await workforcesService.GetAllWorkforces();
+                var response = await workforcesService.GetAllWorkforces(null);
                 return Ok(response);
             }
             catch (Exception ex)
