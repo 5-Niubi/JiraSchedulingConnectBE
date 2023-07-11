@@ -1,10 +1,7 @@
-﻿using JiraSchedulingConnectAppService.DTOs;
-using JiraSchedulingConnectAppService.DTOs.Authentication;
-using JiraSchedulingConnectAppService.Models;
-using JiraSchedulingConnectAppService.Services;
+﻿using JiraSchedulingConnectAppService.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
-using System.Text.Json;
+using ModelLibrary.DBModels;
+using ModelLibrary.DTOs;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -29,7 +26,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                var responseMsg = new ResponseMessageDTO<Object>(ex.Message);
+                var responseMsg = new ResponseMessageDTO(ex.Message);
                 return Unauthorized(responseMsg);
             }
         }

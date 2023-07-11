@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.19">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.19" />
+
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UtilsLibrary\UtilsLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="DTOs\Skills\" />
+    <None Remove="DTOs\Tasks\" />
+    <None Remove="DTOs\PertSchedule\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DTOs\Skills\" />
+    <Folder Include="DTOs\Tasks\" />
+    <Folder Include="DTOs\PertSchedule\" />
+  </ItemGroup>
+</Project>

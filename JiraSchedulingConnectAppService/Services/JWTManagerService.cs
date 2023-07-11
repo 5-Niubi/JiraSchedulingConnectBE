@@ -8,7 +8,13 @@ namespace JiraSchedulingConnectAppService.Services
 {
     public class JWTManagerService
     {
-        private readonly IConfiguration configuration;
+        private readonly IConfiguration? configuration;
+        private readonly HttpContext? context;
+
+        public JWTManagerService(HttpContext httpContext)
+        {
+            this.context = httpContext;
+        }
 
         public JWTManagerService(IConfiguration iconfiguration)
         {
@@ -40,7 +46,7 @@ namespace JiraSchedulingConnectAppService.Services
             return encodeToken;
         }
 
-        public static string? GetClaim(string claimName, HttpContext context)
+        public string? GetClaim(string claimName)
         {
             string? value = null;
             var identity = context.User.Identity as ClaimsIdentity;
@@ -51,9 +57,9 @@ namespace JiraSchedulingConnectAppService.Services
             return value;
         }
 
-        public static string? GetCurrentCloudId(HttpContext context)
+        public string? GetCurrentCloudId()
         {
-            string? cloudIdRaw = GetClaim(Const.Claims.CLOUD_ID, context);
+            string? cloudIdRaw = GetClaim(Const.Claims.CLOUD_ID);
             return cloudIdRaw;
         }
     }

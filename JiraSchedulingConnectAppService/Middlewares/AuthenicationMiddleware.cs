@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace JiraSchedulingConnectAppService.Middlewares
+﻿namespace JiraSchedulingConnectAppService.Middlewares
 {
     public class AuthenicationMiddleware
     {
@@ -25,7 +23,9 @@ namespace JiraSchedulingConnectAppService.Middlewares
             //}
 
             // Call the next delegate/middleware in the pipeline.
+
             await _next(context);
+
         }
     }
 

@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  algorithmservice:
+    image: ${DOCKER_REGISTRY-}algorithmservice
+    build:
+      context: .
+      dockerfile: AlgorithmService/Dockerfile
+    ports:
+      - "5003:80"
+  jiraschedulingconnectappservice:
+    image: ${DOCKER_REGISTRY-}jiraschedulingconnectappservice
+    build:
+      context: .
+      dockerfile: JiraSchedulingConnectAppService/Dockerfile
+    ports:
+      - "5126:80"

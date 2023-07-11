@@ -1,9 +1,24 @@
-﻿// See https://aka.ms/new-console-template for more information
-using RcpspAlgorithmLibrary;
+﻿using static System.Console;
 
-Console.WriteLine("Hello, World!");
-Console.WriteLine("Testing library Reference");
-Console.WriteLine("-------------------------");
+static void CheckHttpStatus(string url)
+{
+    HttpClient client = new();
+    var response = client.GetAsync(url).Result;
+    WriteLine($"The HTTP status code of {url} is {response.StatusCode}");
+}
 
-Class1 class1 = new Class1();
-Console.WriteLine($"1 + 2 = {class1.Sum(1, 2)}");
+List<string> urls = new(){
+    "https://www.google.com/",
+    "https://www.duckduckgo.com/",
+    "https://www.yahoo.com/",
+};
+
+foreach (var url in urls)
+{
+    ThreadPool.QueueUserWorkItem((state) => CheckHttpStatus(url));
+}
+
+// wait for all thread to complete
+// and press a key
+Console.Read();
+
