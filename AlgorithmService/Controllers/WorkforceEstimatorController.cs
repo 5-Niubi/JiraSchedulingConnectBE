@@ -14,11 +14,9 @@ namespace AlgorithmServiceServer.Controllers
 
 
         private readonly IEstimateWorkforceService estimateWorkforceService;
-        private readonly ILogger<WorkforceEstimatorController> _logger;
         public WorkforceEstimatorController(IEstimateWorkforceService estimateWorkforceService, ILogger<WorkforceEstimatorController> logger)
         {
             this.estimateWorkforceService = estimateWorkforceService;
-            _logger = logger;
         }
 
         [HttpGet]
