@@ -58,6 +58,7 @@ builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 builder.Services.AddTransient<IExportService, ExportService>();
 builder.Services.AddTransient<IThreadService, ThreadService>();
 builder.Services.AddTransient<IScheduleService, ScheduleService>();
+builder.Services.AddTransient<IMilestonesService, MilestonesService>();
 
 
 var app = builder.Build();
