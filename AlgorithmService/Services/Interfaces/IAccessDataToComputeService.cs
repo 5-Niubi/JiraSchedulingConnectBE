@@ -4,6 +4,6 @@ namespace AlgorithmServiceServer.Services.Interfaces
 {
     public interface IAccessDataToComputeService
     {
-        public Task<List<ScheduleResultSolutionDTO>> GetDataToCompute(int projectId, int parameterId);
+        public Task<List<ScheduleResultSolutionDTO>> GetDataToCompute(int parameterId);
     }
 }
