@@ -20,7 +20,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTestConverter( int parameterId)
+        public async Task<IActionResult> GetTestConverter(int parameterId)
         {
             try
             {              

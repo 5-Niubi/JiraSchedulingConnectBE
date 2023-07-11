@@ -9,10 +9,10 @@ namespace ModelLibrary.DTOs.Thread
 {
     public class ThreadStartDTO
     {
-        public int? ThreadId { get; set; }
+        public string? ThreadId { get; set; }
         public string? ThreadName { get; set; }
 
-        public ThreadStartDTO(int threadId)
+        public ThreadStartDTO(string threadId)
         {
             ThreadId = threadId;
         }

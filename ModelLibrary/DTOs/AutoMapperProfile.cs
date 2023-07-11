@@ -63,6 +63,7 @@ namespace ModelLibrary.DTOs
 
             CreateMap<Schedule, ScheduleResultSolutionDTO>();
             CreateMap<Workforce, WorkforceScheduleResultDTO>();
+            CreateMap<Schedule, ScheduleResultSolutionDTO>();
         }
     }
 }

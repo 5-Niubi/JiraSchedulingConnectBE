@@ -8,8 +8,8 @@ namespace ModelLibrary.DTOs.Thread
 {
     public class ThreadModel
     {
-        public int ThreadId { get; set; }
-        public string Status { get; set; }
-        public object Result { get; set; }
+        public string? ThreadId { get; set; }
+        public string? Status { get; set; }
+        public dynamic? Result { get; set; }
     }
 }

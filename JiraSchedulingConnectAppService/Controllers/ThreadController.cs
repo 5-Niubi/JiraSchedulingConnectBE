@@ -18,7 +18,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         public ThreadController(IThreadService threadService) { this.threadService = threadService; }
 
         [HttpGet]
-        public  IActionResult GetThreadResult(int threadId)
+        public  IActionResult GetThreadResult(string threadId)
         {
             try
             {
