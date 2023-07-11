@@ -126,6 +126,23 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
 
+        [HttpPost]
+        public async Task<IActionResult> SaveTasks(TasksSaveRequest taskRequest)
+        {
+
+            try
+            {
+                var resopnse = await TasksService.SaveTasks(taskRequest);
+                return Ok(resopnse);
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+
 
         [HttpGet]
         public async Task<IActionResult> Index()

@@ -1,3 +1,4 @@
+using AlgorithmServiceServer.Services.Interfaces;
 using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -48,6 +49,8 @@ builder.Services.AddTransient<IProjectServices, ProjectsService>();
 builder.Services.AddTransient<ISkillsService, SkillsService>();
 builder.Services.AddTransient<ITasksService, TasksService>();
 builder.Services.AddTransient<IAlgorithmService, AlgorithmService>();
+builder.Services.AddTransient<IValidatorService, ScheduleValidatorService>();
+
 builder.Services.AddTransient<IWorkforcesService, WorkforcesService>();
 builder.Services.AddTransient<IEquipmentService, EquipmentsService>();
 builder.Services.AddTransient<IJiraBridgeAPIService, JiraBridgeAPIService>();
