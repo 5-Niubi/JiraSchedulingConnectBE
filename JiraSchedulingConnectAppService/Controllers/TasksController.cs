@@ -41,6 +41,24 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> SaveTasksForPert([FromBody] TaskCreatedRequest taskRequest)
+        {
+            try
+            {
+                var response = await TasksService.CreateTask(taskRequest);
+                return Ok(response);
+            }
+
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> GetTaskDetail(int Id)
         {
@@ -89,6 +107,24 @@ namespace JiraSchedulingConnectAppService.Controllers
                 return BadRequest(response);
             }
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> SaveTasksPrecedencesTasks(TasksPrecedencesSaveRequest taskRequest)
+        {
+
+            try
+            {
+                var resopnse = await TasksService.SaveTasksPrecedencesTasks(taskRequest);
+                return Ok(resopnse);
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
 
 
         [HttpGet]

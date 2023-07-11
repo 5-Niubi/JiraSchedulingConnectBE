@@ -11,7 +11,7 @@ namespace ModelLibrary.DTOs.PertSchedule
         public double? Duration { get; set; }
         public int? MilestoneId { get; set; }
 
-        public List<PrecedenceDTO>? Precedences { get; set; }
+        public List<TaskPrecedenceDTO>? Precedences { get; set; }
         public List<SkillRequiredDTO>? SkillRequireds { get; set; }
 
     }

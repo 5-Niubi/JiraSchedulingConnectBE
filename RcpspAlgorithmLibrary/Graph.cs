@@ -1,4 +1,4 @@
-﻿namespace RcpspEstimator
+﻿namespace RcpspAlgorithmLibrary
 {
     public class DirectedGraph
     {
@@ -43,6 +43,41 @@
                 };
 
             }
+
+            // is validate not exited isolate node
+            IsAnyNodeIsolated(adjacencyMatrix);
+        }
+
+
+        private bool IsAnyNodeIsolated(List<List<int>> adjacencyMatrix) {
+            for(int  i = 0; i < adjacencyMatrix.Count; i ++) {
+                var vecAdj = adjacencyMatrix[i];
+                var isValid = false;
+                foreach (var e in vecAdj) {
+                    if(e == 1) {
+                        isValid = true;
+                        break;
+                    }
+
+                }
+
+                if (isValid == false) {
+                    for(int j = 0; j < adjacencyMatrix.Count; j ++)
+                    {
+                        if (adjacencyMatrix[j][i] == 1)
+                        {
+                            break;
+                        }
+
+                    }
+
+                    throw new Exception("In Graph exited node is isolated");
+                }
+                
+
+
+            }
+            return true;
         }
 
 
@@ -83,10 +118,15 @@
         {
             List<bool> visited = new List<bool>(Enumerable.Repeat(false, this.NumberOfNode));
             List<bool> path = new List<bool>(Enumerable.Repeat(false, this.NumberOfNode));
+
+            
+
             if (IsCycle(visited, path, this.startNode))
             {
                 return false;
             }
+
+
             return true;
 
 
