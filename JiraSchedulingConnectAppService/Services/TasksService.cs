@@ -20,6 +20,7 @@ namespace JiraSchedulingConnectAppService.Services
     public class TasksService : ITasksService
     {
         public const string NotFoundMessage = "Task Not Found!";
+        public const string PrecedenceMissingTaskMessage = "Some Task Not Set Precedence!";
         public const string ProjectNotFoundMessage = "Project Not Found!";
         public const string NotUniqueTaskNameMessage = "Task Name Must Unique!";
         public const string PredenceNotExitedMessage = "Predence Task  not valid!";
@@ -79,8 +80,6 @@ namespace JiraSchedulingConnectAppService.Services
                 .Where(s => RequiredSkillsId.Contains(s.Id) & s.CloudId == task.CloudId & s.IsDelete == false)
                 .ToListAsync();
 
-
-
             if (exitedSkills.Count != RequiredSkillsId.Count)
             {
                 throw new Exception(RequiredSkillNotValidMessage);
@@ -128,6 +127,14 @@ namespace JiraSchedulingConnectAppService.Services
                 & t.IsDelete == false);
 
             return existedTask;
+        }
+
+        private async Task<bool> _ClearTaskPrecedenceTask(List<TaskPrecedence> taskPrecedences) {
+
+            // TODO: improve clean data -> not 
+            db.RemoveRange(taskPrecedences);
+            await db.SaveChangesAsync();
+            return true;
         }
 
 
@@ -232,7 +239,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
 
-
+        // TODO
         public Task<bool> DeleteTask(int Id)
         {
             throw new NotImplementedException();
@@ -376,6 +383,119 @@ namespace JiraSchedulingConnectAppService.Services
             var taskPertViewDTO = mapper.Map<TaskPertViewDTO>(changingTask);
             return taskPertViewDTO;
         }
+
+        public async Task<List<TaskPrecedenceDTO>> SaveTasksPrecedencesTasks(TasksPrecedencesSaveRequest pertRequest)
+        {
+
+            var UniqueTasks = new List<int>();
+            foreach(var precedenceT in pertRequest.TaskPrecedences) {
+                var taskId = precedenceT.TaskId;
+                var precedenceId = precedenceT.PrecedenceId;
+                if (!UniqueTasks.Contains(taskId)) {
+                    UniqueTasks.Add(taskId);
+                }
+
+                if (!UniqueTasks.Contains(precedenceId))
+                {
+                    UniqueTasks.Add(precedenceId);
+                }
+            }
+
+            // validated task exited
+            // validate precedence tasks exited
+            var exitedTasks = await db.Tasks
+                .Where(s => s.ProjectId == pertRequest.ProjectId & s.IsDelete == false)
+                .ToListAsync();
+
+            if (exitedTasks.Count > UniqueTasks.Count)
+            {
+                throw new Exception(PrecedenceMissingTaskMessage);
+            }
+
+            if (exitedTasks.Count < UniqueTasks.Count)
+            {
+                throw new Exception(NotFoundMessage);
+            }
+
+
+
+            // TODO: validate DAG graph
+            // TODO: validate  edge node in graph
+
+            var exitedPrecedenceTasks = await db.TaskPrecedences
+                .Where(s => UniqueTasks.Contains(s.TaskId) | UniqueTasks.Contains(s.TaskId))
+                .ToListAsync();
+
+            //var exitedPrecedenceTasks = await db.TaskPrecedences
+            //    .Where(s => s.IsDelete == true)
+            //    .ToListAsync();
+
+
+            // clean all precedence tasks of project id
+            await _ClearTaskPrecedenceTask(exitedPrecedenceTasks);
+
+
+            // mapping task precedences request -> task precedences database
+            var precedenceTasksToAdd = mapper.Map<List<TaskPrecedence>>(pertRequest.TaskPrecedences);
+
+            // insert new precedence tasks
+            await db.AddRangeAsync(precedenceTasksToAdd);
+            await db.SaveChangesAsync();
+
+            // TODO: review code -> mapping task precedences database -> task precedences for view
+            var taskPrecedencesDTO = mapper.Map<List<TaskPrecedenceDTO>>(precedenceTasksToAdd);
+            
+            return taskPrecedencesDTO;
+
+
+        }
+
+        //public async Task<List<TaskPertViewDTO>> SaveTasksForPert(PertSaveRequest pertSaveRequest)
+        //{
+
+        //    List<TaskPertViewDTO> output = new List<TaskPertViewDTO>();
+
+        //    // mapping tasks pert's -> list task on database
+        //    var TasksRequest = pertSaveRequest.TasksRequest;
+        //    var TaskList = mapper.Map<List<ModelLibrary.DBModels.Task>>(TasksRequest);
+
+        //    // Validate task name must unique
+        //    // 1.1 TODO Validate task in task request list must unique
+
+        //    // 1.2 Validate task request must unique in database
+        //    foreach(var task in TaskList) {
+
+        //        // validate milestone task
+        //        await _ValidateMilestoneTask(task);
+
+        //        // validate exited predences in this project
+        //        await _ValidatePrecedenceTask(task);
+
+        //        // validate required skills task's
+        //        await _ValidateSkillsRequired(task);
+
+
+
+
+        //    }
+
+
+
+
+        //    // Validate task precedence must exited
+
+        //    // Validate task skill must exited
+
+
+
+
+
+        //    // if task not exited -> create
+
+        //    // if task exited -> update
+
+        //    return output;
+        //}
     }
 }
 

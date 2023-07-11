@@ -35,7 +35,6 @@
       "publishAllPorts": true,
       "sslPort": 5002,
       "httpPort": 5126
-
     }
   }
 }

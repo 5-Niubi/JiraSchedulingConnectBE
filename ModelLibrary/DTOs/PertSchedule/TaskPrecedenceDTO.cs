@@ -1,7 +1,7 @@
 ﻿using System;
 namespace ModelLibrary.DTOs.PertSchedule
 {
-	public class PrecedenceDTO
+	public class TaskPrecedenceDTO
     {
         
         public int TaskId { get; set; } // task id of current task

@@ -26,11 +26,9 @@ namespace ModelLibrary.DTOs
             CreateMap<Skill, SkillDTO>();
             CreateMap<SkillDTO, Skill>();
             CreateMap<SkillCreatedRequest, Skill>();
-           
-    
-            
-            CreateMap<TaskPrecedence, PrecedenceDTO>();
-            CreateMap<PrecedenceDTO, TaskPrecedence>();
+
+            CreateMap<TaskPrecedenceDTO, TaskPrecedence>();
+            CreateMap<TaskPrecedence, TaskPrecedenceDTO>();
 
             CreateMap<TasksSkillsRequired, SkillRequiredDTO>();
             CreateMap<SkillRequiredDTO, TasksSkillsRequired>();
