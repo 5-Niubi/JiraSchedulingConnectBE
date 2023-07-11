@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -138,8 +139,19 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
+        private async Task<bool> _ClearTaskSkillRequired(List<TasksSkillsRequired> tasksSkillsRequireds)
+        {
 
-        public  async Task<TaskPertViewDTO> CreateTask(TaskCreatedRequest taskRequest)
+            // TODO: improve clean data -> not 
+            db.RemoveRange(tasksSkillsRequireds);
+            await db.SaveChangesAsync();
+            return true;
+        }
+
+
+
+
+        public async Task<TaskPertViewDTO> CreateTask(TaskCreatedRequest taskRequest)
         {
 
             try
@@ -450,52 +462,194 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
-        //public async Task<List<TaskPertViewDTO>> SaveTasksForPert(PertSaveRequest pertSaveRequest)
-        //{
 
-        //    List<TaskPertViewDTO> output = new List<TaskPertViewDTO>();
+        private async Task<List<TaskPrecedenceDTO>> _SaveTasksPrecedencesTasks(List<TaskPrecedencesTaskRequestDTO> taskprecedencesTasksRequest)
+        {
 
-        //    // mapping tasks pert's -> list task on database
-        //    var TasksRequest = pertSaveRequest.TasksRequest;
-        //    var TaskList = mapper.Map<List<ModelLibrary.DBModels.Task>>(TasksRequest);
+            var UniqueTasks = new List<int>();
+            foreach (var taskPredencesTask in taskprecedencesTasksRequest)
+            {
+                var taskId = taskPredencesTask.TaskId;
+                if (!UniqueTasks.Contains(taskId))
+                {
+                    UniqueTasks.Add(taskId);
+                }
+                foreach (var precedenceId in taskPredencesTask.TaskPrecedences) {
+                    if (!UniqueTasks.Contains(precedenceId))
+                    {
+                        UniqueTasks.Add(precedenceId);
+                    }
+                }
+      
+                
+            }
 
-        //    // Validate task name must unique
-        //    // 1.1 TODO Validate task in task request list must unique
+            // validated task exited
+            // validate precedence tasks exited
+            var exitedTasks = await db.Tasks
+                .Where(t => UniqueTasks.Contains(t.Id) & t.IsDelete == false)
+                .ToListAsync();
 
-        //    // 1.2 Validate task request must unique in database
-        //    foreach(var task in TaskList) {
+            if (exitedTasks.Count > UniqueTasks.Count)
+            {
+                throw new Exception(PrecedenceMissingTaskMessage);
+            }
 
-        //        // validate milestone task
-        //        await _ValidateMilestoneTask(task);
-
-        //        // validate exited predences in this project
-        //        await _ValidatePrecedenceTask(task);
-
-        //        // validate required skills task's
-        //        await _ValidateSkillsRequired(task);
-
-
-
-
-        //    }
+            if (exitedTasks.Count < UniqueTasks.Count)
+            {
+                throw new Exception(NotFoundMessage);
+            }
 
 
 
+            // TODO: validate DAG graph
+            // TODO: validate  edge node in graph
 
-        //    // Validate task precedence must exited
+            var exitedPrecedenceTasks = await db.TaskPrecedences
+                .Where(s => UniqueTasks.Contains(s.TaskId) | UniqueTasks.Contains(s.TaskId))
+                .ToListAsync();
 
-        //    // Validate task skill must exited
+            //var exitedPrecedenceTasks = await db.TaskPrecedences
+            //    .Where(s => s.IsDelete == true)
+            //    .ToListAsync();
+
+
+            // clean all precedence tasks of project id
+            await _ClearTaskPrecedenceTask(exitedPrecedenceTasks);
+
+
+            // mapping task precedences request -> task precedences database
+            List<TaskPrecedence> precedenceTasksToAdd = new List<TaskPrecedence>();
+            foreach(var taskPrecedences in taskprecedencesTasksRequest) {
+                foreach(var precedenceId in taskPrecedences.TaskPrecedences) {
+                    precedenceTasksToAdd.Add(new TaskPrecedence()
+                    {
+                        TaskId = taskPrecedences.TaskId,
+                        PrecedenceId = precedenceId
+                    });
+                }
+                
+            }
+
+            // insert new precedence tasks
+            await db.AddRangeAsync(precedenceTasksToAdd);
+            await db.SaveChangesAsync();
+
+            // TODO: review code -> mapping task precedences database -> task precedences for view
+            var taskPrecedencesDTO = mapper.Map<List<TaskPrecedenceDTO>>(precedenceTasksToAdd);
+
+            return taskPrecedencesDTO;
+
+
+        }
+
+
+
+        private async Task<List<TasksSkillsRequired>> _SaveTasksSkillsRequireds(List<TaskSkillsRequiredRequestDTO> taskSkillsRequiredRequests)
+        {
+
+            var uniqueSkills = new List<int>();
+            foreach (var taskSkillsRequired in taskSkillsRequiredRequests)
+            {
+                var skillsRequired = taskSkillsRequired.SkillsRequireds;
+                foreach (var skill in skillsRequired)
+                    if (!uniqueSkills.Contains(skill.SkillId))
+                {
+                        uniqueSkills.Add(skill.SkillId);
+                }
+  
+
+            }
+
+            // validate skills exited
+            var exitedSkills = await db.Skills
+                .Where(t => uniqueSkills.Contains(t.Id) & t.IsDelete == false)
+                .ToListAsync();
+
+            if (exitedSkills.Count != uniqueSkills.Count)
+            {
+                throw new Exception("SKill not found");
+            }
+
+
+            // TODO: validate DAG graph
+            // TODO: validate  edge node in graph
+
+            
+            
+
+
+            // get all required skills by task ids
+
+            // validate skills exited
+            var requiredSkillsToRemove = await db.TasksSkillsRequireds
+                .Where(t => taskSkillsRequiredRequests.Select(f=> f.TaskId).Contains( t.TaskId) & t.IsDelete == false)
+                .ToListAsync();
+        
+            // clean all precedence tasks of project id
+            await _ClearTaskSkillRequired(requiredSkillsToRemove);
+
+
+            // mapping task precedences request -> task precedences database
+            List<TasksSkillsRequired> tasksSkillsRequiredsToAdd = new List<TasksSkillsRequired>();
+            foreach (var taskSkillsRequired in taskSkillsRequiredRequests)
+            {
+                foreach (var skill in taskSkillsRequired.SkillsRequireds)
+                {
+                    var taskSkillRequired = new TasksSkillsRequired()
+                    {
+                        TaskId = taskSkillsRequired.TaskId,
+                        SkillId = skill.SkillId,
+                        Level = skill.Level
+
+                    };
+                    tasksSkillsRequiredsToAdd.Add(taskSkillRequired);
+                }
+
+            }
+
+            // insert new precedence tasks
+            await db.AddRangeAsync(tasksSkillsRequiredsToAdd);
+            await db.SaveChangesAsync();
+
+
+            return tasksSkillsRequiredsToAdd;
+
+
+        }
+
+
+        public async Task<bool> SaveTasks(TasksSaveRequest TasksSaveRequest)
+        {
+
+            var TaskPrecedenceTasks = TasksSaveRequest.TaskPrecedenceTasks;
+            await _SaveTasksPrecedencesTasks(TaskPrecedenceTasks);
+
+
+            var TaskSkillsRequireds = TasksSaveRequest.TaskSkillsRequireds;
+            await _SaveTasksSkillsRequireds(TaskSkillsRequireds);
+
+            return true;
+
+        }
+
+
+
+
+            //    // Validate task precedence must exited
+
+            //    // Validate task skill must exited
 
 
 
 
 
-        //    // if task not exited -> create
+            //    // if task not exited -> create
 
-        //    // if task exited -> update
+            //    // if task exited -> update
 
-        //    return output;
-        //}
-    }
+            //    return output;
+            //}
+        }
 }
 
