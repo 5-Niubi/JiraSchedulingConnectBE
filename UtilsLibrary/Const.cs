@@ -3,6 +3,7 @@
     public class Const
     {
         public static int THREAD_ID_COUNT_START = 1;
+        public static int THREAD_ID_LENGTH = 10;
 
         public static class Claims
         {
