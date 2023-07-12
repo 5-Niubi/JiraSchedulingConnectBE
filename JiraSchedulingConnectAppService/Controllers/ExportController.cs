@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
+using System.IO;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers
@@ -29,6 +30,21 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var response = new ResponseMessageDTO(ex.Message);
                 response.Data = ex.jiraResponse;
                 return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+        [HttpGet]
+        async public Task<IActionResult> ExportToMicrosoftProject(int scheduleId)
+        {
+            try
+            {
+                var responseStream = await exportService.ToMSProject(scheduleId);
+                return File(responseStream, "application/octet-stream", "project.mpp");
             }
             catch (Exception ex)
             {
