@@ -22,9 +22,9 @@
 
         }
 
-        public void LoadData(List<List<int>> adjacencyMatrix)
+        public void LoadData(int[][] adjacencyMatrix)
         {
-            this.NumberOfNode = adjacencyMatrix.Count;
+            this.NumberOfNode = adjacencyMatrix.Length;
 
             for (int i = 0; i < NumberOfNode; i++)
             {
@@ -45,7 +45,7 @@
             }
 
             // is validate not exited isolate node
-            IsAnyNodeIsolated(adjacencyMatrix);
+            //IsAnyNodeIsolated(adjacencyMatrix);
         }
 
 
