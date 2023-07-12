@@ -95,6 +95,11 @@ namespace AlgorithmServiceServer.Services
             return scheduleResultDTOs;
         }
 
+        public Task<List<ScheduleResultSolutionDTO>> GetDataToCompute(int projectId, int parameterId)
+        {
+            throw new NotImplementedException();
+        }
+
         private async void InsertScheduleIntoDB(int parameterId, OutputFromORDTO algOutConverted,
             List<ScheduleResultSolutionDTO> scheduleResultDTOs)
         {

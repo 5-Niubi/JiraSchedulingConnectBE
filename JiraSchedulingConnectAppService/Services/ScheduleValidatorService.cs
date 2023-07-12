@@ -1,25 +1,34 @@
 ﻿using System;
 using AlgorithmServiceServer.DTOs.AlgorithmController;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
+using ModelLibrary.DTOs.PertSchedule;
 using RcpspAlgorithmLibrary;
 
 namespace AlgorithmServiceServer.Services.Interfaces
 {
-	public class PertGraphValidatorService: IPertGraphValidatorService
+	public class ScheduleValidatorService: IValidatorService
 	{
 
 
         private readonly JiraDemoContext db;
         private readonly HttpContext http;
+        private readonly IWorkforcesService workforceService;
 
 
         private DirectedGraph DirectedGraph;
 
-        public PertGraphValidatorService(JiraDemoContext db, IHttpContextAccessor httpAccessor)
+        public ScheduleValidatorService(
+            JiraDemoContext db,
+            IHttpContextAccessor httpAccessor,
+            IWorkforcesService workforceService
+            )
 		{
             this.db = db;
             http = httpAccessor.HttpContext;
+            this.workforceService = workforceService;
+
         }
 
         public async Task<bool> IsValidDAG(int projectId)
@@ -70,6 +79,37 @@ namespace AlgorithmServiceServer.Services.Interfaces
         public Task<bool> IsValidDAG(string projectId)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> IsValidRequiredParameters(ParameterRequest parameterRequest)
+        {
+
+            // TODO: is validate duration
+
+            var projectId = parameterRequest.ProjectId;
+            var workforeIds = parameterRequest.WorkforceIds;
+
+
+            var listTasks = await db.Tasks
+                .Include(t => t.TasksSkillsRequireds)
+                .Where(t => t.ProjectId == projectId).ToListAsync();
+
+            var WorkforcesSkills = await db.WorkforceSkills.Where(w => workforeIds.Contains(w.SkillId)).ToListAsync();
+
+
+            //foreach(var task in listTasks) {
+            //    foreach(var skill)
+            //}
+            return true;
+
+            //foreach(var taskSkillRequired in TaskSkillrequireds) {
+            //    var task = taskSkillRequired.
+            //}
+                //var workforces = await this.workforceService.GetAllWorkforces(workforeIds);
+
+
+            // is validate workforce adapted with task required
+
         }
     }
 }

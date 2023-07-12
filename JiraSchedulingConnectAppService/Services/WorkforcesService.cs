@@ -22,13 +22,16 @@ namespace JiraSchedulingConnectAppService.Services
             this.mapper = mapper;
             httpContext = httpContextAccessor.HttpContext;
         }
-        public async Task<List<WorkforceDTOResponse>> GetAllWorkforces()
+        public async Task<List<WorkforceDTOResponse>> GetAllWorkforces(List<int>? Ids)
         {
             try
             {
                 var jwt = new JWTManagerService(httpContext);
                 var cloudId = jwt.GetCurrentCloudId();
-                var query = await db.Workforces.ToListAsync();
+
+                var query = (Ids == null) ?
+                    await db.Workforces.ToListAsync() : await db.Workforces.Where(
+                    W => Ids.Contains(W.Id) == true).ToListAsync();
                 var queryDTOResponse = mapper.Map<List<WorkforceDTOResponse>>(query);
                 return queryDTOResponse;
             }
@@ -37,6 +40,10 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new Exception();
             }
         }
+
+        
+
+
 
         public async Task<WorkforceDTOResponse> CreateWorkforce(WorkforceDTORequest? workforceRequest)
         {
