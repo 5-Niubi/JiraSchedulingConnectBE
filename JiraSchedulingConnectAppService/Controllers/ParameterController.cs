@@ -4,7 +4,6 @@ using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
-using ModelLibrary.DTOs.Invalidator;
 using ModelLibrary.DTOs.Projects;
 using UtilsLibrary.Exceptions;
 
@@ -34,7 +33,7 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var projectCreated = await parametersService.SaveParams(parameterRequest);
                 return Ok(projectCreated);
             }
-            catch(ParamInputFailureException ex) {
+            catch(NotSuitableInputException ex) {
                 var response = ex.Errors;
                 return BadRequest(response);
             }

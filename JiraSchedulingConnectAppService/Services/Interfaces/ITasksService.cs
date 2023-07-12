@@ -15,7 +15,7 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
         public Task<bool> SaveTasks(TasksSaveRequest taskRequest);
 
         
-        public Task<List<TaskPrecedenceDTO>> SaveTasksPrecedencesTasks(TasksPrecedencesSaveRequest taskRequest);
+        //public Task<List<TaskPrecedenceDTO>> SaveTasksPrecedencesTasks(TasksPrecedencesSaveRequest taskRequest);
 
 
     }

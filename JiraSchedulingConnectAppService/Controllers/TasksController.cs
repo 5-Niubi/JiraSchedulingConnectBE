@@ -7,7 +7,7 @@ using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Skills;
 using ModelLibrary.DTOs.Tasks;
-
+using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -34,6 +34,12 @@ namespace JiraSchedulingConnectAppService.Controllers
                 return Ok(response);
             }
 
+            catch (NotSuitableInputException ex)
+            {
+                var response = ex.Errors;
+                return BadRequest(response);
+            }
+
             catch (Exception ex)
             {
                 var response = new ResponseMessageDTO(ex.Message);
@@ -49,6 +55,12 @@ namespace JiraSchedulingConnectAppService.Controllers
             {
                 var response = await TasksService.CreateTask(taskRequest);
                 return Ok(response);
+            }
+
+            catch (NotSuitableInputException ex)
+            {
+                var response = ex.Errors;
+                return BadRequest(response);
             }
 
             catch (Exception ex)
@@ -68,6 +80,12 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var response = await TasksService.GetTaskDetail(Id);
                 return Ok(response);
             }
+
+            catch (NotSuitableInputException ex)
+            {
+                var response = ex.Errors;
+                return BadRequest(response);
+            }
             catch (Exception ex)
             {
                 var response = new ResponseMessageDTO(ex.Message);
@@ -83,6 +101,12 @@ namespace JiraSchedulingConnectAppService.Controllers
             {
                 var response = await TasksService.GetTasksPertChart(ProjectId);
                 return Ok(response);
+            }
+
+            catch (NotSuitableInputException ex)
+            {
+                var response = ex.Errors;
+                return BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -101,22 +125,11 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var resopnse = await TasksService.UpdateTask(taskRequest);
                 return Ok(resopnse);
             }
-            catch (Exception ex)
+
+            catch (NotSuitableInputException ex)
             {
-                var response = new ResponseMessageDTO(ex.Message);
+                var response = ex.Errors;
                 return BadRequest(response);
-            }
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> SaveTasksPrecedencesTasks(TasksPrecedencesSaveRequest taskRequest)
-        {
-
-            try
-            {
-                var resopnse = await TasksService.SaveTasksPrecedencesTasks(taskRequest);
-                return Ok(resopnse);
             }
             catch (Exception ex)
             {
@@ -134,6 +147,11 @@ namespace JiraSchedulingConnectAppService.Controllers
             {
                 var resopnse = await TasksService.SaveTasks(taskRequest);
                 return Ok(resopnse);
+            }
+
+            catch (NotSuitableInputException ex) {
+                var response = ex.Errors;
+                return BadRequest(response);
             }
             catch (Exception ex)
             {
