@@ -22,7 +22,7 @@ namespace ModelLibrary.DBModels
         public virtual DbSet<EquipmentsFunction> EquipmentsFunctions { get; set; } = null!;
         public virtual DbSet<Function> Functions { get; set; } = null!;
         public virtual DbSet<Milestone> Milestones { get; set; } = null!;
-        public virtual DbSet<Parameter> Parameters { get; set; } = null!;
+        public virtual DbSet<ParameterRequestDTO> Parameters { get; set; } = null!;
         public virtual DbSet<ParameterResource> ParameterResources { get; set; } = null!;
         public virtual DbSet<Project> Projects { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
@@ -52,7 +52,7 @@ namespace ModelLibrary.DBModels
             modelBuilder.Entity<EquipmentsFunction>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Milestone>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Parameter>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<ParameterRequestDTO>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<ParameterResource>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
@@ -276,7 +276,7 @@ namespace ModelLibrary.DBModels
                     .HasConstraintName("FK_milestones_projects");
             });
 
-            modelBuilder.Entity<Parameter>(entity =>
+            modelBuilder.Entity<ParameterRequestDTO>(entity =>
             {
                 entity.ToTable("parameter");
 
