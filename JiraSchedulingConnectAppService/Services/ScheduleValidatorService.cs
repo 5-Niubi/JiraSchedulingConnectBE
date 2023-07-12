@@ -1,6 +1,8 @@
 ﻿using System;
 using AlgorithmServiceServer.DTOs.AlgorithmController;
+using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.PertSchedule;
@@ -13,7 +15,7 @@ namespace AlgorithmServiceServer.Services.Interfaces
 
 
         private readonly JiraDemoContext db;
-        private readonly HttpContext http;
+        private readonly HttpContext httpContext;
         private readonly IWorkforcesService workforceService;
 
 
@@ -26,17 +28,17 @@ namespace AlgorithmServiceServer.Services.Interfaces
             )
 		{
             this.db = db;
-            http = httpAccessor.HttpContext;
+            httpContext = httpAccessor.HttpContext;
             this.workforceService = workforceService;
 
         }
 
         public async Task<bool> IsValidDAG(int projectId)
         {
-            
+
             // get all task active by project id
-            //var cloudId = new JWTManagerService(http).GetCurrentCloudId();
-            var cloudId = "ea48ddc7-ed56-4d60-9b55-02667724849d"; // DEBUG
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
 
             var projectFromDB = await db.Projects
                 .Where(p => p.CloudId == cloudId)
@@ -69,7 +71,7 @@ namespace AlgorithmServiceServer.Services.Interfaces
 
             int startNode = 0;
             DirectedGraph = new DirectedGraph(startNode);
-            //DirectedGraph.LoadData(TaskAdjacency);
+            DirectedGraph.LoadData(TaskAdjacency);
 
 
             return true;
@@ -86,15 +88,15 @@ namespace AlgorithmServiceServer.Services.Interfaces
 
             // TODO: is validate duration
 
-            var projectId = parameterRequest.ProjectId;
-            var workforeIds = parameterRequest.WorkforceIds;
+            //var projectId = parameterRequest.ProjectId;
+            //var workforeIds = parameterRequest.ParameterResourceRequest;
 
 
-            var listTasks = await db.Tasks
-                .Include(t => t.TasksSkillsRequireds)
-                .Where(t => t.ProjectId == projectId).ToListAsync();
+            //var listTasks = await db.Tasks
+            //    .Include(t => t.TasksSkillsRequireds)
+            //    .Where(t => t.ProjectId == projectId).ToListAsync();
 
-            var WorkforcesSkills = await db.WorkforceSkills.Where(w => workforeIds.Contains(w.SkillId)).ToListAsync();
+            //var WorkforcesSkills = await db.WorkforceSkills.Where(w => workforeIds.Contains(w.SkillId)).ToListAsync();
 
 
             //foreach(var task in listTasks) {

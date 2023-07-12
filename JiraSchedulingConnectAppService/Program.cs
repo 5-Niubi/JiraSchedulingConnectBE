@@ -51,6 +51,8 @@ builder.Services.AddTransient<ITasksService, TasksService>();
 builder.Services.AddTransient<IAlgorithmService, AlgorithmService>();
 builder.Services.AddTransient<IValidatorService, ScheduleValidatorService>();
 
+
+builder.Services.AddTransient<IParametersService, ParametersService>();
 builder.Services.AddTransient<IWorkforcesService, WorkforcesService>();
 builder.Services.AddTransient<IEquipmentService, EquipmentsService>();
 builder.Services.AddTransient<IJiraBridgeAPIService, JiraBridgeAPIService>();
