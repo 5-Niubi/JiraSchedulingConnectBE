@@ -41,7 +41,7 @@ namespace JiraSchedulingConnectAppService.Services
             return bulkTasks;
         }
 
-        async public Task ToMSProject(int scheduleId)
+        async public Task<MemoryStream> ToMSProject(int scheduleId)
         {
             var schedule = await db.Schedules.Where(s => s.Id == scheduleId)
                 .FirstOrDefaultAsync();
@@ -50,7 +50,7 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new NotFoundException(Const.MESSAGE.NOTFOUND_SCHEDULE);
             }
             var tasks = JsonConvert.DeserializeObject<List<TaskScheduleResultDTO>>(schedule.Tasks);
-            await MppCreateFile(tasks);
+            return MppCreateFile(tasks);
         }
 
 
@@ -82,7 +82,7 @@ namespace JiraSchedulingConnectAppService.Services
             // Planed end: customfield_10053
         }
 
-        private async Task<string> JiraCreateBulkTask(List<TaskScheduleResultDTO> tasks, 
+        private async Task<string> JiraCreateBulkTask(List<TaskScheduleResultDTO> tasks,
             Dictionary<int?, WorkforceScheduleResultDTO> workderDict, string projectJiraId)
         {
             dynamic request = new ExpandoObject();
@@ -114,13 +114,12 @@ namespace JiraSchedulingConnectAppService.Services
             return await respone.Content.ReadAsStringAsync();
         }
 
-        private async Task MppCreateFile(List<TaskScheduleResultDTO> tasks
-            )
+        private MemoryStream MppCreateFile(List<TaskScheduleResultDTO> tasks)
         {
+            var taskDict = new Dictionary<int?, Aspose.Tasks.Task>();
+
             var project = new Aspose.Tasks.Project();
 
-
-           
             foreach (var t in tasks)
             {
                 // Add tasks
@@ -130,13 +129,40 @@ namespace JiraSchedulingConnectAppService.Services
                 task.Set(Tsk.Finish, (DateTime)t.endDate);
 
                 // Resource
-                var resource =  project.Resources.Add(t.workforce.name);
+                var resource = project.Resources.Add(t.workforce.name);
                 project.ResourceAssignments.Add(task, resource);
+
+                taskDict.Add(t.id, task);
             }
-            
+
+            // Set task predecessor
+            foreach (var t in tasks)
+            {
+                if (t.taskIdPrecedences.Count != 0)
+                {
+                    foreach (var taskPred in t.taskIdPrecedences)
+                    {
+                        var link = project.TaskLinks.Add(taskDict[taskPred], taskDict[t.id]);
+                        link.LinkType = TaskLinkType.FinishToStart;
+                    }
+                }
+
+            }
             // Save the project as MPP
-            var filePath = @"C:\project.mpp";
-            project.Save(filePath, SaveFileFormat.Mpp);
+            var memoryStream = new MemoryStream();
+
+            // Save the project as MPP to the MemoryStream
+            project.Save(memoryStream, SaveFileFormat.Mpp);
+
+            // Reset the MemoryStream position to the beginning
+            memoryStream.Position = 0;
+
+            // Use the MemoryStream as needed, such as sending it through an API response
+            // For example, you could return it in a controller action as a FileStreamResult:
+            // return File(memoryStream, "application/octet-stream", "project.mpp");
+            return memoryStream;
+
         }
+
     }
 }
