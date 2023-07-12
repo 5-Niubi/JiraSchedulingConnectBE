@@ -12,6 +12,7 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class ScheduleController : ControllerBase
     {
         private readonly IScheduleService scheduleService;
+        
         public ScheduleController(IScheduleService scheduleService)
         {
             this.scheduleService = scheduleService;
