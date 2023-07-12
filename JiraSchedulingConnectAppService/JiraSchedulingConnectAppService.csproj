@@ -48,4 +48,7 @@
   <ItemGroup>
     <Content Remove="Services\Interfaces\IWorkforcesService.json" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Services\PertGraphValidatorService.cs" />
+  </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 ﻿using AlgorithmServiceServer;
+using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Thread;
 
 namespace JiraSchedulingConnectAppService.Services.Interfaces
@@ -7,5 +8,9 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
     {
         public ThreadStartDTO TestConverter(int parameterId);
         public Task<EstimatedResultDTO> EstimateWorkforce(int projectId);
+
+        
+
+        
     }
 }
