@@ -70,7 +70,6 @@ namespace JiraSchedulingConnectAppService.Services
                 var responseObj = await respone.Content.ReadFromJsonAsync<CreateJiraUserDTO.Response>();
                 worker.accountId = responseObj.accountId;
             }
-
             return workderDict;
         }
 
@@ -161,7 +160,6 @@ namespace JiraSchedulingConnectAppService.Services
             // For example, you could return it in a controller action as a FileStreamResult:
             // return File(memoryStream, "application/octet-stream", "project.mpp");
             return memoryStream;
-
         }
 
     }
