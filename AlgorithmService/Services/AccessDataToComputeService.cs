@@ -1,6 +1,7 @@
 ﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
 using AlgorithmServiceServer.Services.Interfaces;
 using AutoMapper;
+using JiraSchedulingConnectAppService.Common;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
@@ -28,37 +29,42 @@ namespace AlgorithmServiceServer.Services
         {
             var cloudId = new JWTManagerService(http).GetCurrentCloudId();
             var inputTo = new InputToORDTO();
-            var parameterLatest = db.Parameters.Where(p => p.Id == parameterId)
-                .Include(p => p.Project).FirstOrDefault();
-            if (parameterLatest == null)
-            {
-                throw new NotFoundException($"Can not find parameter with id: {parameterId}");
-            }
-            var projectFromDB = parameterLatest.Project;
-            var taskFromDB = db.Tasks.Where(t => t.ProjectId == parameterLatest.ProjectId)
+
+            var parameterEntity = db.Parameters.Where(p => p.Id == parameterId)
+                .Include(p => p.Project).FirstOrDefault() ??
+                    throw new NotFoundException($"Can not find parameter with id: {parameterId}");
+
+            var projectFromDB = parameterEntity.Project;
+            var parameterResource = db.ParameterResources.Where(prs => prs.ParameterId == parameterId
+                                    && prs.Type == Const.RESOURCE_TYPE.WORKFORCE)
+                                    .Include(pr => pr.ResourceNavigation).First();
+
+            var workerFromDB = parameterResource.ResourceNavigation;
+
+            var taskFromDB = db.Tasks.Where(t => t.ProjectId == parameterEntity.ProjectId)
                .Include(t => t.TasksSkillsRequireds).Include(t => t.TaskPrecedenceTasks).ToList();
-
-
-            var workerFromDB = db.Workforces.Where(w => w.CloudId == cloudId)
-                .Include(w => w.WorkforceSkills)
-                .ToList();
             var skillFromDB = db.Skills.Where(s => s.CloudId == cloudId).ToList();
 
-            var functionFromDB = db.Functions.Where(f => f.CloudId == cloudId).ToList();
-            var equipmentsFromDB = db.Equipments.Where(e => e.CloudId == cloudId)
-                .Include(eq => eq.EquipmentsFunctions)
-                .ToList();
+            // Equipment
+            //var functionFromDB = db.Functions.Where(f => f.CloudId == cloudId).ToList();
+            //var equipmentsFromDB = db.Equipments.Where(e => e.CloudId == cloudId)
+            //    .Include(eq => eq.EquipmentsFunctions)
+            //    .ToList();
+            // ---------
 
             inputTo.StartDate = (DateTime)projectFromDB.StartDate;
             inputTo.Deadline = (int)projectFromDB.Deadline.Value
                 .Subtract(projectFromDB.StartDate.Value).TotalDays;
 
-            inputTo.Budget = (int)parameterLatest.Budget;
+            inputTo.Budget = (int)parameterEntity.Budget;
+            //inputTo.WorkerList = workerFromDB;
+
+
             inputTo.TaskList = taskFromDB.ToList();
-            inputTo.WorkerList = workerFromDB;
             inputTo.SkillList = skillFromDB;
-            inputTo.FunctionList = functionFromDB;
-            inputTo.EquipmentList = equipmentsFromDB;
+
+            //inputTo.FunctionList = functionFromDB;
+            //inputTo.EquipmentList = equipmentsFromDB;
 
             var converter = new AlgorithmConverter(inputTo, mapper);
 

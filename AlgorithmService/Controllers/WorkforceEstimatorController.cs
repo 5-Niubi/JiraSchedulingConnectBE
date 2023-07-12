@@ -26,9 +26,7 @@ namespace AlgorithmServiceServer.Controllers
         {
             try
             {
-
                 return Ok(await estimateWorkforceService.Execute(projectId));
-
             }
             catch (Exception ex)
             {
