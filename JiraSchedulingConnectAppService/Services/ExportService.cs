@@ -1,4 +1,6 @@
-﻿using JiraSchedulingConnectAppService.Common;
+﻿using Aspose.Tasks.Saving;
+using Aspose.Tasks;
+using JiraSchedulingConnectAppService.Common;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
@@ -8,6 +10,7 @@ using Newtonsoft.Json;
 using System.Dynamic;
 using UtilsLibrary.Exceptions;
 using Task = System.Threading.Tasks.Task;
+using Humanizer.Localisation;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -38,6 +41,20 @@ namespace JiraSchedulingConnectAppService.Services
             return bulkTasks;
         }
 
+        async public Task ToMSProject(int scheduleId)
+        {
+            var schedule = await db.Schedules.Where(s => s.Id == scheduleId)
+                .FirstOrDefaultAsync();
+            if (schedule == null)
+            {
+                throw new NotFoundException(Const.MESSAGE.NOTFOUND_SCHEDULE);
+            }
+            var tasks = JsonConvert.DeserializeObject<List<TaskScheduleResultDTO>>(schedule.Tasks);
+            await MppCreateFile(tasks);
+        }
+
+
+
         private async Task<Dictionary<int?, WorkforceScheduleResultDTO>> JiraCreateWorkForce(List<TaskScheduleResultDTO> tasks)
         {
             var workderDict = new Dictionary<int?, WorkforceScheduleResultDTO>();
@@ -63,16 +80,6 @@ namespace JiraSchedulingConnectAppService.Services
             // Start date : customfield_10015
             // Planed start: customfield_10061
             // Planed end: customfield_10053
-
-
-            // Create startdate field
-            //dynamic request = new ExpandoObject();
-            //request.description = "Task Start Time";
-            //request.name = "Start Date";
-            //request.searchKey = "com.atlassian.jira.plugin.system.customfieldtypes:datetimerange";
-            //request.type = ""
-
-            //var respone = await jiraAPI.Post("rest/api/3/field", userCreate);
         }
 
         private async Task<string> JiraCreateBulkTask(List<TaskScheduleResultDTO> tasks, 
@@ -105,6 +112,31 @@ namespace JiraSchedulingConnectAppService.Services
 
             var respone = await jiraAPI.Post("rest/api/3/issue/bulk", request);
             return await respone.Content.ReadAsStringAsync();
+        }
+
+        private async Task MppCreateFile(List<TaskScheduleResultDTO> tasks
+            )
+        {
+            var project = new Aspose.Tasks.Project();
+
+
+           
+            foreach (var t in tasks)
+            {
+                // Add tasks
+                var task = project.RootTask.Children.Add(t.name);
+                task.Set(Tsk.PercentComplete, 0);
+                task.Set(Tsk.Start, (DateTime)t.startDate);
+                task.Set(Tsk.Finish, (DateTime)t.endDate);
+
+                // Resource
+                var resource =  project.Resources.Add(t.workforce.name);
+                project.ResourceAssignments.Add(task, resource);
+            }
+            
+            // Save the project as MPP
+            var filePath = @"C:\project.mpp";
+            project.Save(filePath, SaveFileFormat.Mpp);
         }
     }
 }
