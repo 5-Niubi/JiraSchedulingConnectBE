@@ -67,16 +67,16 @@ namespace ModelLibrary.DTOs
 
 
             
-            CreateMap<Parameter, ParameterDTO>();
-            CreateMap<Parameter, ParameterDTO>();
+            CreateMap<ParameterRequestDTO, ParameterDTO>();
+            CreateMap<ParameterRequestDTO, ParameterDTO>();
 
             CreateMap<ParameterResourceRequest, ParameterResource>();
             CreateMap<ParameterResource, ParameterResourceRequest>();
-            CreateMap<Parameter, ParameterRequest>()
+            CreateMap<ParameterRequestDTO, ParameterRequest>()
                 .ForMember(tr => tr.ParameterResources, t => t.MapFrom(t => t.ParameterResources));
 
 
-            CreateMap<ParameterRequest, Parameter>()
+            CreateMap<ParameterRequest, ParameterRequestDTO>()
                 .ForMember(tr => tr.ParameterResources, t => t.MapFrom(t => t.ParameterResources));
 
             
