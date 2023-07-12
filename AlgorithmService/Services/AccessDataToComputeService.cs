@@ -37,7 +37,7 @@ namespace AlgorithmServiceServer.Services
             var projectFromDB = parameterEntity.Project;
             var parameterResources = db.ParameterResources.Where(prs => prs.ParameterId == parameterId
                                     && prs.Type == Const.RESOURCE_TYPE.WORKFORCE)
-                                    .Include(pr => pr.ResourceNavigation).ToList();
+                                    .Include(pr => pr.ResourceNavigation).ThenInclude(w => w.WorkforceSkills).ToList();
 
             var workerFromDB = new List<Workforce>();
             parameterResources.ForEach(e => workerFromDB.Add(e.ResourceNavigation));

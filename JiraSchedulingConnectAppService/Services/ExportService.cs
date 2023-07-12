@@ -58,18 +58,19 @@ namespace JiraSchedulingConnectAppService.Services
         private async Task<Dictionary<int?, WorkforceScheduleResultDTO>> JiraCreateWorkForce(List<TaskScheduleResultDTO> tasks)
         {
             var workderDict = new Dictionary<int?, WorkforceScheduleResultDTO>();
-            tasks.ForEach(t => workderDict.Add(t.workforce.id, t.workforce));
+            
+            tasks.ForEach(t => {workderDict.TryAdd(t.workforce.id, t.workforce);});
 
-            foreach (var worker in workderDict.Values)
-            {
-                var userCreate = new CreateJiraUserDTO.Request();
-                userCreate.displayName = worker.displayName;
-                userCreate.emailAddress = worker.email;
+            //foreach (var worker in workderDict.Values)
+            //{
+            //    var userCreate = new CreateJiraUserDTO.Request();
+            //    userCreate.displayName = worker.displayName;
+            //    userCreate.emailAddress = worker.email;
 
-                var respone = await jiraAPI.Post("rest/api/3/user", userCreate);
-                var responseObj = await respone.Content.ReadFromJsonAsync<CreateJiraUserDTO.Response>();
-                worker.accountId = responseObj.accountId;
-            }
+            //    var respone = await jiraAPI.Post("rest/api/3/user", userCreate);
+            //    var responseObj = await respone.Content.ReadFromJsonAsync<CreateJiraUserDTO.Response>();
+            //    worker.accountId = responseObj.accountId;
+            //}
             return workderDict;
         }
 
@@ -93,23 +94,27 @@ namespace JiraSchedulingConnectAppService.Services
                 // each issueUpdate is each task
                 issueUpdate = new ExpandoObject();
                 dynamic fields = new ExpandoObject();
+                fields.assignee = new ExpandoObject();
+                fields.assignee.emailAddress = workderDict[task.workforce.id].email;
 
-                fields.assignee.id = workderDict[task.workforce.id].accountId;
+                //fields.customfield_10061 = "09/Jun/19"; // Planed Start
+                //fields.customfield_10053 = task.endDate; // Planed End
+                fields.duedate = "2011-03-11";
 
-                fields.customfield_10061 = task.startDate; // Planed Start
-                fields.customfield_10053 = task.endDate; // Planed End
-                fields.đueate = task.endDate;
-
+                fields.project = new ExpandoObject();
                 fields.project.id = projectJiraId;
 
+                fields.project.reporter = new ExpandoObject();
                 fields.project.reporter.id = "";
                 fields.summary = task.name;
-
+                fields.issuetype = new ExpandoObject();
+                fields.issuetype.id = "10023"; //Type task
                 issueUpdate.fields = fields;
                 request.issueUpdates.Add(issueUpdate);
             }
 
             var respone = await jiraAPI.Post("rest/api/3/issue/bulk", request);
+
             return await respone.Content.ReadAsStringAsync();
         }
 
