@@ -2,6 +2,7 @@
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
+using ModelLibrary.DTOs.Milestones;
 using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Projects;
@@ -26,8 +27,11 @@ namespace ModelLibrary.DTOs
             CreateMap<Skill, SkillDTO>();
             CreateMap<SkillDTO, Skill>();
             CreateMap<SkillCreatedRequest, Skill>();
+			CreateMap<Milestone, MilestoneDTO>();
+			CreateMap<MilestoneDTO, Milestone>();
+			CreateMap<MilestoneCreatedRequest, Milestone>();
 
-            CreateMap<TaskPrecedenceDTO, TaskPrecedence>();
+			CreateMap<TaskPrecedenceDTO, TaskPrecedence>();
             CreateMap<TaskPrecedence, TaskPrecedenceDTO>();
 
             CreateMap<TasksSkillsRequired, SkillRequiredDTO>();

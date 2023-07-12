@@ -1,6 +1,7 @@
 ﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
 using AlgorithmServiceServer.Services.Interfaces;
 using AutoMapper;
+using JiraSchedulingConnectAppService.Common;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
@@ -28,37 +29,43 @@ namespace AlgorithmServiceServer.Services
         {
             var cloudId = new JWTManagerService(http).GetCurrentCloudId();
             var inputTo = new InputToORDTO();
-            var parameterLatest = db.Parameters.Where(p => p.Id == parameterId)
-                .Include(p => p.Project).FirstOrDefault();
-            if (parameterLatest == null)
-            {
-                throw new NotFoundException($"Can not find parameter with id: {parameterId}");
-            }
-            var projectFromDB = parameterLatest.Project;
-            var taskFromDB = db.Tasks.Where(t => t.ProjectId == parameterLatest.ProjectId)
+
+            var parameterEntity = db.Parameters.Where(p => p.Id == parameterId)
+                .Include(p => p.Project).FirstOrDefault() ??
+                    throw new NotFoundException($"Can not find parameter with id: {parameterId}");
+
+            var projectFromDB = parameterEntity.Project;
+            var parameterResources = db.ParameterResources.Where(prs => prs.ParameterId == parameterId
+                                    && prs.Type == Const.RESOURCE_TYPE.WORKFORCE)
+                                    .Include(pr => pr.ResourceNavigation).ToList();
+
+            var workerFromDB = new List<Workforce>();
+            parameterResources.ForEach(e => workerFromDB.Add(e.ResourceNavigation));
+
+            var taskFromDB = db.Tasks.Where(t => t.ProjectId == parameterEntity.ProjectId)
                .Include(t => t.TasksSkillsRequireds).Include(t => t.TaskPrecedenceTasks).ToList();
-
-
-            var workerFromDB = db.Workforces.Where(w => w.CloudId == cloudId)
-                .Include(w => w.WorkforceSkills)
-                .ToList();
             var skillFromDB = db.Skills.Where(s => s.CloudId == cloudId).ToList();
 
-            var functionFromDB = db.Functions.Where(f => f.CloudId == cloudId).ToList();
-            var equipmentsFromDB = db.Equipments.Where(e => e.CloudId == cloudId)
-                .Include(eq => eq.EquipmentsFunctions)
-                .ToList();
+            // Equipment
+            //var functionFromDB = db.Functions.Where(f => f.CloudId == cloudId).ToList();
+            //var equipmentsFromDB = db.Equipments.Where(e => e.CloudId == cloudId)
+            //    .Include(eq => eq.EquipmentsFunctions)
+            //    .ToList();
+            // ---------
 
             inputTo.StartDate = (DateTime)projectFromDB.StartDate;
             inputTo.Deadline = (int)projectFromDB.Deadline.Value
                 .Subtract(projectFromDB.StartDate.Value).TotalDays;
 
-            inputTo.Budget = (int)parameterLatest.Budget;
-            inputTo.TaskList = taskFromDB.ToList();
+            inputTo.Budget = (int)parameterEntity.Budget;
             inputTo.WorkerList = workerFromDB;
+
+
+            inputTo.TaskList = taskFromDB.ToList();
             inputTo.SkillList = skillFromDB;
-            inputTo.FunctionList = functionFromDB;
-            inputTo.EquipmentList = equipmentsFromDB;
+
+            inputTo.FunctionList = new List<Function>();
+            inputTo.EquipmentList = new List<Equipment>();
 
             var converter = new AlgorithmConverter(inputTo, mapper);
 
@@ -78,7 +85,6 @@ namespace AlgorithmServiceServer.Services
                     var algOutConverted = converter.FromOR(algOutRaw.Genes,
                         new int[0], algOutRaw.TaskBegin, algOutRaw.TaskFinish);
                     algorithmOutputConverted.Add(algOutConverted);
-
 
                     InsertScheduleIntoDB(parameterId, algOutConverted, scheduleResultDTOs);
                 }
@@ -109,29 +115,11 @@ namespace AlgorithmServiceServer.Services
             schedule.Duration = algOutConverted.timeFinish;
             schedule.Cost = algOutConverted.totalSalary;
             schedule.Quality = algOutConverted.totalExper;
-
             schedule.Tasks = JsonConvert.SerializeObject(algOutConverted.tasks);
 
             var scheduleSolution = (await db.Schedules.AddAsync(schedule)).Entity;
             var scheduleSolutionDTO = mapper.Map<ScheduleResultSolutionDTO>(scheduleSolution);
 
-            //foreach (var task in algOutConverted.tasks)
-            //{
-            //    var scheduleTask = new ScheduleTask();
-            //    scheduleTask.Startdate = task.startDate;
-            //    scheduleTask.Enddate = task.endDate;
-            //    scheduleTask.ScheduleId = scheduleSolution.Id;
-            //    scheduleTask.TaskId = task.id;
-
-            //    scheduleTask = (await db.ScheduleTasks.AddAsync(scheduleTask)).Entity;
-            //    var taskResource = new ScheduleTaskResource();
-            //    taskResource.ScheduleTaskId = scheduleTask.Id;
-            //    taskResource.ResourceId = task.workerId;
-            //    taskResource.Type = Const.RESOURCE_TYPE.WORKFORCE;
-
-            //    // Pending Equipment
-            //    await db.ScheduleTaskResources.AddAsync(taskResource);
-            //}
             scheduleResultDTOs.Add(scheduleSolutionDTO);
         }
     }
