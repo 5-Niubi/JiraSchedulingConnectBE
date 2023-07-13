@@ -86,11 +86,6 @@ namespace JiraSchedulingConnectAppService.Services
             return responseContent;
 
 
-        }
-
-        
-
-
-        
+        } 
     }
 }
