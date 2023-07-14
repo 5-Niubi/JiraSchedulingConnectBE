@@ -54,9 +54,9 @@ namespace JiraSchedulingConnectAppService.Services
                 var workforce = mapper.Map<Workforce>(workforceRequest);
                 workforce.CloudId = cloudId;
 
-                await db.Workforces.AddAsync(workforce);
+                var workforceEntity = await db.Workforces.AddAsync(workforce);
                 await db.SaveChangesAsync();
-                var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(workforce);
+                var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(workforceEntity.Entity);
                 return workforceDTOResponse;
             }
             catch (Exception e)
@@ -79,17 +79,20 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        public async System.Threading.Tasks.Task DeleteWorkforce(string? workforce_id)
+        public async Task<WorkforceDTOResponse> DeleteWorkforce(string? workforce_id)
         {
             try
             {
                 var workforce = await db.Workforces.SingleOrDefaultAsync(x => x.Id.ToString() == workforce_id);
-                if(workforce != null) {
+                if(workforce == null) {
+                    return null;
+                }
                     workforce.IsDelete = true;
                     workforce.DeleteDatetime = DateTime.Now;
-                    db.Workforces.Update(workforce);
-                }
+                var workforceEntity = db.Workforces.Update(workforce);
                 await db.SaveChangesAsync();
+                var workforceResponse = mapper.Map<WorkforceDTOResponse>(workforceEntity.Entity);
+                return workforceResponse;
             }
             catch (Exception e)
             {
@@ -102,9 +105,9 @@ namespace JiraSchedulingConnectAppService.Services
             try
             {
                 var workforce = mapper.Map<Workforce>(workforceRequest);
-                db.Update(workforce);
+                var workforceEntity = db.Update(workforce);
                 await db.SaveChangesAsync();
-                var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(workforce);
+                var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(workforceEntity.Entity);
                 return workforceDTOResponse;
             }
             catch (Exception e)

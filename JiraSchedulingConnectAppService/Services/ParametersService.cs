@@ -8,6 +8,7 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Invalidator;
 using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.PertSchedule;
+using NuGet.Packaging.Signing;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
@@ -17,8 +18,6 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly JiraDemoContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
-
-
         private const string NotResourceAdaptivedMessage = "Not Resource (Workfore) adapt required skills task's";
 
         public ParametersService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
@@ -26,13 +25,9 @@ namespace JiraSchedulingConnectAppService.Services
             db = dbContext;
             this.mapper = mapper;
             httpContext = httpContextAccessor.HttpContext;
-
         }
 
-
         private async Task<bool> _ValidateTasksSkillRequireds(int ProjectId, List<ParameterResourceRequest> parameterResourcesRequest) {
-
-
             var Errors = new List<TaskSkillRequiredErrorDTO>();
 
             var WorkforcesSkills = db.Workforces
@@ -42,11 +37,9 @@ namespace JiraSchedulingConnectAppService.Services
                     p => p.ResourceId).Contains(wf.Id))
                 .ToList();
 
-
             var Tasks = await db.Tasks
                 .Include(t => t.TasksSkillsRequireds)
                 .Where(t => t.ProjectId == ProjectId).ToListAsync();
-
 
             foreach (var task in Tasks)
             {
@@ -87,7 +80,6 @@ namespace JiraSchedulingConnectAppService.Services
                         TaskId = task.Id,
                         SkillRequireds = mapper.Map<List<SkillRequiredDTO>>(skillsRequireds),
                         Messages = NotResourceAdaptivedMessage
-
                     });
 
                 }
@@ -99,31 +91,38 @@ namespace JiraSchedulingConnectAppService.Services
             if(Errors.Count != 0) {
                 throw new NotSuitableInputException(Errors);
             }
-
-
             return true;
-
-
-
         }
 
 
         public async Task<ParameterDTO> SaveParams(ParameterRequest parameterRequest)
         {
-
             // Is validate Resource parameter minimize adaptive Resource Task
             await _ValidateTasksSkillRequireds(parameterRequest.ProjectId, parameterRequest.ParameterResources);
-
-
             var parameterRequestDTO = mapper.Map<ParameterRequestDTO>(parameterRequest);
             var paramsEntity =  await db.Parameters.AddAsync(parameterRequestDTO);
-
             await db.SaveChangesAsync();
-
             var parameterDTO  = mapper.Map<ParameterDTO>(paramsEntity.Entity);
             return parameterDTO;
+        }
 
+        public async Task<List<WorkforceDTOResponse>> GetWorkforceParameter(string project_id) {
+            try
+            {
+                var jwt = new JWTManagerService(httpContext);
+                var cloudId = jwt.GetCurrentCloudId();
 
+                //QUERY WORKFORCE IN PARAMETER TABLE WITH PROJECT ID
+                var parameter_resources = (project_id == null) ? null: await db.Workforces.Include(s=>s.ParameterResources).ThenInclude(s=>s.Parameter)
+                    .Include(s=>s.WorkforceSkills).ThenInclude(s=>s.Skill)
+                    .Where(p => p.ParameterResources.Any(x => x.Parameter.ProjectId.ToString().Equals(project_id))).ToListAsync();
+                var queryDTOResponse = mapper.Map<List<WorkforceDTOResponse>>(parameter_resources);
+                return queryDTOResponse;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }
