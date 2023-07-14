@@ -66,8 +66,8 @@ namespace JiraSchedulingConnectAppService.Controllers
             try
             {
                 var w = workforcesService.GetWorkforceById(id);
-                await workforcesService.DeleteWorkforce(id);
-                return Ok("Delete success");
+                var response = await workforcesService.DeleteWorkforce(id);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -82,8 +82,8 @@ namespace JiraSchedulingConnectAppService.Controllers
             try
             {
                 var w1 = workforcesService.GetWorkforceById(id);
-                await workforcesService.UpdateWorkforce(workforce);
-                return Ok("Update success");
+                var response = await workforcesService.UpdateWorkforce(workforce);
+                return Ok(response);
             }
             catch (Exception ex)
             {
