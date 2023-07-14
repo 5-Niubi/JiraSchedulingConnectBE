@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 
 namespace ModelLibrary.DBModels
 {
@@ -21,8 +22,9 @@ namespace ModelLibrary.DBModels
         public virtual DbSet<Equipment> Equipments { get; set; } = null!;
         public virtual DbSet<EquipmentsFunction> EquipmentsFunctions { get; set; } = null!;
         public virtual DbSet<Function> Functions { get; set; } = null!;
+        public virtual DbSet<Log> Logs { get; set; } = null!;
         public virtual DbSet<Milestone> Milestones { get; set; } = null!;
-        public virtual DbSet<ParameterRequestDTO> Parameters { get; set; } = null!;
+        public virtual DbSet<Parameter> Parameters { get; set; } = null!;
         public virtual DbSet<ParameterResource> ParameterResources { get; set; } = null!;
         public virtual DbSet<Project> Projects { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
@@ -37,11 +39,11 @@ namespace ModelLibrary.DBModels
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server=34.123.177.151,1433; database=JiraDemo; uid=sa; pwd=5Niubipass; TrustServerCertificate=True");
-            }
+            var builder = new ConfigurationBuilder()
+                        .SetBasePath(Directory.GetCurrentDirectory())
+                        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            IConfigurationRoot configuration = builder.Build();
+            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DB"));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -52,7 +54,7 @@ namespace ModelLibrary.DBModels
             modelBuilder.Entity<EquipmentsFunction>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Milestone>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<ParameterRequestDTO>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Parameter>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<ParameterResource>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
@@ -64,6 +66,7 @@ namespace ModelLibrary.DBModels
             modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
+
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
@@ -245,6 +248,11 @@ namespace ModelLibrary.DBModels
                     .HasColumnName("name");
             });
 
+            modelBuilder.Entity<Log>(entity =>
+            {
+                entity.HasNoKey();
+            });
+
             modelBuilder.Entity<Milestone>(entity =>
             {
                 entity.ToTable("milestones");
@@ -276,7 +284,7 @@ namespace ModelLibrary.DBModels
                     .HasConstraintName("FK_milestones_projects");
             });
 
-            modelBuilder.Entity<ParameterRequestDTO>(entity =>
+            modelBuilder.Entity<Parameter>(entity =>
             {
                 entity.ToTable("parameter");
 

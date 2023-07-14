@@ -1,0 +1,23 @@
+- Create default software project. Tạo mới tới khi được nếu trùng key thì tự động đổi key
+
+	- Check if screen with name: "JiraResourceAssign Screen" exist
+		- Create a screen: "JiraResourceAssign Screen"
+	
+	- Create issue type. Kiểm tra nếu type chưa tồn tại thì create
+		- Get issue type of user
+		- Create a new issue type "Task Export From []"
+	 
+	- Create all needed custom field
+	
+	- Add field into screen
+			- Get screen tab id (create one if not Exist "Field tab")
+			- Add screen tab field with all custom field
+			
+	- Create a screen scheme 
+	
+	- Create issue type screen scheme with name "JiraResourceAssign Issue Type Screen Scheme"
+	
+	- Create issue type scheme
+	
+- Assign IssueTypeScreenScheme  with project
+- Assign IssueTypeScheme with project

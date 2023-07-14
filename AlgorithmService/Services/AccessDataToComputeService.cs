@@ -16,7 +16,7 @@ namespace AlgorithmServiceServer.Services
     public class AccessDataToComputeService : IAccessDataToComputeService
     {
         private readonly JiraDemoContext db;
-        private readonly HttpContext http;
+        private readonly HttpContext? http;
         private readonly IMapper mapper;
         public AccessDataToComputeService(JiraDemoContext db, IHttpContextAccessor httpAccessor, IMapper mapper)
         {
@@ -30,36 +30,28 @@ namespace AlgorithmServiceServer.Services
             var cloudId = new JWTManagerService(http).GetCurrentCloudId();
             var inputTo = new InputToORDTO();
 
-            var parameterEntity = db.Parameters.Where(p => p.Id == parameterId)
-                .Include(p => p.Project).FirstOrDefault() ??
+            var parameterEntity = await db.Parameters.Where(p => p.Id == parameterId)
+                .Include(p => p.Project).FirstOrDefaultAsync() ??
                     throw new NotFoundException($"Can not find parameter with id: {parameterId}");
 
             var projectFromDB = parameterEntity.Project;
-            var parameterResources = db.ParameterResources.Where(prs => prs.ParameterId == parameterId
+            var parameterResources = await db.ParameterResources.Where(prs => prs.ParameterId == parameterId
                                     && prs.Type == Const.RESOURCE_TYPE.WORKFORCE)
-                                    .Include(pr => pr.ResourceNavigation).ThenInclude(w => w.WorkforceSkills).ToList();
+                                    .Include(pr => pr.ResourceNavigation).ThenInclude(w => w.WorkforceSkills).ToListAsync();
 
             var workerFromDB = new List<Workforce>();
             parameterResources.ForEach(e => workerFromDB.Add(e.ResourceNavigation));
 
-            var taskFromDB = db.Tasks.Where(t => t.ProjectId == parameterEntity.ProjectId)
-               .Include(t => t.TasksSkillsRequireds).Include(t => t.TaskPrecedenceTasks).ToList();
+            var taskFromDB = await db.Tasks.Where(t => t.ProjectId == parameterEntity.ProjectId)
+               .Include(t => t.TasksSkillsRequireds).Include(t => t.TaskPrecedenceTasks).ToListAsync();
 
-            var skillFromDB =
-                // Get skill required of task
-                db.Skills.Where(s => s.CloudId == cloudId).ToList();
-            // Equipment
-            //var functionFromDB = db.Functions.Where(f => f.CloudId == cloudId).ToList();
-            //var equipmentsFromDB = db.Equipments.Where(e => e.CloudId == cloudId)
-            //    .Include(eq => eq.EquipmentsFunctions)
-            //    .ToList();
-            // ---------
+            var skillFromDB = await db.Skills.Where(s => s.CloudId == cloudId).ToListAsync();
 
             inputTo.StartDate = (DateTime)projectFromDB.StartDate;
             inputTo.Deadline = (int)projectFromDB.Deadline.Value
                 .Subtract(projectFromDB.StartDate.Value).TotalDays;
 
-            inputTo.Budget = (int) parameterEntity.Budget;
+            inputTo.Budget = (int)parameterEntity.Budget;
             inputTo.WorkerList = workerFromDB;
 
 
@@ -81,20 +73,26 @@ namespace AlgorithmServiceServer.Services
             await db.Database.BeginTransactionAsync();
             try
             {
-
+                var schedules = new List<Schedule>();
                 foreach (var algOutRaw in algorithmOutputRaws)
                 {
                     var algOutConverted = converter.FromOR(algOutRaw.Genes,
                         new int[0], algOutRaw.TaskBegin, algOutRaw.TaskFinish);
                     algorithmOutputConverted.Add(algOutConverted);
 
-                    InsertScheduleIntoDB(parameterId, algOutConverted, scheduleResultDTOs);
+                    var schedule = await InsertScheduleIntoDB(parameterId, algOutConverted);
+                    schedules.Add(schedule);
                 }
-                db.SaveChanges();
+
+                await db.SaveChangesAsync();
+                await db.Database.CommitTransactionAsync();
+
+                scheduleResultDTOs = mapper.Map<List<ScheduleResultSolutionDTO>>(schedules);             
             }
             catch (Exception ex)
             {
                 await db.Database.RollbackTransactionAsync();
+                throw;
             }
             finally
             {
@@ -103,13 +101,9 @@ namespace AlgorithmServiceServer.Services
             return scheduleResultDTOs;
         }
 
-        public Task<List<ScheduleResultSolutionDTO>> GetDataToCompute(int projectId, int parameterId)
-        {
-            throw new NotImplementedException();
-        }
-
-        private async void InsertScheduleIntoDB(int parameterId, OutputFromORDTO algOutConverted,
-            List<ScheduleResultSolutionDTO> scheduleResultDTOs)
+        private async Task<Schedule> InsertScheduleIntoDB(
+                int parameterId,OutputFromORDTO algOutConverted
+            )
         {
             // Insert result into Schedules table
             var schedule = new Schedule();
@@ -119,10 +113,8 @@ namespace AlgorithmServiceServer.Services
             schedule.Quality = algOutConverted.totalExper;
             schedule.Tasks = JsonConvert.SerializeObject(algOutConverted.tasks);
 
-            var scheduleSolution = (await db.Schedules.AddAsync(schedule)).Entity;
-            var scheduleSolutionDTO = mapper.Map<ScheduleResultSolutionDTO>(scheduleSolution);
-
-            scheduleResultDTOs.Add(scheduleSolutionDTO);
+            var scheduleSolution = await db.Schedules.AddAsync(schedule);
+            return scheduleSolution.Entity;
         }
     }
 }

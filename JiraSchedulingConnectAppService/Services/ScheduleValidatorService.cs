@@ -83,7 +83,7 @@ namespace AlgorithmServiceServer.Services.Interfaces
             throw new NotImplementedException();
         }
 
-        public async Task<bool> IsValidRequiredParameters(ParameterRequest parameterRequest)
+        public async Task<bool> IsValidRequiredParameters(ParameterRequestDTO parameterRequest)
         {
 
             // TODO: is validate duration

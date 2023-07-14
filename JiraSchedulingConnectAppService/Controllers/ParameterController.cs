@@ -42,7 +42,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveParameter([FromBody] ModelLibrary.DTOs.PertSchedule.ParameterRequest parameterRequest)
+        public async Task<IActionResult> SaveParameter([FromBody] ModelLibrary.DTOs.PertSchedule.ParameterRequestDTO parameterRequest)
         {
             try
             {

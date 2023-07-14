@@ -14,6 +14,5 @@ namespace ModelLibrary.DBModels
 
         public virtual Skill Skill { get; set; } = null!;
         public virtual Task Task { get; set; } = null!;
-
     }
 }

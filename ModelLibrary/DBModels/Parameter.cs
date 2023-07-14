@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace ModelLibrary.DBModels
 {
-    public partial class ParameterRequestDTO
+    public partial class Parameter
     {
-        public ParameterRequestDTO()
+        public Parameter()
         {
             ParameterResources = new HashSet<ParameterResource>();
             Schedules = new HashSet<Schedule>();

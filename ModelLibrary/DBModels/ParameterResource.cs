@@ -13,7 +13,7 @@ namespace ModelLibrary.DBModels
         public bool? IsDelete { get; set; }
         public DateTime? DeleteDatetime { get; set; }
 
-        public virtual ParameterRequestDTO Parameter { get; set; } = null!;
+        public virtual Parameter Parameter { get; set; } = null!;
         public virtual Equipment Resource { get; set; } = null!;
         public virtual Workforce ResourceNavigation { get; set; } = null!;
     }
