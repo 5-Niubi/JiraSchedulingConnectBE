@@ -20,7 +20,16 @@ namespace ModelLibrary.DTOs
             CreateMap<Project, ProjectDetailDTO>();
             CreateMap<WorkforceDTORequest, Workforce>();
             CreateMap<Workforce, WorkforceDTORequest>();
-            CreateMap<Workforce, WorkforceDTOResponse>();
+            CreateMap<Workforce, WorkforceDTOResponse>()
+                .ForMember(x=>x.Skills, t => t.MapFrom(t=>t.WorkforceSkills.Select(s=> new SkillDTO {
+                    Id = s.Skill.Id,
+                    Name = s.Skill.Name,
+                    CloudId = s.Skill.CloudId,
+                    Level = s.Level,
+                    CreateDatetime = s.Skill.CreateDatetime,
+                    IsDelete = s.Skill.IsDelete,
+                    DeleteDatetime = s.Skill.DeleteDatetime,
+                })));
             CreateMap<WorkforceDTOResponse, Workforce>();
             CreateMap<EquipmentDTOResponse, Equipment>();
             CreateMap<Equipment, EquipmentDTOResponse>();
