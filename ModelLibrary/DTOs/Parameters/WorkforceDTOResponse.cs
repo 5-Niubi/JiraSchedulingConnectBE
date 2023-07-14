@@ -1,4 +1,7 @@
 ﻿using System;
+using ModelLibrary.DBModels;
+using ModelLibrary.DTOs.Skills;
+
 namespace ModelLibrary.DTOs.Parameters
 {
 	public class WorkforceDTOResponse
@@ -18,6 +21,7 @@ namespace ModelLibrary.DTOs.Parameters
         public bool? IsDelete { get; set; }
         public DateTime? CreateDatetime { get; set; }
         public DateTime? DeleteDatetime { get; set; }
+        public List<SkillDTO> Skills { get; set; } = null!;
     }
 }
 

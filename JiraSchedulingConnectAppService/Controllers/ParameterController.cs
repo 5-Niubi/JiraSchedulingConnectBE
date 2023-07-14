@@ -26,6 +26,21 @@ namespace JiraSchedulingConnectAppService.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetWorkforceParameter(string? id)
+        {
+            try
+            {
+                var response = await parametersService.GetWorkforceParameter(id);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> SaveParameter([FromBody] ModelLibrary.DTOs.PertSchedule.ParameterRequest parameterRequest)
         {
