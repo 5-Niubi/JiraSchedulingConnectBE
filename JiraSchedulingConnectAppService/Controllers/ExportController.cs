@@ -26,12 +26,7 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var response = await exportService.ToJira(scheduleId);
                 return Ok(response);
             }
-            catch (JiraAPIException ex)
-            {
-                var response = new ResponseMessageDTO(ex.Message);
-                response.Data = ex.jiraResponse;
-                return BadRequest(response);
-            }
+           
             catch (Exception ex)
             {
                 var response = new ResponseMessageDTO(ex.Message);
@@ -45,7 +40,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             try
             { 
                 var responseStream = await exportService.ToMSProject(scheduleId);
-                return File(responseStream, "application/octet-stream", "project.mpp");
+                return File(responseStream, "application/octet-stream", "project.xml");
             }
             catch (Exception ex)
             {

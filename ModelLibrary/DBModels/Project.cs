@@ -8,7 +8,7 @@ namespace ModelLibrary.DBModels
         public Project()
         {
             Milestones = new HashSet<Milestone>();
-            Parameters = new HashSet<ParameterRequestDTO>();
+            Parameters = new HashSet<Parameter>();
             Tasks = new HashSet<Task>();
         }
 
@@ -29,7 +29,7 @@ namespace ModelLibrary.DBModels
         public DateTime? DeleteDatetime { get; set; }
 
         public virtual ICollection<Milestone> Milestones { get; set; }
-        public virtual ICollection<ParameterRequestDTO> Parameters { get; set; }
+        public virtual ICollection<Parameter> Parameters { get; set; }
         public virtual ICollection<Task> Tasks { get; set; }
     }
 }

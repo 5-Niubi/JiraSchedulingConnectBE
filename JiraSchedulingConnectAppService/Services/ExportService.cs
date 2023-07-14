@@ -1,14 +1,19 @@
 ﻿using Aspose.Tasks;
 using Aspose.Tasks.Saving;
 using com.sun.xml.@internal.fastinfoset.util;
+using com.sun.xml.@internal.ws.client;
+using java.lang;
 using JiraSchedulingConnectAppService.Common;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using ModelLibrary.DBModels;
+using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
 using ModelLibrary.DTOs.Export;
+using ModelLibrary.DTOs.Thread;
 using net.sf.mpxj;
+using net.sf.mpxj.mpx;
 using net.sf.mpxj.MpxjUtilities;
 using net.sf.mpxj.writer;
 using Newtonsoft.Json;
@@ -16,7 +21,10 @@ using System.Collections.Immutable;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using UtilsLibrary.Exceptions;
+using static com.sun.tools.javac.code.Attribute;
+using Duration = net.sf.mpxj.Duration;
 using Task = System.Threading.Tasks.Task;
 
 namespace JiraSchedulingConnectAppService.Services
@@ -27,37 +35,37 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly IJiraBridgeAPIService jiraAPI;
         private readonly HttpContext http;
         private readonly string appName;
+        private readonly IThreadService threadService;
+
         public ExportService(JiraDemoContext db, IJiraBridgeAPIService jiraAPI,
-            IHttpContextAccessor httpAccessor, IConfiguration config)
+            IHttpContextAccessor httpAccessor, IConfiguration config,
+            IThreadService threadService)
         {
             this.db = db;
             this.jiraAPI = jiraAPI;
             http = httpAccessor.HttpContext;
 
             appName = config.GetValue<string>("Environment:Appname");
+            this.threadService = threadService;
         }
 
-        async public Task<string> ToJira(int scheduleId)
+        public async Task<ThreadStartDTO> ToJira(int scheduleId)
         {
             var schedule = await db.Schedules.Where(s => s.Id == scheduleId)
-                .Include(s => s.Parameter).ThenInclude(p => p.Project)
-                .FirstOrDefaultAsync();
-
+               .Include(s => s.Parameter).ThenInclude(p => p.Project)
+               .FirstOrDefaultAsync();
+            var cloudId = new JWTManagerService(http).GetCurrentCloudId();
+            var accountId = db.AtlassianTokens.Where(tk => tk.CloudId == cloudId)
+    .First().AccountInstalledId;
             if (schedule == null)
             {
                 throw new NotFoundException(Const.MESSAGE.NOTFOUND_SCHEDULE);
             }
-            var tasks = JsonConvert.DeserializeObject<List<TaskScheduleResultDTO>>(schedule.Tasks);
+            string threadId = ThreadService.CreateThreadId();
+            threadId = threadService.StartThread(threadId,
+                async () => await ProcessToJiraThread(threadId, schedule, accountId));
 
-            //// Create jira user and get user accountId into workerDict
-
-
-            var prepareResult = await JiraPrepareForSync(schedule.Parameter.Project);
-            var workerCreatedDict = await JiraCreateWorkForce(tasks, prepareResult.FieldDict["Worker"]);
-            var bulkTasks = await JiraCreateBulkTask(tasks, workerCreatedDict, prepareResult);
-            await JiraCreateIssueLink(tasks, bulkTasks);
-
-            return "";
+            return new ThreadStartDTO(threadId);
         }
 
         async public Task<MemoryStream> ToMSProject(int scheduleId)
@@ -70,8 +78,43 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new NotFoundException(Const.MESSAGE.NOTFOUND_SCHEDULE);
             }
             var tasks = JsonConvert.DeserializeObject<List<TaskScheduleResultDTO>>(schedule.Tasks);
-             XMLCreateFile(tasks, schedule.Parameter.Project);
-            return null;
+            return XMLCreateFile(tasks, schedule.Parameter.Project);
+        }
+
+        private async Task ProcessToJiraThread(string threadId, Schedule schedule, string? accountId)
+        {
+            var thread = threadService.GetThreadModel(threadId);
+            try
+            {
+                var tasks = JsonConvert.DeserializeObject<List<TaskScheduleResultDTO>>(schedule.Tasks);
+
+                var prepareResult = await JiraPrepareForSync(schedule.Parameter.Project, accountId);
+                var workerCreatedDict = await JiraCreateWorkForce(tasks, prepareResult.FieldDict["Worker"]);
+                var bulkTasks = await JiraCreateBulkTask(tasks, workerCreatedDict, prepareResult);
+                await JiraCreateIssueLink(tasks, bulkTasks);
+
+                // Update the thread status and result when finished
+                thread.Status = Const.THREAD_STATUS.SUCCESS;
+            }
+            catch (JiraAPIException ex)
+            {
+                thread.Status = Const.THREAD_STATUS.ERROR;
+                dynamic error = new ExpandoObject();
+                error.message = ex.Message;
+                error.response = ex.jiraResponse;
+                thread.Result = error;
+            }
+            catch (System.Exception ex)
+            {
+                thread.Status = Const.THREAD_STATUS.ERROR;
+
+                dynamic error = new ExpandoObject();
+                error.message = ex.Message;
+                error.stackTrace = ex.StackTrace;
+
+                thread.Result = error;
+            }
+
         }
 
         private async Task JiraCreateIssueLink(List<TaskScheduleResultDTO> tasks, Dictionary<int?, string> issueIdDict)
@@ -95,9 +138,7 @@ namespace JiraSchedulingConnectAppService.Services
 
                     respone = await jiraAPI.Post($"rest/api/3/issueLink", body);
                 }
-
             }
-
         }
 
         private async Task<Dictionary<int?, WorkforceScheduleResultDTO>> JiraCreateWorkForce(List<TaskScheduleResultDTO> tasks, string? fieldId)
@@ -160,7 +201,7 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
         private async Task<JiraAPIPrepareResultDTO> JiraPrepareForSync(
-            ModelLibrary.DBModels.Project project)
+            ModelLibrary.DBModels.Project project,string accountId)
         {
             /* TODO: - Tối ưu việc config field
                      - Tối ưu việc quản lý các scheme
@@ -177,7 +218,7 @@ namespace JiraSchedulingConnectAppService.Services
             var issueTypeScreenSchemeId = await JiraCreateIssueTypeScreenScheme(issueTypeId, screenSchemeId);
             var issueTypeSchemeId = await JiraCreateIssueTypeScheme(issueTypeId);
 
-            var projectId = await JiraCreateProject(project);
+            var projectId = await JiraCreateProject(project, accountId);
 
             await JiraAssignIssueTypeScreenSchemeWithProject(issueTypeScreenSchemeId, projectId);
             await JiraAssignIssueTypeSchemeWithProject(issueTypeSchemeId, projectId);
@@ -388,12 +429,10 @@ namespace JiraSchedulingConnectAppService.Services
             return id;
         }
 
-        private async Task<int> JiraCreateProject(ModelLibrary.DBModels.Project project)
+        private async Task<int> JiraCreateProject(ModelLibrary.DBModels.Project project, string accountId)
         {
-            // TODO: Xử lý trùng key
-            var cloudId = new JWTManagerService(http).GetCurrentCloudId();
-            var accountId = db.AtlassianTokens.Where(tk => tk.CloudId == cloudId)
-                .First().AccountInstalledId;
+            // TODO: Xử lý trùng key       
+
             HttpResponseMessage respone;
             int count = 0;
             var projectName = $"{project.Name}";
@@ -492,77 +531,56 @@ namespace JiraSchedulingConnectAppService.Services
             return issueIdDict;
         }
 
-        private void XMLCreateFile(List<TaskScheduleResultDTO> tasks, ModelLibrary.DBModels.Project projectDb)
+        private MemoryStream XMLCreateFile(List<TaskScheduleResultDTO> tasks, ModelLibrary.DBModels.Project projectDb)
         {
-            //var project = new MSPXMLModelDTO.Project();
-            //project.Xmlns = "http://schemas.microsoft.com/project";
-            //project.Name = $"{projectDb.Name}.xml";
-            //project.Title = projectDb.Name;
-
             ProjectFile project = new ProjectFile();
-       
+            var projectFileName = $"{projectDb.Name}.xml";
+            var resourceDict = new Dictionary<int?, net.sf.mpxj.Resource>();
             var taskDict = new Dictionary<int?, net.sf.mpxj.Task>();
+
+            tasks.ForEach(t =>
+            {
+                if (!resourceDict.ContainsKey(t.workforce.id))
+                {
+                    var rs = project.AddResource();
+                    rs.Name = t.workforce.displayName;
+                    rs.Cost = new Float((float)t.workforce.unitSalary);
+
+                    resourceDict.Add(t.workforce.id, rs);
+                }
+            });
+
             foreach (var t in tasks)
             {
-                net.sf.mpxj.Task task = project.addTask();
+                var task = project.addTask();
                 task.Start = t.startDate.Value.ToJavaLocalDateTime();
                 task.Finish = t.endDate.Value.ToJavaLocalDateTime();
+                task.Duration = Duration.getInstance((double)t.duration, TimeUnit.DAYS);
                 task.Name = t.name;
 
-                taskDict.Add(t.id, task);
-            }
-
-            ProjectWriter writer = ProjectWriterUtility.getProjectWriter("Project.xml");
-            writer.write(project, "Project");
-        }
-
-        private MemoryStream MppCreateFile(List<TaskScheduleResultDTO> tasks)
-        {
-            var taskDict = new Dictionary<int?, Aspose.Tasks.Task>();
-
-            var project = new Aspose.Tasks.Project();
-
-            foreach (var t in tasks)
-            {
-                // Add tasks
-                var task = project.RootTask.Children.Add(t.name);
-                task.Set(Tsk.PercentComplete, 0);
-                task.Set(Tsk.Start, (DateTime)t.startDate);
-                task.Set(Tsk.Finish, (DateTime)t.endDate);
-
-                // Resource
-                var resource = project.Resources.Add(t.workforce.name);
-                project.ResourceAssignments.Add(task, resource);
+                var assignment = task.AddResourceAssignment(resourceDict[t.workforce.id]);
 
                 taskDict.Add(t.id, task);
             }
 
-            // Set task predecessor
             foreach (var t in tasks)
             {
-                if (t.taskIdPrecedences.Count != 0)
+                if (t.taskIdPrecedences.Count == 0) continue;
+                foreach (var pre in t.taskIdPrecedences)
                 {
-                    foreach (var taskPred in t.taskIdPrecedences)
-                    {
-                        var link = project.TaskLinks.Add(taskDict[taskPred], taskDict[t.id]);
-                        link.LinkType = TaskLinkType.FinishToStart;
-                    }
+                    taskDict[t.id].AddPredecessor(taskDict[pre], RelationType.FINISH_START, null);
                 }
-
             }
-            // Save the project as MPP
-            var memoryStream = new MemoryStream();
 
-            // Save the project as MPP to the MemoryStream
-            project.Save("project.mpp", SaveFileFormat.Mpp);
 
-            // Reset the MemoryStream position to the beginning
-            memoryStream.Position = 0;
 
-            // Use the MemoryStream as needed, such as sending it through an API response
-            // For example, you could return it in a controller action as a FileStreamResult:
-            // return File(memoryStream, "application/octet-stream", "project.mpp");
-            return memoryStream;
+            ProjectWriter writer = ProjectWriterUtility.getProjectWriter(projectFileName);
+
+            MemoryStream memStream = new MemoryStream();
+            DotNetOutputStream stream = new DotNetOutputStream(memStream);
+            writer.write(project, stream);
+            memStream.Position = 0;
+            return memStream;
         }
 
         public async Task<string> JiraRequest(dynamic dynamic)

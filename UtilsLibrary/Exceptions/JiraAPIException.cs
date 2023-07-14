@@ -8,7 +8,7 @@ namespace UtilsLibrary.Exceptions
 {
     public class JiraAPIException : Exception
     {
-        public string? jiraResponse;
+        public dynamic? jiraResponse;
         public JiraAPIException()
         {
 

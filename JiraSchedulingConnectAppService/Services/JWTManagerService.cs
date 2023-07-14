@@ -20,6 +20,7 @@ namespace JiraSchedulingConnectAppService.Services
         {
             this.configuration = iconfiguration;
         }
+
         public string? Authenticate(string accountId, string cloudId)
         {
 
