@@ -70,7 +70,7 @@ namespace RcpspAlgorithmLibrary
                 for (int j = 0; j < TaskList.Count; j++)
                 {
                     taskAdjacency[i, j] = (TaskList[i]
-                        .TaskPrecedenceTasks.Where(e => e.TaskId == TaskList[j].Id)
+                        .TaskPrecedenceTasks.Where(e => e.PrecedenceId == TaskList[j].Id) //TODO: re-confirm what vector embedding in taskAdjacency
                         .Count() > 0) ? 1 : 0;
                 }
 

@@ -74,7 +74,7 @@ namespace JiraSchedulingConnectAppService.Services
                 }
             }
 
-            if(Errors.Count != null) {
+            if(Errors.Count != 0) {
                 throw new NotSuitableInputException(Errors);
             }
 
