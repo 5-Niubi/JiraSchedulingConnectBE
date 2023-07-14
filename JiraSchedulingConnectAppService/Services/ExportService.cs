@@ -8,6 +8,9 @@ using Microsoft.Identity.Client;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
 using ModelLibrary.DTOs.Export;
+using net.sf.mpxj;
+using net.sf.mpxj.MpxjUtilities;
+using net.sf.mpxj.writer;
 using Newtonsoft.Json;
 using System.Collections.Immutable;
 using System.Dynamic;
@@ -60,13 +63,15 @@ namespace JiraSchedulingConnectAppService.Services
         async public Task<MemoryStream> ToMSProject(int scheduleId)
         {
             var schedule = await db.Schedules.Where(s => s.Id == scheduleId)
-                .FirstOrDefaultAsync();
+               .Include(s => s.Parameter).ThenInclude(p => p.Project)
+               .FirstOrDefaultAsync();
             if (schedule == null)
             {
                 throw new NotFoundException(Const.MESSAGE.NOTFOUND_SCHEDULE);
             }
             var tasks = JsonConvert.DeserializeObject<List<TaskScheduleResultDTO>>(schedule.Tasks);
-            return MppCreateFile(tasks);
+             XMLCreateFile(tasks, schedule.Parameter.Project);
+            return null;
         }
 
         private async Task JiraCreateIssueLink(List<TaskScheduleResultDTO> tasks, Dictionary<int?, string> issueIdDict)
@@ -140,7 +145,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             }
 
-            if(body.options.Count > 0)
+            if (body.options.Count > 0)
             {
                 respone = await jiraAPI.Post($"rest/api/3/field/{fieldId}/context/{contextFound.Id}/option", body);
                 var responseObj = await respone.Content.ReadFromJsonAsync<JiraAPICreateFieldOptionResDTO.Root>();
@@ -479,12 +484,36 @@ namespace JiraSchedulingConnectAppService.Services
             var issueCreatedResult = await respone.Content.ReadFromJsonAsync<JiraAPICreateBulkTaskResDTO.Root>();
             var issueIdDict = new Dictionary<int?, string>();
 
-            for (int i = 0; i< tasks.Count; i++)
+            for (int i = 0; i < tasks.Count; i++)
             {
                 issueIdDict.Add(tasks[i].id, issueCreatedResult.Issues[i].Id);
             }
-                
+
             return issueIdDict;
+        }
+
+        private void XMLCreateFile(List<TaskScheduleResultDTO> tasks, ModelLibrary.DBModels.Project projectDb)
+        {
+            //var project = new MSPXMLModelDTO.Project();
+            //project.Xmlns = "http://schemas.microsoft.com/project";
+            //project.Name = $"{projectDb.Name}.xml";
+            //project.Title = projectDb.Name;
+
+            ProjectFile project = new ProjectFile();
+       
+            var taskDict = new Dictionary<int?, net.sf.mpxj.Task>();
+            foreach (var t in tasks)
+            {
+                net.sf.mpxj.Task task = project.addTask();
+                task.Start = t.startDate.Value.ToJavaLocalDateTime();
+                task.Finish = t.endDate.Value.ToJavaLocalDateTime();
+                task.Name = t.name;
+
+                taskDict.Add(t.id, task);
+            }
+
+            ProjectWriter writer = ProjectWriterUtility.getProjectWriter("Project.xml");
+            writer.write(project, "Project");
         }
 
         private MemoryStream MppCreateFile(List<TaskScheduleResultDTO> tasks)

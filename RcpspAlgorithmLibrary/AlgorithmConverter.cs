@@ -43,6 +43,7 @@ namespace RcpspAlgorithmLibrary
             this.SkillList = inputToOR.SkillList;
             this.FunctionList = inputToOR.FunctionList;
             this.Deadline = inputToOR.Deadline;
+            this.Budget = inputToOR.Budget;
         }
 
         public OutputToORDTO ToOR()

@@ -44,8 +44,10 @@ namespace AlgorithmServiceServer.Services
 
             var taskFromDB = db.Tasks.Where(t => t.ProjectId == parameterEntity.ProjectId)
                .Include(t => t.TasksSkillsRequireds).Include(t => t.TaskPrecedenceTasks).ToList();
-            var skillFromDB = db.Skills.Where(s => s.CloudId == cloudId).ToList();
 
+            var skillFromDB =
+                // Get skill required of task
+                db.Skills.Where(s => s.CloudId == cloudId).ToList();
             // Equipment
             //var functionFromDB = db.Functions.Where(f => f.CloudId == cloudId).ToList();
             //var equipmentsFromDB = db.Equipments.Where(e => e.CloudId == cloudId)
@@ -57,7 +59,7 @@ namespace AlgorithmServiceServer.Services
             inputTo.Deadline = (int)projectFromDB.Deadline.Value
                 .Subtract(projectFromDB.StartDate.Value).TotalDays;
 
-            inputTo.Budget = (int)parameterEntity.Budget;
+            inputTo.Budget = (int) parameterEntity.Budget;
             inputTo.WorkerList = workerFromDB;
 
 

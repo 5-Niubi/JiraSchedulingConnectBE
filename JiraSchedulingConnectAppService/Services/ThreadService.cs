@@ -27,7 +27,7 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        private static string CreateThreadId()
+        public static string CreateThreadId()
         {
             string? threadId;
             do
@@ -38,10 +38,8 @@ namespace JiraSchedulingConnectAppService.Services
             return threadId;
         }
 
-        public string StartThread(ThreadStart threadStart)
-        {
-
-            string threadId = CreateThreadId();
+        public string StartThread(string threadId, ThreadStart threadStart)
+        {       
             Thread thread = new Thread(threadStart);
             thread.Start();
 

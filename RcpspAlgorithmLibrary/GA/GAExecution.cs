@@ -73,7 +73,7 @@ namespace RcpspAlgorithmLibrary.GA
                         var taskVec2 = new int[numOfSkill];
 
                         // task skill level la mot tieu chi
-                        for (var s = 0; s < numOfTask; s++)
+                        for (var s = 0; s < numOfSkill; s++)
                         {
                             taskVec1[s] = R[t1, s];
                             taskVec2[s] = R[t2, s];
