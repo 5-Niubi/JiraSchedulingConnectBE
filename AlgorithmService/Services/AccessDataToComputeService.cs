@@ -37,15 +37,17 @@ namespace AlgorithmServiceServer.Services
             var projectFromDB = parameterEntity.Project;
             var parameterResources = db.ParameterResources.Where(prs => prs.ParameterId == parameterId
                                     && prs.Type == Const.RESOURCE_TYPE.WORKFORCE)
-                                    .Include(pr => pr.ResourceNavigation).ToList();
+                                    .Include(pr => pr.ResourceNavigation).ThenInclude(w => w.WorkforceSkills).ToList();
 
             var workerFromDB = new List<Workforce>();
             parameterResources.ForEach(e => workerFromDB.Add(e.ResourceNavigation));
 
             var taskFromDB = db.Tasks.Where(t => t.ProjectId == parameterEntity.ProjectId)
                .Include(t => t.TasksSkillsRequireds).Include(t => t.TaskPrecedenceTasks).ToList();
-            var skillFromDB = db.Skills.Where(s => s.CloudId == cloudId).ToList();
 
+            var skillFromDB =
+                // Get skill required of task
+                db.Skills.Where(s => s.CloudId == cloudId).ToList();
             // Equipment
             //var functionFromDB = db.Functions.Where(f => f.CloudId == cloudId).ToList();
             //var equipmentsFromDB = db.Equipments.Where(e => e.CloudId == cloudId)
@@ -57,7 +59,7 @@ namespace AlgorithmServiceServer.Services
             inputTo.Deadline = (int)projectFromDB.Deadline.Value
                 .Subtract(projectFromDB.StartDate.Value).TotalDays;
 
-            inputTo.Budget = (int)parameterEntity.Budget;
+            inputTo.Budget = (int) parameterEntity.Budget;
             inputTo.WorkerList = workerFromDB;
 
 

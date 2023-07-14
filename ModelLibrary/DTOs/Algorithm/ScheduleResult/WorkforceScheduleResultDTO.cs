@@ -4,6 +4,7 @@
     {
         public int? id { get; set; }
         public string? accountId { get; set; }
+        public string? fieldOptiontId { get; set; }
         public string? email { get; set; }
         public string? accountType { get; set; }
         public string? name { get; set; }

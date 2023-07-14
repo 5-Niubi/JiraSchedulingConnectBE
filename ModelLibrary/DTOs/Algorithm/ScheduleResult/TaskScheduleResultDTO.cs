@@ -11,7 +11,8 @@
         public MileStoneScheduleResultDTO? mileStone { get; set; }
         public List<int>? taskIdPrecedences { get; set; } = new List<int>();
         public WorkforceScheduleResultDTO? workforce { get; set; }
-        public List<int>? equipmentId { get; set; } // Chua dung
+        //public List<int>? equipmentId { get; set; } // Chua dung
+        
 
     }
 }
