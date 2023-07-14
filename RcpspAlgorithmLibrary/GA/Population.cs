@@ -16,6 +16,7 @@
             {
                 chromosomes[c] = new Chromosome(data).InitializeChromosome(data);
             }
+
             SortChromosomesByFitness(data);
             return this;
         }
