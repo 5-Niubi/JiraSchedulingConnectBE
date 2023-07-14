@@ -64,7 +64,6 @@ namespace JiraSchedulingConnectAppService.Services
         {
             await GetNewAccessTokenFromRefreshToken(cloudId);
             var respone = await client.GetAsync(url);
-            respone.EnsureSuccessStatusCode();
             if (!respone.IsSuccessStatusCode)
             {
                 throw new JiraAPIException(await respone.Content.ReadAsStringAsync(),

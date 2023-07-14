@@ -48,6 +48,7 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
+
         
 
 
@@ -345,17 +346,8 @@ namespace JiraSchedulingConnectAppService.Services
             return taskPertViewDTO;
         }
 
-
-        
-
-
-
-
-
         private async Task<List<TaskPrecedenceDTO>> _SaveTasksPrecedencesTasks(List<TaskPrecedencesTaskRequestDTO> taskprecedencesTasksRequest)
         {
-
- 
 
             // mapping task precedences request -> task precedences database
             List<TaskPrecedence> precedenceTasksToAdd = new List<TaskPrecedence>();

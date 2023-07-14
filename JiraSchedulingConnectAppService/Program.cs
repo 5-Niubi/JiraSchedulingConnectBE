@@ -1,4 +1,6 @@
 using AlgorithmServiceServer.Services.Interfaces;
+using JiraSchedulingConnectAppService.Repository;
+using JiraSchedulingConnectAppService.Repository.Interfaces;
 using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -6,13 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
+using System.Configuration;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -30,6 +31,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -41,16 +43,27 @@ builder.Services.AddDbContext<JiraDemoContext>(opt => opt.UseSqlServer(
     )
 );
 
+
+
+builder.Services.AddSingleton<ILoggerService, DatabaseLoggerService>();
+
+
 builder.Services.AddHttpContextAccessor();
 
 // Register services
+
+builder.Services.AddTransient<ILogRepository, LogRepository>(_
+            => new LogRepository(builder.Configuration.GetConnectionString("DB")));
+builder.Services.AddHostedService(sp => sp.GetService<ILoggerService>() as DatabaseLoggerService);
+
+
 builder.Services.AddTransient<IAPIMicroserviceService, APIMicroserviceService>();
 builder.Services.AddTransient<IProjectServices, ProjectsService>();
 builder.Services.AddTransient<ISkillsService, SkillsService>();
 builder.Services.AddTransient<ITasksService, TasksService>();
 builder.Services.AddTransient<IAlgorithmService, AlgorithmService>();
 builder.Services.AddTransient<IValidatorService, ScheduleValidatorService>();
-
+//builder.Services.AddTransient<ILoggerService, DatabaseLoggerService>();
 
 builder.Services.AddTransient<IParametersService, ParametersService>();
 builder.Services.AddTransient<IWorkforcesService, WorkforcesService>();
@@ -74,7 +87,7 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseAuthentication();
-app.UseAuthorization();
+ app.UseAuthorization();
 
 app.MapControllers();
 

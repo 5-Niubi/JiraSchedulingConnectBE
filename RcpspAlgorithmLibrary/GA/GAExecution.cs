@@ -31,6 +31,7 @@ namespace RcpspAlgorithmLibrary.GA
 
         // workerSalary
         public int[] salaryEachTime { get; set; }
+
         // ------
 
         public List<List<int>> manAbleDo = new List<List<int>>();
@@ -52,9 +53,57 @@ namespace RcpspAlgorithmLibrary.GA
             salaryEachTime = param.WorkerSalary;
         }
 
+        private double[,] GenerateTaskSimilarityMatrix()
+        {
+            var taskSimilarityMatrix = new double[numOfTask, numOfTask];
+
+            for (var t1 = 0; t1 < numOfTask; t1++)
+            {
+                for (var t2 = 0; t2 < numOfTask; t2++)
+                {
+                    // neu 2 task la 1, do tuong dong cua no bang 0
+                    if (t1 == t2)
+                    {
+                        taskSimilarityMatrix[t1, t2] = 0;
+                    }
+                    // nguoc lai, tinh cosine similarity
+                    else
+                    {
+                        var taskVec1 = new int[numOfSkill];
+                        var taskVec2 = new int[numOfSkill];
+
+                        // task skill level la mot tieu chi
+                        for (var s = 0; s < numOfSkill; s++)
+                        {
+                            taskVec1[s] = R[t1, s];
+                            taskVec2[s] = R[t2, s];
+                        }
+
+                        // tinh toan similarity
+                        double dotProduct = 0;
+                        double norm1 = 0;
+                        double norm2 = 0;
+
+                        for (var element = 0; element < numOfSkill; element++)
+                        {
+                            dotProduct += taskVec1[element] * taskVec2[element];
+                            norm1 += taskVec1[element] * taskVec1[element];
+                            norm2 += taskVec2[element] * taskVec2[element];
+                        }
+
+                        var cosineSimilarity = dotProduct / (Math.Sqrt(norm1) * Math.Sqrt(norm2));
+                        taskSimilarityMatrix[t1, t2] = cosineSimilarity; ;
+                    }
+                }
+            }
+            return taskSimilarityMatrix;
+        }
+
         public List<AlgorithmRawOutput> Run()
         {
 
+            // Calculate task similarity
+            Z = GenerateTaskSimilarityMatrix();
             // Bat dau xu ly
             manAbleDo = GAHelper.SuitableWorker(K, R, numOfTask, numOfPeople, numOfSkill);
             Exper = GAHelper.TaskExperByWorker(K, R, numOfTask, numOfPeople, numOfSkill);
