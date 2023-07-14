@@ -6,7 +6,7 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
 {
     public interface IParametersService
 	{
-        public Task<ParameterDTO> SaveParams(ParameterRequest paramsRequest);
+        public Task<ParameterDTO> SaveParams(ParameterRequestDTO paramsRequest);
         public Task<List<WorkforceDTOResponse>> GetWorkforceParameter(string project_id);
     }
 }

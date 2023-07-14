@@ -73,26 +73,22 @@ namespace ModelLibrary.DTOs
             CreateMap<DBModels.Task, TaskUpdatedRequest>()
                 .ForMember(tr => tr.SkillRequireds, t => t.MapFrom(t => t.TasksSkillsRequireds))
                 .ForMember(tr => tr.Precedences, t => t.MapFrom(t => t.TaskPrecedenceTasks));
-
-
-            
+         
             CreateMap<Parameter, ParameterDTO>();
-            CreateMap<Parameter, ParameterDTO>();
+            CreateMap<ParameterDTO, Parameter>();
 
             CreateMap<ParameterResourceRequest, ParameterResource>();
             CreateMap<ParameterResource, ParameterResourceRequest>();
-            CreateMap<Parameter, ParameterRequest>()
+            CreateMap<Parameter, ParameterRequestDTO>()
                 .ForMember(tr => tr.ParameterResources, t => t.MapFrom(t => t.ParameterResources));
 
-
-            CreateMap<ParameterRequest, Parameter>()
+            CreateMap<ParameterRequestDTO, Parameter>()
                 .ForMember(tr => tr.ParameterResources, t => t.MapFrom(t => t.ParameterResources));
-
-            
-
+        
             CreateMap<Schedule, ScheduleResultSolutionDTO>();
             CreateMap<Workforce, WorkforceScheduleResultDTO>();
             CreateMap<Schedule, ScheduleResultSolutionDTO>();
+            CreateMap<Workforce, WorkforceScheduleResultDTO>();
         }
     }
 }

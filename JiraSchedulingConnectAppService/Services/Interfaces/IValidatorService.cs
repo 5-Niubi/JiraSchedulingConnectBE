@@ -7,7 +7,7 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
 	{
         public Task<bool> IsValidDAG(int projectId);
 
-        public Task<bool> IsValidRequiredParameters(ParameterRequest parameterRequest );
+        public Task<bool> IsValidRequiredParameters(ParameterRequestDTO parameterRequest );
     }
 }
 

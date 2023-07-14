@@ -95,11 +95,11 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
-        public async Task<ParameterDTO> SaveParams(ParameterRequest parameterRequest)
+        public async Task<ParameterDTO> SaveParams(ParameterRequestDTO parameterRequest)
         {
             // Is validate Resource parameter minimize adaptive Resource Task
             await _ValidateTasksSkillRequireds(parameterRequest.ProjectId, parameterRequest.ParameterResources);
-            var parameterRequestDTO = mapper.Map<ParameterRequestDTO>(parameterRequest);
+            var parameterRequestDTO = mapper.Map<Parameter>(parameterRequest);
             var paramsEntity =  await db.Parameters.AddAsync(parameterRequestDTO);
             await db.SaveChangesAsync();
             var parameterDTO  = mapper.Map<ParameterDTO>(paramsEntity.Entity);
