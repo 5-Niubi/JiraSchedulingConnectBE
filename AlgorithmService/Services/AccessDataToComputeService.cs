@@ -54,7 +54,6 @@ namespace AlgorithmServiceServer.Services
             inputTo.Budget = (int)parameterEntity.Budget;
             inputTo.WorkerList = workerFromDB;
 
-
             inputTo.TaskList = taskFromDB.ToList();
             inputTo.SkillList = skillFromDB;
 
@@ -78,6 +77,11 @@ namespace AlgorithmServiceServer.Services
                 {
                     var algOutConverted = converter.FromOR(algOutRaw.Genes,
                         new int[0], algOutRaw.TaskBegin, algOutRaw.TaskFinish);
+
+                    algOutConverted.timeFinish = algOutRaw.TimeFinish;
+                    algOutConverted.totalExper = algOutRaw.TotalExper;
+                    algOutConverted.totalSalary = algOutRaw.TotalSalary;
+
                     algorithmOutputConverted.Add(algOutConverted);
 
                     var schedule = await InsertScheduleIntoDB(parameterId, algOutConverted);
