@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Configuration;
 
 namespace ModelLibrary.DBModels
 {
@@ -39,11 +38,11 @@ namespace ModelLibrary.DBModels
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var builder = new ConfigurationBuilder()
-                        .SetBasePath(Directory.GetCurrentDirectory())
-                        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-            IConfigurationRoot configuration = builder.Build();
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DB"));
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("server=34.123.177.151,1433; database=JiraDemo; uid=sa; pwd=5Niubipass; TrustServerCertificate=True");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -297,6 +296,10 @@ namespace ModelLibrary.DBModels
                     .HasColumnName("create_datetime")
                     .HasDefaultValueSql("(getdate())");
 
+                entity.Property(e => e.Deadline)
+                    .HasColumnType("datetime")
+                    .HasColumnName("deadline");
+
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
@@ -312,6 +315,10 @@ namespace ModelLibrary.DBModels
                 entity.Property(e => e.ObjectiveTime).HasColumnName("objective_time");
 
                 entity.Property(e => e.ProjectId).HasColumnName("project_id");
+
+                entity.Property(e => e.StartDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("start_date");
 
                 entity.HasOne(d => d.Project)
                     .WithMany(p => p.Parameters)
