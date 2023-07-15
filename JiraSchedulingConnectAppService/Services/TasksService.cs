@@ -384,8 +384,7 @@ namespace JiraSchedulingConnectAppService.Services
         private async Task<List<TasksSkillsRequired>> _SaveTasksSkillsRequireds(List<TaskSkillsRequiredRequestDTO> taskSkillsRequiredsRequest)
         {
 
-           
-
+          
 
             // mapping task precedences request -> task precedences database
             List<TasksSkillsRequired> tasksSkillsRequiredsToAdd = new List<TasksSkillsRequired>();
@@ -522,6 +521,8 @@ namespace JiraSchedulingConnectAppService.Services
         private async Task<bool> _ValidateSkillsRequired(ModelLibrary.DBModels.Task task)
         {
             var Errors = new List<TaskInputErrorDTO>();
+
+
             //validate exited on database
             var exitedSkills = await db.Skills
                 .Where(s => s.CloudId == task.CloudId & s.IsDelete == false)

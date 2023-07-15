@@ -15,7 +15,12 @@ namespace JiraSchedulingConnectAppService.Controllers
     {
 
         private readonly IThreadService threadService;
-        public ThreadController(IThreadService threadService) { this.threadService = threadService; }
+        private readonly ILoggerService _Logger;
+        public ThreadController(IThreadService threadService, ILoggerService logger)
+        {
+            this.threadService = threadService;
+            this._Logger = logger;
+        }
 
         [HttpGet]
         public  IActionResult GetThreadResult(string threadId)
@@ -27,6 +32,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (NotFoundException ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return NotFound(response);
             }

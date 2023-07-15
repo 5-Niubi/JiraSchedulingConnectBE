@@ -14,9 +14,11 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class AlgorithmController : ControllerBase
     {
         private readonly IAlgorithmService algorithmService;
+        private readonly ILoggerService _Logger;
 
-        public AlgorithmController(IAlgorithmService algorithmService)
+        public AlgorithmController(IAlgorithmService algorithmService, ILoggerService logger)
         {
+            this._Logger = logger;
             this.algorithmService = algorithmService;
         }
 
@@ -29,12 +31,14 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (MicroServiceAPIException ex)
             {
+                this._Logger.Log(LogLevel.Critical, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 response.Data = ex.mircoserviceResponse;
                 return BadRequest(response);
             }
             catch (Exception ex)
             {
+                this._Logger.Log(LogLevel.Error, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -50,6 +54,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                this._Logger.Log(LogLevel.Error, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

@@ -48,9 +48,9 @@ namespace AlgorithmServiceServer.Services
             var skillFromDB = await db.Skills.Where(s => s.CloudId == cloudId).ToListAsync();
 
             inputTo.StartDate = (DateTime)projectFromDB.StartDate;
-            inputTo.Deadline = (int)projectFromDB.Deadline.Value
-                .Subtract(projectFromDB.StartDate.Value).TotalDays;
-
+            //inputTo.Deadline = (int)projectFromDB.Deadline.Value
+            //    .Subtract(projectFromDB.StartDate.Value).TotalDays;
+            inputTo.Deadline = 1000;
             inputTo.Budget = (int)parameterEntity.Budget;
             inputTo.WorkerList = workerFromDB;
 

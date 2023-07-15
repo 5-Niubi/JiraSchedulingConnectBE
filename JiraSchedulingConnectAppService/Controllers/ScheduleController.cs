@@ -12,9 +12,10 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class ScheduleController : ControllerBase
     {
         private readonly IScheduleService scheduleService;
-        
-        public ScheduleController(IScheduleService scheduleService)
+        private readonly ILoggerService _Logger;
+        public ScheduleController(IScheduleService scheduleService, ILoggerService logger)
         {
+            this._Logger = logger;
             this.scheduleService = scheduleService;
         }
         [HttpGet]
@@ -27,6 +28,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                this._Logger.Log(LogLevel.Error, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -42,6 +44,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                this._Logger.Log(LogLevel.Error, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

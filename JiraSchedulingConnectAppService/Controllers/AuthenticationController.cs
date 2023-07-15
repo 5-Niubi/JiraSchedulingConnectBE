@@ -1,4 +1,5 @@
 ﻿using JiraSchedulingConnectAppService.Services;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
@@ -10,9 +11,10 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly AuthenticationService authenticationService;
-
-        public AuthenticationController(JiraDemoContext db, IConfiguration config)
+        private readonly ILoggerService _Logger;
+        public AuthenticationController(JiraDemoContext db, IConfiguration config, ILoggerService logger)
         {
+            this._Logger = logger;
             authenticationService = new AuthenticationService(db, config);
         }
 
@@ -26,6 +28,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                this._Logger.Log(LogLevel.Error, ex);
                 var responseMsg = new ResponseMessageDTO(ex.Message);
                 return Unauthorized(responseMsg);
             }

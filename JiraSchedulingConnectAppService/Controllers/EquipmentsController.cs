@@ -18,8 +18,10 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class EquipmentsController : ControllerBase
     {
         private IEquipmentService EquipmentService;
-        public EquipmentsController(IEquipmentService equipmentService)
+        private readonly ILoggerService _Logger;
+        public EquipmentsController(IEquipmentService equipmentService, ILoggerService logger)
         {
+            this._Logger = logger;
             this.EquipmentService = equipmentService;
         }
 
@@ -33,6 +35,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                this._Logger.Log(LogLevel.Error, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -48,6 +51,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                this._Logger.Log(LogLevel.Error, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -64,6 +68,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                this._Logger.Log(LogLevel.Error, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -78,6 +83,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                this._Logger.Log(LogLevel.Error, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -94,6 +100,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                this._Logger.Log(LogLevel.Error, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

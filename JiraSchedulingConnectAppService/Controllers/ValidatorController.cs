@@ -14,12 +14,13 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class ValidatorController: ControllerBase
 	{
         private IValidatorService ValidatorService;
-        public ValidatorController(IValidatorService validatorService)
+        private readonly ILoggerService _Logger;
+        public ValidatorController(IValidatorService validatorService, ILoggerService logger)
 
         {
+            this._Logger = logger;
             this.ValidatorService = validatorService;
         }
-
 
         [HttpGet]
         public async Task<IActionResult> IsDAG(int projectId)

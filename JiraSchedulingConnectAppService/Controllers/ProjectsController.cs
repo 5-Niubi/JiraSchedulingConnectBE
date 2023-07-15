@@ -15,8 +15,9 @@ namespace JiraSchedulingConnectAppService.Controllers
         private IProjectServices projectsService;
         public ProjectsController(IProjectServices projectsService, ILoggerService logger)
         {
-            this.projectsService = projectsService;
             this._Logger = logger;
+            this.projectsService = projectsService;
+            
         }
 
         [HttpGet]
@@ -27,9 +28,10 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var response = await projectsService.GetAllProjectsPaging(page, projectName);
                 return Ok(response);
             }
+
             catch (Exception ex)
             {
-                this._Logger.Log(LogLevel.Warning, ex);
+                this._Logger.Log(LogLevel.Error, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -45,6 +47,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                this._Logger.Log(LogLevel.Error, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -60,6 +63,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                this._Logger.Log(LogLevel.Error, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -75,6 +79,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                this._Logger.Log(LogLevel.Error, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

@@ -19,7 +19,21 @@ namespace ModelLibrary.DTOs
             CreateMap<ProjectsListCreateProject, Project>();
             CreateMap<Project, ProjectDetailDTO>();
             CreateMap<WorkforceDTORequest, Workforce>();
-            CreateMap<Workforce, WorkforceDTORequest>();
+
+            CreateMap<SkillRequestDTO, WorkforceSkill > ();
+            CreateMap<WorkforceRequestDTO, Workforce>()
+                .ForMember(x => x.WorkforceSkills, t => t.MapFrom(t => t.Skills.Select(s => new WorkforceSkill
+                {
+                    SkillId = s.SkillId,
+                    Level = s.Level,
+
+                })))
+                .ForMember(
+                    x => x.WorkingEffort, t => t.MapFrom(t => "[" + string.Join(", ", t.WorkingEfforts) + "]")
+                );
+
+
+
             CreateMap<Workforce, WorkforceDTOResponse>()
                 .ForMember(x=>x.Skills, t => t.MapFrom(t=>t.WorkforceSkills.Select(s=> new SkillDTO {
                     Id = s.Skill.Id,
@@ -30,6 +44,9 @@ namespace ModelLibrary.DTOs
                     IsDelete = s.Skill.IsDelete,
                     DeleteDatetime = s.Skill.DeleteDatetime,
                 })));
+
+
+
             CreateMap<WorkforceDTOResponse, Workforce>();
             CreateMap<EquipmentDTOResponse, Equipment>();
             CreateMap<Equipment, EquipmentDTOResponse>();

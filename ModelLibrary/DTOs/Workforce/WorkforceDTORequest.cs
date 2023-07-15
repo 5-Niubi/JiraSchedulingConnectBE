@@ -3,8 +3,8 @@ using ModelLibrary.DTOs.Skills;
 
 namespace ModelLibrary.DTOs.Parameters
 {
-	public class WorkforceDTORequest
-	{
+	public class WorkforceRequestDTO
+    {
         public int Id { get; set; }
         public string? AccountId { get; set; }
         public string? Email { get; set; }
@@ -17,7 +17,7 @@ namespace ModelLibrary.DTOs.Parameters
         
         public int? WorkingType { get; set; }
         public List<float>? WorkingEfforts { get; set; }
-        public List<SkillRequestDTO>? WorkforceSkills { get; set; }
+        public List<SkillRequestDTO>? Skills { get; set; }
     }
 }
 
