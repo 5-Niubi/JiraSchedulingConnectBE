@@ -13,7 +13,6 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Authorize]
     public class ThreadController : ControllerBase
     {
-
         private readonly IThreadService threadService;
         public ThreadController(IThreadService threadService) { this.threadService = threadService; }
 
