@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using AutoMapper;
 using JiraSchedulingConnectAppService.Common;
 using JiraSchedulingConnectAppService.Services.Interfaces;
@@ -28,9 +29,13 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async Task<bool> _ValidateTasksSkillRequireds(int ProjectId, List<ParameterResourceRequest> parameterResourcesRequest) {
             var Errors = new List<TaskSkillRequiredErrorDTO>();
-            var WorkforcesSkills = db.WorkforceSkills.Where(
+
+            var WorkforcesSkills = db.Workforces
+                .Include(sk => sk.WorkforceSkills)
+                .Where(
                 wf => parameterResourcesRequest.Select(
-                    p => p.ResourceId).Contains(wf.WorkforceId)).ToList();
+                    p => p.ResourceId).Contains(wf.Id))
+                .ToList();
 
             var Tasks = await db.Tasks
                 .Include(t => t.TasksSkillsRequireds)
@@ -40,42 +45,61 @@ namespace JiraSchedulingConnectAppService.Services
             {
 
                 var skillsRequireds = task.TasksSkillsRequireds.ToList();
-                var isAdapted = true;
-
-                foreach (var rq in skillsRequireds)
-                {
-                    if (!WorkforcesSkills.Any(wf => wf.SkillId == rq.SkillId
-                    && wf.Level >= rq.Level))
+                var num_adapt = skillsRequireds.Count;
+                var isAdapted = false;
+                
+                foreach (var wfk in WorkforcesSkills) {
+                    var listSkills = wfk.WorkforceSkills.ToList();
+                    var num_check = 0;
+                    foreach (var rqSk in skillsRequireds)
                     {
-                        isAdapted = false;
+                        for (int i = 0; i < listSkills.Count; i++)
+                        {
+                            if (listSkills[i].SkillId == rqSk.SkillId && listSkills[i].Level >= rqSk.Level)
+                            {
+                                num_check += 1;
+                            }
+                        }
+                    }
+
+                    if (num_check == num_adapt)
+                    {
+                        isAdapted = true;
                         break;
                     }
+
                 }
+
 
                 // If skills required task's not adaptive then throw
                 if (isAdapted == false)
                 {
-                    Errors.Add(new TaskSkillRequiredErrorDTO {
+                    Errors.Add(new TaskSkillRequiredErrorDTO
+                    {
 
                         TaskId = task.Id,
                         SkillRequireds = mapper.Map<List<SkillRequiredDTO>>(skillsRequireds),
                         Messages = NotResourceAdaptivedMessage
                     });
-                    
+
                 }
+
             }
-            if(Errors.Count != null) {
+
+                    
+
+            if(Errors.Count != 0) {
                 throw new NotSuitableInputException(Errors);
             }
             return true;
         }
 
 
-        public async Task<ParameterDTO> SaveParams(ParameterRequest parameterRequest)
+        public async Task<ParameterDTO> SaveParams(ParameterRequestDTO parameterRequest)
         {
             // Is validate Resource parameter minimize adaptive Resource Task
             await _ValidateTasksSkillRequireds(parameterRequest.ProjectId, parameterRequest.ParameterResources);
-            var parameterRequestDTO = mapper.Map<ParameterRequestDTO>(parameterRequest);
+            var parameterRequestDTO = mapper.Map<Parameter>(parameterRequest);
             var paramsEntity =  await db.Parameters.AddAsync(parameterRequestDTO);
             await db.SaveChangesAsync();
             var parameterDTO  = mapper.Map<ParameterDTO>(paramsEntity.Entity);

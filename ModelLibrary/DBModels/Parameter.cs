@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace ModelLibrary.DBModels
 {
-    public partial class ParameterRequestDTO
+    public partial class Parameter
     {
-        public ParameterRequestDTO()
+        public Parameter()
         {
             ParameterResources = new HashSet<ParameterResource>();
             Schedules = new HashSet<Schedule>();
@@ -14,6 +14,8 @@ namespace ModelLibrary.DBModels
         public int Id { get; set; }
         public int? ProjectId { get; set; }
         public int? Budget { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? Deadline { get; set; }
         public int? ObjectiveTime { get; set; }
         public int? ObjectiveCost { get; set; }
         public int? ObjectiveQuality { get; set; }

@@ -18,6 +18,6 @@ namespace ModelLibrary.DBModels
         public DateTime? CreateDatetime { get; set; }
         public DateTime? DeleteDatetime { get; set; }
 
-        public virtual ParameterRequestDTO? Parameter { get; set; }
+        public virtual Parameter? Parameter { get; set; }
     }
 }

@@ -12,6 +12,12 @@
             public static string ACCOUNT_ID = "account_id";
         }
 
+        public static class DELETE_STATE
+        {
+            public const bool DELETE = true;
+            public const bool NOT_DELETE = false;
+        }
+
         public static class PAGING
         {
             public static int NUMBER_RECORD_PAGE = 10;

@@ -11,7 +11,7 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly IConfiguration? configuration;
         private readonly HttpContext? context;
 
-        public JWTManagerService(HttpContext httpContext)
+        public JWTManagerService(HttpContext? httpContext)
         {
             this.context = httpContext;
         }
@@ -20,6 +20,7 @@ namespace JiraSchedulingConnectAppService.Services
         {
             this.configuration = iconfiguration;
         }
+
         public string? Authenticate(string accountId, string cloudId)
         {
 
