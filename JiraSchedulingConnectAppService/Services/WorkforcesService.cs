@@ -6,6 +6,7 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.Projects;
+using ModelLibrary.DTOs.Skills;
 using Newtonsoft.Json.Linq;
 
 namespace JiraSchedulingConnectAppService.Services

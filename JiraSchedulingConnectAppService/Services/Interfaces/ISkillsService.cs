@@ -4,20 +4,20 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
 {
     public interface ISkillsService
     {
-        public Task<SkillDTO> GetSkillName(string? skillName);
+        public Task<SkillDTOResponse> GetSkillName(string? skillName);
 
-        public Task<List<SkillDTO>> GetSkills(string? skillName);
-
-
-        public Task<SkillDTO> GetSkillId(int Id);
+        public Task<List<SkillDTOResponse>> GetSkills(string? skillName);
 
 
+        public Task<SkillDTOResponse> GetSkillId(int Id);
 
-        public Task<SkillDTO> UpdateNameSkill(SkillDTO skill);
+
+
+        public Task<SkillDTOResponse> UpdateNameSkill(SkillDTOResponse skill);
 
         public Task<bool> DeleteSkill(int Id);
 
-        public Task<SkillDTO> CreateSkill(SkillCreatedRequest skillRequest);
+        public Task<SkillDTOResponse> CreateSkill(SkillCreatedRequest skillRequest);
 
     }
 }
