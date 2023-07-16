@@ -59,6 +59,10 @@ namespace JiraSchedulingConnectAppService.Services
 
                 thread.Result = error;
             }
+            catch(NotFoundException ex)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 thread.Status = Const.THREAD_STATUS.ERROR;
