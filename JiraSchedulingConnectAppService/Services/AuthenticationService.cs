@@ -125,12 +125,10 @@ namespace JiraSchedulingConnectAppService.Services
             };
             var jsonExchangeDTO = JsonSerializer.Serialize(exchangeTokenDTO);
 
-
             var content = new StringContent(jsonExchangeDTO, null, "application/json");
 
             request.Content = content;
             var response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
 
             var reponseAccessToken = JsonSerializer
                 .Deserialize<RepsoneAccessToken>(await response.Content.ReadAsStringAsync());
