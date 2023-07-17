@@ -31,7 +31,7 @@ namespace JiraSchedulingConnectAppService.Services
             var jwt = new JWTManagerService(http);
             cloudId = jwt.GetCurrentCloudId();
 
-            SetBaseURL();
+            if(cloudId != null) SetBaseURL();
         }
 
         private void SetBaseURL()
