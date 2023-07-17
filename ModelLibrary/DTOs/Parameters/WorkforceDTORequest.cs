@@ -15,19 +15,12 @@ namespace ModelLibrary.DTOs.Parameters
 
         
         public int? WorkingType { get; set; }
-<<<<<<< HEAD
+    
+
+
         public List<float>? WorkingEfforts { get; set; }
         public List<SkillRequestDTO>? WorkforceSkills { get; set; }
 
-=======
-//<<<<<<< HEAD
-//        public string? WorkingEffort { get; set; }
-//        List<SkillDTORequest> Skills { get; set; }
-//=======
-        public List<float>? WorkingEfforts { get; set; }
-        public List<SkillRequestDTO>? WorkforceSkills { get; set; }
-//>>>>>>> 89e8213 (fix create workforce service)
->>>>>>> 8882709 (fix conflict)
     }
 }
 
