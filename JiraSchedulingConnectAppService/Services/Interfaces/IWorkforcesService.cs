@@ -1,6 +1,7 @@
 ﻿using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Parameters;
+using ModelLibrary.DTOs.Skills;
 using Task = System.Threading.Tasks.Task;
 
 namespace JiraSchedulingConnectAppService.Services.Interfaces

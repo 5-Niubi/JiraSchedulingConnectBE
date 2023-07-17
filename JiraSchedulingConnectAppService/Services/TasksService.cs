@@ -47,11 +47,6 @@ namespace JiraSchedulingConnectAppService.Services
             this.httpContext = httpContextAccessor.HttpContext;
         }
 
-
-
-        
-
-
         private async Task<ModelLibrary.DBModels.Task> GetExitedTask(ModelLibrary.DBModels.Task task)
         {
             // validate exited name task  project's 

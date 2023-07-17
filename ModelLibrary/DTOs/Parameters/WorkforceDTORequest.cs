@@ -8,7 +8,6 @@ namespace ModelLibrary.DTOs.Parameters
         public int Id { get; set; }
         public string? AccountId { get; set; }
         public string? Email { get; set; }
-        public string? AccountType { get; set; }
         public string? Name { get; set; }
         public string? Avatar { get; set; }
         public string? DisplayName { get; set; }
@@ -18,6 +17,7 @@ namespace ModelLibrary.DTOs.Parameters
         public int? WorkingType { get; set; }
         public List<float>? WorkingEfforts { get; set; }
         public List<SkillRequestDTO>? WorkforceSkills { get; set; }
+
     }
 }
 

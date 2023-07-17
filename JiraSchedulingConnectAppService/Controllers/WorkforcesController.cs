@@ -94,11 +94,11 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateWorkforce(string id, [FromBody] WorkforceDTORequest workforce)
+        public async Task<IActionResult> UpdateWorkforce([FromBody] WorkforceDTORequest workforce)
         {
             try
             {
-                var w1 = workforcesService.GetWorkforceById(id);
+                var w1 = workforcesService.GetWorkforceById(workforce.Id.ToString());
                 var response = await workforcesService.UpdateWorkforce(workforce);
                 return Ok(response);
             }
