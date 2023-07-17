@@ -16,6 +16,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         public WorkforcesController(IWorkforcesService workforcesService)
         {
 
+
             this.workforcesService = workforcesService;
         }
 
@@ -29,7 +30,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -45,7 +46,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (NotSuitableInputException ex)
             {
-                
+
                 var response = ex.Errors;
                 return BadRequest(response);
 
@@ -55,7 +56,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             
             catch (Exception ex)
             {
-                
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -71,7 +72,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -87,7 +88,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -105,7 +106,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (Exception ex)
             {
-                
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

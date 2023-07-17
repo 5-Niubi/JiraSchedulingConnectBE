@@ -14,6 +14,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         private IProjectServices projectsService;
         public ProjectsController(IProjectServices projectsService)
         {
+
             this.projectsService = projectsService;
             
         }
@@ -29,7 +30,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (Exception ex)
             {
-                
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -45,7 +46,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -61,7 +62,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -77,7 +78,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

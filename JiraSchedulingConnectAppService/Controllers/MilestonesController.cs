@@ -16,8 +16,8 @@ namespace JiraSchedulingConnectAppService.Controllers
 		private readonly IMilestonesService milestonesService;
         private readonly ILoggerManager _Logger;
 
-        public MilestonesController(IMilestonesService milestonesService, ILoggerManager logger)
-		{
+        public MilestonesController(IMilestonesService milestonesService, ILoggerManager logger) { 
+
 			this._Logger = logger;
 
             this.milestonesService = milestonesService;
@@ -37,6 +37,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 			catch (Exception ex)
 			{
                 this._Logger.LogError(ex.Message);
+
                 var response = new ResponseMessageDTO(ex.Message);
 				return BadRequest(response);
 			}
@@ -54,6 +55,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 			catch (Exception ex)
 			{
                 this._Logger.LogError(ex.Message);
+
                 var response = new ResponseMessageDTO(ex.Message);
 				return BadRequest(response);
 			}
@@ -71,6 +73,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 			catch (Exception ex)
 			{
                 this._Logger.LogError(ex.Message);
+
                 var response = new ResponseMessageDTO(ex.Message);
 				return BadRequest(response);
 			}

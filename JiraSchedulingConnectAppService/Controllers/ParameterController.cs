@@ -21,6 +21,9 @@ namespace JiraSchedulingConnectAppService.Controllers
         private readonly ILoggerManager _Logger;
 
         public ParameterController(IParametersService parametersService, ModelLibrary.ILoggerManager logger )
+
+
+
 		{
             this.parametersService = parametersService;
             this._Logger = logger;
@@ -38,6 +41,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             catch (Exception ex)
             {
                 this._Logger.LogDebug(ex.Message);
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -54,12 +58,14 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch(NotSuitableInputException ex) {
                 this._Logger.LogDebug( ex.Message);
+
                 var response = ex.Errors;
                 return BadRequest(response);
             }
             catch (Exception ex)
             {
                 this._Logger.LogDebug(ex.Message);
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

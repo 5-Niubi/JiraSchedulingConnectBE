@@ -14,6 +14,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         public AuthenticationController(JiraDemoContext db, IConfiguration config)
         {
             
+
             authenticationService = new AuthenticationService(db, config);
         }
 
@@ -27,7 +28,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 var responseMsg = new ResponseMessageDTO(ex.Message);
                 return Unauthorized(responseMsg);
             }

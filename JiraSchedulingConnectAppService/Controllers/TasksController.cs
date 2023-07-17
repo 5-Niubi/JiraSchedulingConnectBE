@@ -18,8 +18,8 @@ namespace JiraSchedulingConnectAppService.Controllers
 
     {
         private readonly ITasksService TasksService;
-        public TasksController(ITasksService tasksService)
-        {
+
+        public TasksController(ITasksService tasksService){
 
             this.TasksService = tasksService;
         }
@@ -61,7 +61,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (NotSuitableInputException ex)
             {
-                
+
                 var response = ex.Errors;
                 return BadRequest(response);
             }
@@ -87,7 +87,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (NotSuitableInputException ex)
             {
-                
+
                 var response = ex.Errors;
                 return BadRequest(response);
             }
@@ -110,7 +110,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (NotSuitableInputException ex)
             {
-                
+
                 var response = ex.Errors;
                 return BadRequest(response);
             }
@@ -135,7 +135,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (NotSuitableInputException ex)
             {
-                
+
                 var response = ex.Errors;
                 return BadRequest(response);
             }
