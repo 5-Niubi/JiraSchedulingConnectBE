@@ -27,7 +27,6 @@ namespace JiraSchedulingConnectAppService.Services
         {
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
-
             projectName = projectName ?? string.Empty;
 
             //QUERY LIST PROJECT WITH CLOUD_ID
@@ -93,6 +92,13 @@ namespace JiraSchedulingConnectAppService.Services
             var project = mapper.Map<Project>(projectRequest);
             project.CloudId = cloudId;
 
+            if (projectRequest.Name == string.Empty)
+            {
+                throw new Exception(Const.MESSAGE.PROJECT_NAME_EMPTY);
+            }
+            if (Utils.IsUpperFirstLetter(projectRequest.Name))
+                throw new Exception(Const.MESSAGE.PROJECT_NAME_UPPER_1ST_CHAR);
+
             // Check Name project's exited
             // if not exited -> insert
             // else throw error
@@ -157,9 +163,9 @@ namespace JiraSchedulingConnectAppService.Services
             var cloudId = jwt.GetCurrentCloudId();
 
             var projectInDB = await db.Projects.FirstOrDefaultAsync(p => p.Id == projectId
-                && p.CloudId == cloudId) ??         
+                && p.CloudId == cloudId) ??
                 throw new NotFoundException($"Can not find project :{projectId}");
-            
+
             projectInDB.IsDelete = Const.DELETE_STATE.DELETE;
             projectInDB.DeleteDatetime = DateTime.Now;
 

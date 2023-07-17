@@ -70,7 +70,7 @@ namespace JiraSchedulingConnectAppService.Services
             return new ThreadStartDTO(threadId);
         }
 
-        async public Task<MemoryStream> ToMSProject(int scheduleId)
+        async public Task<(string, MemoryStream)> ToMSProject(int scheduleId)
         {
             var schedule = (await db.Schedules.Where(s => s.Id == scheduleId)
                .Include(s => s.Parameter).ThenInclude(p => p.Project)
@@ -468,7 +468,7 @@ namespace JiraSchedulingConnectAppService.Services
                 var result = await respone.Content.ReadFromJsonAsync<JiraAPIResponsePagingDTO<JiraAPISearchProjectResDTO.Root>>();
                 if (result.Total > 0)
                 {
-                    projectName = $"{project.Name}-{++count}";
+                    projectName = $"{project.Name}-{result.Total + 1}";
                 }
                 else
                 {
@@ -477,7 +477,7 @@ namespace JiraSchedulingConnectAppService.Services
             }
             while (isContinue);
             dynamic body = new ExpandoObject();
-            var key = string.Concat(Utils.ExtractUpperLetter(project.Name), project.Id, count);
+            var key = Utils.ExtractUpperDigitLetter(projectName);
             body.key = key;
             body.leadAccountId = accountId;
             body.name = projectName;
@@ -556,7 +556,7 @@ namespace JiraSchedulingConnectAppService.Services
             return issueIdDict;
         }
 
-        private MemoryStream XMLCreateFile(List<TaskScheduleResultDTO> tasks, ModelLibrary.DBModels.Project projectDb,
+        private (string, MemoryStream) XMLCreateFile(List<TaskScheduleResultDTO> tasks, ModelLibrary.DBModels.Project projectDb,
             Dictionary<int, WorkforceScheduleResultDTO> workforceResultDict)
         {
             ProjectFile project = new ProjectFile();
@@ -615,7 +615,7 @@ namespace JiraSchedulingConnectAppService.Services
             DotNetOutputStream stream = new DotNetOutputStream(memStream);
             writer.write(project, stream);
             memStream.Position = 0;
-            return memStream;
+            return (projectFileName, memStream);
         }
 
         public async Task<string> JiraRequest(dynamic dynamic)
