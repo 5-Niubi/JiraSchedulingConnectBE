@@ -9,9 +9,14 @@ using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Skills;
 using Newtonsoft.Json.Linq;
+//<<<<<<< HEAD
 using UtilsLibrary.Exceptions;
 using static ModelLibrary.DTOs.Export.JiraAPICreateBulkTaskResDTO;
 using static ModelLibrary.DTOs.Invalidation.WorkforceInputErrorDTO;
+//=======
+using JiraSchedulingConnectAppService.Common;
+using JiraSchedulingConnectAppService.Services.Interfaces;
+//>>>>>>> c8c0f72 (sf)
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -219,8 +224,8 @@ namespace JiraSchedulingConnectAppService.Services
                 if(workforce == null) {
                     return null;
                 }
-                    workforce.IsDelete = true;
-                    workforce.DeleteDatetime = DateTime.Now;
+                workforce.IsDelete = Const.DELETE_STATE.DELETE;
+                workforce.DeleteDatetime = DateTime.Now;
                 var workforceEntity = db.Workforces.Update(workforce);
                 await db.SaveChangesAsync();
                 var workforceResponse = mapper.Map<WorkforceDTOResponse>(workforceEntity.Entity);
