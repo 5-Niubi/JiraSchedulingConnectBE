@@ -2,6 +2,7 @@
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ModelLibrary;
 using ModelLibrary.DTOs;
 using UtilsLibrary.Exceptions;
 
@@ -12,8 +13,8 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class ScheduleController : ControllerBase
     {
         private readonly IScheduleService scheduleService;
-        private readonly ILoggerService _Logger;
-        public ScheduleController(IScheduleService scheduleService, ILoggerService logger)
+        private readonly ILoggerManager _Logger;
+        public ScheduleController(IScheduleService scheduleService, ILoggerManager logger)
         {
             this._Logger = logger;
             this.scheduleService = scheduleService;
@@ -28,7 +29,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                this._Logger.Log(LogLevel.Error, ex);
+                this._Logger.LogDebug(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -44,7 +45,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                this._Logger.Log(LogLevel.Error, ex);
+                this._Logger.LogDebug(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

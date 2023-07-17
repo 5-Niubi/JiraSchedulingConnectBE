@@ -3,7 +3,8 @@ using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ModelLibrary.DTOs;
+using ModelLibrary;
+using NLog;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -12,34 +13,26 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Authorize]
     public class LogController: ControllerBase
 	{
-        private readonly ILoggerService LoggerService;
-
-        public LogController(ILoggerService logger)
+        private readonly ILoggerManager _Logger;
+        public LogController(ILoggerManager logger)
 		{
 
-            LoggerService = logger;
+            _Logger = logger;
 
         }
 
 
         [HttpGet]
-        async public Task<IActionResult> Get()
+        public IActionResult Get()
         {
-            try
-            {
+            _Logger.LogDebug("Debug message");
+            _Logger.LogError("Error message");
+            _Logger.LogWarning("Warning message");
+            _Logger.LogInfo("Information message");
 
-
-                LoggerService.Log(
-                    LogLevel.Debug,
-                    new Exception("HELLOO"));
-                return Ok("OKE");
-            }
-            catch (Exception ex)
-            {
-                var response = new ResponseMessageDTO(ex.Message);
-                return BadRequest(response);
-            }
+            return Ok();
         }
+
     }
 }
 

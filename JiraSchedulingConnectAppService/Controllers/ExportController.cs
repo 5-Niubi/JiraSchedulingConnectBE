@@ -14,10 +14,9 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class ExportController : ControllerBase
     {
         private readonly IExportService exportService;
-        private readonly ILoggerService _Logger;
-        public ExportController(IExportService exportService, ILoggerService logger)
+        
+        public ExportController(IExportService exportService)
         {
-            this._Logger = logger;
             this.exportService = exportService;
         }
         [HttpGet]
@@ -31,7 +30,6 @@ namespace JiraSchedulingConnectAppService.Controllers
            
             catch (Exception ex)
             {
-                this._Logger.Log(LogLevel.Error, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -48,7 +46,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                this._Logger.Log(LogLevel.Error, ex);
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -64,14 +62,13 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (JiraAPIException ex)
             {
-                this._Logger.Log(LogLevel.Critical, ex);
                 var response = new ResponseMessageDTO(ex.Message);
                 response.Data = ex.jiraResponse;
                 return BadRequest(response);
             }
             catch (Exception ex)
             {
-                this._Logger.Log(LogLevel.Error, ex);
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

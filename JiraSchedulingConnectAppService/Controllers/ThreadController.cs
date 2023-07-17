@@ -15,11 +15,9 @@ namespace JiraSchedulingConnectAppService.Controllers
     {
 
         private readonly IThreadService threadService;
-        private readonly ILoggerService _Logger;
-        public ThreadController(IThreadService threadService, ILoggerService logger)
+        public ThreadController(IThreadService threadService)
         {
             this.threadService = threadService;
-            this._Logger = logger;
         }
 
         [HttpGet]

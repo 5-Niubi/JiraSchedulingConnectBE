@@ -3,6 +3,7 @@ using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ModelLibrary;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Projects;
 using UtilsLibrary.Exceptions;
@@ -17,9 +18,9 @@ namespace JiraSchedulingConnectAppService.Controllers
 
 
         private IParametersService parametersService;
-        private readonly ILoggerService _Logger;
+        private readonly ILoggerManager _Logger;
 
-        public ParameterController(IParametersService parametersService, ILoggerService logger )
+        public ParameterController(IParametersService parametersService, ModelLibrary.ILoggerManager logger )
 		{
             this.parametersService = parametersService;
             this._Logger = logger;
@@ -36,7 +37,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                this._Logger.Log(LogLevel.Error, ex);
+                this._Logger.LogDebug(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -52,13 +53,13 @@ namespace JiraSchedulingConnectAppService.Controllers
                 return Ok(projectCreated);
             }
             catch(NotSuitableInputException ex) {
-                this._Logger.Log(LogLevel.Warning, ex);
+                this._Logger.LogDebug( ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
             }
             catch (Exception ex)
             {
-                this._Logger.Log(LogLevel.Error, ex);
+                this._Logger.LogDebug(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
