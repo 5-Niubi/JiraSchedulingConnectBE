@@ -21,11 +21,11 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTestConverter(int parameterId)
+        public async Task<IActionResult> ExecuteAlgorithm(int parameterId)
         {
             try
             {              
-                return Ok(algorithmService.TestConverter(parameterId));
+                return Ok(algorithmService.ExecuteAlgorithm(parameterId));
             }
             catch (MicroServiceAPIException ex)
             {

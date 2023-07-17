@@ -24,7 +24,7 @@ namespace AlgorithmServiceServer.Controllers
         }
 
         [HttpGet]
-        async public Task<IActionResult> GetTestConverter(int parameterId)
+        async public Task<IActionResult> ExecuteAlgorithm(int parameterId)
         {
             try
             {

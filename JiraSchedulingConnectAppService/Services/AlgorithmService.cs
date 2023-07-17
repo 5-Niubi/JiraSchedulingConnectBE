@@ -25,7 +25,7 @@ namespace JiraSchedulingConnectAppService.Services
             this.threadService = threadService;
         }
 
-        public ThreadStartDTO TestConverter(int parameterId)
+        public ThreadStartDTO ExecuteAlgorithm(int parameterId)
         {
             string threadId = ThreadService.CreateThreadId();
             threadId = threadService.StartThread(threadId,
@@ -43,7 +43,7 @@ namespace JiraSchedulingConnectAppService.Services
                 {
                     // Your thread processing logic goes here
                     var response = await apiMicro
-                      .Get($"/api/Algorithm/GetTestConverter?parameterId={parameterId}");
+                      .Get($"/api/Algorithm/ExecuteAlgorithm?parameterId={parameterId}");
                     dynamic responseContent;
 
                     responseContent = await response.Content.ReadAsStringAsync();
