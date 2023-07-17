@@ -96,37 +96,49 @@ namespace JiraSchedulingConnectAppService.Services
         private async Task ProcessToJiraThread(string threadId, Schedule schedule, string? accountId,
             Dictionary<int, WorkforceScheduleResultDTO> workforceResultDict)
         {
-            var thread = threadService.GetThreadModel(threadId);
             try
             {
-                var tasks = JsonConvert.DeserializeObject<List<TaskScheduleResultDTO>>(schedule.Tasks);
+                var thread = threadService.GetThreadModel(threadId);
+                try
+                {
+                    var tasks = JsonConvert.DeserializeObject<List<TaskScheduleResultDTO>>(schedule.Tasks);
 
-                var prepareResult = await JiraPrepareForSync(schedule.Parameter.Project, accountId);
-                var workerCreatedDict = await JiraCreateWorkForce(tasks, prepareResult.FieldDict["Worker"], workforceResultDict);
-                var bulkTasks = await JiraCreateBulkTask(tasks, workerCreatedDict, prepareResult);
-                await JiraCreateIssueLink(tasks, bulkTasks);
+                    var prepareResult = await JiraPrepareForSync(schedule.Parameter.Project, accountId);
+                    var workerCreatedDict = await JiraCreateWorkForce(tasks, prepareResult.FieldDict["Worker"], workforceResultDict);
+                    var bulkTasks = await JiraCreateBulkTask(tasks, workerCreatedDict, prepareResult);
+                    await JiraCreateIssueLink(tasks, bulkTasks);
 
-                // Update the thread status and result when finished
-                thread.Status = Const.THREAD_STATUS.SUCCESS;
+                    // Update the thread status and result when finished
+                    thread.Status = Const.THREAD_STATUS.SUCCESS;
+                    dynamic result = new ExpandoObject();
+                    result.projectId = prepareResult.ProjectId;
+                    result.projectName = prepareResult.ProjectName;
+                    thread.Result = result;
+                }
+                catch (JiraAPIException ex)
+                {
+                    thread.Status = Const.THREAD_STATUS.ERROR;
+                    dynamic error = new ExpandoObject();
+                    error.message = ex.Message;
+                    error.response = ex.jiraResponse;
+                    thread.Result = error;
+                }
+                catch (System.Exception ex)
+                {
+                    thread.Status = Const.THREAD_STATUS.ERROR;
+
+                    dynamic error = new ExpandoObject();
+                    error.message = ex.Message;
+                    error.stackTrace = ex.StackTrace;
+
+                    thread.Result = error;
+                }
             }
-            catch (JiraAPIException ex)
+            catch
             {
-                thread.Status = Const.THREAD_STATUS.ERROR;
-                dynamic error = new ExpandoObject();
-                error.message = ex.Message;
-                error.response = ex.jiraResponse;
-                thread.Result = error;
+                /* Do nothing*/
             }
-            catch (System.Exception ex)
-            {
-                thread.Status = Const.THREAD_STATUS.ERROR;
 
-                dynamic error = new ExpandoObject();
-                error.message = ex.Message;
-                error.stackTrace = ex.StackTrace;
-
-                thread.Result = error;
-            }
         }
 
         private async Task JiraCreateIssueLink(List<TaskScheduleResultDTO> tasks, Dictionary<int?, string> issueIdDict)
@@ -230,7 +242,7 @@ namespace JiraSchedulingConnectAppService.Services
             var issueTypeScreenSchemeId = await JiraCreateIssueTypeScreenScheme(issueTypeId, screenSchemeId);
             var issueTypeSchemeId = await JiraCreateIssueTypeScheme(issueTypeId);
 
-            var projectId = await JiraCreateProject(project, accountId);
+            (var projectId, var projectName) = await JiraCreateProject(project, accountId);
 
             await JiraAssignIssueTypeScreenSchemeWithProject(issueTypeScreenSchemeId, projectId);
             await JiraAssignIssueTypeSchemeWithProject(issueTypeSchemeId, projectId);
@@ -238,6 +250,7 @@ namespace JiraSchedulingConnectAppService.Services
             var result = new JiraAPIPrepareResultDTO();
             result.FieldDict = fieldDict;
             result.ProjectId = projectId;
+            result.ProjectName = projectName;
             result.IssueTypeId = issueTypeId;
             return result;
         }
@@ -441,7 +454,7 @@ namespace JiraSchedulingConnectAppService.Services
             return id;
         }
 
-        private async Task<int> JiraCreateProject(ModelLibrary.DBModels.Project project, string accountId)
+        private async Task<(int, string)> JiraCreateProject(ModelLibrary.DBModels.Project project, string accountId)
         {
             // TODO: Xử lý trùng key       
 
@@ -473,7 +486,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             respone = await jiraAPI.Post("rest/api/3/project", body);
             var id = (await respone.Content.ReadFromJsonAsync<JiraAPICreatProjectResponseDTO>()).Id;
-            return id;
+            return (id, projectName);
         }
 
         private async Task<int> JiraCreateScreen()

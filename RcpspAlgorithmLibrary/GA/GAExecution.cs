@@ -31,7 +31,6 @@ namespace RcpspAlgorithmLibrary.GA
 
         // workerSalary
         public int[] salaryEachTime { get; set; }
-
         // ------
 
         public List<List<int>> manAbleDo = new List<List<int>>();
