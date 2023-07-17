@@ -12,10 +12,28 @@ namespace JiraSchedulingConnectAppService.Common
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public static string ExtractUpperLetter(string source)
+        public static string ExtractUpperDigitLetter(string source)
         {
-            string result = string.Concat(source.Where(c => char.IsUpper(c)));
+            source = FirstLetterToUpper(source);
+            string result = string.Concat(source.Where(c => char.IsUpper(c) || char.IsDigit(c)));
+
             return result;
+        }
+
+        public static string FirstLetterToUpper(string str)
+        {
+            if (str == null)
+                return null;
+            if (str.Length > 1)
+                return char.ToUpper(str[0]) + str.Substring(1);
+            return str.ToUpper();
+        }
+
+        public static bool IsUpperFirstLetter(string str)
+        {
+            if (str == null)
+                return false;
+            return char.IsUpper(str[0]);
         }
 
         public static void AddPropertyToExpando(ExpandoObject expando, string propertyName, object propertyValue)
@@ -56,7 +74,7 @@ namespace JiraSchedulingConnectAppService.Common
 
         public static double? GetDaysBeetween2Dates(DateTime? start, DateTime? end)
         {
-            if(start == null || end == null)
+            if (start == null || end == null)
             {
                 return 0;
             }

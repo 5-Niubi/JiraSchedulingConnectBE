@@ -39,8 +39,8 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                var responseStream = await exportService.ToMSProject(scheduleId);
-                return File(responseStream, "application/octet-stream", "project.xml");
+                (var fileName , var responseStream) = await exportService.ToMSProject(scheduleId);
+                return File(responseStream, "application/octet-stream", fileName);
             }
             catch (Exception ex)
             {

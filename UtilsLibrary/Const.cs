@@ -36,6 +36,8 @@
             public const string JIRA_API_ERROR = "Error when make a request to JIRA";
             public const string MICROSERVICE_API_ERROR = "Error when make a request to other service";
             public const string NOTFOUND_SCHEDULE = "Not found schedule";
+            public const string PROJECT_NAME_EMPTY = "Project Name empty!";
+            public const string PROJECT_NAME_UPPER_1ST_CHAR = "Project Name must start by an uppercase letter";
         }
 
         public static class THREAD_STATUS
