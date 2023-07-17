@@ -47,10 +47,17 @@ namespace AlgorithmServiceServer.Services
 
             var skillFromDB = await db.Skills.Where(s => s.CloudId == cloudId).ToListAsync();
 
-            inputTo.StartDate = (DateTime)projectFromDB.StartDate;
-            //inputTo.Deadline = (int)projectFromDB.Deadline.Value
-            //    .Subtract(projectFromDB.StartDate.Value).TotalDays;
-            inputTo.Deadline = 1000;
+//<<<<<<< HEAD
+//            inputTo.StartDate = (DateTime)projectFromDB.StartDate;
+//            //inputTo.Deadline = (int)projectFromDB.Deadline.Value
+//            //    .Subtract(projectFromDB.StartDate.Value).TotalDays;
+//            inputTo.Deadline = 1000;
+//=======
+            inputTo.StartDate = (DateTime)parameterEntity.StartDate;
+            inputTo.Deadline = (int)Utils.GetDaysBeetween2Dates
+                (parameterEntity.StartDate, parameterEntity.Deadline);
+
+//>>>>>>> 41b5892 (Get TaskCount in each project to ProjectList)
             inputTo.Budget = (int)parameterEntity.Budget;
             inputTo.WorkerList = workerFromDB;
 
@@ -91,7 +98,7 @@ namespace AlgorithmServiceServer.Services
                 await db.SaveChangesAsync();
                 await db.Database.CommitTransactionAsync();
 
-                scheduleResultDTOs = mapper.Map<List<ScheduleResultSolutionDTO>>(schedules);             
+                scheduleResultDTOs = mapper.Map<List<ScheduleResultSolutionDTO>>(schedules);
             }
             catch (Exception ex)
             {
@@ -106,7 +113,7 @@ namespace AlgorithmServiceServer.Services
         }
 
         private async Task<Schedule> InsertScheduleIntoDB(
-                int parameterId,OutputFromORDTO algOutConverted
+                int parameterId, OutputFromORDTO algOutConverted
             )
         {
             // Insert result into Schedules table
