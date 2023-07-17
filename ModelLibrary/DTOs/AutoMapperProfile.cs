@@ -15,7 +15,8 @@ namespace ModelLibrary.DTOs
     {
         public AutoMapperProfile()
         {
-            CreateMap<Project, ProjectListHomePageDTO>();
+            CreateMap<Project, ProjectListHomePageDTO>()
+                .ForMember(p => p.TaskCount, p => p.MapFrom(t => t.Tasks.Count));
             CreateMap<ProjectsListCreateProject, Project>();
             CreateMap<Project, ProjectDetailDTO>();
             CreateMap<WorkforceDTORequest, Workforce>();

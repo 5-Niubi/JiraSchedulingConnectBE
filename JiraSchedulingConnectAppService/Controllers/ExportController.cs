@@ -10,7 +10,6 @@ namespace JiraSchedulingConnectAppService.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
     public class ExportController : ControllerBase
     {
         private readonly IExportService exportService;
@@ -18,6 +17,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             this.exportService = exportService;
         }
+        [Authorize]
         [HttpGet]
         async public Task<IActionResult> ExportToJira(int scheduleId)
         {
@@ -26,7 +26,7 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var response = await exportService.ToJira(scheduleId);
                 return Ok(response);
             }
-           
+
             catch (Exception ex)
             {
                 var response = new ResponseMessageDTO(ex.Message);
@@ -38,7 +38,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         async public Task<IActionResult> ExportToMicrosoftProject(int scheduleId)
         {
             try
-            { 
+            {
                 var responseStream = await exportService.ToMSProject(scheduleId);
                 return File(responseStream, "application/octet-stream", "project.xml");
             }
@@ -49,25 +49,6 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-        [HttpGet]
-        async public Task<IActionResult> CreateAPIJiraRequest()
-        {
-            try
-            {
-                var responseStream = await exportService.JiraRequest(null);
-                return Ok(responseStream);
-            }
-            catch (JiraAPIException ex)
-            {
-                var response = new ResponseMessageDTO(ex.Message);
-                response.Data = ex.jiraResponse;
-                return BadRequest(response);
-            }
-            catch (Exception ex)
-            {
-                var response = new ResponseMessageDTO(ex.Message);
-                return BadRequest(response);
-            }
-        }
+
     }
 }

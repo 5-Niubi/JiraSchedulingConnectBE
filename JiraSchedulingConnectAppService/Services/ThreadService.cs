@@ -33,8 +33,8 @@ namespace JiraSchedulingConnectAppService.Services
             do
             {
               threadId =  Utils.RandomString(Const.THREAD_ID_LENGTH);
-
             }while(threadDict.ContainsKey(threadId));
+            threadDict.Add(threadId, new ThreadModel(threadId));
             return threadId;
         }
 
@@ -42,13 +42,6 @@ namespace JiraSchedulingConnectAppService.Services
         {       
             Thread thread = new Thread(threadStart);
             thread.Start();
-
-            threadDict[threadId] = new ThreadModel
-            {
-                ThreadId = threadId,
-                Status = Const.THREAD_STATUS.RUNNING
-            };
-
             return threadId;
         }
 

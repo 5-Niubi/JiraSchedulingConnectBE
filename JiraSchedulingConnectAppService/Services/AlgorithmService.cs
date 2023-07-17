@@ -29,46 +29,54 @@ namespace JiraSchedulingConnectAppService.Services
         {
             string threadId = ThreadService.CreateThreadId();
             threadId = threadService.StartThread(threadId,
-                async() => await ProcessTestConverterThread(threadId, parameterId));
+                async () => await ProcessTestConverterThread(threadId, parameterId));
 
             return new ThreadStartDTO(threadId);
         }
 
         private async System.Threading.Tasks.Task ProcessTestConverterThread(string threadId, int parameterId)
         {
-            var thread = threadService.GetThreadModel(threadId);
             try
             {
-                // Your thread processing logic goes here
-                var response = await apiMicro
-                  .Get($"/api/Algorithm/GetTestConverter?parameterId={parameterId}");
-                dynamic responseContent;
+                var thread = threadService.GetThreadModel(threadId);
+                try
+                {
+                    // Your thread processing logic goes here
+                    var response = await apiMicro
+                      .Get($"/api/Algorithm/GetTestConverter?parameterId={parameterId}");
+                    dynamic responseContent;
 
-                responseContent = await response.Content.ReadAsStringAsync();
-                // Update the thread status and result when finished
-                thread.Status = Const.THREAD_STATUS.SUCCESS;
-                thread.Result = responseContent;
+                    responseContent = await response.Content.ReadAsStringAsync();
+                    // Update the thread status and result when finished
+                    thread.Status = Const.THREAD_STATUS.SUCCESS;
+                    thread.Result = responseContent;
+                }
+                catch (MicroServiceAPIException ex)
+                {
+                    thread.Status = Const.THREAD_STATUS.ERROR;
+
+                    dynamic error = new ExpandoObject();
+                    error.message = ex.Message;
+                    error.response = ex.mircoserviceResponse;
+
+                    thread.Result = error;
+                }
+                catch (NotFoundException ex)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    thread.Status = Const.THREAD_STATUS.ERROR;
+
+                    dynamic error = new ExpandoObject();
+                    error.message = ex.Message;
+                    error.stackTrace = ex.StackTrace;
+
+                    thread.Result = error;
+                }
             }
-            catch (MicroServiceAPIException ex)
-            {
-                thread.Status = Const.THREAD_STATUS.ERROR;
-
-                dynamic error = new ExpandoObject();
-                error.message = ex.Message;
-                error.response = ex.mircoserviceResponse;
-
-                thread.Result = error;
-            }
-            catch (Exception ex)
-            {
-                thread.Status = Const.THREAD_STATUS.ERROR;
-
-                dynamic error = new ExpandoObject();
-                error.message = ex.Message;
-                error.stackTrace = ex.StackTrace;
-
-                thread.Result = error;
-            }
+            catch {/* Do nothing*/ }
         }
 
         public async Task<EstimatedResultDTO> EstimateWorkforce(int projectId)
@@ -86,6 +94,6 @@ namespace JiraSchedulingConnectAppService.Services
             return responseContent;
 
 
-        } 
+        }
     }
 }

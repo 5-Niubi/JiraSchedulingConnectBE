@@ -31,18 +31,17 @@ namespace JiraSchedulingConnectAppService.Services
             projectName = projectName ?? string.Empty;
 
             //QUERY LIST PROJECT WITH CLOUD_ID
-            //var query = db.Projects.Where(e => e.CloudId == cloudId
-            //    && (projectName.Equals(string.Empty) || e.Name.Contains(projectName))
-            //    )
-            //    .OrderByDescending(e => e.Id);
+            var query = db.Projects.Where(e => e.CloudId == cloudId
+                && (projectName.Equals(string.Empty) || e.Name.Contains(projectName))
+                ).Include(p => p.Tasks)
+                .OrderByDescending(e => e.Id);
 
             ///////////////////////////////////////
             //QUERY LIST PROJECT WITHOUT CLOUD_ID (TEMPORARY FIX)
-            var query = db.Projects.Where(e => (projectName.Equals(string.Empty) || e.Name.Contains(projectName)))
-                .OrderByDescending(e => e.Id);
+            //var query = db.Projects.Where(e => (projectName.Equals(string.Empty) || e.Name.Contains(projectName)))
+            //    .OrderByDescending(e => e.Id);
             ///////////////////////////////////////
-
-
+            ///
             var projectsResult = await query.ToListAsync();
             var projectDTO = mapper.Map<List<ProjectListHomePageDTO>>(projectsResult);
 
@@ -59,7 +58,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             var query = db.Projects.Where(e => e.CloudId == cloudId
                 && (projectName.Equals(string.Empty) || e.Name.Contains(projectName))
-                )
+                ).Include(p => p.Tasks)
                 .OrderByDescending(e => e.Id);
 
             var queryPagingResult = Utils.MyQuery<Project>.Paging(query, currentPage);
