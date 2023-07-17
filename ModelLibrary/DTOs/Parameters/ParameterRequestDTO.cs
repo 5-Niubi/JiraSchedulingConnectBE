@@ -9,7 +9,8 @@ namespace ModelLibrary.DTOs.PertSchedule
 		public int ProjectId { get; set; }
         public int Duration { get; set; }
         public float Budget { get; set; }
-
+        public DateTime? StartDate { get; set; }
+        public DateTime? Deadline { get; set; }
         public List<ParameterResourceRequest> ParameterResources { get; set; }
     }
 }

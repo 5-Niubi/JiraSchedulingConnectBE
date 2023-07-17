@@ -22,7 +22,7 @@ namespace ModelLibrary.DTOs
             CreateMap<WorkforceDTORequest, Workforce>();
             CreateMap<Workforce, WorkforceDTORequest>();
             CreateMap<Workforce, WorkforceDTOResponse>()
-                .ForMember(x=>x.Skills, t => t.MapFrom(t=>t.WorkforceSkills.Select(s=> new SkillDTO {
+                .ForMember(x=>x.Skills, t => t.MapFrom(t=>t.WorkforceSkills.Select(s=> new SkillDTOResponse {
                     Id = s.Skill.Id,
                     Name = s.Skill.Name,
                     CloudId = s.Skill.CloudId,
@@ -34,8 +34,8 @@ namespace ModelLibrary.DTOs
             CreateMap<WorkforceDTOResponse, Workforce>();
             CreateMap<EquipmentDTOResponse, Equipment>();
             CreateMap<Equipment, EquipmentDTOResponse>();
-            CreateMap<Skill, SkillDTO>();
-            CreateMap<SkillDTO, Skill>();
+            CreateMap<Skill, SkillDTOResponse>();
+            CreateMap<SkillDTOResponse, Skill>();
             CreateMap<SkillCreatedRequest, Skill>();
 			CreateMap<Milestone, MilestoneDTO>();
 			CreateMap<MilestoneDTO, Milestone>();

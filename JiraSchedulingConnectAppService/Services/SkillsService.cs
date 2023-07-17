@@ -29,7 +29,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
 
-        public async Task<SkillDTO> GetSkillId(int Id)
+        public async Task<SkillDTOResponse> GetSkillId(int Id)
         {
             //ModelLibrary.DBModels.Skill skill = new ModelLibrary.DBModels.Skill();
             try
@@ -39,7 +39,7 @@ namespace JiraSchedulingConnectAppService.Services
 
                 var skillResult = await db.Skills.SingleOrDefaultAsync(s => s.Id == Id && s.CloudId == cloudId && s.IsDelete == false);
 
-                var skillDTO = mapper.Map<SkillDTO>(skillResult);
+                var skillDTO = mapper.Map<SkillDTOResponse>(skillResult);
                 return skillDTO;
 
             }
@@ -51,7 +51,7 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
-        public async Task<SkillDTO> UpdateNameSkill(SkillDTO skillDTO)
+        public async Task<SkillDTOResponse> UpdateNameSkill(SkillDTOResponse skillDTO)
         {
 
             try
@@ -97,7 +97,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
 
-        public async Task<SkillDTO> CreateSkill(SkillCreatedRequest skillRequest)
+        public async Task<SkillDTOResponse> CreateSkill(SkillCreatedRequest skillRequest)
         {
 
             try
@@ -119,7 +119,7 @@ namespace JiraSchedulingConnectAppService.Services
                 var SkillCreatedEntity = await db.Skills.AddAsync(skill);
                 await db.SaveChangesAsync();
 
-                var skillDeatailDTO = mapper.Map<SkillDTO>(SkillCreatedEntity.Entity);
+                var skillDeatailDTO = mapper.Map<SkillDTOResponse>(SkillCreatedEntity.Entity);
                 return skillDeatailDTO;
             }
             catch (Exception ex)
@@ -131,7 +131,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
 
-        async public Task<List<SkillDTO>> GetSkills(string? skillName)
+        async public Task<List<SkillDTOResponse>> GetSkills(string? skillName)
         {
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
@@ -144,7 +144,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             var skillsResult = await query.ToListAsync();
 
-            var skillsDTO = mapper.Map<List<SkillDTO>>(skillsResult);
+            var skillsDTO = mapper.Map<List<SkillDTOResponse>>(skillsResult);
 
             return skillsDTO;
 
@@ -153,14 +153,14 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
-        async public Task<SkillDTO> GetSkillName(string? skillName)
+        async public Task<SkillDTOResponse> GetSkillName(string? skillName)
         {
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
             var result = await db.Skills.SingleOrDefaultAsync(s => s.Name.ToLower() == skillName.ToLower() && s.CloudId == cloudId && s.IsDelete == false);
 
-            var skillDTO = mapper.Map<SkillDTO>(result);
+            var skillDTO = mapper.Map<SkillDTOResponse>(result);
 
             return skillDTO;
         }
