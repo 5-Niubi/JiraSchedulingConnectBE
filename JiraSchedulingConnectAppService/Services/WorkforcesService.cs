@@ -9,6 +9,8 @@ using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Skills;
 using Newtonsoft.Json.Linq;
+using JiraSchedulingConnectAppService.Common;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 
 using JiraSchedulingConnectAppService.Common;
 using JiraSchedulingConnectAppService.Services.Interfaces;
