@@ -8,7 +8,7 @@ namespace JiraSchedulingConnectAppService.Services
     {
         private static NLog.ILogger logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
-    
+
         public void LogDebug(string message)
         {
             logger.Debug(message);

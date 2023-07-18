@@ -1,5 +1,4 @@
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Parameters;
@@ -50,10 +49,10 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var response = ex.Errors;
                 return BadRequest(response);
 
-         
+
             }
 
-            
+
             catch (Exception ex)
             {
 
@@ -79,7 +78,8 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteWorkforce(string id) {
+        public async Task<IActionResult> DeleteWorkforce(string id)
+        {
             try
             {
                 var w = workforcesService.GetWorkforceById(id);

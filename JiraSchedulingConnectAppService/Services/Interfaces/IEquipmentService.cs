@@ -1,5 +1,4 @@
-﻿using System;
-using ModelLibrary.DTOs.Parameters;
+﻿using ModelLibrary.DTOs.Parameters;
 
 namespace JiraSchedulingConnectAppService.Services.Interfaces
 {

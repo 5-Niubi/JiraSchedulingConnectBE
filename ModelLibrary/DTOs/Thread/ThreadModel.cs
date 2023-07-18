@@ -1,9 +1,4 @@
 ﻿using JiraSchedulingConnectAppService.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModelLibrary.DTOs.Thread
 {
@@ -13,7 +8,8 @@ namespace ModelLibrary.DTOs.Thread
         public string? Status { get; set; }
         public dynamic? Result { get; set; }
 
-        public ThreadModel(string? threadId) {
+        public ThreadModel(string? threadId)
+        {
             this.Status = Const.THREAD_STATUS.RUNNING;
             this.ThreadId = threadId;
         }

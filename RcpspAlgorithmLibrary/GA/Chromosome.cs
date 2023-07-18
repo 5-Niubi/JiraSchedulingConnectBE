@@ -112,7 +112,7 @@
                 {
                     if (workerTask[i] == wt)
                     {
-                        similarityAssign = MathF.Max((float) similarityAssign, (float)data.TaskSimilarity[i, np]);
+                        similarityAssign = MathF.Max((float)similarityAssign, (float)data.TaskSimilarity[i, np]);
                     }
                 }
                 if (similarityAssign > 0.75) actualEffort *= 0.7;
@@ -120,7 +120,7 @@
                 else if (similarityAssign > 0.25) actualEffort *= 0.9;
                 while (end < data.Deadline)
                 {
-                    
+
                     actualEffort -= (data.WorkerEffort[wt, end]);
                     end++;
                     if (actualEffort <= 0) break;

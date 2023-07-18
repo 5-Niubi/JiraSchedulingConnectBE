@@ -1,8 +1,7 @@
-﻿using System;
-namespace ModelLibrary.DTOs.Parameters
+﻿namespace ModelLibrary.DTOs.Parameters
 {
-	public class EquipmentDTOResponse
-	{
+    public class EquipmentDTOResponse
+    {
         public int Id { get; set; }
         public string? CloudId { get; set; }
         public string Name { get; set; } = null!;

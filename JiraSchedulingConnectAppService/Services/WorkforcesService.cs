@@ -1,24 +1,12 @@
 ﻿using AutoMapper;
+using JiraSchedulingConnectAppService.Common;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
-using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Invalidation;
 using ModelLibrary.DTOs.Parameters;
-using ModelLibrary.DTOs.Projects;
-using ModelLibrary.DTOs.Skills;
-using Newtonsoft.Json.Linq;
-using JiraSchedulingConnectAppService.Common;
-using JiraSchedulingConnectAppService.Services.Interfaces;
-
-using JiraSchedulingConnectAppService.Common;
-using JiraSchedulingConnectAppService.Services.Interfaces;
-
-
 using UtilsLibrary.Exceptions;
-using static ModelLibrary.DTOs.Export.JiraAPICreateBulkTaskResDTO;
-using static ModelLibrary.DTOs.Invalidation.WorkforceInputErrorDTO;
 
 
 namespace JiraSchedulingConnectAppService.Services
@@ -40,7 +28,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         public WorkforcesService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
-            
+
             db = dbContext;
             this.mapper = mapper;
             httpContext = httpContextAccessor.HttpContext;
@@ -71,7 +59,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async Task<List<SkillRequestErrorDTO>> _ValidateWorkforceSkills(WorkforceRequestDTO WorkforceRequest)
         {
-            
+
 
             var jwt = new JWTManagerService(httpContext);
             //var cloudId = jwt.GetCurrentCloudId();
@@ -117,7 +105,8 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
-        private async Task<List<WorkingEffortErrorDTO>> _ValidateWorkforceEfforts(WorkforceRequestDTO WorkforceRequest) {
+        private async Task<List<WorkingEffortErrorDTO>> _ValidateWorkforceEfforts(WorkforceRequestDTO WorkforceRequest)
+        {
 
             var EffortErrors = new List<WorkingEffortErrorDTO>();
 
@@ -126,7 +115,8 @@ namespace JiraSchedulingConnectAppService.Services
             // working effort
             var WorkingEfforts = WorkforceRequest.WorkingEfforts;
 
-            if (WorkingEfforts.Count != 7) {
+            if (WorkingEfforts.Count != 7)
+            {
 
                 throw new NotSuitableInputException(
                         new WorkforceInputErrorDTO()
@@ -134,12 +124,14 @@ namespace JiraSchedulingConnectAppService.Services
                             Messages = EffortElementNotValidMessage
                         }
                     );
-                    
+
 
             }
 
-            for (int i = 0; i < WorkingEfforts.Count; i++) {
-                if (WorkingEfforts[i] < 0 || WorkingEfforts[i] > 1) {
+            for (int i = 0; i < WorkingEfforts.Count; i++)
+            {
+                if (WorkingEfforts[i] < 0 || WorkingEfforts[i] > 1)
+                {
                     EffortErrors.Add(new WorkingEffortErrorDTO
                     {
                         DayIndex = i,
@@ -152,16 +144,16 @@ namespace JiraSchedulingConnectAppService.Services
 
 
             return EffortErrors;
-    }
+        }
 
 
-    public async Task<WorkforceDTOResponse> CreateWorkforce(WorkforceRequestDTO? workforceRequest)
+        public async Task<WorkforceDTOResponse> CreateWorkforce(WorkforceRequestDTO? workforceRequest)
         {
-           
+
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
             var workforce = mapper.Map<Workforce>(workforceRequest);
-            
+
 
 
             // TODO: validate email
@@ -178,7 +170,8 @@ namespace JiraSchedulingConnectAppService.Services
             var SkillErrors = await _ValidateWorkforceSkills(workforceRequest);
 
 
-            if (EffortErrors.Count != 0 || SkillErrors.Count != 0) {
+            if (EffortErrors.Count != 0 || SkillErrors.Count != 0)
+            {
                 throw new NotSuitableInputException(
                     new WorkforceInputErrorDTO()
                     {
@@ -188,7 +181,7 @@ namespace JiraSchedulingConnectAppService.Services
 
                     }
                     );
-                    
+
 
             }
 
@@ -201,8 +194,8 @@ namespace JiraSchedulingConnectAppService.Services
             await db.SaveChangesAsync();
             var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(workforceEntity.Entity);
             return workforceDTOResponse;
-         
-            
+
+
         }
 
         public async Task<WorkforceDTOResponse> GetWorkforceById(string workforce_id)
@@ -224,7 +217,8 @@ namespace JiraSchedulingConnectAppService.Services
             try
             {
                 var workforce = await db.Workforces.SingleOrDefaultAsync(x => x.Id.ToString() == workforce_id);
-                if(workforce == null) {
+                if (workforce == null)
+                {
                     return null;
                 }
                 workforce.IsDelete = Const.DELETE_STATE.DELETE;

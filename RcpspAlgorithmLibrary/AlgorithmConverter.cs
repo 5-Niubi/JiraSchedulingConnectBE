@@ -36,7 +36,7 @@ namespace RcpspAlgorithmLibrary
             NumOfSkills = inputToOR.SkillList.Count;
             NumOfEquipments = inputToOR.EquipmentList.Count;
             NumOfFunctions = inputToOR.FunctionList.Count;
-            
+
             this.TaskList = inputToOR.TaskList;
             this.WorkerList = inputToOR.WorkerList;
             this.EquipmentList = inputToOR.EquipmentList;
@@ -176,11 +176,11 @@ namespace RcpspAlgorithmLibrary
                 var task = new TaskScheduleResultDTO();
                 task.id = TaskList[i].Id;
                 task.name = TaskList[i].Name;
-                task.duration = (int?) TaskList[i].Duration;
+                task.duration = (int?)TaskList[i].Duration;
                 task.workforce = mapper.Map<WorkforceScheduleResultDTO>(WorkerList[taskWithWorker[i]]);
                 task.startDate = StartDate.AddDays(taskStart[i]);
                 task.endDate = StartDate.AddDays(taskEnd[i]);
-                foreach(var taskPre in TaskList[i].TaskPrecedenceTasks)
+                foreach (var taskPre in TaskList[i].TaskPrecedenceTasks)
                 {
                     task.taskIdPrecedences.Add(taskPre.PrecedenceId);
                 }

@@ -18,7 +18,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         private string cloudId = "";
 
-        public JiraBridgeAPIService( IHttpContextAccessor httpAccess,
+        public JiraBridgeAPIService(IHttpContextAccessor httpAccess,
             IAuthenticationService authenticationService)
         {
             this.client = new HttpClient();
@@ -31,7 +31,7 @@ namespace JiraSchedulingConnectAppService.Services
             var jwt = new JWTManagerService(http);
             cloudId = jwt.GetCurrentCloudId();
 
-            if(cloudId != null) SetBaseURL();
+            if (cloudId != null) SetBaseURL();
         }
 
         private void SetBaseURL()

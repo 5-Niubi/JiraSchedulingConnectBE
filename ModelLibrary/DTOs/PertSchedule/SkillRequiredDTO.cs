@@ -1,8 +1,7 @@
-﻿using System;
-namespace ModelLibrary.DTOs.PertSchedule
+﻿namespace ModelLibrary.DTOs.PertSchedule
 {
-	public class SkillRequiredDTO
-	{
+    public class SkillRequiredDTO
+    {
         public int SkillId { get; set; }
         public int Level { get; set; }
     }

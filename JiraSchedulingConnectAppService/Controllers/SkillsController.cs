@@ -17,7 +17,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         public SkillsController(ISkillsService skillsService)
         {
 
-   
+
             this.skillsService = skillsService;
         }
 
@@ -56,7 +56,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
 
         [HttpPut]
-        async public Task<IActionResult> UpdateNameSkill( [FromBody] SkillDTOResponse skill)
+        async public Task<IActionResult> UpdateNameSkill([FromBody] SkillDTOResponse skill)
         {
             try
             {

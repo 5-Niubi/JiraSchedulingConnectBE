@@ -1,9 +1,8 @@
-﻿using System;
-using ModelLibrary.DTOs.Skills;
+﻿using ModelLibrary.DTOs.Skills;
 
 namespace ModelLibrary.DTOs.Parameters
 {
-	public class WorkforceRequestDTO
+    public class WorkforceRequestDTO
     {
         public int Id { get; set; }
         public string? AccountId { get; set; }
@@ -14,7 +13,7 @@ namespace ModelLibrary.DTOs.Parameters
         public string? DisplayName { get; set; }
         public double? UnitSalary { get; set; }
 
-        
+
         public int? WorkingType { get; set; }
         public List<float>? WorkingEfforts { get; set; }
         public List<SkillRequestDTO>? Skills { get; set; }

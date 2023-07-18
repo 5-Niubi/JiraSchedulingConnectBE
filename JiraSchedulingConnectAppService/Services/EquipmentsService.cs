@@ -1,9 +1,7 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
-using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Parameters;
 
 namespace JiraSchedulingConnectAppService.Services

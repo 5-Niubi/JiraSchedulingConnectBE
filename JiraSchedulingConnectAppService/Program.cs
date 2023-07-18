@@ -1,27 +1,20 @@
 using AlgorithmServiceServer.Services.Interfaces;
-using ikvm.runtime;
-using JiraSchedulingConnectAppService.Repository;
-using JiraSchedulingConnectAppService.Repository.Interfaces;
 using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using ModelLibrary;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using NLog;
-using NLog.Extensions.Logging;
 using NLog.Web;
-using sun.util.logging.resources;
-using System.Configuration;
 using System.Text;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
-try {
+try
+{
 
     logger.Info("Start Game...");
 
@@ -69,7 +62,7 @@ try {
     builder.Services.AddTransient<IAlgorithmService, AlgorithmService>();
     builder.Services.AddTransient<IValidatorService, ScheduleValidatorService>();
 
-    
+
 
     builder.Services.AddTransient<IParametersService, ParametersService>();
     builder.Services.AddTransient<IWorkforcesService, WorkforcesService>();
@@ -115,7 +108,8 @@ catch (Exception ex)
     logger.Error(ex, "Stopped program because of exception");
     throw;
 }
-finally {
+finally
+{
     NLog.LogManager.Shutdown();
 
 

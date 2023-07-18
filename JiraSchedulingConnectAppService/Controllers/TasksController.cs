@@ -1,12 +1,8 @@
-
-﻿using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.PertSchedule;
-using ModelLibrary.DTOs.Skills;
-using ModelLibrary.DTOs.Tasks;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers
@@ -14,12 +10,13 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    public class TasksController: ControllerBase
+    public class TasksController : ControllerBase
 
     {
         private readonly ITasksService TasksService;
 
-        public TasksController(ITasksService tasksService){
+        public TasksController(ITasksService tasksService)
+        {
 
             this.TasksService = tasksService;
         }
@@ -158,7 +155,8 @@ namespace JiraSchedulingConnectAppService.Controllers
                 return Ok(resopnse);
             }
 
-            catch (NotSuitableInputException ex) {
+            catch (NotSuitableInputException ex)
+            {
 
                 var response = ex.Errors;
                 return BadRequest(response);
@@ -183,7 +181,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
 
 
-        
+
 
     }
 }

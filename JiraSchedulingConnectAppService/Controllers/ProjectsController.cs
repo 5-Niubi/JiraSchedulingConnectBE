@@ -16,7 +16,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
 
             this.projectsService = projectsService;
-            
+
         }
 
         [HttpGet]

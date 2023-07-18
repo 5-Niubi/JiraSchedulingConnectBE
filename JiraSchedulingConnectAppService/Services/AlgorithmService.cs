@@ -1,13 +1,9 @@
 ﻿using AlgorithmServiceServer;
 using JiraSchedulingConnectAppService.Common;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis;
 using ModelLibrary.DBModels;
-using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Thread;
 using System.Dynamic;
-using System.Reflection.Metadata;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services

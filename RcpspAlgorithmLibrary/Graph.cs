@@ -49,20 +49,25 @@
         }
 
 
-        private bool IsAnyNodeIsolated(List<List<int>> adjacencyMatrix) {
-            for(int  i = 0; i < adjacencyMatrix.Count; i ++) {
+        private bool IsAnyNodeIsolated(List<List<int>> adjacencyMatrix)
+        {
+            for (int i = 0; i < adjacencyMatrix.Count; i++)
+            {
                 var vecAdj = adjacencyMatrix[i];
                 var isValid = false;
-                foreach (var e in vecAdj) {
-                    if(e == 1) {
+                foreach (var e in vecAdj)
+                {
+                    if (e == 1)
+                    {
                         isValid = true;
                         break;
                     }
 
                 }
 
-                if (isValid == false) {
-                    for(int j = 0; j < adjacencyMatrix.Count; j ++)
+                if (isValid == false)
+                {
+                    for (int j = 0; j < adjacencyMatrix.Count; j++)
                     {
                         if (adjacencyMatrix[j][i] == 1)
                         {
@@ -73,7 +78,7 @@
 
                     throw new Exception("In Graph exited node is isolated");
                 }
-                
+
 
 
             }
@@ -119,7 +124,7 @@
             List<bool> visited = new List<bool>(Enumerable.Repeat(false, this.NumberOfNode));
             List<bool> path = new List<bool>(Enumerable.Repeat(false, this.NumberOfNode));
 
-            
+
 
             if (IsCycle(visited, path, this.startNode))
             {

@@ -1,5 +1,4 @@
-﻿using System;
-namespace ModelLibrary.DTOs.Skills
+﻿namespace ModelLibrary.DTOs.Skills
 {
     public class SkillDTORequest
     {

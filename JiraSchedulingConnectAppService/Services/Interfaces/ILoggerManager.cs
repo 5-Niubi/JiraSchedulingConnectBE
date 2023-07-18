@@ -1,5 +1,4 @@
-﻿using System;
-namespace ModelLibrary
+﻿namespace ModelLibrary
 {
     public interface ILoggerManager
     {

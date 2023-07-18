@@ -1,7 +1,5 @@
-﻿using JiraSchedulingConnectAppService.Services;
-using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
 using UtilsLibrary.Exceptions;
@@ -21,7 +19,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpGet]
-        public  IActionResult GetThreadResult(string threadId)
+        public IActionResult GetThreadResult(string threadId)
         {
             try
             {

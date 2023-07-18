@@ -5,13 +5,13 @@ namespace RcpEstimator
 {
 
 
-    
+
     public class ScheduleEstimator
     {
 
         const string AlgorithmnException = "Algorithmn Estimate Error!!!";
 
-        
+
         public int NumOfTasks = 0;
 
         public int[] TaskDuration;
@@ -213,7 +213,8 @@ namespace RcpEstimator
             bool[] visited = new bool[SubTaskList.Count];
 
 
-            try {
+            try
+            {
                 // Them vao queue nhung task dau tien trong milestone
                 for (int i = 0; i < SubTaskList.Count; i++)
                 {
@@ -307,7 +308,7 @@ namespace RcpEstimator
                     // cuối cùng, thực hiện enque các node ở level tiếp theo         
                     for (int j = 0; j < SubTaskList.Count; j++)
                     {
-                
+
                         if (this.TaskAdjacency[SubTaskList[j]][SubTaskList[v]] == 1 & queue.Contains(j) == false)
                         {
                             if (visited[j] == false)
@@ -452,9 +453,9 @@ namespace RcpEstimator
 
             foreach (var i in StartTasks)
             {
-               
+
                 queue.Enqueue(i);
-          
+
             }
 
 
@@ -574,7 +575,8 @@ namespace RcpEstimator
             TaskSortedUnitTime = new int[this.NumOfTasks][];
             var check = 0;
             var check_j = 0;
-            try {
+            try
+            {
                 for (int i = 0; i < this.TaskAdjacency.Length; i++)
                 {
                     //if(i == 4) {
@@ -592,10 +594,11 @@ namespace RcpEstimator
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 throw new Exception("ERRORsd");
             }
-            
+
         }
 
 

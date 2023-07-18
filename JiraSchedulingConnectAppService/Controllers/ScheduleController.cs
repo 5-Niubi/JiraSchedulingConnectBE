@@ -1,10 +1,7 @@
-﻿using JiraSchedulingConnectAppService.Services;
-using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary;
 using ModelLibrary.DTOs;
-using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -14,7 +11,8 @@ namespace JiraSchedulingConnectAppService.Controllers
     {
         private readonly IScheduleService scheduleService;
         private readonly ILoggerManager _Logger;
-        public ScheduleController(IScheduleService scheduleService, ILoggerManager logger) { 
+        public ScheduleController(IScheduleService scheduleService, ILoggerManager logger)
+        {
 
             this._Logger = logger;
             this.scheduleService = scheduleService;

@@ -1,5 +1,4 @@
 ﻿using JiraSchedulingConnectAppService.Services;
-using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
@@ -13,7 +12,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         private readonly AuthenticationService authenticationService;
         public AuthenticationController(JiraDemoContext db, IConfiguration config)
         {
-            
+
 
             authenticationService = new AuthenticationService(db, config);
         }

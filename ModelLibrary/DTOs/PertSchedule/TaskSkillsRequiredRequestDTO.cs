@@ -1,7 +1,6 @@
-﻿using System;
-namespace ModelLibrary.DTOs.PertSchedule
+﻿namespace ModelLibrary.DTOs.PertSchedule
 {
-	public class TaskSkillsRequiredRequestDTO
+    public class TaskSkillsRequiredRequestDTO
     {
         public int TaskId { get; set; }
         public List<SkillRequiredRequestDTO> SkillsRequireds { get; set; }

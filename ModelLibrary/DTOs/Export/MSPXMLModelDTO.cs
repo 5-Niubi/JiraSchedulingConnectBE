@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace ModelLibrary.DTOs.Export
 {
-    public class MSPXMLModelDTO 
+    public class MSPXMLModelDTO
     {
         // using System.Xml.Serialization;
         // XmlSerializer serializer = new XmlSerializer(typeof(Project));
