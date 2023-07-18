@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
-using ModelLibrary.DTOs.Export;
-using System.IO;
-using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -13,7 +10,9 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class ExportController : ControllerBase
     {
         private readonly IExportService exportService;
+
         public ExportController(IExportService exportService)
+
         {
             this.exportService = exportService;
         }
@@ -39,11 +38,12 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                (var fileName , var responseStream) = await exportService.ToMSProject(scheduleId);
+                (var fileName, var responseStream) = await exportService.ToMSProject(scheduleId);
                 return File(responseStream, "application/octet-stream", fileName);
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

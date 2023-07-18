@@ -1,5 +1,4 @@
-﻿using ModelLibrary.DTOs.Export;
-using ModelLibrary.DTOs.Thread;
+﻿using ModelLibrary.DTOs.Thread;
 
 namespace JiraSchedulingConnectAppService.Services.Interfaces
 {

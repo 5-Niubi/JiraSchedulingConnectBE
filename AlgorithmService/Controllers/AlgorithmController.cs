@@ -5,7 +5,7 @@ using ModelLibrary.DTOs;
 using UtilsLibrary.Exceptions;
 
 namespace AlgorithmServiceServer.Controllers
-{   
+{
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]

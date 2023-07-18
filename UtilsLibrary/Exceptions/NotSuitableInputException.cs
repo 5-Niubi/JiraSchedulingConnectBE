@@ -1,8 +1,7 @@
-﻿using System;
-namespace UtilsLibrary.Exceptions
+﻿namespace UtilsLibrary.Exceptions
 {
-	public class NotSuitableInputException: Exception
-	{
+    public class NotSuitableInputException : Exception
+    {
 
         public dynamic Errors;
 

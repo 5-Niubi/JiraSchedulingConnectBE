@@ -1,7 +1,5 @@
-﻿using JiraSchedulingConnectAppService.Services;
-using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
 using UtilsLibrary.Exceptions;
@@ -14,10 +12,14 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class ThreadController : ControllerBase
     {
         private readonly IThreadService threadService;
-        public ThreadController(IThreadService threadService) { this.threadService = threadService; }
+        public ThreadController(IThreadService threadService)
+        {
+            this.threadService = threadService;
+
+        }
 
         [HttpGet]
-        public  IActionResult GetThreadResult(string threadId)
+        public IActionResult GetThreadResult(string threadId)
         {
             try
             {
@@ -26,6 +28,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (NotFoundException ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return NotFound(response);
             }

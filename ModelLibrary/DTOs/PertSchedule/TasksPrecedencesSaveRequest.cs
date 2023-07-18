@@ -1,8 +1,7 @@
-﻿using System;
-namespace ModelLibrary.DTOs.PertSchedule
+﻿namespace ModelLibrary.DTOs.PertSchedule
 {
     public class TasksPrecedencesSaveRequest
-    {      
+    {
         public int ProjectId { get; set; }
         public List<TaskPrecedenceDTO> TaskPrecedences { get; set; }
 

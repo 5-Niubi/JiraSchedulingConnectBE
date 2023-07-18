@@ -1,8 +1,7 @@
-﻿using System;
-namespace ModelLibrary.DTOs.PertSchedule
+﻿namespace ModelLibrary.DTOs.PertSchedule
 {
-	public class PrecedenceRequestDTO
-	{
+    public class PrecedenceRequestDTO
+    {
         public int PrecedenceId { get; set; }
     }
 }

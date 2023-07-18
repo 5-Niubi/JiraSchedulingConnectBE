@@ -1,8 +1,7 @@
-﻿using System;
-namespace ModelLibrary.DTOs.Parameters
+﻿namespace ModelLibrary.DTOs.Parameters
 {
-	public class EquipmentDTORequest
-	{
+    public class EquipmentDTORequest
+    {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
         public int? Quantity { get; set; }

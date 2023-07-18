@@ -1,24 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Aspose.Tasks;
-using AutoMapper;
-using Humanizer;
+﻿using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Build.Framework;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Invalidation;
 using ModelLibrary.DTOs.Invalidator;
 using ModelLibrary.DTOs.PertSchedule;
-using ModelLibrary.DTOs.Projects;
-using ModelLibrary.DTOs.Tasks;
 using UtilsLibrary.Exceptions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -59,7 +47,8 @@ namespace JiraSchedulingConnectAppService.Services
             return existedTask;
         }
 
-        private async Task<bool> _ClearTaskPrecedenceTask(int projectId) {
+        private async Task<bool> _ClearTaskPrecedenceTask(int projectId)
+        {
 
 
             //var UniqueTasks = new List<int>();
@@ -118,7 +107,7 @@ namespace JiraSchedulingConnectAppService.Services
         public async Task<TaskPertViewDTO> CreateTask(TaskCreatedRequest taskRequest)
         {
 
-           
+
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
@@ -128,7 +117,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             // validate exited name task  project's 
             await _ValidateExitedTaskName(task);
-                
+
             // validate milestone task
             await _ValidateMilestoneTask(task);
 
@@ -136,7 +125,7 @@ namespace JiraSchedulingConnectAppService.Services
             await _ValidatePrecedenceTask(task);
 
             // validate required skills task's
-            await _ValidateSkillsRequired(task) ;
+            await _ValidateSkillsRequired(task);
 
             // validate is DAG graph
             // TODO 
@@ -147,10 +136,10 @@ namespace JiraSchedulingConnectAppService.Services
 
             var taskPertViewDTO = mapper.Map<TaskPertViewDTO>(taskCreatedEntity.Entity);
             return taskPertViewDTO;
-          
+
         }
 
-      
+
 
         public async Task<TaskPertViewDTO> GetTaskDetail(int Id)
         {
@@ -162,11 +151,12 @@ namespace JiraSchedulingConnectAppService.Services
                     t => t.Id == Id
                     && t.IsDelete == false);
 
-            if(task == null) {
+            if (task == null)
+            {
                 throw new Exception(NotFoundMessage);
             }
 
-            var taskPertViewDTO = mapper.Map<TaskPertViewDTO> (task);
+            var taskPertViewDTO = mapper.Map<TaskPertViewDTO>(task);
 
             return taskPertViewDTO;
 
@@ -191,10 +181,10 @@ namespace JiraSchedulingConnectAppService.Services
             }
 
             // Get all task in project
-            var taskList =  await db.Tasks
+            var taskList = await db.Tasks
                 .Include(tp => tp.TaskPrecedenceTasks)
                 .Include(tk => tk.TasksSkillsRequireds)
-                .Where(t =>  t.ProjectId == projectId
+                .Where(t => t.ProjectId == projectId
                 & t.IsDelete == false).ToListAsync();
 
 
@@ -208,7 +198,8 @@ namespace JiraSchedulingConnectAppService.Services
 
 
 
-        private async Task<bool> _UpsertSkillRequireds(ModelLibrary.DBModels.Task task, List<TasksSkillsRequired> tasksSkillsRequireds) {
+        private async Task<bool> _UpsertSkillRequireds(ModelLibrary.DBModels.Task task, List<TasksSkillsRequired> tasksSkillsRequireds)
+        {
             // delete skillRequiredsToRemove  
             foreach (var oldSkillRequired in task.TasksSkillsRequireds)
             {
@@ -258,7 +249,7 @@ namespace JiraSchedulingConnectAppService.Services
                     exitedPrecedenceTask.IsDelete = true;
 
                 }
-               
+
 
             }
 
@@ -298,16 +289,18 @@ namespace JiraSchedulingConnectAppService.Services
                     t => t.Id == changingTask.Id
                     && t.IsDelete == false);
 
-            if (oldTask == null) {
+            if (oldTask == null)
+            {
                 throw new Exception(NotFoundMessage);
             }
 
             // validated task name exited
             await _ValidateExitedTaskName(changingTask);
-            
+
 
             // validate exited predences in this project
-            if (changingTask.TaskPrecedenceTasks != null) {
+            if (changingTask.TaskPrecedenceTasks != null)
+            {
                 await _ValidatePrecedenceTask(changingTask);
             }
 
@@ -335,7 +328,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
             // update and insert precedence task
-            _UpsertPrecedenceTasks(oldTask, changingTask.TaskPrecedenceTasks.ToList()); 
+            _UpsertPrecedenceTasks(oldTask, changingTask.TaskPrecedenceTasks.ToList());
 
             var taskPertViewDTO = mapper.Map<TaskPertViewDTO>(changingTask);
             return taskPertViewDTO;
@@ -346,15 +339,17 @@ namespace JiraSchedulingConnectAppService.Services
 
             // mapping task precedences request -> task precedences database
             List<TaskPrecedence> precedenceTasksToAdd = new List<TaskPrecedence>();
-            foreach(var taskPrecedences in taskprecedencesTasksRequest) {
-                foreach(var precedenceId in taskPrecedences.TaskPrecedences) {
+            foreach (var taskPrecedences in taskprecedencesTasksRequest)
+            {
+                foreach (var precedenceId in taskPrecedences.TaskPrecedences)
+                {
                     precedenceTasksToAdd.Add(new TaskPrecedence()
                     {
                         TaskId = taskPrecedences.TaskId,
                         PrecedenceId = precedenceId
                     });
                 }
-                
+
             }
 
             // insert new precedence tasks
@@ -370,16 +365,15 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
-        
 
 
-        
+
+
 
 
         private async Task<List<TasksSkillsRequired>> _SaveTasksSkillsRequireds(List<TaskSkillsRequiredRequestDTO> taskSkillsRequiredsRequest)
         {
 
-           
 
 
             // mapping task precedences request -> task precedences database
@@ -474,12 +468,12 @@ namespace JiraSchedulingConnectAppService.Services
                             TaskId = precedenceTask.TaskId,
                             Messages = PredenceNotExitedMessage
                         });
- 
-                    
-            }
 
 
-              
+                }
+
+
+
             }
 
             if (PrecedenceTaskErrors.Count != 0)
@@ -517,12 +511,14 @@ namespace JiraSchedulingConnectAppService.Services
         private async Task<bool> _ValidateSkillsRequired(ModelLibrary.DBModels.Task task)
         {
             var Errors = new List<TaskInputErrorDTO>();
+
+
             //validate exited on database
             var exitedSkills = await db.Skills
                 .Where(s => s.CloudId == task.CloudId & s.IsDelete == false)
                 .ToListAsync();
 
-            
+
             foreach (var skill in task.TasksSkillsRequireds)
             {
 
@@ -548,11 +544,12 @@ namespace JiraSchedulingConnectAppService.Services
                             SkillId = skill.SkillId,
                             Level = skill.Level,
                             Messages = LevelSkillNotValidMessage
-                        }); 
+                        });
 
                 }
 
-                if (SkillErrors.Count != 0) {
+                if (SkillErrors.Count != 0)
+                {
                     Errors.Add(new TaskInputErrorDTO
                     {
                         TaskId = task.Id,
@@ -590,8 +587,8 @@ namespace JiraSchedulingConnectAppService.Services
                     {
                         TaskId = task.Id,
                         Messages = NotUniqueTaskNameMessage
-                 });
-                
+                    });
+
 
             }
 

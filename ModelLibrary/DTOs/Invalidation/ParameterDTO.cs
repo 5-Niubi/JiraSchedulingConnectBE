@@ -1,11 +1,10 @@
-﻿using System;
-namespace ModelLibrary.DTOs.Parameters
+﻿namespace ModelLibrary.DTOs.Parameters
 {
-	public class InvalidParameterDTO
-	{
-		public InvalidParameterDTO()
-		{
-		}
-	}
+    public class InvalidParameterDTO
+    {
+        public InvalidParameterDTO()
+        {
+        }
+    }
 }
 

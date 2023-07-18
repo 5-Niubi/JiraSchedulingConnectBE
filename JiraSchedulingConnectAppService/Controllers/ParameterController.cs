@@ -1,10 +1,8 @@
-﻿using System;
-using JiraSchedulingConnectAppService.Services;
-using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ModelLibrary;
 using ModelLibrary.DTOs;
-using ModelLibrary.DTOs.Projects;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers
@@ -12,15 +10,18 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    public class ParameterController: ControllerBase
-	{
+    public class ParameterController : ControllerBase
+    {
 
 
         private IParametersService parametersService;
+        private readonly ILoggerManager _Logger;
 
-        private readonly ILoggerService _Logger;
-        public ParameterController(IParametersService parametersService, ILoggerService logger )
-		{
+        public ParameterController(IParametersService parametersService, ModelLibrary.ILoggerManager logger)
+
+
+
+        {
             this.parametersService = parametersService;
             this._Logger = logger;
 
@@ -36,6 +37,8 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                this._Logger.LogDebug(ex.Message);
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -46,17 +49,21 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
+
                 var projectCreated = await parametersService.SaveParams(parameterRequest);
                 return Ok(projectCreated);
             }
-            catch(NotSuitableInputException ex) {
-                this._Logger.Log(LogLevel.Error, ex);
+            catch (NotSuitableInputException ex)
+            {
+                this._Logger.LogDebug(ex.Message);
+
                 var response = ex.Errors;
                 return BadRequest(response);
             }
             catch (Exception ex)
             {
-                this._Logger.Log(LogLevel.Critical, ex);
+                this._Logger.LogDebug(ex.Message);
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
