@@ -2,7 +2,7 @@
 
 namespace AlgorithmServiceServer.Services.Interfaces
 {
-    public interface IAccessDataToComputeService
+    public interface IAlgorithmComputeService
     {
         public Task<List<ScheduleResultSolutionDTO>> GetDataToCompute(int parameterId);
     }

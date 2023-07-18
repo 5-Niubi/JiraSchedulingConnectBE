@@ -13,12 +13,12 @@ using UtilsLibrary.Exceptions;
 
 namespace AlgorithmServiceServer.Services
 {
-    public class AccessDataToComputeService : IAccessDataToComputeService
+    public class AlgorithmComputeService : IAlgorithmComputeService
     {
         private readonly JiraDemoContext db;
         private readonly HttpContext? http;
         private readonly IMapper mapper;
-        public AccessDataToComputeService(JiraDemoContext db, IHttpContextAccessor httpAccessor, IMapper mapper)
+        public AlgorithmComputeService(JiraDemoContext db, IHttpContextAccessor httpAccessor, IMapper mapper)
         {
             this.db = db;
             http = httpAccessor.HttpContext;

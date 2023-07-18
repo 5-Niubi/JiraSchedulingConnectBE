@@ -123,11 +123,9 @@ namespace RcpspAlgorithmLibrary.GA
             }
 
             // Dau ra tu day
-            Chromosome best = population.Chromosomes[0];
-
             var outputList = new List<AlgorithmRawOutput>();
 
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var output = new AlgorithmRawOutput();
                 var individual = population.Chromosomes[i];
