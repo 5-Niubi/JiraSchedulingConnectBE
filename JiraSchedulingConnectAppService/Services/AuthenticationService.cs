@@ -12,12 +12,15 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly HttpClient client;
         private readonly JiraDemoContext db;
         private readonly IConfiguration config;
+        private readonly HttpContext? http;
 
-        public AuthenticationService(JiraDemoContext db, IConfiguration config)
+        public AuthenticationService(JiraDemoContext db, IConfiguration config,
+            IHttpContextAccessor httpAcc)
         {
             this.client = new HttpClient();
             this.db = db;
             this.config = config;
+            this.http = httpAcc.HttpContext;
         }
 
         async public Task<Object> InitAuthen(string code, string state)
@@ -147,6 +150,20 @@ namespace JiraSchedulingConnectAppService.Services
             var reponseAccessToken = JsonSerializer
                 .Deserialize<AccessiableResourceResponseDTO[]>(await response.Content.ReadAsStringAsync());
             return reponseAccessToken;
+        }
+
+        public TokenForDownloadDTO GetTokenForHandshakeDownload()
+        {
+            var tokenManager = new JWTManagerService(http, config);
+
+            var cloudId = tokenManager.GetCurrentCloudId();
+
+            var token = tokenManager.GenerateToken(cloudId);
+            var tokenDTO = new TokenForDownloadDTO()
+            {
+                token = token
+            };
+            return tokenDTO;
         }
     }
 }

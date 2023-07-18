@@ -12,7 +12,6 @@ using NLog.Web;
 using System.Text;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
-
 try
 {
 
@@ -34,7 +33,6 @@ try
         };
     });
 
-
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
@@ -47,12 +45,9 @@ try
         )
     );
 
-
-
     builder.Services.AddHttpContextAccessor();
 
     // Register services
-
     builder.Services.AddTransient<ILoggerManager, LoggerManager>();
 
     builder.Services.AddTransient<IAPIMicroserviceService, APIMicroserviceService>();
@@ -61,8 +56,6 @@ try
     builder.Services.AddTransient<ITasksService, TasksService>();
     builder.Services.AddTransient<IAlgorithmService, AlgorithmService>();
     builder.Services.AddTransient<IValidatorService, ScheduleValidatorService>();
-
-
 
     builder.Services.AddTransient<IParametersService, ParametersService>();
     builder.Services.AddTransient<IWorkforcesService, WorkforcesService>();
@@ -99,7 +92,6 @@ try
 
     // Custom Config:
     app.UseCors(opt => opt.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
-
     await app.RunAsync();
 
 }
@@ -111,8 +103,6 @@ catch (Exception ex)
 finally
 {
     NLog.LogManager.Shutdown();
-
-
 }
 
 

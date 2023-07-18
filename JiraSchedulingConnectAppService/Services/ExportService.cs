@@ -26,15 +26,18 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly string appName;
         private readonly IThreadService threadService;
         private readonly IMapper mapper;
+        private IConfiguration config;
 
         public ExportService(JiraDemoContext db, IJiraBridgeAPIService jiraAPI,
             IHttpContextAccessor httpAccessor, IConfiguration config,
-            IThreadService threadService, IMapper mapper)
+            IThreadService threadService, IMapper mapper
+            )
         {
             this.db = db;
             this.jiraAPI = jiraAPI;
             http = httpAccessor.HttpContext;
 
+            this.config = config;
             appName = config.GetValue<string>("Environment:Appname");
             this.threadService = threadService;
             this.mapper = mapper;
@@ -70,8 +73,15 @@ namespace JiraSchedulingConnectAppService.Services
             return new ThreadStartDTO(threadId);
         }
 
-        async public Task<(string, MemoryStream)> ToMSProject(int scheduleId)
+        async public Task<(string, MemoryStream)> ToMSProject(int scheduleId, string token)
         {
+            // Validate token
+            var jwtManage = new JWTManagerService(config);
+            if (!jwtManage.ValidateJwt(token))
+            {
+                throw new UnAuthorizedException();
+            };
+
             var schedule = (await db.Schedules.Where(s => s.Id == scheduleId)
                .Include(s => s.Parameter).ThenInclude(p => p.Project)
                .FirstOrDefaultAsync()) ??
