@@ -92,6 +92,9 @@ namespace JiraSchedulingConnectAppService.Services
             if (!Utils.IsUpperFirstLetter(projectRequest.Name))
                 throw new Exception(Const.MESSAGE.PROJECT_NAME_UPPER_1ST_CHAR);
 
+            projectRequest.Name = projectRequest.Name.Trim();
+            projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
+
             // Check Name project's exited
             // if not exited -> insert
             // else throw error
@@ -114,6 +117,9 @@ namespace JiraSchedulingConnectAppService.Services
 
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
+
+            projectRequest.Name = projectRequest.Name.Trim();
+            projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
 
             var projectUpdate = mapper.Map<Project>(projectRequest);
             projectUpdate.CloudId = cloudId;
