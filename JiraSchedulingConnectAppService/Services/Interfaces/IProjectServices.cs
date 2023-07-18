@@ -11,6 +11,6 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
 
         public Task<ProjectDetailDTO> CreateProject(ProjectsListCreateProject projectRequest);
         public Task<ProjectDetailDTO> UpdateProject(int projectId, ProjectsListCreateProject projectRequest);
-        public  Task<ProjectDeleteResDTO> DeleteProject(int projectId);
+        public Task<ProjectDeleteResDTO> DeleteProject(int projectId);
     }
 }

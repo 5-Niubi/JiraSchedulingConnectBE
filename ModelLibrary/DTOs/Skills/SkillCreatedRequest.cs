@@ -1,8 +1,7 @@
-﻿using System;
-namespace ModelLibrary.DTOs.Skills
+﻿namespace ModelLibrary.DTOs.Skills
 {
-	public class SkillCreatedRequest
-	{
+    public class SkillCreatedRequest
+    {
         public string? Name { get; set; }
     }
 }

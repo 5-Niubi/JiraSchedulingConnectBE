@@ -1,12 +1,10 @@
-﻿using System;
-using ModelLibrary.DTOs.PertSchedule;
-
-namespace ModelLibrary.DTOs.Invalidation
+﻿namespace ModelLibrary.DTOs.Invalidation
 {
 
 
-	public class SkillRequestErrorDTO {
-       
+    public class SkillRequestErrorDTO
+    {
+
         public int SkillId { get; set; }
         public int? Level { get; set; }
         public String? Messages { get; set; }
@@ -24,14 +22,14 @@ namespace ModelLibrary.DTOs.Invalidation
     }
 
     public class TaskInputErrorDTO
-	{
+    {
 
-		public int TaskId { get; set; }
+        public int TaskId { get; set; }
         public int? MilestoneId { get; set; }
         public List<SkillRequestErrorDTO>? SkillRequireds { get; set; }
         public List<TaskPrecedenceErrorDTO>? TaskPrecedences { get; set; }
         public String? Messages { get; set; }
-	
-	}
+
+    }
 }
 

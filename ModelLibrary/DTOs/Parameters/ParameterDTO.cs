@@ -1,8 +1,7 @@
-﻿using System;
-namespace ModelLibrary.DTOs.Parameters
+﻿namespace ModelLibrary.DTOs.Parameters
 {
-	public class ParameterDTO
-	{
+    public class ParameterDTO
+    {
         public int Id { get; set; }
         public int? ProjectId { get; set; }
         public int? Budget { get; set; }

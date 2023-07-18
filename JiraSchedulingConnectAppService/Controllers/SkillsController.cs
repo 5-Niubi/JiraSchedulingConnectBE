@@ -16,6 +16,8 @@ namespace JiraSchedulingConnectAppService.Controllers
         private readonly ISkillsService skillsService;
         public SkillsController(ISkillsService skillsService)
         {
+
+
             this.skillsService = skillsService;
         }
 
@@ -29,6 +31,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -45,6 +48,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -52,7 +56,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
 
         [HttpPut]
-        async public Task<IActionResult> UpdateNameSkill( [FromBody] SkillDTOResponse skill)
+        async public Task<IActionResult> UpdateNameSkill([FromBody] SkillDTOResponse skill)
         {
             try
             {
@@ -66,6 +70,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -81,6 +86,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

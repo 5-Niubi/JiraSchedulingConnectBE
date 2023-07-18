@@ -7,7 +7,6 @@ using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Skills;
-using ModelLibrary.DTOs.Tasks;
 
 namespace ModelLibrary.DTOs
 {
@@ -20,9 +19,24 @@ namespace ModelLibrary.DTOs
             CreateMap<ProjectsListCreateProject, Project>();
             CreateMap<Project, ProjectDetailDTO>();
             CreateMap<WorkforceDTORequest, Workforce>();
-            CreateMap<Workforce, WorkforceDTORequest>();
+
+            CreateMap<SkillRequestDTO, WorkforceSkill>();
+            CreateMap<WorkforceRequestDTO, Workforce>()
+                .ForMember(x => x.WorkforceSkills, t => t.MapFrom(t => t.Skills.Select(s => new WorkforceSkill
+                {
+                    SkillId = s.SkillId,
+                    Level = s.Level,
+
+                })))
+                .ForMember(
+                    x => x.WorkingEffort, t => t.MapFrom(t => "[" + string.Join(", ", t.WorkingEfforts) + "]")
+                );
+
+
+
             CreateMap<Workforce, WorkforceDTOResponse>()
-                .ForMember(x=>x.Skills, t => t.MapFrom(t=>t.WorkforceSkills.Select(s=> new SkillDTOResponse {
+                .ForMember(x => x.Skills, t => t.MapFrom(t => t.WorkforceSkills.Select(s => new SkillDTOResponse
+                {
                     Id = s.Skill.Id,
                     Name = s.Skill.Name,
                     CloudId = s.Skill.CloudId,
@@ -31,17 +45,20 @@ namespace ModelLibrary.DTOs
                     IsDelete = s.Skill.IsDelete,
                     DeleteDatetime = s.Skill.DeleteDatetime,
                 })));
+
+
+
             CreateMap<WorkforceDTOResponse, Workforce>();
             CreateMap<EquipmentDTOResponse, Equipment>();
             CreateMap<Equipment, EquipmentDTOResponse>();
             CreateMap<Skill, SkillDTOResponse>();
             CreateMap<SkillDTOResponse, Skill>();
             CreateMap<SkillCreatedRequest, Skill>();
-			CreateMap<Milestone, MilestoneDTO>();
-			CreateMap<MilestoneDTO, Milestone>();
-			CreateMap<MilestoneCreatedRequest, Milestone>();
+            CreateMap<Milestone, MilestoneDTO>();
+            CreateMap<MilestoneDTO, Milestone>();
+            CreateMap<MilestoneCreatedRequest, Milestone>();
 
-			CreateMap<TaskPrecedenceDTO, TaskPrecedence>();
+            CreateMap<TaskPrecedenceDTO, TaskPrecedence>();
             CreateMap<TaskPrecedence, TaskPrecedenceDTO>();
 
             CreateMap<TasksSkillsRequired, SkillRequiredDTO>();
@@ -62,7 +79,7 @@ namespace ModelLibrary.DTOs
                 .ForMember(tr => tr.Precedences, t => t.MapFrom(t => t.TaskPrecedenceTasks))
                 .ForMember(tr => tr.SkillRequireds, t => t.MapFrom(t => t.TasksSkillsRequireds));
 
-            CreateMap<TaskCreatedRequest, DBModels.Task > ()
+            CreateMap<TaskCreatedRequest, DBModels.Task>()
                 .ForMember(tr => tr.TasksSkillsRequireds, t => t.MapFrom(t => t.SkillRequireds))
                 .ForMember(tr => tr.TaskPrecedenceTasks, t => t.MapFrom(t => t.Precedences));
 
@@ -74,7 +91,7 @@ namespace ModelLibrary.DTOs
             CreateMap<DBModels.Task, TaskUpdatedRequest>()
                 .ForMember(tr => tr.SkillRequireds, t => t.MapFrom(t => t.TasksSkillsRequireds))
                 .ForMember(tr => tr.Precedences, t => t.MapFrom(t => t.TaskPrecedenceTasks));
-         
+
             CreateMap<Parameter, ParameterDTO>();
             CreateMap<ParameterDTO, Parameter>();
 
@@ -85,7 +102,7 @@ namespace ModelLibrary.DTOs
 
             CreateMap<ParameterRequestDTO, Parameter>()
                 .ForMember(tr => tr.ParameterResources, t => t.MapFrom(t => t.ParameterResources));
-        
+
             CreateMap<Schedule, ScheduleResultSolutionDTO>();
             CreateMap<Workforce, WorkforceScheduleResultDTO>();
             CreateMap<Schedule, ScheduleResultSolutionDTO>();

@@ -1,8 +1,6 @@
-﻿using System;
-using AlgorithmServiceServer.DTOs.AlgorithmController;
+﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
 using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.PertSchedule;
@@ -10,8 +8,8 @@ using RcpspAlgorithmLibrary;
 
 namespace AlgorithmServiceServer.Services.Interfaces
 {
-	public class ScheduleValidatorService: IValidatorService
-	{
+    public class ScheduleValidatorService : IValidatorService
+    {
 
 
         private readonly JiraDemoContext db;
@@ -26,7 +24,7 @@ namespace AlgorithmServiceServer.Services.Interfaces
             IHttpContextAccessor httpAccessor,
             IWorkforcesService workforceService
             )
-		{
+        {
             this.db = db;
             httpContext = httpAccessor.HttpContext;
             this.workforceService = workforceService;
@@ -75,7 +73,7 @@ namespace AlgorithmServiceServer.Services.Interfaces
 
 
             return true;
-              
+
         }
 
         public Task<bool> IsValidDAG(string projectId)
@@ -107,7 +105,7 @@ namespace AlgorithmServiceServer.Services.Interfaces
             //foreach(var taskSkillRequired in TaskSkillrequireds) {
             //    var task = taskSkillRequired.
             //}
-                //var workforces = await this.workforceService.GetAllWorkforces(workforeIds);
+            //var workforces = await this.workforceService.GetAllWorkforces(workforeIds);
 
 
             // is validate workforce adapted with task required

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ModelLibrary.DTOs.Export
+﻿namespace ModelLibrary.DTOs.Export
 {
     public class JiraAPICreateIssueTypeResDTO
     {
@@ -12,7 +6,7 @@ namespace ModelLibrary.DTOs.Export
         public string? Description { get; set; }
         public string? EntityId { get; set; }
         public int? HierarchyLevel { get; set; }
-        public string?   IconUrl { get; set; }
+        public string? IconUrl { get; set; }
         public string? Id { get; set; }
         public string? Name { get; set; }
         public ScopeDTO? Scope { get; set; }

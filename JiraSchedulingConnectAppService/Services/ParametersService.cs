@@ -1,19 +1,15 @@
-﻿using System;
-using System.Linq;
-using AutoMapper;
-using JiraSchedulingConnectAppService.Common;
+﻿using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Invalidator;
 using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.PertSchedule;
-using NuGet.Packaging.Signing;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
 {
-	public class ParametersService: IParametersService
+    public class ParametersService : IParametersService
     {
         private readonly JiraDemoContext db;
         private readonly IMapper mapper;
@@ -27,7 +23,8 @@ namespace JiraSchedulingConnectAppService.Services
             httpContext = httpContextAccessor.HttpContext;
         }
 
-        private async Task<bool> _ValidateTasksSkillRequireds(int ProjectId, List<ParameterResourceRequest> parameterResourcesRequest) {
+        private async Task<bool> _ValidateTasksSkillRequireds(int ProjectId, List<ParameterResourceRequest> parameterResourcesRequest)
+        {
             var Errors = new List<TaskSkillRequiredErrorDTO>();
 
             var WorkforcesSkills = db.Workforces
@@ -47,8 +44,9 @@ namespace JiraSchedulingConnectAppService.Services
                 var skillsRequireds = task.TasksSkillsRequireds.ToList();
                 var num_adapt = skillsRequireds.Count;
                 var isAdapted = false;
-                
-                foreach (var wfk in WorkforcesSkills) {
+
+                foreach (var wfk in WorkforcesSkills)
+                {
                     var listSkills = wfk.WorkforceSkills.ToList();
                     var num_check = 0;
                     foreach (var rqSk in skillsRequireds)
@@ -86,9 +84,10 @@ namespace JiraSchedulingConnectAppService.Services
 
             }
 
-                    
 
-            if(Errors.Count != 0) {
+
+            if (Errors.Count != 0)
+            {
                 throw new NotSuitableInputException(Errors);
             }
             return true;
@@ -100,21 +99,22 @@ namespace JiraSchedulingConnectAppService.Services
             // Is validate Resource parameter minimize adaptive Resource Task
             await _ValidateTasksSkillRequireds(parameterRequest.ProjectId, parameterRequest.ParameterResources);
             var parameterRequestDTO = mapper.Map<Parameter>(parameterRequest);
-            var paramsEntity =  await db.Parameters.AddAsync(parameterRequestDTO);
+            var paramsEntity = await db.Parameters.AddAsync(parameterRequestDTO);
             await db.SaveChangesAsync();
-            var parameterDTO  = mapper.Map<ParameterDTO>(paramsEntity.Entity);
+            var parameterDTO = mapper.Map<ParameterDTO>(paramsEntity.Entity);
             return parameterDTO;
         }
 
-        public async Task<List<WorkforceDTOResponse>> GetWorkforceParameter(string project_id) {
+        public async Task<List<WorkforceDTOResponse>> GetWorkforceParameter(string project_id)
+        {
             try
             {
                 var jwt = new JWTManagerService(httpContext);
                 var cloudId = jwt.GetCurrentCloudId();
 
                 //QUERY WORKFORCE IN PARAMETER TABLE WITH PROJECT ID
-                var parameter_resources = (project_id == null) ? null: await db.Workforces.Include(s=>s.ParameterResources).ThenInclude(s=>s.Parameter)
-                    .Include(s=>s.WorkforceSkills).ThenInclude(s=>s.Skill)
+                var parameter_resources = (project_id == null) ? null : await db.Workforces.Include(s => s.ParameterResources).ThenInclude(s => s.Parameter)
+                    .Include(s => s.WorkforceSkills).ThenInclude(s => s.Skill)
                     .Where(p => p.ParameterResources.Any(x => x.Parameter.ProjectId.ToString().Equals(project_id))).ToListAsync();
                 var queryDTOResponse = mapper.Map<List<WorkforceDTOResponse>>(parameter_resources);
                 return queryDTOResponse;

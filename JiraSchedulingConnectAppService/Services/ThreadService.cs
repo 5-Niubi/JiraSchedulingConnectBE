@@ -2,7 +2,6 @@
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using ModelLibrary.DTOs.Thread;
 using UtilsLibrary.Exceptions;
-using static System.Net.WebRequestMethods;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -32,14 +31,14 @@ namespace JiraSchedulingConnectAppService.Services
             string? threadId;
             do
             {
-              threadId =  Utils.RandomString(Const.THREAD_ID_LENGTH);
-            }while(threadDict.ContainsKey(threadId));
+                threadId = Utils.RandomString(Const.THREAD_ID_LENGTH);
+            } while (threadDict.ContainsKey(threadId));
             threadDict.Add(threadId, new ThreadModel(threadId));
             return threadId;
         }
 
         public string StartThread(string threadId, ThreadStart threadStart)
-        {       
+        {
             Thread thread = new Thread(threadStart);
             thread.Start();
             return threadId;

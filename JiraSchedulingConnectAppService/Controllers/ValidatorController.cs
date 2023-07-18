@@ -1,25 +1,21 @@
-﻿using System;
-using JiraSchedulingConnectAppService.Services;
-using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
-using ModelLibrary.DTOs.PertSchedule;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    public class ValidatorController: ControllerBase
-	{
+    public class ValidatorController : ControllerBase
+    {
         private IValidatorService ValidatorService;
         public ValidatorController(IValidatorService validatorService)
 
         {
             this.ValidatorService = validatorService;
         }
-
 
         [HttpGet]
         public async Task<IActionResult> IsDAG(int projectId)

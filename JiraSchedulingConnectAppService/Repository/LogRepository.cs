@@ -1,7 +1,7 @@
-﻿using System.Data;
-using System.Data.SqlClient;
-using JiraSchedulingConnectAppService.Repository.Interfaces;
+﻿using JiraSchedulingConnectAppService.Repository.Interfaces;
 using ModelLibrary.DTOs;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace JiraSchedulingConnectAppService.Repository
 {

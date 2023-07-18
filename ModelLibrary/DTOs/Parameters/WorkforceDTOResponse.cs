@@ -1,11 +1,9 @@
-﻿using System;
-using ModelLibrary.DBModels;
-using ModelLibrary.DTOs.Skills;
+﻿using ModelLibrary.DTOs.Skills;
 
 namespace ModelLibrary.DTOs.Parameters
 {
-	public class WorkforceDTOResponse
-	{
+    public class WorkforceDTOResponse
+    {
         public int Id { get; set; }
         public string? Email { get; set; }
         public string? Name { get; set; }

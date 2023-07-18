@@ -1,9 +1,8 @@
 ﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ModelLibrary;
 using ModelLibrary.DTOs;
-using ModelLibrary.DTOs.PertSchedule;
-using System.Dynamic;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers
@@ -14,9 +13,11 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class AlgorithmController : ControllerBase
     {
         private readonly IAlgorithmService algorithmService;
+        private readonly ILoggerManager _Logger;
 
-        public AlgorithmController(IAlgorithmService algorithmService)
+        public AlgorithmController(IAlgorithmService algorithmService, ILoggerManager logger)
         {
+            this._Logger = logger;
             this.algorithmService = algorithmService;
         }
 
@@ -24,7 +25,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         public async Task<IActionResult> ExecuteAlgorithm(int parameterId)
         {
             try
-            {              
+            {
                 return Ok(algorithmService.ExecuteAlgorithm(parameterId));
             }
             catch (MicroServiceAPIException ex)
@@ -35,6 +36,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -50,12 +52,13 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
         }
 
 
-       
+
     }
 }
