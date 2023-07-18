@@ -52,7 +52,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
 
         [HttpPut]
-        async public Task<IActionResult> UpdateNameSkill( [FromBody] SkillDTO skill)
+        async public Task<IActionResult> UpdateNameSkill( [FromBody] SkillDTOResponse skill)
         {
             try
             {
