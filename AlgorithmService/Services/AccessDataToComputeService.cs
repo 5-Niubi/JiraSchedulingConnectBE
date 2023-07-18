@@ -47,29 +47,12 @@ namespace AlgorithmServiceServer.Services
 
             var skillFromDB = await db.Skills.Where(s => s.CloudId == cloudId).ToListAsync();
 
-//<<<<<<< HEAD
-<<<<<<< HEAD
-//            inputTo.StartDate = (DateTime)projectFromDB.StartDate;
-//            //inputTo.Deadline = (int)projectFromDB.Deadline.Value
-//            //    .Subtract(projectFromDB.StartDate.Value).TotalDays;
-//            inputTo.Deadline = 1000;
-//=======
-=======
->>>>>>> 8882709 (fix conflict)
+
             inputTo.StartDate = (DateTime)parameterEntity.StartDate;
             inputTo.Deadline = (int)Utils.GetDaysBeetween2Dates
                 (parameterEntity.StartDate, parameterEntity.Deadline);
 
-<<<<<<< HEAD
-//>>>>>>> 41b5892 (Get TaskCount in each project to ProjectList)
-=======
-//=======
-//            inputTo.StartDate = (DateTime)projectFromDB.StartDate;
-//            //inputTo.Deadline = (int)projectFromDB.Deadline.Value
-//            //    .Subtract(projectFromDB.StartDate.Value).TotalDays;
-//            inputTo.Deadline = 1000;
-//>>>>>>> 89e8213 (fix create workforce service)
->>>>>>> 8882709 (fix conflict)
+
             inputTo.Budget = (int)parameterEntity.Budget;
             inputTo.WorkerList = workerFromDB;
 
