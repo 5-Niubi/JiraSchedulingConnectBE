@@ -58,7 +58,7 @@ namespace JiraSchedulingConnectAppService.Services
                         {
                             ThreadId = thread.ThreadId,
                             Status = thread.Status,
-                            Result = thread.Result
+                            Result = thread.Result,
                         };
                     case Const.THREAD_STATUS.ERROR:
                         threadDict.Remove(threadId);
@@ -66,13 +66,14 @@ namespace JiraSchedulingConnectAppService.Services
                         {
                             ThreadId = thread.ThreadId,
                             Status = thread.Status,
-                            Result = thread.Result
+                            Result = thread.Result,
                         };
                     default:
                         return new ThreadResultDTO()
                         {
                             ThreadId = threadId,
                             Status = thread.Status,
+                            Progress = thread.Progress
                         };
                 }
 
