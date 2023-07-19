@@ -23,21 +23,18 @@ namespace JiraSchedulingConnectAppService.Controllers
             this.milestonesService = milestonesService;
         }
 
-        [HttpGet]
-        async public Task<IActionResult> GetMilestones(int projectId)
-        {
-            try
-            {
 
-                _Logger.LogWarning("ahihi");
-                this._Logger.LogError("HELLO WORLD");
+		[HttpGet]
+		async public Task<IActionResult> GetMilestones(int projectId )
+		{
+			try
+			{
                 var response = await milestonesService.GetMilestones(projectId);
                 return Ok(response);
             }
             catch (Exception ex)
             {
                 this._Logger.LogError(ex.Message);
-
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
