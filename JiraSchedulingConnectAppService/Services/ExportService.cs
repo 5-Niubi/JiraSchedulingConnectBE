@@ -11,7 +11,9 @@ using net.sf.mpxj;
 using net.sf.mpxj.MpxjUtilities;
 using net.sf.mpxj.writer;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Dynamic;
+using System.Threading;
 using UtilsLibrary.Exceptions;
 using Duration = net.sf.mpxj.Duration;
 using Task = System.Threading.Tasks.Task;
@@ -62,13 +64,22 @@ namespace JiraSchedulingConnectAppService.Services
             });
             var workforceResultDict = mapper.Map<Dictionary<int, WorkforceScheduleResultDTO>>(worforceDiction);
 
+            var workforceEmailDiction = new Dictionary<string, WorkforceScheduleResultDTO>();
+            foreach (var wf in workforceResultDict.Values)
+            {
+                if (!workforceEmailDiction.ContainsKey(wf.email))
+                    workforceEmailDiction.Add(wf.email, wf);
+            }
+
             var cloudId = new JWTManagerService(http).GetCurrentCloudId();
             var accountId = db.AtlassianTokens.Where(tk => tk.CloudId == cloudId)
                                     .First().AccountInstalledId;
 
             string threadId = ThreadService.CreateThreadId();
             threadId = threadService.StartThread(threadId,
-                async () => await ProcessToJiraThread(threadId, schedule, accountId, workforceResultDict));
+                async () => await ProcessToJiraThread(
+                    threadId, schedule, accountId, workforceResultDict, workforceEmailDiction
+                    ));
 
             return new ThreadStartDTO(threadId);
         }
@@ -104,7 +115,8 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
         private async Task ProcessToJiraThread(string threadId, Schedule schedule, string? accountId,
-            Dictionary<int, WorkforceScheduleResultDTO> workforceResultDict)
+            Dictionary<int, WorkforceScheduleResultDTO> workforceResultDict,
+            Dictionary<string, WorkforceScheduleResultDTO> workforceEmailDict)
         {
             try
             {
@@ -112,10 +124,19 @@ namespace JiraSchedulingConnectAppService.Services
                 try
                 {
                     var tasks = JsonConvert.DeserializeObject<List<TaskScheduleResultDTO>>(schedule.Tasks);
+                    thread.Progress = "Prepare Jira screen fields";
+                    var prepareResult = await JiraPrepareForSync(schedule.Parameter.Project, accountId, thread);
 
-                    var prepareResult = await JiraPrepareForSync(schedule.Parameter.Project, accountId);
+                    thread.Progress = "Create worker selection";
                     var workerCreatedDict = await JiraCreateWorkForce(tasks, prepareResult.FieldDict["Worker"], workforceResultDict);
+
+                    thread.Progress = "Finding assignee";
+                    var workerEmailDict = await JiraGetExistUserIdByEmail(workforceEmailDict);
+
+                    thread.Progress = "Importing tasks";
                     var bulkTasks = await JiraCreateBulkTask(tasks, workerCreatedDict, prepareResult);
+
+                    thread.Progress = "Linking tasks";
                     await JiraCreateIssueLink(tasks, bulkTasks);
 
                     // Update the thread status and result when finished
@@ -175,13 +196,30 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
+        private async Task<Dictionary<string, WorkforceScheduleResultDTO>> JiraGetExistUserIdByEmail(Dictionary<string, WorkforceScheduleResultDTO> workerEmailDict)
+        {
+            HttpResponseMessage respone;
+            respone = await jiraAPI.Get($"rest/api/3/users/search");
+            var rawUserInfos = await respone.Content.ReadAsStringAsync();
+            var userinfos = JsonConvert.DeserializeObject<List<JiraAPIGetUsersResDTO.Root>>(rawUserInfos);
+            foreach (var userinfo in userinfos)
+            {
+                string? emailAddr = userinfo.emailAddress;
+                if (emailAddr != null && workerEmailDict.ContainsKey(emailAddr))
+                {
+                    workerEmailDict[emailAddr].accountId = userinfo.accountId;
+                }
+            }
+
+            return workerEmailDict;
+        }
+
         private async Task<Dictionary<int, WorkforceScheduleResultDTO>> JiraCreateWorkForce(List<TaskScheduleResultDTO> tasks, string? fieldId, Dictionary<int, WorkforceScheduleResultDTO> workerDict)
         {
             //var workderDict = new Dictionary<int, WorkforceScheduleResultDTO>();
             //tasks.ForEach(t => { workderDict.TryAdd(t.workforce.id, t.workforce); });
 
             HttpResponseMessage respone;
-
             respone = await jiraAPI.Get($"rest/api/3/field/{fieldId}/context");
             var pagingContextJson = await respone.Content.ReadFromJsonAsync<JiraAPIResponsePagingDTO<JiraAPIGetIssueCustomFieldContextResDTO>>();
             var contextFound = pagingContextJson.Values.Where(e => e.Name == "Default Configuration Scheme for Worker").FirstOrDefault();
@@ -235,12 +273,16 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
         private async Task<JiraAPIPrepareResultDTO> JiraPrepareForSync(
-            ModelLibrary.DBModels.Project project, string accountId)
+            ModelLibrary.DBModels.Project project, string accountId, ThreadModel thread)
         {
             /* TODO: - Tối ưu việc config field
                      - Tối ưu việc quản lý các scheme
              */
+
+            thread.Progress = "Creating custom field";
             var fieldDict = await JiraCreateCustomField();
+
+            thread.Progress = "Creating custom screen";
             var screenId = await JiraCreateScreen();
 
             var screenTabId = await JiraCreateScreenTab(screenId);
@@ -252,6 +294,7 @@ namespace JiraSchedulingConnectAppService.Services
             var issueTypeScreenSchemeId = await JiraCreateIssueTypeScreenScheme(issueTypeId, screenSchemeId);
             var issueTypeSchemeId = await JiraCreateIssueTypeScheme(issueTypeId);
 
+            thread.Progress = "Creating Project";
             (var projectId, var projectName) = await JiraCreateProject(project, accountId);
 
             await JiraAssignIssueTypeScreenSchemeWithProject(issueTypeScreenSchemeId, projectId);
@@ -368,17 +411,17 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async Task JiraAddFieldIntoScreen(int screenId, int? tabId, Dictionary<string, string?> fieldDict)
         {
-            try
-            {
 
-                foreach (var value in fieldDict.Values)
+            foreach (var value in fieldDict.Values)
+            {
+                dynamic body = new ExpandoObject();
+                body.fieldId = value;
+                try
                 {
-                    dynamic body = new ExpandoObject();
-                    body.fieldId = value;
                     await jiraAPI.Post($"rest/api/3/screens/{screenId}/tabs/{tabId}/fields", body);
                 }
+                catch (JiraAPIException ex) { }
             }
-            catch (JiraAPIException ex) { }
 
         }
 
@@ -420,6 +463,10 @@ namespace JiraSchedulingConnectAppService.Services
 
             // Linked Issue: Linked
             issType = result.Where(r => r.Name == "Linked Issues").First();
+            fieldDict.Add(issType.Name, issType.Id);
+
+            // Assignee: Assignee
+            issType = result.Where(r => r.Name == "Assignee").First();
             fieldDict.Add(issType.Name, issType.Id);
 
             // Worker: Select
@@ -533,7 +580,11 @@ namespace JiraSchedulingConnectAppService.Services
                 // each issueUpdate is each task
                 issueUpdate = new ExpandoObject();
                 dynamic fields = new ExpandoObject();
-
+                if (workderDict.ContainsKey(task.workforce.id) && workderDict[task.workforce.id].accountId != null)
+                {
+                    fields.assignee = new ExpandoObject();
+                    fields.assignee.id = workderDict[task.workforce.id].accountId;
+                }
                 Utils.AddPropertyToExpando(fields, prepare.FieldDict["Target start"], task.startDate.Value.ToString("yyyy-MM-dd"));
                 Utils.AddPropertyToExpando(fields, prepare.FieldDict["Target end"], task.endDate.Value.ToString("yyyy-MM-dd"));
 
@@ -630,7 +681,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<string> JiraRequest(dynamic dynamic)
         {
-            string url = "rest/api/3/issuetypescreenscheme?queryString=Default Issue Type ";
+            string url = "rest/api/3/field";
             string method = "GET";
             dynamic body = new ExpandoObject();
 
