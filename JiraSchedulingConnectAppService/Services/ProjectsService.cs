@@ -34,13 +34,6 @@ namespace JiraSchedulingConnectAppService.Services
                 && (projectName.Equals(string.Empty) || e.Name.Contains(projectName))
                 ).Include(p => p.Tasks)
                 .OrderByDescending(e => e.Id);
-
-            ///////////////////////////////////////
-            //QUERY LIST PROJECT WITHOUT CLOUD_ID (TEMPORARY FIX)
-            //var query = db.Projects.Where(e => (projectName.Equals(string.Empty) || e.Name.Contains(projectName)))
-            //    .OrderByDescending(e => e.Id);
-            ///////////////////////////////////////
-            ///
             var projectsResult = await query.ToListAsync();
             var projectDTO = mapper.Map<List<ProjectListHomePageDTO>>(projectsResult);
 
@@ -96,8 +89,11 @@ namespace JiraSchedulingConnectAppService.Services
             {
                 throw new Exception(Const.MESSAGE.PROJECT_NAME_EMPTY);
             }
-            if (Utils.IsUpperFirstLetter(projectRequest.Name))
+            if (!Utils.IsUpperFirstLetter(projectRequest.Name))
                 throw new Exception(Const.MESSAGE.PROJECT_NAME_UPPER_1ST_CHAR);
+
+            projectRequest.Name = projectRequest.Name.Trim();
+            projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
 
             // Check Name project's exited
             // if not exited -> insert
@@ -121,6 +117,9 @@ namespace JiraSchedulingConnectAppService.Services
 
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
+
+            projectRequest.Name = projectRequest.Name.Trim();
+            projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
 
             var projectUpdate = mapper.Map<Project>(projectRequest);
             projectUpdate.CloudId = cloudId;

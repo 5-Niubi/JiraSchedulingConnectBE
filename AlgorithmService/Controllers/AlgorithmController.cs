@@ -11,8 +11,8 @@ namespace AlgorithmServiceServer.Controllers
     [Authorize]
     public class AlgorithmController : ControllerBase
     {
-        private readonly IAccessDataToComputeService accessData;
-        public AlgorithmController(IAccessDataToComputeService accessData)
+        private readonly IAlgorithmComputeService accessData;
+        public AlgorithmController(IAlgorithmComputeService accessData)
         {
             this.accessData = accessData;
         }
