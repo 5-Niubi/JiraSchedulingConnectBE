@@ -1,7 +1,4 @@
-﻿using System;
-using ModelLibrary.DTOs.Skills;
-
-namespace ModelLibrary.DTOs.PertSchedule
+﻿namespace ModelLibrary.DTOs.PertSchedule
 {
     public class TaskCreatedRequest
     {

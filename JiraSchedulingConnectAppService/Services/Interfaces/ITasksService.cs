@@ -1,6 +1,4 @@
-﻿using ModelLibrary.DBModels;
-using ModelLibrary.DTOs.PertSchedule;
-using ModelLibrary.DTOs.Tasks;
+﻿using ModelLibrary.DTOs.PertSchedule;
 
 namespace JiraSchedulingConnectAppService.Services.Interfaces
 {
@@ -9,11 +7,13 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
 
         public Task<TaskPertViewDTO> CreateTask(TaskCreatedRequest taskRequest);
         public Task<TaskPertViewDTO> UpdateTask(TaskUpdatedRequest taskRequest);
-        //public Task<bool> DeleteTask(int Id);
+
         public Task<TaskPertViewDTO> GetTaskDetail(int Id);
         public Task<List<TaskPertViewDTO>> GetTasksPertChart(int projectId);
+        public Task<bool> SaveTasks(TasksSaveRequest taskRequest);
 
-        public Task<List<TaskPrecedenceDTO>> SaveTasksPrecedencesTasks(TasksPrecedencesSaveRequest taskRequest);
+
+        //public Task<List<TaskPrecedenceDTO>> SaveTasksPrecedencesTasks(TasksPrecedencesSaveRequest taskRequest);
 
 
     }

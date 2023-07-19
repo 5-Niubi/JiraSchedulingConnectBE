@@ -43,6 +43,9 @@ namespace RcpspAlgorithmLibrary
             this.SkillList = inputToOR.SkillList;
             this.FunctionList = inputToOR.FunctionList;
             this.Deadline = inputToOR.Deadline;
+            this.Budget = inputToOR.Budget;
+            StartDate = inputToOR.StartDate;
+
         }
 
         public OutputToORDTO ToOR()
@@ -69,7 +72,7 @@ namespace RcpspAlgorithmLibrary
                 for (int j = 0; j < TaskList.Count; j++)
                 {
                     taskAdjacency[i, j] = (TaskList[i]
-                        .TaskPrecedenceTasks.Where(e => e.TaskId == TaskList[j].Id)
+                        .TaskPrecedenceTasks.Where(e => e.PrecedenceId == TaskList[j].Id) //TODO: re-confirm what vector embedding in taskAdjacency
                         .Count() > 0) ? 1 : 0;
                 }
 
@@ -172,10 +175,12 @@ namespace RcpspAlgorithmLibrary
             {
                 var task = new TaskScheduleResultDTO();
                 task.id = TaskList[i].Id;
+                task.name = TaskList[i].Name;
+                task.duration = (int?)TaskList[i].Duration;
                 task.workforce = mapper.Map<WorkforceScheduleResultDTO>(WorkerList[taskWithWorker[i]]);
                 task.startDate = StartDate.AddDays(taskStart[i]);
                 task.endDate = StartDate.AddDays(taskEnd[i]);
-                foreach(var taskPre in TaskList[i].TaskPrecedenceTasks)
+                foreach (var taskPre in TaskList[i].TaskPrecedenceTasks)
                 {
                     task.taskIdPrecedences.Add(taskPre.PrecedenceId);
                 }

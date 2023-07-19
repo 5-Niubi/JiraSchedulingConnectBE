@@ -5,7 +5,11 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
 {
     public interface IAlgorithmService
     {
-        public ThreadStartDTO TestConverter(int parameterId);
+        public ThreadStartDTO ExecuteAlgorithm(int parameterId);
         public Task<EstimatedResultDTO> EstimateWorkforce(int projectId);
+
+
+
+
     }
 }

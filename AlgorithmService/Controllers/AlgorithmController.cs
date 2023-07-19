@@ -5,14 +5,14 @@ using ModelLibrary.DTOs;
 using UtilsLibrary.Exceptions;
 
 namespace AlgorithmServiceServer.Controllers
-{   
+{
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
     public class AlgorithmController : ControllerBase
     {
-        private readonly IAccessDataToComputeService accessData;
-        public AlgorithmController(IAccessDataToComputeService accessData)
+        private readonly IAlgorithmComputeService accessData;
+        public AlgorithmController(IAlgorithmComputeService accessData)
         {
             this.accessData = accessData;
         }
@@ -24,7 +24,7 @@ namespace AlgorithmServiceServer.Controllers
         }
 
         [HttpGet]
-        async public Task<IActionResult> GetTestConverter(int parameterId)
+        async public Task<IActionResult> ExecuteAlgorithm(int parameterId)
         {
             try
             {

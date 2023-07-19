@@ -1,5 +1,6 @@
 ﻿using JiraSchedulingConnectAppService.Common;
 using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
@@ -17,18 +18,20 @@ namespace JiraSchedulingConnectAppService.Services
 
         private string cloudId = "";
 
-        public JiraBridgeAPIService(JiraDemoContext db, IHttpContextAccessor httpAccess,
+        public JiraBridgeAPIService(IHttpContextAccessor httpAccess,
             IAuthenticationService authenticationService)
         {
             this.client = new HttpClient();
+            client.Timeout = Timeout.InfiniteTimeSpan;
+
             this.authenticationService = authenticationService;
-            this.db = db;
+            this.db = new JiraDemoContext();
             this.http = httpAccess.HttpContext;
 
             var jwt = new JWTManagerService(http);
             cloudId = jwt.GetCurrentCloudId();
 
-            SetBaseURL();
+            if (cloudId != null) SetBaseURL();
         }
 
         private void SetBaseURL()
@@ -40,7 +43,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async System.Threading.Tasks.Task GetNewAccessTokenFromRefreshToken(string? cloudId)
         {
-            var tokenFromDB = db.AtlassianTokens.FirstOrDefault(e => e.CloudId == cloudId);
+            var tokenFromDB = await db.AtlassianTokens.FirstOrDefaultAsync(e => e.CloudId == cloudId);
             if (tokenFromDB == null)
             {
                 //TODO: Handle token null from db;
@@ -64,7 +67,6 @@ namespace JiraSchedulingConnectAppService.Services
         {
             await GetNewAccessTokenFromRefreshToken(cloudId);
             var respone = await client.GetAsync(url);
-            respone.EnsureSuccessStatusCode();
             if (!respone.IsSuccessStatusCode)
             {
                 throw new JiraAPIException(await respone.Content.ReadAsStringAsync(),

@@ -1,8 +1,8 @@
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Parameters;
+using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -14,6 +14,8 @@ namespace JiraSchedulingConnectAppService.Controllers
         private IWorkforcesService workforcesService;
         public WorkforcesController(IWorkforcesService workforcesService)
         {
+
+
             this.workforcesService = workforcesService;
         }
 
@@ -22,25 +24,38 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                var response = await workforcesService.GetAllWorkforces();
+                var response = await workforcesService.GetAllWorkforces(null);
                 return Ok(response);
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateWorkforce([FromBody] WorkforceDTORequest workforce)
+        public async Task<IActionResult> CreateWorkforce([FromBody] WorkforceRequestDTO workforce)
         {
             try
             {
                 return Ok(await workforcesService.CreateWorkforce(workforce));
             }
+
+            catch (NotSuitableInputException ex)
+            {
+
+                var response = ex.Errors;
+                return BadRequest(response);
+
+
+            }
+
+
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -56,37 +71,42 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteWorkforce(string id) {
+        public async Task<IActionResult> DeleteWorkforce(string id)
+        {
             try
             {
                 var w = workforcesService.GetWorkforceById(id);
-                await workforcesService.DeleteWorkforce(id);
-                return Ok("Delete success");
+                var response = await workforcesService.DeleteWorkforce(id);
+                return Ok(response);
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateWorkforce(string id, [FromBody] WorkforceDTORequest workforce)
+        public async Task<IActionResult> UpdateWorkforce([FromBody] WorkforceDTORequest workforce)
         {
             try
             {
-                var w1 = workforcesService.GetWorkforceById(id);
-                await workforcesService.UpdateWorkforce(workforce);
-                return Ok("Update success");
+                var w1 = workforcesService.GetWorkforceById(workforce.Id.ToString());
+                var response = await workforcesService.UpdateWorkforce(workforce);
+                return Ok(response);
             }
+
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

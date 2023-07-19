@@ -1,5 +1,4 @@
-﻿using System;
-namespace ModelLibrary.DTOs.PertSchedule
+﻿namespace ModelLibrary.DTOs.PertSchedule
 {
     public class TaskUpdatedRequest
     {

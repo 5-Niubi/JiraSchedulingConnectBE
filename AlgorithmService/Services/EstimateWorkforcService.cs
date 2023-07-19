@@ -52,7 +52,6 @@ namespace AlgorithmServiceServer.Services
 
             //var cloudId = new JWTManagerService(http).GetCurrentCloudId();
             var cloudId = "ea48ddc7-ed56-4d60-9b55-02667724849d"; // DEBUG
-            var inputTo = new InputToORDTO();
 
             var projectFromDB = await db.Projects
                 .Where(p => p.CloudId == cloudId)

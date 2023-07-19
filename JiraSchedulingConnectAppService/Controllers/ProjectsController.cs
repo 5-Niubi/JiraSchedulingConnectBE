@@ -14,7 +14,9 @@ namespace JiraSchedulingConnectAppService.Controllers
         private IProjectServices projectsService;
         public ProjectsController(IProjectServices projectsService)
         {
+
             this.projectsService = projectsService;
+
         }
 
         [HttpGet]
@@ -25,8 +27,10 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var response = await projectsService.GetAllProjectsPaging(page, projectName);
                 return Ok(response);
             }
+
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -42,6 +46,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -57,6 +62,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -72,11 +78,40 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
         }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateProject(int projectId, [FromBody] ProjectsListCreateProject projectRequest)
+        {
+            try
+            {
+                var projectUpdated = await projectsService.UpdateProject(projectId, projectRequest);
+                return Ok(projectUpdated);
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
 
+        [HttpDelete]
+        public async Task<IActionResult> DeleteProject(int projectId)
+        {
+            try
+            {
+                var idProjectDeleted = await projectsService.DeleteProject(projectId);
+                return Ok(idProjectDeleted);
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
     }
 }

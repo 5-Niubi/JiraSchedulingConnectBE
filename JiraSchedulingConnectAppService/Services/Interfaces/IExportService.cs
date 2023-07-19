@@ -1,7 +1,11 @@
-﻿namespace JiraSchedulingConnectAppService.Services.Interfaces
+﻿using ModelLibrary.DTOs.Thread;
+
+namespace JiraSchedulingConnectAppService.Services.Interfaces
 {
     public interface IExportService
     {
-        public Task<string> ToJira(int scheduleId, string projectJiraId);
+        public Task<ThreadStartDTO> ToJira(int scheduleId);
+        public Task<(string, MemoryStream)> ToMSProject(int scheduleId, string? token);
+        public Task<string> JiraRequest(dynamic dynamic);
     }
 }

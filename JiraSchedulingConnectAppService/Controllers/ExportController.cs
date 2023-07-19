@@ -8,27 +8,58 @@ namespace JiraSchedulingConnectAppService.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
     public class ExportController : ControllerBase
     {
         private readonly IExportService exportService;
+
         public ExportController(IExportService exportService)
+
         {
             this.exportService = exportService;
         }
+        [Authorize]
         [HttpGet]
-        async public Task<IActionResult> ExportToJira(int scheduleId, string projectJiraId)
+        async public Task<IActionResult> ExportToJira(int scheduleId)
         {
             try
             {
-                var response = await exportService.ToJira(scheduleId, projectJiraId);
+                var response = await exportService.ToJira(scheduleId);
                 return Ok(response);
             }
-            catch (JiraAPIException ex)
+
+            catch (Exception ex)
             {
                 var response = new ResponseMessageDTO(ex.Message);
-                response.Data = ex.jiraResponse;
                 return BadRequest(response);
+            }
+        }
+
+        [HttpGet]
+        async public Task<IActionResult> ExportToMicrosoftProject(int scheduleId, string token)
+        {
+            try
+            {
+                (var fileName, var responseStream) = await exportService.ToMSProject(scheduleId, token);
+                return File(responseStream, "application/octet-stream", fileName);
+            }
+            catch (UnAuthorizedException ex)
+            {
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+        [HttpGet]
+        async public Task<IActionResult> CreateJiraRequest()
+        {
+            try
+            {
+               var response = await exportService.JiraRequest(null);
+                return Ok(response);
             }
             catch (Exception ex)
             {

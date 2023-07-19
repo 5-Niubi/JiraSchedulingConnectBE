@@ -40,7 +40,7 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 builder.Services.AddHttpContextAccessor();
 
 // Register services
-builder.Services.AddTransient<IAccessDataToComputeService, AccessDataToComputeService>();
+builder.Services.AddTransient<IAlgorithmComputeService, AlgorithmComputeService>();
 builder.Services.AddTransient<IEstimateWorkforceService, EstimateWorkforcService>();
 
 var app = builder.Build();

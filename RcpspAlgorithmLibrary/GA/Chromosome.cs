@@ -82,6 +82,7 @@
                     }
                 }
             }
+
             for (int t = 0; t < data.NumOfTasks; ++t)
             {
                 if (dependencies[t] == 0) noPredecessors.Add(t);
@@ -111,14 +112,15 @@
                 {
                     if (workerTask[i] == wt)
                     {
-                        similarityAssign = Math.Max(similarityAssign, data.TaskSimilarity[i, np]);
+                        similarityAssign = MathF.Max((float)similarityAssign, (float)data.TaskSimilarity[i, np]);
                     }
                 }
                 if (similarityAssign > 0.75) actualEffort *= 0.7;
                 else if (similarityAssign > 0.5) actualEffort *= 0.8;
                 else if (similarityAssign > 0.25) actualEffort *= 0.9;
-                while (end <= data.Deadline)
+                while (end < data.Deadline)
                 {
+
                     actualEffort -= (data.WorkerEffort[wt, end]);
                     end++;
                     if (actualEffort <= 0) break;

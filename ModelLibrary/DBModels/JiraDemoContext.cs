@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace ModelLibrary.DBModels
 {
@@ -21,6 +18,7 @@ namespace ModelLibrary.DBModels
         public virtual DbSet<Equipment> Equipments { get; set; } = null!;
         public virtual DbSet<EquipmentsFunction> EquipmentsFunctions { get; set; } = null!;
         public virtual DbSet<Function> Functions { get; set; } = null!;
+        public virtual DbSet<Log> Logs { get; set; } = null!;
         public virtual DbSet<Milestone> Milestones { get; set; } = null!;
         public virtual DbSet<Parameter> Parameters { get; set; } = null!;
         public virtual DbSet<ParameterResource> ParameterResources { get; set; } = null!;
@@ -64,6 +62,7 @@ namespace ModelLibrary.DBModels
             modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
+
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
@@ -245,6 +244,11 @@ namespace ModelLibrary.DBModels
                     .HasColumnName("name");
             });
 
+            modelBuilder.Entity<Log>(entity =>
+            {
+                entity.HasNoKey();
+            });
+
             modelBuilder.Entity<Milestone>(entity =>
             {
                 entity.ToTable("milestones");
@@ -289,6 +293,10 @@ namespace ModelLibrary.DBModels
                     .HasColumnName("create_datetime")
                     .HasDefaultValueSql("(getdate())");
 
+                entity.Property(e => e.Deadline)
+                    .HasColumnType("datetime")
+                    .HasColumnName("deadline");
+
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
@@ -304,6 +312,10 @@ namespace ModelLibrary.DBModels
                 entity.Property(e => e.ObjectiveTime).HasColumnName("objective_time");
 
                 entity.Property(e => e.ProjectId).HasColumnName("project_id");
+
+                entity.Property(e => e.StartDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("start_date");
 
                 entity.HasOne(d => d.Project)
                     .WithMany(p => p.Parameters)

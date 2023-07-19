@@ -20,6 +20,7 @@ namespace JiraSchedulingConnectAppService.Services
         {
             http = httpAccessor.HttpContext;
             client = new HttpClient();
+            client.Timeout = Timeout.InfiniteTimeSpan;
 
             var bearer = http.Request.Headers["Authorization"];
             bearer = bearer.IsNullOrEmpty() ? "Bearer " : bearer;

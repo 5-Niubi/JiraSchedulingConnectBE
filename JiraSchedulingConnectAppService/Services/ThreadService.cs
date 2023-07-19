@@ -2,24 +2,23 @@
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using ModelLibrary.DTOs.Thread;
 using UtilsLibrary.Exceptions;
-using static System.Net.WebRequestMethods;
 
 namespace JiraSchedulingConnectAppService.Services
 {
     public class ThreadService : IThreadService
     {
-        private static Dictionary<int, ThreadModel> _threads = new Dictionary<int, ThreadModel>();
-        private static int _nextThreadId = Const.THREAD_ID_COUNT_START;
+        // Thread with random string key
+        private static Dictionary<string, ThreadModel> threadDict = new Dictionary<string, ThreadModel>();
 
         public ThreadService()
         {
         }
 
-        public ThreadModel GetThreadModel(int threadId)
+        public ThreadModel GetThreadModel(string threadId)
         {
-            if (_threads.ContainsKey(threadId))
+            if (threadDict.ContainsKey(threadId))
             {
-                return _threads[threadId];
+                return threadDict[threadId];
             }
             else
             {
@@ -27,45 +26,54 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        public int StartThread(ThreadStart threadStart)
+        public static string CreateThreadId()
         {
-
-            int threadId = _nextThreadId++;
-            Thread thread = new Thread(threadStart);
-            thread.Start();
-
-            _threads[threadId] = new ThreadModel
+            string? threadId;
+            do
             {
-                ThreadId = threadId,
-                Status = Const.THREAD_STATUS.RUNNING
-            };
-
+                threadId = Utils.RandomString(Const.THREAD_ID_LENGTH);
+            } while (threadDict.ContainsKey(threadId));
+            threadDict.Add(threadId, new ThreadModel(threadId));
             return threadId;
         }
 
-        public ThreadResultDTO GetThreadResult(int threadId)
+        public string StartThread(string threadId, ThreadStart threadStart)
         {
-            if (_threads.ContainsKey(threadId))
+            Thread thread = new Thread(threadStart);
+            thread.Start();
+            return threadId;
+        }
+
+        public ThreadResultDTO GetThreadResult(string threadId)
+        {
+            if (threadDict.ContainsKey(threadId))
             {
-                var thread = _threads[threadId];
+                var thread = threadDict[threadId];
+                // Clean a thread data if it finish and allow read onetime
                 switch (thread.Status)
                 {
                     case Const.THREAD_STATUS.SUCCESS:
+                        threadDict.Remove(threadId);
                         return new ThreadResultDTO()
                         {
+                            ThreadId = thread.ThreadId,
                             Status = thread.Status,
-                            Result = thread.Result
+                            Result = thread.Result,
                         };
                     case Const.THREAD_STATUS.ERROR:
+                        threadDict.Remove(threadId);
                         return new ThreadResultDTO()
                         {
+                            ThreadId = thread.ThreadId,
                             Status = thread.Status,
-                            Result = thread.Result
+                            Result = thread.Result,
                         };
                     default:
                         return new ThreadResultDTO()
                         {
+                            ThreadId = threadId,
                             Status = thread.Status,
+                            Progress = thread.Progress
                         };
                 }
 

@@ -25,10 +25,14 @@
     <None Remove="DTOs\Skills\" />
     <None Remove="DTOs\Tasks\" />
     <None Remove="DTOs\PertSchedule\" />
+    <None Remove="DTOs\Invalidation\" />
+    <None Remove="DTOs\Workforce\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DTOs\Skills\" />
     <Folder Include="DTOs\Tasks\" />
     <Folder Include="DTOs\PertSchedule\" />
+    <Folder Include="DTOs\Invalidation\" />
+    <Folder Include="DTOs\Workforce\" />
   </ItemGroup>
 </Project>

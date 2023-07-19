@@ -1,12 +1,9 @@
 ﻿using AlgorithmServiceServer;
 using JiraSchedulingConnectAppService.Common;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Thread;
 using System.Dynamic;
-using System.Reflection.Metadata;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
@@ -24,50 +21,58 @@ namespace JiraSchedulingConnectAppService.Services
             this.threadService = threadService;
         }
 
-        public ThreadStartDTO TestConverter(int parameterId)
+        public ThreadStartDTO ExecuteAlgorithm(int parameterId)
         {
-            var threadId = 0;
-            threadId = threadService.StartThread(
-                async() => await ProcessTestConverterThread(threadId, parameterId));
+            string threadId = ThreadService.CreateThreadId();
+            threadId = threadService.StartThread(threadId,
+                async () => await ProcessTestConverterThread(threadId, parameterId));
 
             return new ThreadStartDTO(threadId);
         }
 
-        private async System.Threading.Tasks.Task ProcessTestConverterThread(int threadId, int parameterId)
+        private async System.Threading.Tasks.Task ProcessTestConverterThread(string threadId, int parameterId)
         {
-            var thread = threadService.GetThreadModel(threadId);
             try
             {
-                // Your thread processing logic goes here
-                var response = await apiMicro
-                  .Get($"/api/Algorithm/GetTestConverter?parameterId={parameterId}");
-                dynamic responseContent;
+                var thread = threadService.GetThreadModel(threadId);
+                try
+                {
+                    // Your thread processing logic goes here
+                    var response = await apiMicro
+                      .Get($"/api/Algorithm/ExecuteAlgorithm?parameterId={parameterId}");
+                    dynamic responseContent;
 
-                responseContent = await response.Content.ReadAsStringAsync();
-                // Update the thread status and result when finished
-                thread.Status = Const.THREAD_STATUS.SUCCESS;
-                thread.Result = responseContent;
+                    responseContent = await response.Content.ReadAsStringAsync();
+                    // Update the thread status and result when finished
+                    thread.Status = Const.THREAD_STATUS.SUCCESS;
+                    thread.Result = responseContent;
+                }
+                catch (MicroServiceAPIException ex)
+                {
+                    thread.Status = Const.THREAD_STATUS.ERROR;
+
+                    dynamic error = new ExpandoObject();
+                    error.message = ex.Message;
+                    error.response = ex.mircoserviceResponse;
+
+                    thread.Result = error;
+                }
+                catch (NotFoundException ex)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    thread.Status = Const.THREAD_STATUS.ERROR;
+
+                    dynamic error = new ExpandoObject();
+                    error.message = ex.Message;
+                    error.stackTrace = ex.StackTrace;
+
+                    thread.Result = error;
+                }
             }
-            catch (MicroServiceAPIException ex)
-            {
-                thread.Status = Const.THREAD_STATUS.ERROR;
-
-                dynamic error = new ExpandoObject();
-                error.message = ex.Message;
-                error.response = ex.mircoserviceResponse;
-
-                thread.Result = error;
-            }
-            catch (Exception ex)
-            {
-                thread.Status = Const.THREAD_STATUS.ERROR;
-
-                dynamic error = new ExpandoObject();
-                error.message = ex.Message;
-                error.stackTrace = ex.StackTrace;
-
-                thread.Result = error;
-            }
+            catch {/* Do nothing*/ }
         }
 
         public async Task<EstimatedResultDTO> EstimateWorkforce(int projectId)
@@ -83,6 +88,7 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new Exception(response.StatusCode.ToString());
             }
             return responseContent;
+
 
         }
     }

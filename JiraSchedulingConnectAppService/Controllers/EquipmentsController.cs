@@ -1,13 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Parameters;
 
@@ -18,8 +10,10 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class EquipmentsController : ControllerBase
     {
         private IEquipmentService EquipmentService;
-        public EquipmentsController(IEquipmentService equipmentService)
+        private readonly ModelLibrary.ILoggerManager _Logger;
+        public EquipmentsController(IEquipmentService equipmentService, ModelLibrary.ILoggerManager logger)
         {
+            this._Logger = logger;
             this.EquipmentService = equipmentService;
         }
 
@@ -33,6 +27,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -48,6 +43,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -64,13 +60,14 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateEquipment([FromBody]EquipmentDTORequest equipmentRequest)
+        public async Task<IActionResult> CreateEquipment([FromBody] EquipmentDTORequest equipmentRequest)
         {
             try
             {
@@ -78,6 +75,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -94,6 +92,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
