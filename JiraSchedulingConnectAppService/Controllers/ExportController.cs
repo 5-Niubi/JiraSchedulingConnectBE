@@ -53,6 +53,19 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-
+        [HttpGet]
+        async public Task<IActionResult> CreateJiraRequest()
+        {
+            try
+            {
+               var response = await exportService.JiraRequest(null);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
     }
 }
