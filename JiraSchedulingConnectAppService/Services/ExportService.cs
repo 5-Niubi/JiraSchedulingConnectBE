@@ -653,22 +653,29 @@ namespace JiraSchedulingConnectAppService.Services
             //    }
             //});
             foreach (var t in tasks)
-            {
-                net.sf.mpxj.Task milestone;
+            {            
+                net.sf.mpxj.Task milestone = null;
 
-                if (!milestoneDict.ContainsKey(t.mileStone.id))
+                if (t.mileStone != null && !milestoneDict.ContainsKey(t.mileStone.id))
                 {
                     milestone = project.AddTask();
                     milestone.Name = t.mileStone.name;
                     milestoneDict.Add(t.mileStone.id, milestone);
                 }
-                else
+                else if(t.mileStone != null && milestoneDict.ContainsKey(t.mileStone.id))
                 {
                     milestone = milestoneDict[t.mileStone.id];
                 }
 
-                var task = milestone.addTask();
-
+                net.sf.mpxj.Task task;
+                if (milestone != null)
+                {
+                    task = milestone.addTask();
+                }else
+                {
+                    task = project.AddTask();
+                }
+               
                 task.Start = t.startDate.Value.ToJavaLocalDateTime();
                 task.Finish = t.endDate.Value.ToJavaLocalDateTime();
                 task.Duration = Duration.getInstance((double)t.duration, TimeUnit.DAYS);
