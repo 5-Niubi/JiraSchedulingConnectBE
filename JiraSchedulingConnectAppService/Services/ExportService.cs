@@ -239,7 +239,8 @@ namespace JiraSchedulingConnectAppService.Services
 
             foreach (var worker in workerDict.Values)
             {
-                var workerName = $"{worker.displayName} - {worker.email}";
+                // Must convert to English characters
+                var workerName = Utils.ConvertVN($"{worker.displayName} - {worker.email}");
 
                 // Check is worker exist
                 var workerFound = pagingWorkerJson.Values.Where(e => e.Value == workerName).FirstOrDefault();
