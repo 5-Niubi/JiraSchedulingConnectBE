@@ -239,7 +239,8 @@ namespace JiraSchedulingConnectAppService.Services
 
             foreach (var worker in workerDict.Values)
             {
-                var workerName = $"{worker.displayName} - {worker.email}";
+                // Must convert to English characters
+                var workerName = Utils.ConvertVN($"{worker.displayName} - {worker.email}");
 
                 // Check is worker exist
                 var workerFound = pagingWorkerJson.Values.Where(e => e.Value == workerName).FirstOrDefault();
@@ -624,6 +625,8 @@ namespace JiraSchedulingConnectAppService.Services
             var projectFileName = $"{projectDb.Name}.xml";
             var resourceDict = new Dictionary<int?, net.sf.mpxj.Resource>();
             var taskDict = new Dictionary<int?, net.sf.mpxj.Task>();
+            var milestoneDict = new Dictionary<int, net.sf.mpxj.Task>();
+
 
             foreach (var key in workforceResultDict.Keys)
             {
@@ -636,6 +639,8 @@ namespace JiraSchedulingConnectAppService.Services
                     resourceDict.Add(workforceResultDict[key].id, rs);
                 }
             }
+
+
             //tasks.ForEach(t =>
             //{
             //    if (!resourceDict.ContainsKey(t.workforce.id))
@@ -647,10 +652,30 @@ namespace JiraSchedulingConnectAppService.Services
             //        resourceDict.Add(t.workforce.id, rs);
             //    }
             //});
-
             foreach (var t in tasks)
-            {
-                var task = project.addTask();
+            {            
+                net.sf.mpxj.Task milestone = null;
+
+                if (t.mileStone != null && !milestoneDict.ContainsKey(t.mileStone.id))
+                {
+                    milestone = project.AddTask();
+                    milestone.Name = t.mileStone.name;
+                    milestoneDict.Add(t.mileStone.id, milestone);
+                }
+                else if(t.mileStone != null && milestoneDict.ContainsKey(t.mileStone.id))
+                {
+                    milestone = milestoneDict[t.mileStone.id];
+                }
+
+                net.sf.mpxj.Task task;
+                if (milestone != null)
+                {
+                    task = milestone.addTask();
+                }else
+                {
+                    task = project.AddTask();
+                }
+               
                 task.Start = t.startDate.Value.ToJavaLocalDateTime();
                 task.Finish = t.endDate.Value.ToJavaLocalDateTime();
                 task.Duration = Duration.getInstance((double)t.duration, TimeUnit.DAYS);

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
@@ -16,6 +17,15 @@ namespace JiraSchedulingConnectAppService.Services
         {
             this.db = db;
             this.mapper = mapper;
+        }
+
+        public async Task<List<ScheduleResultSolutionDTO>> GetSchedulesByProject(int projectId)
+        {
+            var schedule = await db.Schedules.Include(s => s.Parameter)
+                .Where(s => s.Parameter.ProjectId == projectId)
+                 .ToListAsync();
+            var scheduleDTO = mapper.Map<List<ScheduleResultSolutionDTO>>(schedule);
+            return scheduleDTO;
         }
 
         public async Task<List<ScheduleResultSolutionDTO>> GetSchedules(int parameterId)
