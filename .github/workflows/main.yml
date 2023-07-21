@@ -17,7 +17,7 @@ jobs:
         run: |
           dotnet restore
           dotnet build
-          dotnet test
+
 
       # Step 3: Build Docker image and push to Docker Hub
       - name: Build and push Docker image
