@@ -11,12 +11,7 @@ namespace ModelLibrary.DTOs.Parameters
         public string? Avatar { get; set; }
         public string? DisplayName { get; set; }
         public double? UnitSalary { get; set; }
-
-
         public int? WorkingType { get; set; }
-
-
-
         public List<float>? WorkingEfforts { get; set; }
         public List<SkillRequestDTO>? WorkforceSkills { get; set; }
 

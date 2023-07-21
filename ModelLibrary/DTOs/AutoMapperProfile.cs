@@ -37,13 +37,12 @@ namespace ModelLibrary.DTOs
             CreateMap<Workforce, WorkforceDTOResponse>()
                 .ForMember(x => x.Skills, t => t.MapFrom(t => t.WorkforceSkills.Select(s => new SkillDTOResponse
                 {
-                    Id = s.Skill.Id,
+                    Id = s.SkillId,
                     Name = s.Skill.Name,
-                    CloudId = s.Skill.CloudId,
                     Level = s.Level,
                     CreateDatetime = s.Skill.CreateDatetime,
-                    IsDelete = s.Skill.IsDelete,
-                    DeleteDatetime = s.Skill.DeleteDatetime,
+                    IsDelete = s.IsDelete,
+                    DeleteDatetime = s.DeleteDatetime,
                 })));
 
 

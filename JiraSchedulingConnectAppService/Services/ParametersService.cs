@@ -124,6 +124,7 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new Exception(ex.Message);
             }
         }
+
     }
 }
 
