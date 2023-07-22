@@ -2,6 +2,8 @@
 using java.lang;
 using JiraSchedulingConnectAppService.Common;
 using JiraSchedulingConnectAppService.Services.Interfaces;
+using JiraSchedulingConnectAppService.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
@@ -11,9 +13,7 @@ using net.sf.mpxj;
 using net.sf.mpxj.MpxjUtilities;
 using net.sf.mpxj.writer;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 using System.Dynamic;
-using System.Threading;
 using UtilsLibrary.Exceptions;
 using Duration = net.sf.mpxj.Duration;
 using Task = System.Threading.Tasks.Task;
@@ -29,10 +29,11 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly IThreadService threadService;
         private readonly IMapper mapper;
         private IConfiguration config;
+        private readonly IHubContext<SignalRServer> signal;
 
         public ExportService(JiraDemoContext db, IJiraBridgeAPIService jiraAPI,
             IHttpContextAccessor httpAccessor, IConfiguration config,
-            IThreadService threadService, IMapper mapper
+            IThreadService threadService, IMapper mapper, IHubContext<SignalRServer> signal
             )
         {
             this.db = db;
@@ -43,6 +44,7 @@ namespace JiraSchedulingConnectAppService.Services
             appName = config.GetValue<string>("Environment:Appname");
             this.threadService = threadService;
             this.mapper = mapper;
+            this.signal = signal;
         }
 
         public async Task<ThreadStartDTO> ToJira(int scheduleId, int projectId)
@@ -78,7 +80,8 @@ namespace JiraSchedulingConnectAppService.Services
             string threadId = ThreadService.CreateThreadId();
             threadId = threadService.StartThread(threadId,
                 async () => await ProcessToJiraThread(
-                    threadId, schedule, accountId, workforceResultDict, workforceEmailDiction, projectId
+                    threadId, schedule, accountId, workforceResultDict, workforceEmailDiction, projectId,
+                    signal
                     ));
 
             return new ThreadStartDTO(threadId);
@@ -116,7 +119,8 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async Task ProcessToJiraThread(string threadId, Schedule schedule, string? accountId,
             Dictionary<int, WorkforceScheduleResultDTO> workforceResultDict,
-            Dictionary<string, WorkforceScheduleResultDTO> workforceEmailDict, int projectId)
+            Dictionary<string, WorkforceScheduleResultDTO> workforceEmailDict, int projectId,
+            IHubContext<SignalRServer> signal)
         {
             try
             {
@@ -128,7 +132,8 @@ namespace JiraSchedulingConnectAppService.Services
                     var prepareResult = await JiraPrepareForSync(schedule.Parameter.Project, accountId, thread, projectId);
 
                     thread.Progress = "Create worker selection";
-                    var workerCreatedDict = await JiraCreateWorkForce(tasks, prepareResult.FieldDict["Worker"], workforceResultDict);
+                    var workerCreatedDict = await JiraCreateWorkForce(prepareResult.WorkerFieldContext,
+                        prepareResult.FieldDict["Worker"], workforceResultDict);
 
                     thread.Progress = "Finding assignee";
                     var workerEmailDict = await JiraGetExistUserIdByEmail(workforceEmailDict);
@@ -138,6 +143,8 @@ namespace JiraSchedulingConnectAppService.Services
 
                     thread.Progress = "Linking tasks";
                     await JiraCreateIssueLink(tasks, bulkTasks);
+
+
 
                     // Update the thread status and result when finished
                     thread.Status = Const.THREAD_STATUS.SUCCESS;
@@ -214,23 +221,34 @@ namespace JiraSchedulingConnectAppService.Services
             return workerEmailDict;
         }
 
-        private async Task<Dictionary<int, WorkforceScheduleResultDTO>> JiraCreateWorkForce(List<TaskScheduleResultDTO> tasks, string? fieldId, Dictionary<int, WorkforceScheduleResultDTO> workerDict)
+        private async Task<Dictionary<int, WorkforceScheduleResultDTO>> JiraCreateWorkForce(
+            string fieldContextId,
+            string? fieldId, Dictionary<int, WorkforceScheduleResultDTO> workerDict)
         {
             //var workderDict = new Dictionary<int, WorkforceScheduleResultDTO>();
             //tasks.ForEach(t => { workderDict.TryAdd(t.workforce.id, t.workforce); });
 
             HttpResponseMessage respone;
-            respone = await jiraAPI.Get($"rest/api/3/field/{fieldId}/context");
-            var pagingContextJson = await respone.Content.ReadFromJsonAsync<JiraAPIResponsePagingDTO<JiraAPIGetIssueCustomFieldContextResDTO>>();
-            var contextFound = pagingContextJson.Values.Where(e => e.Name == "Default Configuration Scheme for Worker").FirstOrDefault();
-            if (contextFound == null)
-            {
-                throw new NotFoundException("Not Found Context Of Worker Field");
-            }
+            //respone = await jiraAPI.Get($"rest/api/3/field/{fieldId}/context");
+            //var pagingContextJson = await respone.Content.ReadFromJsonAsync<JiraAPIResponsePagingDTO<JiraAPIGetIssueCustomFieldContextResDTO>>();
+            //var contextFound = pagingContextJson.Values.Where(e => e.Name == "Default Configuration Scheme for Worker").FirstOrDefault();
+            //if (contextFound == null)
+            //{
+            //    throw new NotFoundException("Not Found Context Of Worker Field");
+            //}
 
+            var url = $"rest/api/3/field/{fieldId}/context/{fieldContextId}/option";
+            var workerOptionValueList = new List<JiraAPICreateFieldOptionResDTO.Option>();
+            var isLast = false;
             // Check is worker exist, if not create a new worker
-            respone = await jiraAPI.Get($"rest/api/3/field/{fieldId}/context/{contextFound.Id}/option");
-            var pagingWorkerJson = await respone.Content.ReadFromJsonAsync<JiraAPIResponsePagingDTO<JiraAPICreateFieldOptionResDTO.Option>>();
+            do
+            {
+                respone = await jiraAPI.Get(url);
+                var pagingWorkerJson = await respone.Content.ReadFromJsonAsync<JiraAPIResponsePagingDTO<JiraAPICreateFieldOptionResDTO.Option>>();
+                isLast = pagingWorkerJson.IsLast;
+                workerOptionValueList.AddRange(pagingWorkerJson.Values);
+                url = pagingWorkerJson.NextPage;
+            } while (!isLast);
 
             dynamic body = new ExpandoObject();
             body.options = new List<ExpandoObject>();
@@ -240,10 +258,10 @@ namespace JiraSchedulingConnectAppService.Services
             foreach (var worker in workerDict.Values)
             {
                 // Must convert to English characters
-                var workerName = Utils.ConvertVN($"{worker.displayName} - {worker.email}");
+                var workerName = $"{worker.displayName} - {worker.email}";
 
                 // Check is worker exist
-                var workerFound = pagingWorkerJson.Values.Where(e => e.Value == workerName).FirstOrDefault();
+                var workerFound = workerOptionValueList.Where(e => e.Value == workerName).FirstOrDefault();
                 if (workerFound != null)
                 {
                     worker.fieldOptiontId = workerFound.Id;
@@ -261,7 +279,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             if (body.options.Count > 0)
             {
-                respone = await jiraAPI.Post($"rest/api/3/field/{fieldId}/context/{contextFound.Id}/option", body);
+                respone = await jiraAPI.Post($"rest/api/3/field/{fieldId}/context/{fieldContextId}/option", body);
                 var responseObj = await respone.Content.ReadFromJsonAsync<JiraAPICreateFieldOptionResDTO.Root>();
 
                 for (int i = 0; i < workerCreateList.Count; i++)
@@ -282,20 +300,32 @@ namespace JiraSchedulingConnectAppService.Services
             thread.Progress = "Verifying Project";
             (var projectKey, var projectName) = await JiraVerifyProject(projectId);
 
+            var issueTypeId = await JiraCreateIssueType(projectKey);
+
             thread.Progress = "Creating custom field";
-            var fieldDict = await JiraCreateCustomField();
+            var fieldDict = await JiraCreateCustomField(projectKey);
+
+            thread.Progress = "Creating custom field context";
+            var workerFieldContext = await JiraCreateFieldContext(fieldDict["Worker"],
+                projectKey, projectId, issueTypeId);
 
             thread.Progress = "Creating custom screen";
-            var screenId = await JiraCreateScreen();
+            var screenId = await JiraCreateScreen(projectKey);
 
+            thread.Progress = "Creating screen tab";
             var screenTabId = await JiraCreateScreenTab(screenId);
+
+            thread.Progress = "Add field into screen";
             await JiraAddFieldIntoScreen(screenId, screenTabId, fieldDict);
-            var screenSchemeId = await JiraCreateScreenScheme(screenId);
 
-            var issueTypeId = await JiraCreateIssueType();
+            thread.Progress = "Create screen scheme";
+            var screenSchemeId = await JiraCreateScreenScheme(screenId, projectKey);
 
-            var issueTypeScreenSchemeId = await JiraCreateIssueTypeScreenScheme(issueTypeId, screenSchemeId);
-            var issueTypeSchemeId = await JiraCreateIssueTypeScheme(issueTypeId);
+            thread.Progress = "Create issue type screen scheme";
+            var issueTypeScreenSchemeId = await JiraCreateIssueTypeScreenScheme(issueTypeId, screenSchemeId, projectKey);
+
+            thread.Progress = "Create issue type scheme";
+            var issueTypeSchemeId = await JiraCreateIssueTypeScheme(issueTypeId, projectKey);
 
 
             await JiraAssignIssueTypeScreenSchemeWithProject(issueTypeScreenSchemeId, projectId);
@@ -307,6 +337,7 @@ namespace JiraSchedulingConnectAppService.Services
             result.ProjectKey = projectKey;
             result.ProjectName = projectName;
             result.IssueTypeId = issueTypeId;
+            result.WorkerFieldContext = workerFieldContext;
             return result;
         }
 
@@ -328,9 +359,9 @@ namespace JiraSchedulingConnectAppService.Services
             HttpResponseMessage respone = await jiraAPI.Put($"rest/api/3/issuetypescreenscheme/project", body);
         }
 
-        private async Task<string> JiraCreateIssueTypeScheme(string? issueTypeId)
+        private async Task<string> JiraCreateIssueTypeScheme(string? issueTypeId, string projectKey)
         {
-            var issueTypeSchemeName = $"{appName} Issue Type Scheme";
+            var issueTypeSchemeName = $"{appName} Issue Type Scheme for {projectKey}";
             // Check if exist then get id
             HttpResponseMessage respone = await jiraAPI.Get($"rest/api/3/issuetypescheme?queryString={issueTypeSchemeName}");
             var result = await respone.Content.ReadFromJsonAsync<JiraAPIResponsePagingDTO<JiraAPISearchIssueTypeSchemeResDTO.Root>>();
@@ -353,9 +384,9 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
-        private async Task<string> JiraCreateIssueTypeScreenScheme(string? issueTypeId, int? screenSchemeId)
+        private async Task<string> JiraCreateIssueTypeScreenScheme(string? issueTypeId, int? screenSchemeId, string projectKey)
         {
-            var issueTypeScreenSchemeName = $"{appName} Issue Type Screen Scheme";
+            var issueTypeScreenSchemeName = $"{appName} Issue Type Screen Scheme for {projectKey}";
             // Check if exist then get id
             HttpResponseMessage respone = await jiraAPI.Get($"rest/api/3/issuetypescreenscheme?queryString={issueTypeScreenSchemeName}");
             var result = await respone.Content.ReadFromJsonAsync<JiraAPIResponsePagingDTO<JiraAPISearchIssueTypeScreenSchemeDTO>>();
@@ -366,6 +397,7 @@ namespace JiraSchedulingConnectAppService.Services
             }
 
             dynamic body = new ExpandoObject();
+            body.name = issueTypeScreenSchemeName;
             body.issueTypeMappings = new List<ExpandoObject>();
 
             dynamic issueTypeMapping = new ExpandoObject();
@@ -385,9 +417,9 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
-        private async Task<int?> JiraCreateScreenScheme(int screenId)
+        private async Task<int?> JiraCreateScreenScheme(int screenId, string projectKey)
         {
-            var screenSchemeName = $"{appName} screen scheme";
+            var screenSchemeName = $"{appName} screen scheme for {projectKey}";
             // Check if exist then get id
             HttpResponseMessage respone = await jiraAPI.Get($"rest/api/3/screenscheme?queryString={screenSchemeName}");
             var result = await respone.Content.ReadFromJsonAsync<JiraAPIResponsePagingDTO<JiraAPISearchScreenSchemeResDTO.Root>>();
@@ -436,7 +468,7 @@ namespace JiraSchedulingConnectAppService.Services
             return fieldTab.Id;
         }
 
-        private async Task<Dictionary<string, string?>> JiraCreateCustomField()
+        private async Task<Dictionary<string, string?>> JiraCreateCustomField(string projectKey)
         {
             var fieldDict = new Dictionary<string, string?>();
             // Kiểm tra tồn tại, nếu tồn tại thì lấy luôn
@@ -472,28 +504,44 @@ namespace JiraSchedulingConnectAppService.Services
             fieldDict.Add(issType.Name, issType.Id);
 
             // Worker: Select
-            issType = result.Where(r => r.Name == "Worker").FirstOrDefault();
+            var workerFieldName = $"Worker";
+            issType = result.Where(r => r.Name == workerFieldName).FirstOrDefault();
             if (issType != null)
             {
-                fieldDict.Add(issType.Name, issType.Id);
+                fieldDict.Add("Worker", issType.Id);
             }
             else
             {
                 dynamic body = new ExpandoObject();
-                body.name = "Worker";
+                body.name = workerFieldName;
                 body.description = $"Worker Assign By {appName}";
                 body.type = "com.atlassian.jira.plugin.system.customfieldtypes:select";
 
                 respone = await jiraAPI.Post("rest/api/3/field", body);
                 var field = (await respone.Content.ReadFromJsonAsync<JiraAPICreateIssueFieldResDTO.Root>());
-                fieldDict.Add(field.Name, field.Id);
+                fieldDict.Add("Worker", field.Id);
             }
             return fieldDict;
         }
 
-        private async Task<string> JiraCreateIssueType()
+        private async Task<string> JiraCreateFieldContext(string workerFieldId, string projectKey, int projectId, string issueTypeId)
         {
-            var issueTypeName = string.Concat("Task From", Const.SPACE, appName);
+            HttpResponseMessage response;
+            var contextName = $"{appName} field context for {projectKey} worker field";
+
+            dynamic body = new ExpandoObject();
+            body.name = contextName;
+            body.projectIds = new string[] { projectId.ToString() };
+            body.issueTypeIds = new string[] { issueTypeId.ToString() };
+
+            response = await jiraAPI.Post($"rest/api/3/field/{workerFieldId}/context", body);
+            var id = (await response.Content.ReadFromJsonAsync<JiraAPICreateFieldContextResDTO.Root>()).Id;
+            return id;
+        }
+
+        private async Task<string> JiraCreateIssueType(string projectKey)
+        {
+            var issueTypeName = $"Task From {appName}";
             // Kiểm tra tồn tại, nếu tồn tại thì lấy luôn
             HttpResponseMessage respone = await jiraAPI.Get("rest/api/3/issuetype");
             var result = await respone.Content.ReadFromJsonAsync<List<JiraAPIIssueTypeResDTO>>();
@@ -521,9 +569,9 @@ namespace JiraSchedulingConnectAppService.Services
             return (result.key, result.name);
         }
 
-        private async Task<int> JiraCreateScreen()
+        private async Task<int> JiraCreateScreen(string projectKey)
         {
-            var screenName = string.Concat(appName, Const.SPACE, "screen");
+            var screenName = $"{appName} screen {projectKey}";
             // Check if screen exist then get id
             HttpResponseMessage respone = await jiraAPI.Get($"rest/api/3/screens?queryString={screenName}");
             var result = (await respone.Content.ReadFromJsonAsync<JiraAPIResponsePagingDTO<JiraAPIScreenResDTO>>());

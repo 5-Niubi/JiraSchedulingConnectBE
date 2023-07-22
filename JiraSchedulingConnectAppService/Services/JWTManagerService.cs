@@ -114,7 +114,7 @@ namespace JiraSchedulingConnectAppService.Services
             var identity = context?.User.Identity as ClaimsIdentity;
             if (identity != null)
             {
-                value = identity.FindFirst(claimName) == null? "" : identity.FindFirst(claimName).Value;
+                value = identity.FindFirst(claimName) == null ? "" : identity.FindFirst(claimName).Value;
             }
             return value;
         }
