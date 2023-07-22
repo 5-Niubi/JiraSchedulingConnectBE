@@ -45,7 +45,7 @@ namespace JiraSchedulingConnectAppService.Services
             this.mapper = mapper;
         }
 
-        public async Task<ThreadStartDTO> ToJira(int scheduleId)
+        public async Task<ThreadStartDTO> ToJira(int scheduleId, int projectId)
         {
             var schedule = await db.Schedules.Where(s => s.Id == scheduleId)
                .Include(s => s.Parameter).ThenInclude(p => p.Project)
@@ -78,7 +78,7 @@ namespace JiraSchedulingConnectAppService.Services
             string threadId = ThreadService.CreateThreadId();
             threadId = threadService.StartThread(threadId,
                 async () => await ProcessToJiraThread(
-                    threadId, schedule, accountId, workforceResultDict, workforceEmailDiction
+                    threadId, schedule, accountId, workforceResultDict, workforceEmailDiction, projectId
                     ));
 
             return new ThreadStartDTO(threadId);
@@ -116,7 +116,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async Task ProcessToJiraThread(string threadId, Schedule schedule, string? accountId,
             Dictionary<int, WorkforceScheduleResultDTO> workforceResultDict,
-            Dictionary<string, WorkforceScheduleResultDTO> workforceEmailDict)
+            Dictionary<string, WorkforceScheduleResultDTO> workforceEmailDict, int projectId)
         {
             try
             {
@@ -125,7 +125,7 @@ namespace JiraSchedulingConnectAppService.Services
                 {
                     var tasks = JsonConvert.DeserializeObject<List<TaskScheduleResultDTO>>(schedule.Tasks);
                     thread.Progress = "Prepare Jira screen fields";
-                    var prepareResult = await JiraPrepareForSync(schedule.Parameter.Project, accountId, thread);
+                    var prepareResult = await JiraPrepareForSync(schedule.Parameter.Project, accountId, thread, projectId);
 
                     thread.Progress = "Create worker selection";
                     var workerCreatedDict = await JiraCreateWorkForce(tasks, prepareResult.FieldDict["Worker"], workforceResultDict);
@@ -142,7 +142,7 @@ namespace JiraSchedulingConnectAppService.Services
                     // Update the thread status and result when finished
                     thread.Status = Const.THREAD_STATUS.SUCCESS;
                     dynamic result = new ExpandoObject();
-                    result.projectId = prepareResult.ProjectId;
+                    result.projectKey = prepareResult.ProjectKey;
                     result.projectName = prepareResult.ProjectName;
                     thread.Result = result;
                 }
@@ -274,11 +274,13 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
         private async Task<JiraAPIPrepareResultDTO> JiraPrepareForSync(
-            ModelLibrary.DBModels.Project project, string accountId, ThreadModel thread)
+            ModelLibrary.DBModels.Project project, string accountId, ThreadModel thread, int projectId)
         {
             /* TODO: - Tối ưu việc config field
                      - Tối ưu việc quản lý các scheme
              */
+            thread.Progress = "Verifying Project";
+            (var projectKey, var projectName) = await JiraVerifyProject(projectId);
 
             thread.Progress = "Creating custom field";
             var fieldDict = await JiraCreateCustomField();
@@ -295,8 +297,6 @@ namespace JiraSchedulingConnectAppService.Services
             var issueTypeScreenSchemeId = await JiraCreateIssueTypeScreenScheme(issueTypeId, screenSchemeId);
             var issueTypeSchemeId = await JiraCreateIssueTypeScheme(issueTypeId);
 
-            thread.Progress = "Creating Project";
-            (var projectId, var projectName) = await JiraCreateProject(project, accountId);
 
             await JiraAssignIssueTypeScreenSchemeWithProject(issueTypeScreenSchemeId, projectId);
             await JiraAssignIssueTypeSchemeWithProject(issueTypeSchemeId, projectId);
@@ -304,6 +304,7 @@ namespace JiraSchedulingConnectAppService.Services
             var result = new JiraAPIPrepareResultDTO();
             result.FieldDict = fieldDict;
             result.ProjectId = projectId;
+            result.ProjectKey = projectKey;
             result.ProjectName = projectName;
             result.IssueTypeId = issueTypeId;
             return result;
@@ -512,39 +513,12 @@ namespace JiraSchedulingConnectAppService.Services
             return id;
         }
 
-        private async Task<(int, string)> JiraCreateProject(ModelLibrary.DBModels.Project project, string accountId)
+        private async Task<(string, string)> JiraVerifyProject(int projectId)
         {
-            // TODO: Xử lý trùng key       
-
             HttpResponseMessage respone;
-            int count = 0;
-            var projectName = $"{project.Name}";
-            bool isContinue = true;
-            do
-            {
-                respone = await jiraAPI.Get($"rest/api/3/project/search?query={projectName}");
-                var result = await respone.Content.ReadFromJsonAsync<JiraAPIResponsePagingDTO<JiraAPISearchProjectResDTO.Root>>();
-                if (result.Total > 0)
-                {
-                    projectName = $"{project.Name}-{result.Total + 1}";
-                }
-                else
-                {
-                    isContinue = false;
-                }
-            }
-            while (isContinue);
-            dynamic body = new ExpandoObject();
-            var key = Utils.ExtractUpperDigitLetter(projectName);
-            body.key = key;
-            body.leadAccountId = accountId;
-            body.name = projectName;
-            body.projectTemplateKey = "com.pyxis.greenhopper.jira:gh-simplified-basic";
-            body.projectTypeKey = "software";
-
-            respone = await jiraAPI.Post("rest/api/3/project", body);
-            var id = (await respone.Content.ReadFromJsonAsync<JiraAPICreatProjectResponseDTO>()).Id;
-            return (id, projectName);
+            respone = await jiraAPI.Get($"rest/api/3/project/{projectId}");
+            var result = await respone.Content.ReadFromJsonAsync<JiraAPIGetProjectResDTO.Root>();
+            return (result.key, result.name);
         }
 
         private async Task<int> JiraCreateScreen()
@@ -653,7 +627,7 @@ namespace JiraSchedulingConnectAppService.Services
             //    }
             //});
             foreach (var t in tasks)
-            {            
+            {
                 net.sf.mpxj.Task milestone = null;
 
                 if (t.mileStone != null && !milestoneDict.ContainsKey(t.mileStone.id))
@@ -662,7 +636,7 @@ namespace JiraSchedulingConnectAppService.Services
                     milestone.Name = t.mileStone.name;
                     milestoneDict.Add(t.mileStone.id, milestone);
                 }
-                else if(t.mileStone != null && milestoneDict.ContainsKey(t.mileStone.id))
+                else if (t.mileStone != null && milestoneDict.ContainsKey(t.mileStone.id))
                 {
                     milestone = milestoneDict[t.mileStone.id];
                 }
@@ -671,11 +645,12 @@ namespace JiraSchedulingConnectAppService.Services
                 if (milestone != null)
                 {
                     task = milestone.addTask();
-                }else
+                }
+                else
                 {
                     task = project.AddTask();
                 }
-               
+
                 task.Start = t.startDate.Value.ToJavaLocalDateTime();
                 task.Finish = t.endDate.Value.ToJavaLocalDateTime();
                 task.Duration = Duration.getInstance((double)t.duration, TimeUnit.DAYS);
