@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using java.lang;
-using JiraSchedulingConnectAppService.Common;
+using UtilsLibrary;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using JiraSchedulingConnectAppService.SignalR;
 using Microsoft.AspNetCore.SignalR;

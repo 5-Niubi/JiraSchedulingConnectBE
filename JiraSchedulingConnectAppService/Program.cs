@@ -239,6 +239,7 @@ try
     builder.Services.AddTransient<IThreadService, ThreadService>();
     builder.Services.AddTransient<IScheduleService, ScheduleService>();
     builder.Services.AddTransient<IMilestonesService, MilestonesService>();
+    builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();
 
     // Config log provider
     builder.Host.ConfigureLogging(logging =>

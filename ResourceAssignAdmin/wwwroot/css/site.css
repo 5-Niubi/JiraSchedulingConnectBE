@@ -1,0 +1,76 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+/*img {
+    object-fit: cover;
+    overflow: hidden;
+    background-color: darkgray;
+}
+
+.img-cover-preview {
+    width: 30rem;
+    height: 15rem;
+}
+
+.rounded-circle.img-avatar-preview {
+    width: 15rem;
+    height: 15rem;
+}
+
+.rounded-circle.img-avatar {
+    width: 5em;
+    height: 5em;
+}
+
+.img-avatar-post {
+    width: 3rem;
+    height: 3rem;
+}
+
+.img-avatar-nav {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.img-cover {
+    width: 100%;
+    height: 30vh;
+}
+
+.img-cover-card {
+    width: 100%;
+    height: 200px;
+}
+
+.btn::before {
+    width: 100px;
+}*/
+
+/* Summer note custom style */
+/*.note-editor.note-frame.fullscreen {
+    background-color: white;
+}
+
+.note-modal-content .note-modal-footer {
+    height: 4rem;
+}
+
+.card-body img.note-float-left {
+    width: -webkit-fill-available;
+}*/
