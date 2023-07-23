@@ -58,7 +58,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-               var response = await exportService.JiraRequest(null);
+                var response = await exportService.JiraRequest(null);
                 return Ok(response);
             }
             catch (Exception ex)

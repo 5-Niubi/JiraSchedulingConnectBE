@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
