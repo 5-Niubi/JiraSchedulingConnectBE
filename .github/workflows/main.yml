@@ -21,8 +21,10 @@ jobs:
     name: Test service run success
     runs-on: ubuntu-latest
     steps:
-      - name: Test the Docker image
+      - name: checkout code
         uses: actions/checkout@v2
+      
+      - name: Test the Docker image
         run: docker-compose -f docker-compose.yml up -d 
 
   push_to_registry:
