@@ -9,11 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Debug
-        run: echo "${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}/ ${{ vars.ENV }} / ${{ secrets.FUCK }}"
-      # - name: Check out the repo
-      #   uses: actions/checkout@v3
-
+    
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -26,7 +22,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: AlgorithmService/Dockerfile
+          context: AlgorithmService
           push: true
           tags: ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:0.03 
 
