@@ -6,8 +6,11 @@ services:
     build:
       context: .
       dockerfile: AlgorithmService/Dockerfile
-    ports:
-      - "5003:80"
+
+
+    networks:
+      - internal-network
+
   jiraschedulingconnectappservice:
     image: ${DOCKER_REGISTRY-}jiraschedulingconnectappservice
     build:
@@ -15,9 +18,12 @@ services:
       dockerfile: JiraSchedulingConnectAppService/Dockerfile
     ports:
       - "5126:80"
+    environment:
+      ALGORITHM_SERVICE_URL: http://algorithmservice
 
     networks:
-      - elasticsearch-nw
+      - internal-network
 
 networks:
-  elasticsearch-nw:
+  internal-network:
+    driver: bridge
