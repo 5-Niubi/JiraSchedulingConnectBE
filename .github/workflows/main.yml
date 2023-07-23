@@ -4,7 +4,7 @@ on:
     branches:
       - dev
 jobs:
-  build-test-deploy:
+  build:
     runs-on: ubuntu-latest
     
     steps:
@@ -12,30 +12,44 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Build and run tests
-      - name: Build and test
-        run: |
-          dotnet restore
-          dotnet build
+      # Step 2: Build package by docker compose
+      - name: Build package
+        uses: actions/checkout@v3
+        run: docker-compose build -f docker-compose.yml --no-cache --force-rm 
+  test:
+    name: Test service run success
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Test the Docker image
+        run: docker-compose -f docker-compose.yml up -d 
 
+  push_to_registry:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
 
-      # Step 3: Build Docker image and push to Docker Hub
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: "{{defaultContext}}"
           push: true
-          tags: pham2604/5niubi_backend:${{ github.sha }}
-
-#       # Step 4: SSH to server and deploy using Docker
-#       - name: SSH to server and deploy
-#         uses: appleboy/ssh-action@master
-#         with:
-#           host: your-server-ip
-#           username: your-ssh-username
-#           password: ${{ secrets.SSH_PASSWORD }}  # Store your server password as a secret in GitHub
-#           script: |
-#             docker stop your-container-name || true
-#             docker rm your-container-name || true
-#             docker pull your-docker-hub-username/your-docker-image-name:${{ github.sha }}
-#             docker run -d -p 80:80 --name your-container-name your-docker-hub-username/your-docker-image-name:${{ github.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

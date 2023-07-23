@@ -24,9 +24,9 @@
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "environmentVariables": {},
-      "httpPort": 5003,
       "sslPort": 5004,
-      "publishAllPorts": true
+      "publishAllPorts": true,
+      "httpPort": 5003
     },
     "IIS Express": {
       "commandName": "IISExpress",
