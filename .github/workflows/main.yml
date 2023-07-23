@@ -26,7 +26,7 @@ jobs:
         with:
           context: AlgorithmService/.
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.BE_SERVICE_IMAGE }}:0.03 
+          tags: ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:0.03 
 
   # test:
   #   name: Test service run success
