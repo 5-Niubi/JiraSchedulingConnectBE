@@ -20,7 +20,7 @@
 
         public static class PAGING
         {
-            public static int NUMBER_RECORD_PAGE = 10;
+            public const int NUMBER_RECORD_PAGE = 10;
         }
 
         public static class RESOURCE_TYPE
