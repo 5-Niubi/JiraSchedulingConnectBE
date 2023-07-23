@@ -10,7 +10,7 @@ jobs:
     
     steps:
       - name: Debug
-        run: echo "${{ env.REGISTRY }}/${{ env.BE_SERVICE_IMAGE }}/ ${{ vars.ENV }}"
+        run: echo "${{ env.REGISTRY }}/${{ env.BE_SERVICE_IMAGE }}/ ${{ vars.ENV }} / ${{ secrets.FUCK }}"
       # - name: Check out the repo
       #   uses: actions/checkout@v3
 
