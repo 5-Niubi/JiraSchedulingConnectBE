@@ -41,7 +41,7 @@ jobs:
         with:
           username: pham2604
           password: PhamManh@2604
-      
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
@@ -56,4 +56,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       
-      needs: [build, test]
+    needs: [build, test]
