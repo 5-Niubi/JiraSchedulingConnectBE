@@ -7,7 +7,10 @@ jobs:
   build-algorithm-service:
     name: Build algorithm service
     runs-on: ubuntu-latest
-    
+    defaults:
+      run:
+        working-directory: ./AlgorithmService
+
     steps:
     
       - name: Set up Docker Buildx
@@ -22,10 +25,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: .
           push: true
           tags: ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:0.03 
-          dockerfile: ./AlgorithmService/Dockerfile
   # test:
   #   name: Test service run success
   #   runs-on: ubuntu-latest
