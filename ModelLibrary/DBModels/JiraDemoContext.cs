@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ModelLibrary.DBModels
 {
@@ -14,6 +17,7 @@ namespace ModelLibrary.DBModels
         }
 
         public virtual DbSet<AccountRole> AccountRoles { get; set; } = null!;
+        public virtual DbSet<AdminAccount> AdminAccounts { get; set; } = null!;
         public virtual DbSet<AtlassianToken> AtlassianTokens { get; set; } = null!;
         public virtual DbSet<Equipment> Equipments { get; set; } = null!;
         public virtual DbSet<EquipmentsFunction> EquipmentsFunctions { get; set; } = null!;
@@ -22,10 +26,12 @@ namespace ModelLibrary.DBModels
         public virtual DbSet<Milestone> Milestones { get; set; } = null!;
         public virtual DbSet<Parameter> Parameters { get; set; } = null!;
         public virtual DbSet<ParameterResource> ParameterResources { get; set; } = null!;
+        public virtual DbSet<PlanSubscription> PlanSubscriptions { get; set; } = null!;
         public virtual DbSet<Project> Projects { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Schedule> Schedules { get; set; } = null!;
         public virtual DbSet<Skill> Skills { get; set; } = null!;
+        public virtual DbSet<Subscription> Subscriptions { get; set; } = null!;
         public virtual DbSet<Task> Tasks { get; set; } = null!;
         public virtual DbSet<TaskFunction> TaskFunctions { get; set; } = null!;
         public virtual DbSet<TaskPrecedence> TaskPrecedences { get; set; } = null!;
@@ -44,25 +50,6 @@ namespace ModelLibrary.DBModels
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Equipment>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<EquipmentsFunction>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Milestone>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Parameter>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<ParameterResource>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Schedule>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Skill>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Task>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskFunction>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
-
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
@@ -93,6 +80,49 @@ namespace ModelLibrary.DBModels
                     .WithMany(p => p.AccountRoles)
                     .HasForeignKey(d => d.TokenId)
                     .HasConstraintName("FK_account_roles_atlassian_token");
+            });
+
+            modelBuilder.Entity<AdminAccount>(entity =>
+            {
+                entity.ToTable("admin_account");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Avatar)
+                    .HasMaxLength(500)
+                    .IsUnicode(false)
+                    .HasColumnName("avatar");
+
+                entity.Property(e => e.CreateDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.DeleteDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("delete_datetime");
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(500)
+                    .HasColumnName("email");
+
+                entity.Property(e => e.IsDelete)
+                    .HasColumnName("is_delete")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(100)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.Password)
+                    .HasMaxLength(200)
+                    .IsUnicode(false)
+                    .HasColumnName("password");
+
+                entity.Property(e => e.Username)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("username");
             });
 
             modelBuilder.Entity<AtlassianToken>(entity =>
@@ -362,13 +392,35 @@ namespace ModelLibrary.DBModels
                     .WithMany(p => p.ParameterResources)
                     .HasForeignKey(d => d.ResourceId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_project_resource_equipments");
-
-                entity.HasOne(d => d.ResourceNavigation)
-                    .WithMany(p => p.ParameterResources)
-                    .HasForeignKey(d => d.ResourceId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_project_resource_workforce");
+            });
+
+            modelBuilder.Entity<PlanSubscription>(entity =>
+            {
+                entity.ToTable("plan_subscription");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.CreateDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.DeleteDatetime).HasColumnName("delete_datetime");
+
+                entity.Property(e => e.Duration).HasColumnName("duration");
+
+                entity.Property(e => e.IsDelete)
+                    .HasColumnName("is_delete")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(50)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.Price).HasColumnName("price");
             });
 
             modelBuilder.Entity<Project>(entity =>
@@ -536,6 +588,57 @@ namespace ModelLibrary.DBModels
                     .HasColumnName("name");
             });
 
+            modelBuilder.Entity<Subscription>(entity =>
+            {
+                entity.ToTable("subscription");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AtlassianTokenId).HasColumnName("atlassian_token_id");
+
+                entity.Property(e => e.CancelAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("cancel_at");
+
+                entity.Property(e => e.CreateDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.CurrentPeriodEnd)
+                    .HasColumnType("datetime")
+                    .HasColumnName("current_period_end");
+
+                entity.Property(e => e.CurrentPeriodStart)
+                    .HasColumnType("datetime")
+                    .HasColumnName("current_period_start");
+
+                entity.Property(e => e.DeleteDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("delete_datetime");
+
+                entity.Property(e => e.IsDelete)
+                    .HasColumnName("is_delete")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.PlanId).HasColumnName("plan_id");
+
+                entity.Property(e => e.Token)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("token");
+
+                entity.HasOne(d => d.AtlassianToken)
+                    .WithMany(p => p.Subscriptions)
+                    .HasForeignKey(d => d.AtlassianTokenId)
+                    .HasConstraintName("FK_subscription_atlassian_token");
+
+                entity.HasOne(d => d.Plan)
+                    .WithMany(p => p.Subscriptions)
+                    .HasForeignKey(d => d.PlanId)
+                    .HasConstraintName("FK_subscription_plan_subscription");
+            });
+
             modelBuilder.Entity<Task>(entity =>
             {
                 entity.ToTable("tasks");
@@ -696,6 +799,9 @@ namespace ModelLibrary.DBModels
             modelBuilder.Entity<Workforce>(entity =>
             {
                 entity.ToTable("workforce");
+
+                entity.HasIndex(e => e.Email, "UC_Email")
+                    .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
 

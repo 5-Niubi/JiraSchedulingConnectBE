@@ -1,10 +1,14 @@
-﻿namespace ModelLibrary.DBModels
+﻿using System;
+using System.Collections.Generic;
+
+namespace ModelLibrary.DBModels
 {
     public partial class AtlassianToken
     {
         public AtlassianToken()
         {
             AccountRoles = new HashSet<AccountRole>();
+            Subscriptions = new HashSet<Subscription>();
         }
 
         public int Id { get; set; }
@@ -18,5 +22,6 @@
         public DateTime? DeleteDatetime { get; set; }
 
         public virtual ICollection<AccountRole> AccountRoles { get; set; }
+        public virtual ICollection<Subscription> Subscriptions { get; set; }
     }
 }

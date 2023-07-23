@@ -20,6 +20,24 @@ namespace JiraSchedulingConnectAppService.Controllers
             this._Logger = logger;
             this.scheduleService = scheduleService;
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSchedulesByProject(int projectId)
+        {
+            try
+            {
+                var response = await scheduleService.GetSchedulesByProject(projectId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                this._Logger.LogDebug(ex.Message);
+
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetSchedules(int parameterId)
         {

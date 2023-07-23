@@ -37,13 +37,12 @@ namespace ModelLibrary.DTOs
             CreateMap<Workforce, WorkforceDTOResponse>()
                 .ForMember(x => x.Skills, t => t.MapFrom(t => t.WorkforceSkills.Select(s => new SkillDTOResponse
                 {
-                    Id = s.Skill.Id,
+                    Id = s.SkillId,
                     Name = s.Skill.Name,
-                    CloudId = s.Skill.CloudId,
                     Level = s.Level,
                     CreateDatetime = s.Skill.CreateDatetime,
-                    IsDelete = s.Skill.IsDelete,
-                    DeleteDatetime = s.Skill.DeleteDatetime,
+                    IsDelete = s.IsDelete,
+                    DeleteDatetime = s.DeleteDatetime,
                 })));
 
 
@@ -105,10 +104,9 @@ namespace ModelLibrary.DTOs
 
             CreateMap<Schedule, ScheduleResultSolutionDTO>();
             CreateMap<Workforce, WorkforceScheduleResultDTO>();
-            CreateMap<Schedule, ScheduleResultSolutionDTO>();
-            CreateMap<Workforce, WorkforceScheduleResultDTO>();
             CreateMap<Project, ProjectDeleteResDTO>();
 			CreateMap<ScheduleRequestDTO, Schedule>();
-		}
+            CreateMap<Milestone, MileStoneScheduleResultDTO>();
+        }
     }
 }

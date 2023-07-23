@@ -37,13 +37,14 @@ namespace AlgorithmServiceServer.Services
             var projectFromDB = parameterEntity.Project;
             var parameterResources = await db.ParameterResources.Where(prs => prs.ParameterId == parameterId
                                     && prs.Type == Const.RESOURCE_TYPE.WORKFORCE)
-                                    .Include(pr => pr.ResourceNavigation).ThenInclude(w => w.WorkforceSkills).ToListAsync();
+                                    .Include(pr => pr.Resource).ThenInclude(w => w.WorkforceSkills).ToListAsync();
 
             var workerFromDB = new List<Workforce>();
-            parameterResources.ForEach(e => workerFromDB.Add(e.ResourceNavigation));
+            parameterResources.ForEach(e => workerFromDB.Add(e.Resource));
 
             var taskFromDB = await db.Tasks.Where(t => t.ProjectId == parameterEntity.ProjectId)
-               .Include(t => t.TasksSkillsRequireds).Include(t => t.TaskPrecedenceTasks).ToListAsync();
+               .Include(t => t.TasksSkillsRequireds).Include(t => t.TaskPrecedenceTasks)
+               .Include(t => t.Milestone).ToListAsync();
 
             var skillFromDB = await db.Skills.Where(s => s.CloudId == cloudId).ToListAsync();
 

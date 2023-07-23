@@ -1,0 +1,41 @@
+name: Deployment Pipeline
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Build and run tests
+      - name: Build and test
+        run: |
+          dotnet restore
+          dotnet build
+
+
+      # Step 3: Build Docker image and push to Docker Hub
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: pham2604/5niubi_backend:${{ github.sha }}
+
+#       # Step 4: SSH to server and deploy using Docker
+#       - name: SSH to server and deploy
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: your-server-ip
+#           username: your-ssh-username
+#           password: ${{ secrets.SSH_PASSWORD }}  # Store your server password as a secret in GitHub
+#           script: |
+#             docker stop your-container-name || true
+#             docker rm your-container-name || true
+#             docker pull your-docker-hub-username/your-docker-image-name:${{ github.sha }}
+#             docker run -d -p 80:80 --name your-container-name your-docker-hub-username/your-docker-image-name:${{ github.sha }}

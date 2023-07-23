@@ -180,6 +180,7 @@ namespace RcpspAlgorithmLibrary
                 task.workforce = mapper.Map<WorkforceScheduleResultDTO>(WorkerList[taskWithWorker[i]]);
                 task.startDate = StartDate.AddDays(taskStart[i]);
                 task.endDate = StartDate.AddDays(taskEnd[i]);
+                task.mileStone = mapper.Map<MileStoneScheduleResultDTO>(TaskList[i].Milestone);
                 foreach (var taskPre in TaskList[i].TaskPrecedenceTasks)
                 {
                     task.taskIdPrecedences.Add(taskPre.PrecedenceId);
