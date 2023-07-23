@@ -30,7 +30,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: "{{defaultContext}}:AlgorithmService"
+          context: "{{defaultContext}}"
+          dockerfile: AlgorithmService/Dockerfile
           push: true
           tags: ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:0.03 
   # test:
