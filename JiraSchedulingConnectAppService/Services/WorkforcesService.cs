@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using JiraSchedulingConnectAppService.Common;
+using UtilsLibrary;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;

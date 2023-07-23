@@ -1,0 +1,49 @@
+﻿@page
+@model ResourceAssignAdmin.Pages.Plan.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>PlanSubscription</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="PlanSubscription.Name" class="control-label"></label>
+                <input asp-for="PlanSubscription.Name" class="form-control" />
+                <span asp-validation-for="PlanSubscription.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlanSubscription.Price" class="control-label"></label>
+                <input asp-for="PlanSubscription.Price" class="form-control" />
+                <span asp-validation-for="PlanSubscription.Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlanSubscription.Duration" class="control-label"></label>
+                <input asp-for="PlanSubscription.Duration" class="form-control" />
+                <span asp-validation-for="PlanSubscription.Duration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlanSubscription.DeleteDatetime" class="control-label"></label>
+                <input asp-for="PlanSubscription.DeleteDatetime" class="form-control" />
+                <span asp-validation-for="PlanSubscription.DeleteDatetime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

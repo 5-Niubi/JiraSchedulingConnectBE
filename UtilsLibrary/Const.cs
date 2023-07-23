@@ -1,4 +1,4 @@
-﻿namespace JiraSchedulingConnectAppService.Common
+﻿namespace UtilsLibrary
 {
     public class Const
     {
