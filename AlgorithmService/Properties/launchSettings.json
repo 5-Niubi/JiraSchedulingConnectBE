@@ -19,6 +19,15 @@
       },
       "dotnetRunMessages": true
     },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "environmentVariables": {},
+      "httpPort": 5003,
+      "sslPort": 5004,
+      "publishAllPorts": true
+    },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
@@ -26,15 +35,6 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
-    },
-    "Docker": {
-      "commandName": "Docker",
-      "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
-      "environmentVariables": {},
-      "sslPort": 5004,
-      "publishAllPorts": true,
-      "httpPort": 5003
     }
   }
 }
