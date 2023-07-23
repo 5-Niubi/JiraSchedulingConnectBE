@@ -55,14 +55,14 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new NotFoundException(Const.MESSAGE.NOTFOUND_SCHEDULE);
 
             var parameterWorkers = await db.ParameterResources.Where(pr => pr.ParameterId == schedule.ParameterId
-                && pr.Type == Const.RESOURCE_TYPE.WORKFORCE).Include(pr => pr.ResourceNavigation)
+                && pr.Type == Const.RESOURCE_TYPE.WORKFORCE).Include(pr => pr.Resource)
                 .ToListAsync();
 
             var worforceDiction = new Dictionary<int, Workforce>();
             parameterWorkers.ForEach(pr =>
             {
                 if (!worforceDiction.ContainsKey(pr.ResourceId))
-                    worforceDiction.Add(pr.ResourceId, pr.ResourceNavigation);
+                    worforceDiction.Add(pr.ResourceId, pr.Resource);
             });
             var workforceResultDict = mapper.Map<Dictionary<int, WorkforceScheduleResultDTO>>(worforceDiction);
 
@@ -102,13 +102,13 @@ namespace JiraSchedulingConnectAppService.Services
                throw new NotFoundException(Const.MESSAGE.NOTFOUND_SCHEDULE);
 
             var parameterWorkers = await db.ParameterResources.Where(pr => pr.ParameterId == schedule.ParameterId
-                && pr.Type == Const.RESOURCE_TYPE.WORKFORCE).Include(pr => pr.ResourceNavigation)
+                && pr.Type == Const.RESOURCE_TYPE.WORKFORCE).Include(pr => pr.Resource)
                 .ToListAsync();
             var worforceDiction = new Dictionary<int, Workforce>();
             parameterWorkers.ForEach(pr =>
             {
                 if (!worforceDiction.ContainsKey(pr.ResourceId))
-                    worforceDiction.Add(pr.ResourceId, pr.ResourceNavigation);
+                    worforceDiction.Add(pr.ResourceId, pr.Resource);
             });
             var workforceResultDict = mapper.Map<Dictionary<int, WorkforceScheduleResultDTO>>(worforceDiction);
 
