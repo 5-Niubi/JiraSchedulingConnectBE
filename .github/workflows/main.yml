@@ -43,7 +43,7 @@ jobs:
           context: .
           file: "AlgorithmService/Dockerfile"
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}_${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
   # test:
   #   name: Test service run success
