@@ -33,7 +33,7 @@ jobs:
           context: .
           file: "AlgorithmService/Dockerfile"
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.BE_SERVICE_IMAGE }}:${{ steps.meta.outputs.tags }}
+          tags: ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
   # test:
   #   name: Test service run success
