@@ -4,10 +4,8 @@ services:
   algorithmservice:
     image: ${DOCKER_REGISTRY-}algorithmservice
     build:
-      context: AlgorithmService
-      dockerfile: Dockerfile
-
-
+      context: .
+      dockerfile: AlgorithmService/Dockerfile
     networks:
       - internal-network
 
@@ -18,8 +16,6 @@ services:
       dockerfile: JiraSchedulingConnectAppService/Dockerfile
     ports:
       - "5126:80"
-    environment:
-      ALGORITHM_SERVICE_URL: http://algorithmservice
 
     networks:
       - internal-network
