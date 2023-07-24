@@ -63,7 +63,7 @@ jobs:
           context: .
           file: "JiraSchedulingConnectAppService/Dockerfile"
           push: true
-          tags: ${{ vars.REGISTRY }}/${{ vars.ALGO_SERVICE_IMAGE }}:${{ github.sha }}
+          tags: ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
   
   Deployment:
