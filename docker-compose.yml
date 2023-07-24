@@ -4,8 +4,8 @@ services:
   algorithmservice:
     image: ${DOCKER_REGISTRY-}algorithmservice
     build:
-      context: .
-      dockerfile: AlgorithmService/Dockerfile
+      context: AlgorithmService
+      dockerfile: Dockerfile
 
 
     networks:
