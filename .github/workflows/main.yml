@@ -8,7 +8,6 @@ jobs:
     name: Build algorithm service
     runs-on: ubuntu-latest
 
-
     steps:
       - name: test
         run: echo "{{defaultContext}}"
@@ -29,7 +28,7 @@ jobs:
 
       - name: Build image
         run: |
-          docker build .  -f AlgorithmService/Dockerfile -t pham2604/5niubi_backend:0.0.3
+          docker build .  -f ./AlgorithmService/Dockerfile -t pham2604/5niubi_backend:0.0.3
       # - name: Build and push
       #   uses: docker/build-push-action@v4
       #   with:
