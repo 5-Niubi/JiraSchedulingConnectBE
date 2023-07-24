@@ -32,7 +32,7 @@ jobs:
           context: .
           file: "AlgorithmService/Dockerfile"
           push: true
-          tags: v_${{ github.sha }}
+          tags: 0.0.4
           labels: ${{ steps.meta.outputs.labels }}
 
   build-backend-service:
@@ -63,7 +63,7 @@ jobs:
           context: .
           file: "JiraSchedulingConnectAppService/Dockerfile"
           push: true
-          tags: v_${{ github.sha }}
+          tags: 0.0.4
           labels: ${{ steps.meta.outputs.labels }}
   
   Deployment:
