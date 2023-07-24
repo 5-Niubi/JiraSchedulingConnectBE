@@ -7,8 +7,8 @@ ENV ASPNETCORE_URLS=http://*:80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["AlgorithmService/AlgorithmServiceServer.csproj", "AlgorithmService/"]
-RUN dotnet restore "AlgorithmService/AlgorithmServiceServer.csproj"
+COPY ["AlgorithmServiceServer.csproj", "AlgorithmService/"]
+RUN dotnet restore "AlgorithmServiceServer.csproj"
 COPY . .
 WORKDIR "/src/AlgorithmService"
 RUN dotnet build "AlgorithmServiceServer.csproj" -c Release -o /app/build
