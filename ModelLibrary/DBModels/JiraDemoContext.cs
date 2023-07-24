@@ -168,6 +168,11 @@ namespace ModelLibrary.DBModels
                     .HasMaxLength(500)
                     .IsUnicode(false)
                     .HasColumnName("site");
+
+                entity.Property(e => e.UserToken)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("user_token");
             });
 
             modelBuilder.Entity<Equipment>(entity =>

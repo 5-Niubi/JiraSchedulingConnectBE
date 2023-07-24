@@ -50,7 +50,9 @@ namespace JiraSchedulingConnectAppService.Services
                         AccountInstalledId = stateContextObject?.accountId,
                         CloudId = stateContextObject?.cloudId,
                         AccessToken = reponseTokenFirstPhase.access_token,
-                        RefressToken = reponseTokenFirstPhase.refresh_token
+                        RefressToken = reponseTokenFirstPhase.refresh_token,
+                        //Site = accessiableResourceResponseDTO[0].url,
+                        UserToken = Utils.RandomString(15)
                     };
 
                     var subscription = new Subscription()
@@ -75,6 +77,7 @@ namespace JiraSchedulingConnectAppService.Services
                     // Update existed
                     tokenFromDB.AccessToken = reponseTokenFirstPhase.access_token;
                     tokenFromDB.RefressToken = reponseTokenFirstPhase.refresh_token;
+                    tokenFromDB.Site = accessiableResourceResponseDTO[0].url;
                 }
                 db.SaveChanges();
                 await db.Database.CommitTransactionAsync();
