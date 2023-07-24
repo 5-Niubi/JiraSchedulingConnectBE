@@ -27,13 +27,23 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # - name: Build image
+      #   run: |
+      #     docker build .  -f ./AlgorithmService/Dockerfile -t pham2604/5niubi_backend:0.0.3
+      
+      - name: Extract metadata for the Docker image
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}
+
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
           context: .
           file: "AlgorithmService/Dockerfile"
           push: true
-          tags: ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
   # test:
   #   name: Test service run success
