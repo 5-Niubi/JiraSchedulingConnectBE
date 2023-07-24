@@ -6,7 +6,7 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["AlgorithmService/AlgorithmServiceServer.csproj", "AlgorithmService/"]
+COPY ["AlgorithmServiceServer.csproj", "AlgorithmService/"]
 RUN dotnet restore "AlgorithmService/AlgorithmServiceServer.csproj"
 COPY . .
 WORKDIR "/src/AlgorithmService"
