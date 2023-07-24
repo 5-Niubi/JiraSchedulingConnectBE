@@ -32,7 +32,7 @@ jobs:
           context: .
           file: "AlgorithmService/Dockerfile"
           push: true
-          tags: 0.0.4
+          tags: ${{ vars.REGISTRY }}/${{ vars.ALGO_SERVICE_IMAGE }}/server:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
 
   build-backend-service:
