@@ -17,6 +17,7 @@ services:
     ports:
       - "5126:80"
       - "8443:80"
+      - "80:80"
 
     networks:
       - internal-network
