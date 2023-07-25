@@ -1,4 +1,4 @@
-﻿using JiraSchedulingConnectAppService.Common;
+﻿using UtilsLibrary;
 
 namespace ModelLibrary.DTOs.Thread
 {

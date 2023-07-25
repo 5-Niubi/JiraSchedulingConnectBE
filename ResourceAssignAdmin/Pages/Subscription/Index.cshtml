@@ -1,0 +1,138 @@
+﻿@page
+@model ResourceAssignAdmin.Pages.Subscription.IndexModel
+
+@{
+    ViewData["Title"] = "Subscriptions";
+}
+
+<h1>Subscriptions</h1>
+
+<div class="row">
+    <p class="col-2">
+        <a asp-page="Create">Create New</a>
+    </p>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Token</span>
+            <input id="tokenSearchInput" type="text" class="form-control" value="@ViewBag.Token">
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class=" input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Plan</span>
+            <select class="form-select" id="planSearchSelect">
+                <option value="">All...</option>
+                @foreach (var plan in ViewBag.PlanId)
+                {
+                    @if (plan.Id == ViewBag.Plan)
+                    {
+                        <option value="@plan.Id" selected>@plan.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@plan.Id">@plan.Name</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-light" id="searchBtn">Search</button>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Subscription[0].Token)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Subscription[0].CurrentPeriodStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Subscription[0].CurrentPeriodEnd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Subscription[0].CancelAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Subscription[0].CreateDatetime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Subscription[0].IsDelete)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Subscription[0].DeleteDatetime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Subscription[0].AtlassianToken)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Subscription[0].Plan)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Subscription)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Token)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CurrentPeriodStart)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CurrentPeriodEnd)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CancelAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateDatetime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsDelete)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DeleteDatetime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AtlassianToken.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Plan.Id)
+                </td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="paging">
+    <ul class="pagination" id="pagination">
+    </ul>
+</div>
+
+<script>
+    $("#searchBtn").click(() => {
+        let url = new URL(location.href);
+        url.searchParams.set("token", $("#tokenSearchInput").val());
+        url.searchParams.set("plan", $("#planSearchSelect").val());
+        location.href = url.toString();
+    });
+</script>
+
+<script>
+    paging(@ViewBag.totalPage, @ViewBag.currentPage);
+
+    ﻿
+</script>

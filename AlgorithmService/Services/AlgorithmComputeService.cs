@@ -1,7 +1,6 @@
 ﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
 using AlgorithmServiceServer.Services.Interfaces;
 using AutoMapper;
-using JiraSchedulingConnectAppService.Common;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;

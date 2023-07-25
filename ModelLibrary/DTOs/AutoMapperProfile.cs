@@ -6,7 +6,9 @@ using ModelLibrary.DTOs.Milestones;
 using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Projects;
+using ModelLibrary.DTOs.Schedules;
 using ModelLibrary.DTOs.Skills;
+using ModelLibrary.DTOs.Subscriptions;
 
 namespace ModelLibrary.DTOs
 {
@@ -106,6 +108,11 @@ namespace ModelLibrary.DTOs
             CreateMap<Workforce, WorkforceScheduleResultDTO>();
             CreateMap<Project, ProjectDeleteResDTO>();
             CreateMap<Milestone, MileStoneScheduleResultDTO>();
+            CreateMap<PlanSubscription, PlanSubscriptionResDTO>();
+
+            CreateMap<Subscription, SubscriptionResDTO>()
+                .ForMember(s => s.Plan, s => s.MapFrom(s => s.Plan));
+            CreateMap<Schedule, SchedulesListResDTO>();
         }
     }
 }

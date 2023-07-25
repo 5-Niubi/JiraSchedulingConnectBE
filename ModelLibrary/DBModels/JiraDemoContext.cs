@@ -399,16 +399,16 @@ namespace ModelLibrary.DBModels
             {
                 entity.ToTable("plan_subscription");
 
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("create_datetime")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.DeleteDatetime).HasColumnName("delete_datetime");
+                entity.Property(e => e.DeleteDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("delete_datetime");
 
                 entity.Property(e => e.Duration).HasColumnName("duration");
 

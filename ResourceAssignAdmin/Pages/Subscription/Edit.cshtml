@@ -1,0 +1,70 @@
+﻿@page
+@model ResourceAssignAdmin.Pages.Subscription.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Subscription</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Subscription.Id" />
+            <div class="form-group">
+                <label asp-for="Subscription.Token" class="control-label"></label>
+                <input asp-for="Subscription.Token" class="form-control" readonly/>
+                <span asp-validation-for="Subscription.Token" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.PlanId" class="control-label"></label>
+                <select asp-for="Subscription.PlanId" class="form-control" asp-items="ViewBag.PlanId"></select>
+                <span asp-validation-for="Subscription.PlanId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.CurrentPeriodStart" class="control-label"></label>
+                <input asp-for="Subscription.CurrentPeriodStart" class="form-control" />
+                <span asp-validation-for="Subscription.CurrentPeriodStart" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.CurrentPeriodEnd" class="control-label"></label>
+                <input asp-for="Subscription.CurrentPeriodEnd" class="form-control" />
+                <span asp-validation-for="Subscription.CurrentPeriodEnd" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.CancelAt" class="control-label"></label>
+                <input asp-for="Subscription.CancelAt" class="form-control" />
+                <span asp-validation-for="Subscription.CancelAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.CreateDatetime" class="control-label"></label>
+                <input asp-for="Subscription.CreateDatetime" class="form-control" />
+                <span asp-validation-for="Subscription.CreateDatetime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.IsDelete" class="control-label"></label>
+                <input asp-for="Subscription.IsDelete" class="form-control" />
+                <span asp-validation-for="Subscription.IsDelete" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.DeleteDatetime" class="control-label"></label>
+                <input asp-for="Subscription.DeleteDatetime" class="form-control" />
+                <span asp-validation-for="Subscription.DeleteDatetime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
