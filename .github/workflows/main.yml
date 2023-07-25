@@ -1,8 +1,7 @@
 name: Deployment Pipeline
 on:
   push:
-    branches:
-      - manhpv
+    branches: "*"
 jobs:
   build-algorithm-service:
     name: Build algorithm service
