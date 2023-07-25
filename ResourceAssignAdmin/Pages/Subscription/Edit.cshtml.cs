@@ -22,22 +22,28 @@ namespace ResourceAssignAdmin.Pages.Subscription
         [BindProperty]
         public ModelLibrary.DBModels.Subscription Subscription { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> PrepareView(int? id)
         {
             if (id == null || _context.Subscriptions == null)
             {
                 return NotFound();
             }
 
-            var subscription =  await _context.Subscriptions.FirstOrDefaultAsync(m => m.Id == id);
+            var subscription = await _context.Subscriptions
+                .Include(s => s.AtlassianToken).Include(s => s.Plan)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (subscription == null)
             {
                 return NotFound();
             }
             Subscription = subscription;
-           ViewData["AtlassianTokenId"] = new SelectList(_context.AtlassianTokens, "Id", "Id");
-           ViewData["PlanId"] = new SelectList(_context.PlanSubscriptions, "Id", "Name");
+            
             return Page();
+        }
+
+        public async Task<IActionResult> OnGetAsync(int? id)
+        {     
+            return await PrepareView(id);
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
