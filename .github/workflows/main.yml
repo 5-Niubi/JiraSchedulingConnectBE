@@ -90,7 +90,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
         
       - name: Connect & Pull & Deploy
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.DEV_BRANCH }} && git pull && BACKEND_IMAGE_TAG=${{ github.sha }}  ALGO_IMAGE_TAG=${{ github.sha }} docker-compose -f docker-compose.deployment.yml up -d && exit"
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.DEV_BRANCH }} && git pull && sudo BACKEND_IMAGE_TAG=${{ github.sha }}  ALGO_IMAGE_TAG=${{ github.sha }} docker-compose -f docker-compose.deployment.yml up -d && exit"
       
       - name: cleanup
         run: rm -rf ~/.ssh
