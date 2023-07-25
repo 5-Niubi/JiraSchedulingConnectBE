@@ -43,7 +43,12 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IAlgorithmComputeService, AlgorithmComputeService>();
 builder.Services.AddTransient<IEstimateWorkforceService, EstimateWorkforcService>();
 
+
 var app = builder.Build();
+
+//app.Urls.Add("http://localhost:3000");
+//app.Urls.Add("http://localhost:80");
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
