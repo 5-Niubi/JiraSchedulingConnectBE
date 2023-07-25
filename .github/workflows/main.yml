@@ -1,7 +1,13 @@
 name: Deployment Pipeline
 on:
   push:
-    branches: "*"
+    branches: 
+      - "*"
+  pull_request:
+    branches: 
+      - "*"
+
+
 jobs:
   build-algorithm-service:
     name: Build algorithm service

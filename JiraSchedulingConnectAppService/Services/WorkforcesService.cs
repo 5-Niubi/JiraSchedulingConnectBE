@@ -7,7 +7,6 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Invalidation;
 using ModelLibrary.DTOs.Parameters;
 using Newtonsoft.Json;
-using org.sqlite.core;
 using UtilsLibrary.Exceptions;
 
 
@@ -70,7 +69,6 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async Task<List<SkillRequestErrorDTO>> _ValidateWorkforceSkills(WorkforceRequestDTO WorkforceRequest)
         {
-
 
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();

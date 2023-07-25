@@ -51,25 +51,9 @@ namespace JiraSchedulingConnectAppService.Services
         {
 
 
-            //var UniqueTasks = new List<int>();
-            //foreach (var taskPredencesTask in TaskPrecedencesTasksRequest)
-            //{
-            //    var taskId = taskPredencesTask.TaskId;
-            //    if (!UniqueTasks.Contains(taskId))
-            //    {
-            //        UniqueTasks.Add(taskId);
-            //    }
-            //    foreach (var precedenceId in taskPredencesTask.TaskPrecedences)
-            //    {
-            //        if (!UniqueTasks.Contains(precedenceId))
-            //        {
-            //            UniqueTasks.Add(precedenceId);
-            //        }
-            //    }
-            //}
 
-            //// validated task exited
-            //// validate precedence tasks exited
+            // validated task exited
+            // validate precedence tasks exited
             var exitedTasks = await db.Tasks
                 .Where(t => t.ProjectId == projectId && t.IsDelete == false)
                 .ToListAsync();
@@ -365,12 +349,6 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
-
-
-
-
-
-
         private async Task<List<TasksSkillsRequired>> _SaveTasksSkillsRequireds(List<TaskSkillsRequiredRequestDTO> taskSkillsRequiredsRequest)
         {
 
@@ -444,6 +422,51 @@ namespace JiraSchedulingConnectAppService.Services
             return true;
 
         }
+
+
+        //public async Task<bool> TasksSaveRequestV2(TasksSaveRequestV2 TasksSaveRequest)
+        //{
+
+        //    var projectId = TasksSaveRequest.ProjectId;
+
+
+        //    //var TaskPrecedenceTasksRequest = TasksSaveRequest.TaskSaveRequests;
+
+        //    //var TaskSkillsRequiredsRequest = TasksSaveRequest.TaskSkillsRequireds;
+
+        //    // TODO: all task setup on skill & precedence must exited on database
+        //    // check all task setup precedence
+        //    await _ValidateConfigTaskPrecedences(projectId, TaskPrecedenceTasksRequest);
+
+        //    // check precedence task is validate
+        //    await _ValidateExitedPrecedenceTask(TaskPrecedenceTasksRequest);
+
+        //    // clean all precedence tasks of project id
+        //    await _ClearTaskPrecedenceTask(projectId);
+
+
+        //    // check all Tasks project's must setup Required Skills
+        //    await _ValidateConfigAllTaskSkillsRequireds(projectId, TaskSkillsRequiredsRequest);
+
+
+        //    // validate exited skill 
+        //    await _ValidateExitedSkill(TaskSkillsRequiredsRequest);
+
+        //    // clean all precedence tasks of project id
+        //    await _ClearTaskSkillRequired(TaskSkillsRequiredsRequest);
+
+        //    // save task skill required
+        //    await _SaveTasksSkillsRequireds(TaskSkillsRequiredsRequest);
+
+        //    // save task precedence
+        //    await _SaveTasksPrecedencesTasks(TaskPrecedenceTasksRequest);
+
+        //    return true;
+
+        //}
+
+
+        
 
 
 
