@@ -30,7 +30,7 @@ namespace ResourceAssignAdmin.Pages.Subscription
                 .Include(s => s.AtlassianToken)
                 .Include(s => s.Plan)
                 .Where(s => (
-                    (token == null || s.Token == token)
+                    (token == null || s.AtlassianToken.UserToken == token)
                     &&
                     (plan == null || s.PlanId == plan)
                  ));

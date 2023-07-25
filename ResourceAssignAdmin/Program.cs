@@ -1,5 +1,9 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using ModelLibrary.DBModels;
+using ResourceAssignAdmin.Filter;
+using static ModelLibrary.DTOs.Export.MSPXMLModelDTO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +12,11 @@ builder.Services.AddDbContext<JiraDemoContext>(opt => opt.UseSqlServer(
     builder.Configuration.GetConnectionString("DB")
     )
 );
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages().AddRazorPagesOptions(o =>
+{
+    o.Conventions.AddFolderApplicationModelConvention("/", model => model.Filters.Add(new SessionFilter()));
+});
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(1);//You can set Time   

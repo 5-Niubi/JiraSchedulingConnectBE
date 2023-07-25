@@ -5,7 +5,7 @@ namespace RcpspAlgorithmLibrary.GA
     public class GAHelper
     {
         public static int NUM_OF_POPULATION = 100;
-        public static int NUM_OF_GENARATION = 500;
+        public static int NUM_OF_GENARATION = 700;
         public static int NUM_OF_ELITE_CHOMOSOMES = 10;
         public static int TOURNAMET_SELECTION_SIZE = 10;
         public static double MUTATION_RATE = 0.1;

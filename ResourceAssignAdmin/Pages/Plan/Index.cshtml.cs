@@ -18,7 +18,7 @@ namespace ResourceAssignAdmin.Pages.Plan
             _context = context;
         }
 
-        public IList<PlanSubscription> PlanSubscription { get;set; } = default!;
+        public IList<PlanSubscription> PlanSubscription { get; set; } = default!;
 
         public async System.Threading.Tasks.Task OnGetAsync()
         {
