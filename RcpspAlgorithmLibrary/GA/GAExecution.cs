@@ -125,10 +125,18 @@ namespace RcpspAlgorithmLibrary.GA
             // Dau ra tu day
             var outputList = new List<AlgorithmRawOutput>();
 
-            for (int i = 0; i < 10; i++)
+            var chromosomeWithDistictFitness = population.Chromosomes
+                .GroupBy(c => c.Fitness).Select(c => c.First()).ToList();
+
+            var maxResult = 10;
+            if (maxResult > chromosomeWithDistictFitness.Count)
+            {
+                maxResult = chromosomeWithDistictFitness.Count;
+            }
+            for (int i = 0; i < maxResult; i++)
             {
                 var output = new AlgorithmRawOutput();
-                var individual = population.Chromosomes[i];
+                var individual = chromosomeWithDistictFitness[i];
                 output.TimeFinish = individual.TimeFinish;
                 output.TaskFinish = individual.TaskFinish;
                 output.TaskBegin = individual.TaskBegin;
