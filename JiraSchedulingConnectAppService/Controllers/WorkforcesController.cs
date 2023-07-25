@@ -37,6 +37,22 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetWorkforceScheduleByProject()
+        {
+            try
+            {
+                var response = await workforcesService.GetWorkforceScheduleByProject();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateWorkforce([FromBody] WorkforceRequestDTO workforce)
         {
