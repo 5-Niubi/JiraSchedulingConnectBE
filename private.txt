@@ -18,4 +18,4 @@ modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false); 
