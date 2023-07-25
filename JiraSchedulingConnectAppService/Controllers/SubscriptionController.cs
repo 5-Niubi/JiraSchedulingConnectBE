@@ -18,8 +18,9 @@ namespace JiraSchedulingConnectAppService.Controllers
         public SubscriptionController(ISubscriptionService subscService,
             ILoggerManager logger)
         {
-            this.subsService = subscService;
             this._Logger = logger;
+            this.subsService = subscService;
+            
         }
 
         [HttpGet]
@@ -32,17 +33,16 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (NotFoundException ex)
             {
-                this._Logger.LogDebug(ex.Message);
+                this._Logger.LogWarning(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return NotFound(response);
             }
             catch (Exception ex)
             {
-                this._Logger.LogDebug(ex.Message);
+                this._Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
-            return NoContent();
         }
     }
 }

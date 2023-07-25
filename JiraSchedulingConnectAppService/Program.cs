@@ -13,7 +13,6 @@ using NLog.Web;
 using System.Text;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
-
 try
 {
     logger.Info("Start Game...");

@@ -12,10 +12,12 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class WorkforcesController : ControllerBase
     {
         private IWorkforcesService workforcesService;
-        public WorkforcesController(IWorkforcesService workforcesService)
+        private readonly ModelLibrary.ILoggerManager _Logger;
+        public WorkforcesController(IWorkforcesService workforcesService, ModelLibrary.ILoggerManager logger)
+            
         {
 
-
+            this._Logger = logger;
             this.workforcesService = workforcesService;
         }
 
@@ -46,6 +48,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             catch (NotSuitableInputException ex)
             {
 
+                this._Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
 
@@ -55,7 +58,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (Exception ex)
             {
-
+                this._Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -71,7 +74,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-
+                this._Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -88,7 +91,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-
+                this._Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -106,7 +109,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (Exception ex)
             {
-
+                this._Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

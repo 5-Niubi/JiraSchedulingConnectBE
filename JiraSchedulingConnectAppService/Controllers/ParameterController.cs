@@ -19,11 +19,10 @@ namespace JiraSchedulingConnectAppService.Controllers
 
         public ParameterController(IParametersService parametersService, ModelLibrary.ILoggerManager logger)
 
-
-
         {
-            this.parametersService = parametersService;
             this._Logger = logger;
+            this.parametersService = parametersService;
+            
 
         }
 
@@ -37,8 +36,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                this._Logger.LogDebug(ex.Message);
-
+                this._Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
