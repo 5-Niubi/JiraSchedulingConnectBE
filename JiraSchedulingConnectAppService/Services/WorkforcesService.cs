@@ -180,7 +180,7 @@ namespace JiraSchedulingConnectAppService.Services
         {
             try
             {
-                var workforce = await db.Workforces.Where(e => e.Id.ToString() == workforce_id).FirstOrDefaultAsync();
+                var workforce = await db.Workforces.Include(s=>s.WorkforceSkills).ThenInclude(s=>s.Skill).Where(e => e.Id.ToString() == workforce_id).FirstOrDefaultAsync();
                 var workforceResponse = mapper.Map<WorkforceDTOResponse>(workforce);
                 return workforceResponse;
             }
