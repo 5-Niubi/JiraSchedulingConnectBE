@@ -15,13 +15,13 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Subscription.Id" />
             <div class="form-group">
-                <label asp-for="Subscription.Token" class="control-label"></label>
-                <input asp-for="Subscription.Token" class="form-control" readonly/>
-                <span asp-validation-for="Subscription.Token" class="text-danger"></span>
+                <label asp-for="Subscription.AtlassianToken.UserToken" class="control-label"></label>
+                <input asp-for="Subscription.AtlassianToken.UserToken" class="form-control" readonly />
+                <span asp-validation-for="Subscription.AtlassianToken.UserToken" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Subscription.PlanId" class="control-label"></label>
-                <select asp-for="Subscription.PlanId" class="form-control" asp-items="ViewBag.PlanId"></select>
+                <label asp-for="Subscription.Plan" class="control-label"></label>
+                <input asp-for="Subscription.Plan.Name" class="form-control" readonly disabled/>
                 <span asp-validation-for="Subscription.PlanId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -36,23 +36,11 @@
             </div>
             <div class="form-group">
                 <label asp-for="Subscription.CancelAt" class="control-label"></label>
-                <input asp-for="Subscription.CancelAt" class="form-control" />
-                <span asp-validation-for="Subscription.CancelAt" class="text-danger"></span>
+                <input value="@Model.Subscription.CancelAt" class="form-control" readonly disabled/>
             </div>
             <div class="form-group">
                 <label asp-for="Subscription.CreateDatetime" class="control-label"></label>
-                <input asp-for="Subscription.CreateDatetime" class="form-control" />
-                <span asp-validation-for="Subscription.CreateDatetime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Subscription.IsDelete" class="control-label"></label>
-                <input asp-for="Subscription.IsDelete" class="form-control" />
-                <span asp-validation-for="Subscription.IsDelete" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Subscription.DeleteDatetime" class="control-label"></label>
-                <input asp-for="Subscription.DeleteDatetime" class="form-control" />
-                <span asp-validation-for="Subscription.DeleteDatetime" class="text-danger"></span>
+                <input value="@Model.Subscription.CreateDatetime" class="form-control" readonly disabled/>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

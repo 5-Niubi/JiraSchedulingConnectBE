@@ -46,5 +46,18 @@
             public const string RUNNING = "running";
             public const string ERROR = "error";
         }
+
+        public static class  SUBSCRIPTION 
+        {
+            public const int PLAN_FREE = 1;
+            public const int PLAN_PLUS = 2;
+        }
+
+        public static class ADMIN_SERVER
+        {
+            public const string USER = "user";
+            public const int PLAN_FREE = 1;
+            public const int PLAN_PREMIUM = 2;
+        }
     }
 }

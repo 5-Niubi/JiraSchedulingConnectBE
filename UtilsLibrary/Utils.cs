@@ -73,10 +73,11 @@ namespace UtilsLibrary
                 if (pageNumber > totalPage)
                 {
                     pageNumber = totalPage;
+                    if (totalPage <= 0) pageNumber = 1;
                 }
                 IQueryable<T> queryResult = query.Skip(Const.PAGING.NUMBER_RECORD_PAGE * (pageNumber - 1))
                     .Take(Const.PAGING.NUMBER_RECORD_PAGE);
-                
+
                 return (queryResult, totalPage, pageNumber, totalRecord);
             }
         }
