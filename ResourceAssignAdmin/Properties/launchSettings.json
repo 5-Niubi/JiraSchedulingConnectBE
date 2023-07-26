@@ -20,7 +20,9 @@
       "commandName": "Docker",
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
-      "publishAllPorts": true
+      "publishAllPorts": true,
+      "sslPort": 5003,
+      "httpPort": 5242
     }
   },
   "iisSettings": {

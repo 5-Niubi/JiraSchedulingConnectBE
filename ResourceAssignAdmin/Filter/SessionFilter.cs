@@ -19,10 +19,12 @@ namespace ResourceAssignAdmin.Filter
             var pagePath = context.ActionDescriptor.RelativePath;
 
             // List of URLs that should be excluded from the filter (customize this as needed)
-            var excludedUrls = new List<string> { "/Pages/Authentication/Login.cshtml" };
+            var excludedUrls = new List<string> {
+                "/Pages/Authentication/Login.cshtml",
+                "/Pages/Upgrade" };
 
             // Check if the current page is in the excluded list
-            if (!excludedUrls.Contains(pagePath))
+            if (excludedUrls.Where(eu => pagePath.Contains(eu)).Count() == 0)
             {
                 var currentUser = context.HttpContext.Session.GetString(Const.ADMIN_SERVER.USER);
                 if (currentUser == null)

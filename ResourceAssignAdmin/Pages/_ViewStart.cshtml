@@ -1,3 +1,10 @@
 ﻿@{
-    Layout = "_Layout";
+    var path = Context.Request.Path.Value.ToLower();
+    if (path.Contains("/upgrade"))
+    {
+        Layout = "_Layout2";
+    }else
+    {
+        Layout = "_Layout";
+    }
 }

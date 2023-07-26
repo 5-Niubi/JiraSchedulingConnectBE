@@ -2,8 +2,6 @@
 using java.lang;
 using UtilsLibrary;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using JiraSchedulingConnectAppService.SignalR;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
@@ -29,11 +27,10 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly IThreadService threadService;
         private readonly IMapper mapper;
         private IConfiguration config;
-        private readonly IHubContext<SignalRServer> signal;
 
         public ExportService(JiraDemoContext db, IJiraBridgeAPIService jiraAPI,
             IHttpContextAccessor httpAccessor, IConfiguration config,
-            IThreadService threadService, IMapper mapper, IHubContext<SignalRServer> signal
+            IThreadService threadService, IMapper mapper
             )
         {
             this.db = db;
@@ -44,7 +41,6 @@ namespace JiraSchedulingConnectAppService.Services
             appName = config.GetValue<string>("Environment:Appname");
             this.threadService = threadService;
             this.mapper = mapper;
-            this.signal = signal;
         }
 
         public async Task<ThreadStartDTO> ToJira(int scheduleId, int projectId)
@@ -80,8 +76,7 @@ namespace JiraSchedulingConnectAppService.Services
             string threadId = ThreadService.CreateThreadId();
             threadId = threadService.StartThread(threadId,
                 async () => await ProcessToJiraThread(
-                    threadId, schedule, accountId, workforceResultDict, workforceEmailDiction, projectId,
-                    signal
+                    threadId, schedule, accountId, workforceResultDict, workforceEmailDiction, projectId
                     ));
 
             return new ThreadStartDTO(threadId);
@@ -119,8 +114,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async Task ProcessToJiraThread(string threadId, Schedule schedule, string? accountId,
             Dictionary<int, WorkforceScheduleResultDTO> workforceResultDict,
-            Dictionary<string, WorkforceScheduleResultDTO> workforceEmailDict, int projectId,
-            IHubContext<SignalRServer> signal)
+            Dictionary<string, WorkforceScheduleResultDTO> workforceEmailDict, int projectId)
         {
             try
             {
