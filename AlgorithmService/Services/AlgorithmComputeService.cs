@@ -60,6 +60,10 @@ namespace AlgorithmServiceServer.Services
             inputTo.FunctionList = new List<Function>();
             inputTo.EquipmentList = new List<Equipment>();
 
+            inputTo.ObjectiveTime = parameterEntity.ObjectiveTime;
+            inputTo.ObjectiveCost = parameterEntity.ObjectiveCost;
+            inputTo.ObjectiveQuality = parameterEntity.ObjectiveQuality;
+
             var converter = new AlgorithmConverter(inputTo, mapper);
 
             var outputToAlgorithm = converter.ToOR();

@@ -54,3 +54,48 @@ function paging(totalPage, pageNum) {
 
     $("#pagination").html(pagingContent);
 }
+
+
+function imageToBase64(inputDomId) {
+    const imageInput = document.getElementById(inputDomId);
+
+    const file = imageInput.files[0];
+    if (!file) {
+        alert('Please select an image.');
+        return;
+    }
+
+    const reader = new FileReader();
+    let result;
+    reader.onload = function () {
+        const base64 = reader.result;
+        result = base64;
+    };
+
+    reader.readAsDataURL(file);
+    return result;
+}
+
+function mailTo() {
+    let emailTo = "area1110@outlook.com"
+
+    let userCode = $("#userToken").val();
+    let transferCode = $("#transferCode").val();
+
+    let subject = `[WoTaas][UpgradePlan] ${userCode}`;
+    let body = `
+        UserCode: ${userCode}
+        TransferCode: ${transferCode}
+    `;
+
+    subject = encodeURIComponent(subject);
+    body = encodeURIComponent(body);
+
+    let urlMail = new URL(`mailto:${emailTo}?subject=${subject}&body=${body}`);
+
+    const emailWindow = window.open(urlMail, "_blank");
+    // Close the window after a short delay (optional)
+    setTimeout(() => {
+        emailWindow.close();
+    }, 500);
+}

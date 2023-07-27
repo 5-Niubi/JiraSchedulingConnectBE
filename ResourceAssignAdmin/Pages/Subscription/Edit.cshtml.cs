@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
+using UtilsLibrary;
 
 namespace ResourceAssignAdmin.Pages.Subscription
 {
@@ -28,21 +29,24 @@ namespace ResourceAssignAdmin.Pages.Subscription
             {
                 return NotFound();
             }
-
-            var subscription = await _context.Subscriptions
-                .Include(s => s.AtlassianToken).Include(s => s.Plan)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (subscription == null)
+            if (Subscription == null)
             {
-                return NotFound();
+                var subscription = await _context.Subscriptions
+                    .Include(s => s.AtlassianToken).Include(s => s.Plan)
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (subscription == null)
+                {
+                    return NotFound();
+                }
+                Subscription = subscription;
             }
-            Subscription = subscription;
-            
+
+            ViewData["UserToken"] = Subscription.AtlassianToken.UserToken;
             return Page();
         }
 
         public async Task<IActionResult> OnGetAsync(int? id)
-        {     
+        {
             return await PrepareView(id);
         }
 
@@ -50,35 +54,55 @@ namespace ResourceAssignAdmin.Pages.Subscription
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            _context.Attach(Subscription).State = EntityState.Modified;
-
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return await PrepareView(Subscription.Id);
+                }
+                await _context.Database.BeginTransactionAsync();
+
+                // Get subscription that update to
+                var updateSubscription = await _context.Subscriptions.OrderByDescending(s => s.CreateDatetime)
+                    .FirstOrDefaultAsync(s => s.Id == Subscription.Id);
+                /*
+                // Validate Unique Toke
+                var otherAtlasTokHaveSameUserTok = await _context.AtlassianTokens.FirstOrDefaultAsync(
+                    at => at.UserToken == Subscription.AtlassianToken.UserToken
+                    && at.Id != updateSubscription.AtlassianTokenId);
+                if (otherAtlasTokHaveSameUserTok != null)
+                {
+                    ViewData["tokenMsg"] = "Token does exist";
+                    return await PrepareView(Subscription.Id);
+                }
+
+                var updateAtlasTok = await _context.AtlassianTokens.FirstOrDefaultAsync(at =>
+                    at.Id == updateSubscription.AtlassianTokenId);
+                updateAtlasTok.UserToken = Subscription.AtlassianToken.UserToken;
+                _context.AtlassianTokens.Update(updateAtlasTok);
+                */
+                // Remove Atlassian token after update it done
+                Subscription.AtlassianToken = null;
+
+                updateSubscription.CurrentPeriodStart = Subscription.CurrentPeriodStart;
+                updateSubscription.CurrentPeriodEnd = Subscription.CurrentPeriodEnd;
+                _context.Subscriptions.Update(updateSubscription);
+           
                 await _context.SaveChangesAsync();
+                await _context.Database.CommitTransactionAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!SubscriptionExists(Subscription.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                await _context.Database.RollbackTransactionAsync();
+                throw;
+            }
+            finally
+            {
+                await _context.Database.CloseConnectionAsync();
             }
 
             return RedirectToPage("./Index");
         }
 
-        private bool SubscriptionExists(int id)
-        {
-          return (_context.Subscriptions?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
     }
 }

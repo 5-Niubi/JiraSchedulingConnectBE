@@ -21,6 +21,7 @@
         public int[,] EquipmentFunction { get; set; }
         public int[] EquipmentCost { get; set; }
         public double[,] WorkerEffort { get; set; }
+        public bool[] ObjectiveSelect { get; set; } = new bool[3];
 
         //public List<ModelLibrary.DBModels.Task> TaskList { get; set; }
         //public List<Workforce> WorkerList { get; set; }
