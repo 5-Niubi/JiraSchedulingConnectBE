@@ -273,14 +273,8 @@ namespace JiraSchedulingConnectAppService.Services
                     t => t.Id == changingTask.Id
                     && t.IsDelete == false);
 
-            if (oldTask == null)
-            {
-                throw new Exception(NotFoundMessage);
-            }
-
-            // validated task name exited
-            await _ValidateExitedTaskName(changingTask);
-
+            // Validate milestoneId exited
+            await _ValidateExitedMilestone(taskRequest);
 
             // validate exited predences in this project
             if (changingTask.TaskPrecedenceTasks != null)
@@ -288,18 +282,22 @@ namespace JiraSchedulingConnectAppService.Services
                 await _ValidatePrecedenceTask(changingTask);
             }
 
-
             // validate required skills task's
             if (changingTask.TasksSkillsRequireds != null)
             {
                 await _ValidateSkillsRequired(changingTask);
             }
 
-
-            //TODO validate DAG
-
-            changingTask.Name = (changingTask.Name == null) ?
-                oldTask.Name : changingTask.Name;
+            // validated task name exited
+            if(changingTask.Name != null)
+            {
+                await _ValidateExitedTaskName(changingTask);
+            }
+            else
+            {
+                changingTask.Name = oldTask.Name;
+            }
+            
 
             oldTask.Duration = (changingTask.Duration == null) ?
                 oldTask.Duration : changingTask.Duration;
@@ -579,7 +577,6 @@ namespace JiraSchedulingConnectAppService.Services
                 }
 
 
-
             }
 
             if (PrecedenceTaskErrors.Count != 0)
@@ -693,6 +690,29 @@ namespace JiraSchedulingConnectAppService.Services
                     {
                         TaskId = task.Id,
                         Messages = NotUniqueTaskNameMessage
+                    });
+
+
+            }
+
+            return true;
+        }
+
+        private async Task<bool> _ValidateExitedMilestone(TaskUpdatedRequest task)
+        {
+            // validate exited name task  project's 
+            var existingMileStone = await db.Milestones.FirstOrDefaultAsync(
+                t => t.ProjectId == task.ProjectId && t.Id == task.MilestoneId);
+             
+
+            if (existingMileStone == null)
+            {
+
+                throw new NotSuitableInputException(
+                    new TaskInputErrorDTO
+                    {
+                        TaskId = task.Id,
+                        Messages = MilestoneNotValidMessage
                     });
 
 
