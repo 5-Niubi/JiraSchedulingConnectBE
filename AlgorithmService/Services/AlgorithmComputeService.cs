@@ -1,7 +1,6 @@
 ﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
 using AlgorithmServiceServer.Services.Interfaces;
 using AutoMapper;
-using JiraSchedulingConnectAppService.Common;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
@@ -60,6 +59,10 @@ namespace AlgorithmServiceServer.Services
 
             inputTo.FunctionList = new List<Function>();
             inputTo.EquipmentList = new List<Equipment>();
+
+            inputTo.ObjectiveTime = parameterEntity.ObjectiveTime;
+            inputTo.ObjectiveCost = parameterEntity.ObjectiveCost;
+            inputTo.ObjectiveQuality = parameterEntity.ObjectiveQuality;
 
             var converter = new AlgorithmConverter(inputTo, mapper);
 

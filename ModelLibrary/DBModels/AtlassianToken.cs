@@ -17,6 +17,7 @@ namespace ModelLibrary.DBModels
         public string? Site { get; set; }
         public string? AccessToken { get; set; }
         public string? RefressToken { get; set; }
+        public string? UserToken { get; set; }
         public DateTime? CreateDatetime { get; set; }
         public bool? IsDelete { get; set; }
         public DateTime? DeleteDatetime { get; set; }

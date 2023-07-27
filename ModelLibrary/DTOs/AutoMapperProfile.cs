@@ -6,7 +6,10 @@ using ModelLibrary.DTOs.Milestones;
 using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Projects;
+using ModelLibrary.DTOs.Schedules;
 using ModelLibrary.DTOs.Skills;
+using ModelLibrary.DTOs.Subscriptions;
+using Newtonsoft.Json;
 
 namespace ModelLibrary.DTOs
 {
@@ -34,6 +37,8 @@ namespace ModelLibrary.DTOs
 
 
 
+
+
             CreateMap<Workforce, WorkforceDTOResponse>()
                 .ForMember(x => x.Skills, t => t.MapFrom(t => t.WorkforceSkills.Select(s => new SkillDTOResponse
                 {
@@ -43,7 +48,10 @@ namespace ModelLibrary.DTOs
                     CreateDatetime = s.Skill.CreateDatetime,
                     IsDelete = s.IsDelete,
                     DeleteDatetime = s.DeleteDatetime,
-                })));
+                })))
+                .ForMember(dest => dest.WorkingEfforts, opt => opt.MapFrom(src =>
+                string.IsNullOrEmpty(src.WorkingEffort) ? null : JsonConvert.DeserializeObject<List<float>>(src.WorkingEffort)));
+
 
 
 
@@ -107,6 +115,12 @@ namespace ModelLibrary.DTOs
             CreateMap<Project, ProjectDeleteResDTO>();
 			CreateMap<ScheduleRequestDTO, Schedule>();
             CreateMap<Milestone, MileStoneScheduleResultDTO>();
+            CreateMap<PlanSubscription, PlanSubscriptionResDTO>();
+
+            CreateMap<Subscription, SubscriptionResDTO>()
+                .ForMember(s => s.Plan, s => s.MapFrom(s => s.Plan))
+                .ForMember(s => s.Token, s => s.MapFrom(s => s.AtlassianToken.UserToken));
+            CreateMap<Schedule, SchedulesListResDTO>();
         }
     }
 }

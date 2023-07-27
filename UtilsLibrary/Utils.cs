@@ -1,6 +1,6 @@
 ﻿using System.Dynamic;
 
-namespace JiraSchedulingConnectAppService.Common
+namespace UtilsLibrary
 {
     public class Utils
     {
@@ -70,7 +70,11 @@ namespace JiraSchedulingConnectAppService.Common
 
                 int totalRecord = query.Count();
                 totalPage = (int)Math.Ceiling((decimal)totalRecord / Const.PAGING.NUMBER_RECORD_PAGE);
-
+                if (pageNumber > totalPage)
+                {
+                    pageNumber = totalPage;
+                    if (totalPage <= 0) pageNumber = 1;
+                }
                 IQueryable<T> queryResult = query.Skip(Const.PAGING.NUMBER_RECORD_PAGE * (pageNumber - 1))
                     .Take(Const.PAGING.NUMBER_RECORD_PAGE);
 

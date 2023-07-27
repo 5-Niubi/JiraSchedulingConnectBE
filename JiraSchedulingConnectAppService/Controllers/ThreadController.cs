@@ -23,6 +23,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
+
                 return Ok(threadService.GetThreadResult(threadId));
             }
 

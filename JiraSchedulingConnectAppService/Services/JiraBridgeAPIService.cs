@@ -1,4 +1,4 @@
-﻿using JiraSchedulingConnectAppService.Common;
+﻿using UtilsLibrary;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;

@@ -50,6 +50,27 @@ namespace ModelLibrary.DBModels
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<AdminAccount>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Equipment>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<EquipmentsFunction>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Milestone>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Parameter>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<ParameterResource>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<PlanSubscription>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Schedule>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Skill>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Subscription>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Task>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TaskFunction>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
@@ -168,6 +189,11 @@ namespace ModelLibrary.DBModels
                     .HasMaxLength(500)
                     .IsUnicode(false)
                     .HasColumnName("site");
+
+                entity.Property(e => e.UserToken)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("user_token");
             });
 
             modelBuilder.Entity<Equipment>(entity =>
@@ -399,16 +425,16 @@ namespace ModelLibrary.DBModels
             {
                 entity.ToTable("plan_subscription");
 
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("create_datetime")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.DeleteDatetime).HasColumnName("delete_datetime");
+                entity.Property(e => e.DeleteDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("delete_datetime");
 
                 entity.Property(e => e.Duration).HasColumnName("duration");
 

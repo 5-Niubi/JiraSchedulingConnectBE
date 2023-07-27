@@ -1,4 +1,4 @@
-﻿namespace JiraSchedulingConnectAppService.Common
+﻿namespace UtilsLibrary
 {
     public class Const
     {
@@ -20,7 +20,7 @@
 
         public static class PAGING
         {
-            public static int NUMBER_RECORD_PAGE = 10;
+            public const int NUMBER_RECORD_PAGE = 10;
         }
 
         public static class RESOURCE_TYPE
@@ -45,6 +45,19 @@
             public const string SUCCESS = "success";
             public const string RUNNING = "running";
             public const string ERROR = "error";
+        }
+
+        public static class  SUBSCRIPTION 
+        {
+            public const int PLAN_FREE = 1;
+            public const int PLAN_PLUS = 2;
+        }
+
+        public static class ADMIN_SERVER
+        {
+            public const string USER = "user";
+            public const int PLAN_FREE = 1;
+            public const int PLAN_PREMIUM = 2;
         }
     }
 }

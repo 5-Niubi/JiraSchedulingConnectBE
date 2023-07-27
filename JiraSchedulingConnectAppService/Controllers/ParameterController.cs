@@ -51,19 +51,18 @@ namespace JiraSchedulingConnectAppService.Controllers
             {
 
                 var projectCreated = await parametersService.SaveParams(parameterRequest);
+
                 return Ok(projectCreated);
             }
-            catch (NotSuitableInputException ex)
-            {
-                this._Logger.LogDebug(ex.Message);
 
+            catch(NotSuitableInputException ex) {
+                this._Logger.LogWarning( ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
             }
             catch (Exception ex)
             {
-                this._Logger.LogDebug(ex.Message);
-
+                this._Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

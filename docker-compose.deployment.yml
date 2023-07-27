@@ -1,0 +1,24 @@
+version: '3.4'
+
+services:
+  algorithmservice:
+    image: pham2604/5niubi_algo_service:${BACKEND_IMAGE_TAG}
+    networks:
+      - internal-network
+
+  jiraschedulingconnectappservice:
+    image: pham2604/5niubi_backend:${ALGO_IMAGE_TAG}
+  
+    ports:
+      - "5126:80"
+      - "8443:80"
+      - "80:80"
+    networks:
+      - internal-network
+
+networks:
+  internal-network:
+    driver: bridge
+
+
+    

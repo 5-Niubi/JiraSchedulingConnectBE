@@ -22,11 +22,11 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSchedulesByProject(int projectId)
+        public async Task<IActionResult> GetSchedulesByProject(int projectId, int? page)
         {
             try
             {
-                var response = await scheduleService.GetSchedulesByProject(projectId);
+                var response = await scheduleService.GetSchedulesByProject(projectId, page);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -39,11 +39,11 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSchedules(int parameterId)
+        public async Task<IActionResult> GetSchedules(int parameterId, int? page)
         {
             try
             {
-                var response = await scheduleService.GetSchedules(parameterId);
+                var response = await scheduleService.GetSchedules(parameterId, page);
                 return Ok(response);
             }
             catch (Exception ex)

@@ -22,7 +22,7 @@ namespace ModelLibrary.DBModels
         public string? CloudId { get; set; }
         public double? UnitSalary { get; set; }
         public int? WorkingType { get; set; }
-        public string? WorkingEffort { get; set; }
+        public string WorkingEffort { get; set; }
         public bool? IsDelete { get; set; }
         public DateTime? CreateDatetime { get; set; }
         public DateTime? DeleteDatetime { get; set; }
