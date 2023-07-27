@@ -40,7 +40,7 @@ namespace JiraSchedulingConnectAppService.Services
             var cloudId = jwt.GetCurrentCloudId();
 
             var query = (Ids == null) ?
-                await db.Workforces.Include(s => s.WorkforceSkills).ThenInclude(s => s.Skill).ToListAsync() : await db.Workforces.Where(
+                await db.Workforces.Where(s => s.CloudId == cloudId).Include(s => s.WorkforceSkills).ThenInclude(s => s.Skill).ToListAsync() : await db.Workforces.Where(
                 W => Ids.Contains(W.Id) == true).ToListAsync();
 
             var queryDTOResponse = mapper.Map<List<WorkforceDTOResponse>>(query);
