@@ -740,7 +740,6 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
-
         private async Task<bool> _ValidateConfigAllTaskSkillsRequireds(int ProjectId, List<TaskSkillsRequiredRequestDTO> taskSkillsRequiredsRequest)
         {
 
@@ -753,10 +752,12 @@ namespace JiraSchedulingConnectAppService.Services
             var exitedTasks = await db.Tasks
                 .Where(p => p.ProjectId == ProjectId)
                 .ToListAsync();
-
+                
+            // Check all task exited in project must include required skill
             foreach (var task in exitedTasks)
             {
-                if (!taskSkillsRequiredsRequest.Select(t => t.TaskId).Contains(task.Id))
+                var taskSkillReq = taskSkillsRequiredsRequest.Where(t => t.TaskId == task.Id).FirstOrDefault();
+                if (taskSkillReq == null || taskSkillReq.SkillsRequireds.Count == 0)
                 {
                     Errors.Add(
                         new TaskInputErrorDTO
@@ -766,6 +767,7 @@ namespace JiraSchedulingConnectAppService.Services
                         }
                         );
                 }
+                
             }
 
 
