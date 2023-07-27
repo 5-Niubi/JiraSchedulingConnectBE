@@ -35,6 +35,7 @@ namespace RcpspAlgorithmLibrary.GA
 
         public List<List<int>> manAbleDo = new List<List<int>>();
         public int[,] Exper = new int[505, 505];
+        public bool[] objectiveChoice = new bool[3];
 
         public void SetParam(OutputToORDTO param)
         {
@@ -50,6 +51,8 @@ namespace RcpspAlgorithmLibrary.GA
             K = param.WorkerExper;
             U = param.WorkerEffort;
             salaryEachTime = param.WorkerSalary;
+
+            objectiveChoice = param.ObjectiveSelect;
         }
 
         private double[,] GenerateTaskSimilarityMatrix()
@@ -100,7 +103,6 @@ namespace RcpspAlgorithmLibrary.GA
 
         public List<AlgorithmRawOutput> Run()
         {
-
             // Calculate task similarity
             Z = GenerateTaskSimilarityMatrix();
             // Bat dau xu ly
@@ -110,7 +112,7 @@ namespace RcpspAlgorithmLibrary.GA
             Data d = new Data(numOfTask, numOfSkill, numOfPeople, durationTime,
                 adjacency, salaryEachTime, Z, U, Budget, Deadline, manAbleDo, Exper);
             d.Setup();
-            d.ChangeWeights(4);
+            d.ChangeWeights(objectiveChoice[0], objectiveChoice[1], objectiveChoice[2]);
             Population population = new Population(GAHelper.NUM_OF_POPULATION).InitializePopulation(d);
             GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
             int numOfGen = 0;

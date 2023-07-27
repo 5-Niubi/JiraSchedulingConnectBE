@@ -14,8 +14,6 @@ namespace AlgorithmServiceServer.DTOs.AlgorithmController
         public List<Skill> SkillList { get; set; }
         public List<Function> FunctionList { get; set; }
 
-
-
-
+        public int? ObjectiveTime, ObjectiveCost, ObjectiveQuality;
     }
 }

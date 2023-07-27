@@ -48,7 +48,7 @@ namespace ResourceAssignAdmin.Pages.Subscription
                 // Find correct user with token
                 var atlassianToken = await _context.AtlassianTokens
                     .FirstOrDefaultAsync(at => at.UserToken == Subscription.AtlassianToken.UserToken);
-
+                 
                 if (atlassianToken == null)
                 {
                     ViewData["tokenMsg"] = "Invalid Token";

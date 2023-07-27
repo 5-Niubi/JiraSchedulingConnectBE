@@ -2,7 +2,6 @@ using AlgorithmServiceServer.Services.Interfaces;
 using JiraSchedulingConnectAppService.Jobs;
 using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using JiraSchedulingConnectAppService.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +19,32 @@ try
     logger.Info("Start Game...");
     var builder = WebApplication.CreateBuilder(args);
 
+    // Config log provider
+    builder.Host.ConfigureLogging(logging =>
+    {
+        logging.ClearProviders();
+    }).UseNLog();
+    builder.Services.AddLogging();
+
+    // Config using Quartz
+    builder.Services.AddQuartz(q =>
+    {
+        // Configure Quartz options here, if needed
+        q.UseMicrosoftDependencyInjectionScopedJobFactory();
+        var jobKey = new JobKey("downgradeSubscription");
+        q.AddJob<CheckSubscriptionJob>(opts => opts.WithIdentity(jobKey));
+
+        q.AddTrigger(opts => opts
+            .ForJob(jobKey)
+            .WithIdentity("downgradeSubscription-trigger")
+            //This Cron interval can be described as "run every minute" (when second is zero)
+            .WithCronSchedule("0 * * ? * *")
+        );
+    });
+    // Add Quartz hosted service
+    builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+    // --------------
+
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -33,7 +58,6 @@ try
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
         };
     });
-    builder.Services.AddSignalR();
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
@@ -57,7 +81,6 @@ try
     builder.Services.AddTransient<ITasksService, TasksService>();
     builder.Services.AddTransient<IAlgorithmService, AlgorithmService>();
     builder.Services.AddTransient<IValidatorService, ScheduleValidatorService>();
-
     builder.Services.AddTransient<IParametersService, ParametersService>();
     builder.Services.AddTransient<IWorkforcesService, WorkforcesService>();
     builder.Services.AddTransient<IEquipmentService, EquipmentsService>();
@@ -69,33 +92,6 @@ try
     builder.Services.AddTransient<IMilestonesService, MilestonesService>();
     builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();
 
-    // Config log provider
-    builder.Host.ConfigureLogging(logging =>
-    {
-        logging.ClearProviders();
-    }).UseNLog();
-
-    builder.Services.AddLogging();
-
-    // Config using Quartz
-    builder.Services.AddQuartz(q =>
-    {
-        // Configure Quartz options here, if needed
-        q.UseMicrosoftDependencyInjectionScopedJobFactory();
-        var jobKey = new JobKey("downgradeSubscription");
-        q.AddJob<CheckSubscriptionJob>(opts => opts.WithIdentity(jobKey));
-
-        q.AddTrigger(opts => opts
-            .ForJob(jobKey)
-            .WithIdentity("downgradeSubscription-trigger")
-            //This Cron interval can be described as "run every minute" (when second is zero)
-            .WithCronSchedule("0 * * ? * *")
-        );
-    });
-    // Add Quartz hosted service
-    builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
-    // --------------
-
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
@@ -105,11 +101,9 @@ try
         app.UseSwaggerUI();
     }
     app.UseStaticFiles();
-
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
-    app.MapHub<SignalRServer>("/signalrServer");
 
     // Custom Config:
     app.UseCors(opt => opt.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
@@ -125,4 +119,3 @@ finally
 {
     NLog.LogManager.Shutdown();
 }
-

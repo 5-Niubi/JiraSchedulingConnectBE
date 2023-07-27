@@ -19,7 +19,7 @@ builder.Services.AddRazorPages().AddRazorPagesOptions(o =>
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(1);//You can set Time   
+    options.IdleTimeout = TimeSpan.FromMinutes(30);//You can set Time   
 });
 var app = builder.Build();
 
