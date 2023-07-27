@@ -73,6 +73,8 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
 
+
+
         [HttpGet]
         public async Task<IActionResult> GetTaskDetail(int Id)
         {
@@ -146,7 +148,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-        // TODO SAVE TASK REQUESTS FULL INFO
+        
         [HttpPost]
         public async Task<IActionResult> SaveTasks(TasksSaveRequest taskRequest)
         {
@@ -170,6 +172,31 @@ namespace JiraSchedulingConnectAppService.Controllers
                 return BadRequest(response);
             }
         }
+
+        // TODO SAVE TASK REQUESTS FULL INFO
+        //[HttpPost]
+        //public async Task<IActionResult> SaveTasksV2(TasksSaveRequestV2 taskRequest)
+        //{
+
+        //    try
+        //    {
+        //        var resopnse = await TasksService.TasksSaveRequestV2(taskRequest);
+        //        return Ok(resopnse);
+        //    }
+
+        //    catch (NotSuitableInputException ex)
+        //    {
+        //        this._Logger.LogWarning(ex.Message);
+        //        var response = ex.Errors;
+        //        return BadRequest(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        this._Logger.LogError(ex.Message);
+        //        var response = new ResponseMessageDTO(ex.Message);
+        //        return BadRequest(response);
+        //    }
+        //}
 
 
 

@@ -12,12 +12,12 @@
     {
 
         public int TaskId{ get; set; }
-        public int Name { get; set; }
+        public string Name { get; set; }
         public int Duration { get; set; }
         public int MileStoneId { get; set; }
         
         public List<int> TaskPrecedences { get; set; }
-        public List<int> RequiredSkills { get; set; }
+        public List<SkillRequiredRequestDTO> TaskSkillsRequireds { get; set; }
 
 
     }

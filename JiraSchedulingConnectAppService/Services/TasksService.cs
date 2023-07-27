@@ -13,6 +13,7 @@ namespace JiraSchedulingConnectAppService.Services
     public class TasksService : ITasksService
     {
         public const string NotFoundMessage = "Task Not Found!";
+        public const string MissingMessage = "Missing Task!";
         public const string NotFoundSkillMessage = "Skill Not Found!";
         public const string LevelSkillNotValidMessage = "Level Skill Not Valid!";
         public const string RequiredSkillNotValidMessage = "Skill Not Validate!";
@@ -234,7 +235,6 @@ namespace JiraSchedulingConnectAppService.Services
 
                 }
 
-
             }
 
             // update exited precedence task
@@ -383,6 +383,16 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
+        public async Task<bool> _UpdateTasks(List<ModelLibrary.DBModels.Task> Tasks)
+        {
+
+            db.Tasks.UpdateRange(Tasks);
+            await db.SaveChangesAsync();
+            return true;
+
+        }
+
+
 
         public async Task<bool> SaveTasks(TasksSaveRequest TasksSaveRequest)
         {
@@ -424,47 +434,122 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
-        public async Task<bool> TasksSaveRequestV2(TasksSaveRequestV2 TasksSaveRequest)
-        {
 
-            var projectId = TasksSaveRequest.ProjectId;
+        //public async Task<bool> TasksSaveRequestV2(TasksSaveRequestV2 TasksSaveRequest)
+        //{
 
-            var TasksRequests = TasksSaveRequest.TaskSaveRequests;
-
-
-            //db.UpdateRange()
-            //    //var TaskSkillsRequiredsRequest = TasksSaveRequest.TaskSkillsRequireds;
-
-            //    // TODO: all task setup on skill & precedence must exited on database
-            //    // check all task setup precedence
-            //    await _ValidateConfigTaskPrecedences(projectId, TaskPrecedenceTasksRequest);
-
-            //    // check precedence task is validate
-            //    await _ValidateExitedPrecedenceTask(TaskPrecedenceTasksRequest);
-
-            //    // clean all precedence tasks of project id
-            //    await _ClearTaskPrecedenceTask(projectId);
+        //    var jwt = new JWTManagerService(httpContext);
+        //    var cloudId = jwt.GetCurrentCloudId();
 
 
-            //    // check all Tasks project's must setup Required Skills
-            //    await _ValidateConfigAllTaskSkillsRequireds(projectId, TaskSkillsRequiredsRequest);
+        //    var projectId = TasksSaveRequest.ProjectId;
+
+        //    var TasksRequests = TasksSaveRequest.TaskSaveRequests;
+
+        //    var ListTask = new List<ModelLibrary.DBModels.Task>();
+        //    var TaskPrecedenceTasksRequest = new List<TaskPrecedencesTaskRequestDTO>();
+        //    var TaskSkillsRequiredsRequest = new List<TaskSkillsRequiredRequestDTO>();
+        //    foreach (var task in TasksRequests)
+        //    {
 
 
-            //    // validate exited skill 
-            //    await _ValidateExitedSkill(TaskSkillsRequiredsRequest);
+        //        ListTask.Add(new ModelLibrary.DBModels.Task()
+        //        {
 
-            //    // clean all precedence tasks of project id
-            //    await _ClearTaskSkillRequired(TaskSkillsRequiredsRequest);
+        //            Id = task.TaskId,
+        //            Name = task.Name,
+        //            Duration = task.Duration,
+        //            CloudId = cloudId,
+        //            ProjectId = projectId,
+        //            Milestone = new Milestone()
+        //            {
+        //                Id = task.MileStoneId
+        //            }
+        //        });
 
-            //    // save task skill required
-            //    await _SaveTasksSkillsRequireds(TaskSkillsRequiredsRequest);
+        //        TaskPrecedenceTasksRequest.Add(new TaskPrecedencesTaskRequestDTO()
+        //        {
+        //            TaskId = task.TaskId,
+        //            TaskPrecedences = task.TaskPrecedences
+        //        });
 
-            //    // save task precedence
-            //    await _SaveTasksPrecedencesTasks(TaskPrecedenceTasksRequest);
+        //        TaskSkillsRequiredsRequest.Add(new TaskSkillsRequiredRequestDTO()
+        //        {
+        //            TaskId = task.TaskId,
+        //            SkillsRequireds = task.TaskSkillsRequireds
+        //        });
 
-            return true;
+        //    }
 
-        }
+            
+        //    // TODO: all task setup on skill & precedence must exited on database
+        //    // check all task setup precedence
+        //    await _ValidateConfigTaskPrecedences(projectId, TaskPrecedenceTasksRequest);
+
+        //    // check precedence task is validate
+        //    await _ValidateExitedPrecedenceTask(TaskPrecedenceTasksRequest);
+
+        //    // clean all precedence tasks of project id
+        //    await _ClearTaskPrecedenceTask(projectId);
+
+
+        //    // check all Tasks project's must setup Required Skills
+        //    await _ValidateConfigAllTaskSkillsRequireds(projectId, TaskSkillsRequiredsRequest);
+
+
+        //    // validate exited skill 
+        //    await _ValidateExitedSkill(TaskSkillsRequiredsRequest);
+
+
+        //    // update task info
+        //    await _UpdateTasks(ListTask);
+
+        //    // clean all precedence tasks of project id
+        //    await _ClearTaskSkillRequired(TaskSkillsRequiredsRequest);
+
+        //    // save task skill required
+        //    await _SaveTasksSkillsRequireds(TaskSkillsRequiredsRequest);
+
+        //    // save task precedence
+        //    await _SaveTasksPrecedencesTasks(TaskPrecedenceTasksRequest);
+
+
+
+
+
+        //    //db.UpdateRange()
+        //    //    //var TaskSkillsRequiredsRequest = TasksSaveRequest.TaskSkillsRequireds;
+
+        //    //    // TODO: all task setup on skill & precedence must exited on database
+        //    //    // check all task setup precedence
+        //    //    await _ValidateConfigTaskPrecedences(projectId, TaskPrecedenceTasksRequest);
+
+        //    //    // check precedence task is validate
+        //    //    await _ValidateExitedPrecedenceTask(TaskPrecedenceTasksRequest);
+
+        //    //    // clean all precedence tasks of project id
+        //    //    await _ClearTaskPrecedenceTask(projectId);
+
+
+        //    //    // check all Tasks project's must setup Required Skills
+        //    //    await _ValidateConfigAllTaskSkillsRequireds(projectId, TaskSkillsRequiredsRequest);
+
+
+        //    //    // validate exited skill 
+        //    //    await _ValidateExitedSkill(TaskSkillsRequiredsRequest);
+
+        //    //    // clean all precedence tasks of project id
+        //    //    await _ClearTaskSkillRequired(TaskSkillsRequiredsRequest);
+
+        //    //    // save task skill required
+        //    //    await _SaveTasksSkillsRequireds(TaskSkillsRequiredsRequest);
+
+        //    //    // save task precedence
+        //    //    await _SaveTasksPrecedencesTasks(TaskPrecedenceTasksRequest);
+
+        //    return true;
+
+        //}
 
 
 
@@ -760,6 +845,42 @@ namespace JiraSchedulingConnectAppService.Services
 
             return true;
 
+        }
+
+
+        private async Task<bool> _ValidateTasksExited(int ProjectId, List<ModelLibrary.DBModels.Task> Tasks)
+        {
+
+            var Errors = new List<TaskInputErrorDTO>();
+
+            var exitedTasks = await db.Tasks
+                .Where(p => p.ProjectId == ProjectId && p.IsDelete == true)
+                .ToListAsync();
+
+            foreach (var task in exitedTasks)
+            {
+                if (!Tasks.Select(t => t.Id).Contains(task.Id))
+                {
+
+                    Errors.Add(
+                        new TaskInputErrorDTO
+                        {
+                            TaskId = task.Id,
+                            Messages = MissingMessage
+                        }
+                        );
+                }
+
+
+
+            }
+
+            if (Errors.Count != 0)
+            {
+                throw new NotSuitableInputException(Errors);
+            }
+
+            return true;
         }
 
 
