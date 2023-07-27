@@ -462,12 +462,9 @@ namespace JiraSchedulingConnectAppService.Services
             //    // save task precedence
             //    await _SaveTasksPrecedencesTasks(TaskPrecedenceTasksRequest);
 
-            //    return true;
+            return true;
 
         }
-
-
-
 
 
 

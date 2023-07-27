@@ -77,17 +77,37 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<EstimatedResultDTO> EstimateWorkforce(int projectId)
         {
-            var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforce?projectId={projectId}");
-            dynamic responseContent;
-            if (response.IsSuccessStatusCode)
+            
+
+            try
             {
-                responseContent = await response.Content.ReadFromJsonAsync<EstimatedResultDTO>();
+                var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforce?projectId={projectId}");
+                dynamic responseContent;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseContent = await response.Content.ReadFromJsonAsync<EstimatedResultDTO>();
+                }
+
+                else
+                {
+                    throw new Exception(response.StatusCode.ToString());
+                }
+                return responseContent;
+
             }
-            else
+            catch(MicroServiceAPIException ex)
             {
-                throw new Exception(response.StatusCode.ToString());
+                throw new Exception(ex.mircoserviceResponse);
+
             }
-            return responseContent;
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            
+
 
 
         }

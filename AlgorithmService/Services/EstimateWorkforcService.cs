@@ -4,11 +4,16 @@ using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using RcpEstimator;
 using RcpspAlgorithmLibrary;
+using UtilsLibrary;
+using UtilsLibrary.Exceptions;
 
 namespace AlgorithmServiceServer.Services
 {
     public class EstimateWorkforcService : IEstimateWorkforceService
     {
+
+
+        private const string EmptyTaskInProjectMessage = "Empty Task in this project";
 
         private readonly JiraDemoContext db;
         private readonly HttpContext http;
@@ -48,10 +53,7 @@ namespace AlgorithmServiceServer.Services
         public async Task<EstimatedResultDTO> Execute(int projectId)
         {
 
-            List<int> WorkforceOutputList;
-
-            //var cloudId = new JWTManagerService(http).GetCurrentCloudId();
-            var cloudId = "ea48ddc7-ed56-4d60-9b55-02667724849d"; // DEBUG
+            var cloudId = new JWTManagerService(http).GetCurrentCloudId();
 
             var projectFromDB = await db.Projects
                 .Where(p => p.CloudId == cloudId)
@@ -68,6 +70,12 @@ namespace AlgorithmServiceServer.Services
                 .Include(t => t.TasksSkillsRequireds)
                 .ToList();
 
+
+            if (taskFromDB.Count == 0)
+            {
+                throw new NotSuitableInputException(EmptyTaskInProjectMessage);
+
+            }
 
             var inputToEstimator = new InputToEstimatorDTO();
             inputToEstimator.SkillList = skillFromDB;

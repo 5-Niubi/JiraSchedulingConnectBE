@@ -116,6 +116,7 @@ namespace ModelLibrary.DTOs
             CreateMap<Milestone, MileStoneScheduleResultDTO>();
             CreateMap<PlanSubscription, PlanSubscriptionResDTO>();
 
+
             CreateMap<Subscription, SubscriptionResDTO>()
                 .ForMember(s => s.Plan, s => s.MapFrom(s => s.Plan))
                 .ForMember(s => s.Token, s => s.MapFrom(s => s.AtlassianToken.UserToken));
