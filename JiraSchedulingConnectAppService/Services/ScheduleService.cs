@@ -108,15 +108,5 @@ namespace JiraSchedulingConnectAppService.Services
 				throw new Exception(ex.Message, ex);
 			}
 		}
-
-		Task<PagingResponseDTO<SchedulesListResDTO>> IScheduleService.GetSchedulesByProject(int projectId, int? page)
-		{
-			throw new NotImplementedException();
-		}
-
-		Task<PagingResponseDTO<SchedulesListResDTO>> IScheduleService.GetSchedules(int parameterId, int? page)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }
