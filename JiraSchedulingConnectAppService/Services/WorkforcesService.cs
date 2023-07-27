@@ -7,7 +7,6 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Invalidation;
 using ModelLibrary.DTOs.Parameters;
 using Newtonsoft.Json;
-using org.sqlite.core;
 using UtilsLibrary.Exceptions;
 
 
@@ -17,7 +16,6 @@ namespace JiraSchedulingConnectAppService.Services
     {
 
         public const string WorkforceTyNotVaMessage = "Workforce Typalidatee Is Not Validated!!!";
-
         public const string EffortNotValidMessage = "Effort Is Not Validated!!!";
         public const string EffortElementNotValidMessage = "Effort must only have 7 elements!!!";
         public const string SkillNotFoundVaMessage = "Skill Workforce Is Not Found!!!";
@@ -37,37 +35,43 @@ namespace JiraSchedulingConnectAppService.Services
         }
         public async Task<List<WorkforceDTOResponse>> GetAllWorkforces(List<int>? Ids)
         {
-            try
-            {
-                var jwt = new JWTManagerService(httpContext);
-                var cloudId = jwt.GetCurrentCloudId();
+           
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
 
-                var query = (Ids == null) ?
-                    await db.Workforces.Include(s => s.WorkforceSkills).ThenInclude(s => s.Skill).ToListAsync() : await db.Workforces.Where(
-                    W => Ids.Contains(W.Id) == true).ToListAsync();
+            var query = (Ids == null) ?
+                await db.Workforces.Where(s => s.CloudId == cloudId).Include(s => s.WorkforceSkills).ThenInclude(s => s.Skill).ToListAsync() : await db.Workforces.Where(
+                W => Ids.Contains(W.Id) == true).ToListAsync();
 
-                var queryDTOResponse = mapper.Map<List<WorkforceDTOResponse>>(query);
-                return queryDTOResponse;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception();
-            }
+            var queryDTOResponse = mapper.Map<List<WorkforceDTOResponse>>(query);
+            return queryDTOResponse;
+           
+            
         }
 
+        public async Task<List<WorkforceViewDTOResponse>> GetWorkforceScheduleByProject()
+        {
+           
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
 
+            var results = await db.Workforces
+            .Where(s => s.CloudId == cloudId)
+            .Select(s => new WorkforceViewDTOResponse(){
+                Id = s.Id,
+                Name = s.Name }) // Projection into an anonymous type
+            .ToListAsync();
 
-
+            return results;
+           
+        }
 
 
         private async Task<List<SkillRequestErrorDTO>> _ValidateWorkforceSkills(WorkforceRequestDTO WorkforceRequest)
         {
 
-
             var jwt = new JWTManagerService(httpContext);
-            //var cloudId = jwt.GetCurrentCloudId();
-            var cloudId = "ea48ddc7-ed56-4d60-9b55-02667724849d"; // TODO: fix CLOUD ID
-
+            var cloudId = jwt.GetCurrentCloudId();
             //validate exited on database
             var exitedSkills = await db.Skills
                 .Where(s => s.CloudId == cloudId & s.IsDelete == false)

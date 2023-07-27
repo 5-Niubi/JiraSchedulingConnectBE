@@ -17,7 +17,6 @@ namespace JiraSchedulingConnectAppService.Controllers
 
         }
 
-
         [HttpGet]
         public IActionResult Get()
         {

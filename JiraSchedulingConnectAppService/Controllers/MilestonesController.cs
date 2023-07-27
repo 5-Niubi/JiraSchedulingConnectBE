@@ -52,7 +52,6 @@ namespace JiraSchedulingConnectAppService.Controllers
             catch (Exception ex)
             {
                 this._Logger.LogError(ex.Message);
-
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -70,7 +69,6 @@ namespace JiraSchedulingConnectAppService.Controllers
             catch (Exception ex)
             {
                 this._Logger.LogError(ex.Message);
-
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

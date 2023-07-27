@@ -36,7 +36,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -47,12 +47,11 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-
                 return Ok(await algorithmService.EstimateWorkforce(projectId));
             }
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

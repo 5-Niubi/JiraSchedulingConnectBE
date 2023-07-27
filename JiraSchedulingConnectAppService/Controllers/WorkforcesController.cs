@@ -12,10 +12,12 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class WorkforcesController : ControllerBase
     {
         private IWorkforcesService workforcesService;
-        public WorkforcesController(IWorkforcesService workforcesService)
+        private readonly ModelLibrary.ILoggerManager _Logger;
+        public WorkforcesController(IWorkforcesService workforcesService, ModelLibrary.ILoggerManager logger)
+            
         {
 
-
+            this._Logger = logger;
             this.workforcesService = workforcesService;
         }
 
@@ -25,6 +27,22 @@ namespace JiraSchedulingConnectAppService.Controllers
             try
             {
                 var response = await workforcesService.GetAllWorkforces(null);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetWorkforceScheduleByProject()
+        {
+            try
+            {
+                var response = await workforcesService.GetWorkforceScheduleByProject();
                 return Ok(response);
             }
             catch (Exception ex)
@@ -46,6 +64,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             catch (NotSuitableInputException ex)
             {
 
+                this._Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
 
@@ -55,7 +74,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (Exception ex)
             {
-
+                this._Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -71,7 +90,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-
+                this._Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -88,7 +107,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-
+                this._Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -106,7 +125,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (Exception ex)
             {
-
+                this._Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
