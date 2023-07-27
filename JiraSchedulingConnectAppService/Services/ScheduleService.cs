@@ -3,9 +3,9 @@ using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
+using UtilsLibrary;
 using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Schedules;
-using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
@@ -89,5 +89,24 @@ namespace JiraSchedulingConnectAppService.Services
             var scheduleDTO = mapper.Map<ScheduleResultSolutionDTO>(schedule);
             return scheduleDTO;
         }
-    }
+
+		public async Task<ScheduleResultSolutionDTO> SaveScheduleSolution(ScheduleRequestDTO scheduleRequestDTO)
+		{
+			try
+			{
+				var schedule = mapper.Map<ModelLibrary.DBModels.Schedule>(scheduleRequestDTO);
+                schedule.Since = DateTime.UtcNow;
+
+				var ScheduleCreateEntity = await db.Schedules.AddAsync(schedule);
+				await db.SaveChangesAsync();
+
+				var scheduleResultSolution = mapper.Map<ScheduleResultSolutionDTO>(ScheduleCreateEntity.Entity);
+				return scheduleResultSolution;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message, ex);
+			}
+		}
+	}
 }

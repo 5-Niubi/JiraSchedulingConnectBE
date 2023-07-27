@@ -113,6 +113,7 @@ namespace ModelLibrary.DTOs
             CreateMap<Schedule, ScheduleResultSolutionDTO>();
             CreateMap<Workforce, WorkforceScheduleResultDTO>();
             CreateMap<Project, ProjectDeleteResDTO>();
+			CreateMap<ScheduleRequestDTO, Schedule>();
             CreateMap<Milestone, MileStoneScheduleResultDTO>();
             CreateMap<PlanSubscription, PlanSubscriptionResDTO>();
 
