@@ -26,6 +26,7 @@ namespace RcpspAlgorithmLibrary
         public List<Equipment> EquipmentList { get; private set; }
         public List<Skill> SkillList { get; private set; }
         public List<Function> FunctionList { get; private set; }
+        private int? objtTime, objtCost, objtQuality;
 
         public AlgorithmConverter(InputToORDTO inputToOR, IMapper mapper)
         {
@@ -45,6 +46,10 @@ namespace RcpspAlgorithmLibrary
             this.Deadline = inputToOR.Deadline;
             this.Budget = inputToOR.Budget;
             StartDate = inputToOR.StartDate;
+
+            objtTime = inputToOR.ObjectiveTime;
+            objtCost = inputToOR.ObjectiveCost;
+            objtQuality = inputToOR.ObjectiveQuality;
 
         }
 
@@ -162,6 +167,10 @@ namespace RcpspAlgorithmLibrary
             output.EquipmentFunction = equipmentFunction;
             output.EquipmentCost = equipmentCost;
             output.WorkerEffort = workerEffort;
+
+            output.ObjectiveSelect[0] = objtTime == null ? false : true;
+            output.ObjectiveSelect[1] = objtCost == null ? false : true;
+            output.ObjectiveSelect[2] = objtQuality == null ? false : true;
 
             // output.taskSimilarityGenerateInput = taskSimilarityGenerateInput;
 

@@ -60,14 +60,15 @@
             this.weight3 = 1;
         }
 
-        public void ChangeWeights(int choice)
+        public void ChangeWeights(bool choice1, bool choice2, bool choice3)
         {
             this.weight1 = 1;
             this.weight2 = 1;
             this.weight3 = 1;
-            if (choice == 1) this.weight1 *= 20;
-            else if (choice == 2) this.weight2 *= 20;
-            else if (choice == 3) this.weight3 *= 20;
+
+            if (choice1) this.weight1 *= 20;
+            if (choice2) this.weight2 *= 20;
+            if (choice3) this.weight3 *= 20;
         }
 
     }
