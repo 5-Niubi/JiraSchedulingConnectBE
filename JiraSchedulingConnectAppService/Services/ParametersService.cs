@@ -105,7 +105,7 @@ namespace JiraSchedulingConnectAppService.Services
             return parameterDTO;
         }
 
-        public async Task<List<WorkforceDTOResponse>> GetWorkforceParameter(string project_id)
+        public async Task<List<WorkforceViewDTOResponse>> GetWorkforceParameter(string project_id)
         {
             try
             {
@@ -114,9 +114,12 @@ namespace JiraSchedulingConnectAppService.Services
 
                 //QUERY WORKFORCE IN PARAMETER TABLE WITH PROJECT ID
                 var parameter_resources = (project_id == null) ? null : await db.Workforces.Include(s => s.ParameterResources).ThenInclude(s => s.Parameter)
-                    .Include(s => s.WorkforceSkills).ThenInclude(s => s.Skill)
                     .Where(p => p.ParameterResources.Any(x => x.Parameter.ProjectId.ToString().Equals(project_id))).ToListAsync();
-                var queryDTOResponse = mapper.Map<List<WorkforceDTOResponse>>(parameter_resources);
+                var queryDTOResponse = parameter_resources.Select(s=> new WorkforceViewDTOResponse
+                {
+                    Id = s.Id,
+                    Name = s.Name
+                }).ToList();
                 return queryDTOResponse;
             }
             catch (Exception ex)
