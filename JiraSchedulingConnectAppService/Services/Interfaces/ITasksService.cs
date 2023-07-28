@@ -11,8 +11,12 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
         public Task<TaskPertViewDTO> GetTaskDetail(int Id);
         public Task<List<TaskPertViewDTO>> GetTasksPertChart(int projectId);
         public Task<bool> SaveTasks(TasksSaveRequest taskRequest);
-        //public Task<bool> TasksSaveRequestV2(TasksSaveRequestV2 taskRequest);
+
+        public Task<bool> DeleteTask(int taskId);
+
         
+        //public Task<bool> TasksSaveRequestV2(TasksSaveRequestV2 taskRequest);
+
 
 
         //public Task<List<TaskPrecedenceDTO>> SaveTasksPrecedencesTasks(TasksPrecedencesSaveRequest taskRequest);
