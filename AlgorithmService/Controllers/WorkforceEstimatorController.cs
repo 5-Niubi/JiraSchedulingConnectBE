@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
+using UtilsLibrary.Exceptions;
 
 namespace AlgorithmServiceServer.Controllers
 
@@ -26,6 +27,12 @@ namespace AlgorithmServiceServer.Controllers
             {
                 return Ok(await estimateWorkforceService.Execute(projectId));
             }
+            catch (NotSuitableInputException ex)
+            {
+                var response = new ResponseMessageDTO(ex.Errors);
+                return BadRequest(response);
+            }
+
             catch (Exception ex)
             {
                 var response = new ResponseMessageDTO(ex.Message);

@@ -9,5 +9,6 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
         public Task<PagingResponseDTO<SchedulesListResDTO>> GetSchedulesByProject(int projectId, int? page);
         public Task<PagingResponseDTO<SchedulesListResDTO>> GetSchedules(int parameterId, int? page);
         public Task<ScheduleResultSolutionDTO> GetSchedule(int scheduleId);
-    }
+		public Task<ScheduleResultSolutionDTO> SaveScheduleSolution(ScheduleRequestDTO scheduleRequestDTO);
+	}
 }
