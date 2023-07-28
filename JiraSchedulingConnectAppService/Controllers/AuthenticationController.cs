@@ -8,7 +8,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController : Controller
     {
         private readonly IAuthenticationService authenticationService;
         public AuthenticationController(JiraDemoContext db, IConfiguration config
@@ -23,7 +23,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             try
             {
                 var responeAccessible = await authenticationService.InitAuthen(code, state);
-                return Ok(responeAccessible);
+                return View("/Views/GrantSuccess");
             }
             catch (Exception ex)
             {

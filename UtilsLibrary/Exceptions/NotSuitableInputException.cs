@@ -3,9 +3,15 @@
     public class NotSuitableInputException : Exception
     {
 
-        public dynamic Errors;
+        public dynamic? Errors;
 
         public NotSuitableInputException()
+        {
+
+        }
+
+        public NotSuitableInputException(string message)
+        : base(message)
         {
 
         }

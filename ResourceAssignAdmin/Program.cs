@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using ModelLibrary.DBModels;
 using ResourceAssignAdmin.Filter;
+using ResourceAssignAdmin.Services;
 using static ModelLibrary.DTOs.Export.MSPXMLModelDTO;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,10 @@ builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);//You can set Time   
 });
+
+builder.Services.AddTransient<IBraintreeService, BraintreeService>();
+builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
