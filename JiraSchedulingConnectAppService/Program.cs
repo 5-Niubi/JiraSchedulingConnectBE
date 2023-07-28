@@ -71,7 +71,7 @@ try
     );
 
     builder.Services.AddHttpContextAccessor();
-
+    builder.Services.AddControllersWithViews();
     // Register services
     builder.Services.AddTransient<ILoggerManager, LoggerManager>();
 
@@ -104,6 +104,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
+    
     //app.MapRazorPages();
     // Custom Config:
     app.UseCors(opt => opt.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());

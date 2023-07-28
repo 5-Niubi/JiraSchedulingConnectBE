@@ -5,6 +5,7 @@ using ModelLibrary.DTOs.Authentication;
 using System.Text;
 using System.Text.Json;
 using UtilsLibrary;
+using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -24,8 +25,14 @@ namespace JiraSchedulingConnectAppService.Services
             this.http = httpAcc.HttpContext;
         }
 
-        async public Task<Object> InitAuthen(string code, string state)
+        async public Task<Object> InitAuthen(string code, string state, string? error, string? error_description)
         {
+
+            if (error != null || error_description != null)
+            {
+                throw new UnAuthorizedException(error_description);
+            }
+
             // Handle State
             db.Database.BeginTransaction();
             try
