@@ -12,7 +12,9 @@ namespace UtilsLibrary.Exceptions
 
         }
 
-        public NotSuitableInputException(dynamic Errors) 
+
+
+        public NotSuitableInputException(dynamic Errors)
         {
             this.Errors = Errors;
         }
