@@ -11,7 +11,6 @@ namespace RcpEstimator
 
         const string AlgorithmnException = "Algorithmn Estimate Error!!!";
 
-
         public int NumOfTasks = 0;
 
         public int[] TaskDuration;
@@ -178,6 +177,8 @@ namespace RcpEstimator
             int maxIndex = scores.IndexOf(maxScore);
             return indexes[maxIndex];
         }
+
+            
         public int[] mergeHighSkill(int[] workforceSkills, int[] requiredSkills)
         {
             int[] mergedWorkforceSkills = new int[workforceSkills.Length];
@@ -237,28 +238,19 @@ namespace RcpEstimator
 
                 }
 
-
-
-                int count = 0;
                 while (queue.Count > 0)
                 {
-                    count += 1;
-                    if (count == 12)
-                    {
-                        int f = 1;
-                    }
                     int v = queue.Dequeue();
                     if (visited[v] == false)
                     {
                         visited[v] = true;
-
                         int bestIndex = -1;
                         int[] UnitTimeWorkingTask = TaskSortedUnitTime[v];
+
                         if (AssignedWorkforceWithUnitTime.Count > 0)
                         {
                             // Kiểm tra xem những workforce chưa được assign trong khoảng [startTime, finishTime]
                             List<int> indexes = getAvailableWorkforceIndexes(UnitTimeWorkingTask, AssignedWorkforceWithUnitTime);
-
 
                             if (indexes.Count > 0)
                             {
@@ -327,8 +319,6 @@ namespace RcpEstimator
                 throw new Exception(ex.Message);
 
             }
-
-
             return AssignedWorkforceOfSkill;
         }
 
@@ -344,94 +334,6 @@ namespace RcpEstimator
                 AssignedWorkforceByMilestone[milestoneId] = FitByMilestone(milestoneId);
 
             }
-            //List<List<int>> assignedWorkforceOfTask = new List<List<int>>();
-            //List<int[]> assignedWorkforceOfSkill = new List<int[]>();
-            //List<int[]> assignedWorkforceOfUnitTime = new List<int[]>();
-            //List<int[]> assignedWorkforceMilestone = new List<int[]>();
-
-            //Queue<int> queue = new Queue<int>();
-            //queue.Enqueue(START_TASK);
-
-            //bool[] visited = new bool[NumOfTasks];
-
-            //while (queue.Count > 0)
-            //{
-            //    int v = queue.Dequeue();
-
-            //    if (visited[v] == false)
-            //    {
-            //        visited[v] = true;
-
-            //        int bestIndex = -1;
-            //        int[] taskUnitTime = TaskSortedUnitTime[v];
-            //        if (assignedWorkforceOfUnitTime.Count > 0)
-            //        {
-            //            // Kiểm tra xem những workforce chưa được assign trong khoảng [startTime, finishTime]
-            //            List<int> indexes = getAvailableWorkforceIndexes(taskUnitTime, assignedWorkforceOfUnitTime);
-
-
-            //            if (indexes.Count > 0)
-            //            {
-            //                // Tìm workforce có độ tương đồng cao nhất với điều kiện trùng lặp ít nhất 2 skills
-            //                bestIndex = getBestWorkforceIndex(TaskExper[v], indexes, assignedWorkforceOfSkill);
-            //            }
-
-            //        }
-
-            //        // Nếu có thì update workForceOfUnitTime, workforceOfTasks, skillOfWorkforces
-            //        if (bestIndex != -1 & TaskDuration[v] != 0)
-            //        {
-            //            // Cập nhật workForceOfUnitTime
-            //            for (int i = 0; i < taskUnitTime.Length; i++)
-            //            {
-            //                if (taskUnitTime[i] == 1)
-            //                {
-            //                    assignedWorkforceOfUnitTime[bestIndex][i] = 1;
-            //                }
-            //            }
-            //            // Cập nhật workforceOfTasks
-            //            assignedWorkforceOfTask[bestIndex][v] = 1;
-            //            // Cập nhật skillOfWorkforces
-            //            assignedWorkforceOfSkill[bestIndex] = this.mergeHighSkill(assignedWorkforceOfSkill[bestIndex], TaskExper[v]);
-
-            //        }
-
-            //        // Nếu không có workforce nào thì tạo mới
-            //        if (bestIndex == -1 & TaskDuration[v] != 0)
-            //        {
-
-            //            // Thêm mới row assignedUnitTime vào workForceOfUnitTime cho một workforce mới
-            //            List<int> assignedTask = Enumerable.Repeat(0, this.NumOfTasks).ToList();
-
-            //            // Thêm mới row vào assignedUnitTime
-            //            assignedWorkforceOfUnitTime.Add(taskUnitTime);
-
-            //            // Thêm mới row vào workforceOfTasks
-            //            assignedTask[v] = 1;
-            //            assignedWorkforceOfTask.Add(assignedTask);
-            //            assignedWorkforceOfSkill.Add(this.TaskExper[v]);
-
-            //        }
-
-            //    }
-
-            //    // cuối cùng, thực hiện enque các node ở level tiếp theo         
-            //    for (int j = 0; j < this.TaskAdjacency[v].Length; j++)
-            //    {
-            //        if (this.TaskAdjacency[j][v] == 1 & queue.Contains(j) == false)
-            //        {
-            //            if (visited[j] == false)
-            //            {
-            //                queue.Enqueue(j);
-            //            }
-            //        }
-
-            //    }
-
-
-
-            //}
-
 
             return AssignedWorkforceByMilestone;
 
@@ -450,15 +352,12 @@ namespace RcpEstimator
 
 
             // add all start tasks (mean: task is not exited precedence task ~ elements in vector all is 0)
-
             foreach (var i in StartTasks)
             {
 
                 queue.Enqueue(i);
 
             }
-
-
 
             while (queue.Count > 0)
             {
@@ -552,9 +451,6 @@ namespace RcpEstimator
                 // cuối cùng, thực hiện enque các node ở level tiếp theo
                 for (int i = 0; i < this.TaskAdjacency[v].Length; i++)
                 {
-                    //if (v == 3 & i == 16) {
-                    //    var d = 1;
-                    //}
                     if (this.TaskAdjacency[i][v] == 1)
                     {
                         if (visited[i] == false & queue.Contains(i) == false)
@@ -570,22 +466,17 @@ namespace RcpEstimator
             unitTimes.Sort();
             this.StortedUnitTimeList = unitTimes;
 
-
             // setup matrix task x unit time
             TaskSortedUnitTime = new int[this.NumOfTasks][];
-            var check = 0;
-            var check_j = 0;
+
             try
             {
                 for (int i = 0; i < this.TaskAdjacency.Length; i++)
                 {
-                    //if(i == 4) {
-                    //    check_j = 0;
-                    //}
+   
                     TaskSortedUnitTime[i] = new int[this.StortedUnitTimeList.Count];
                     for (int j = 0; j < this.StortedUnitTimeList.Count; j++)
                     {
-                        check_j = j;
                         if (this.StortedUnitTimeList[j] >= this.TaskOfStartFinishTime[i][0] & this.StortedUnitTimeList[j] <= this.TaskOfStartFinishTime[i][1])
                         {
                             TaskSortedUnitTime[i][j] = 1;
@@ -594,9 +485,10 @@ namespace RcpEstimator
                     }
                 }
             }
+
             catch (Exception ex)
             {
-                throw new Exception("ERRORsd");
+                throw new Exception(AlgorithmnException);
             }
 
         }
