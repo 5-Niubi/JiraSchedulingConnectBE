@@ -2,22 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Braintree.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
+using ResourceAssignAdmin.Services;
 using UtilsLibrary;
+using UtilsLibrary.Exceptions;
 
 namespace ResourceAssignAdmin.Pages.Subscription
 {
     public class CreateModel : PageModel
     {
         private readonly ModelLibrary.DBModels.JiraDemoContext _context;
+        private readonly ISubscriptionService subscriptionService;
 
-        public CreateModel(ModelLibrary.DBModels.JiraDemoContext context)
+        public CreateModel(ModelLibrary.DBModels.JiraDemoContext context,
+            ISubscriptionService subscriptionService)
         {
             _context = context;
+            this.subscriptionService = subscriptionService;
         }
 
         private IActionResult PrepareView()
@@ -42,66 +48,23 @@ namespace ResourceAssignAdmin.Pages.Subscription
                 return PrepareView();
             }
 
-            await _context.Database.BeginTransactionAsync();
             try
             {
-                // Find correct user with token
-                var atlassianToken = await _context.AtlassianTokens
-                    .FirstOrDefaultAsync(at => at.UserToken == Subscription.AtlassianToken.UserToken);
-                 
-                if (atlassianToken == null)
-                {
-                    ViewData["tokenMsg"] = "Invalid Token";
-                    return PrepareView();
-                }
-                // Remove unecessary Atlassian token
+                var userToken = Subscription.AtlassianToken.UserToken;
                 Subscription.AtlassianToken = null;
 
-                // Find lastest subscription active
-                var lastestSubscription = await _context.Subscriptions.OrderByDescending(s => s.CreateDatetime)
-                    .FirstOrDefaultAsync(s => s.AtlassianTokenId == atlassianToken.Id);
-                if (lastestSubscription == null)
-                {
-                    ViewData["tokenMsg"] = "Invalid Token";
-                    return PrepareView();
-                }
-
-                if (lastestSubscription.PlanId == Const.SUBSCRIPTION.PLAN_FREE
-                    && Subscription.PlanId == Const.SUBSCRIPTION.PLAN_FREE)
-                {
-                    ViewData["errorMsg"] = "Invalid Subscription. This user can only Upgrade to higher plan";
-                    return PrepareView();
-                }
-
-                if (lastestSubscription.CancelAt == null)
-                {
-                    lastestSubscription.CancelAt = DateTime.Now;
-                }
-
-                Subscription.AtlassianTokenId = atlassianToken.Id;
-
-                if (Subscription.PlanId == Const.SUBSCRIPTION.PLAN_PLUS)
-                {
-                    Subscription.CurrentPeriodEnd = Subscription.CurrentPeriodStart.Value.AddMonths(12);
-                }
-                else if (Subscription.PlanId == Const.SUBSCRIPTION.PLAN_FREE)
-                {
-                    Subscription.CurrentPeriodEnd = null;
-                }
-                _context.Subscriptions.Add(Subscription);
-
-                await _context.SaveChangesAsync();
-                await _context.Database.CommitTransactionAsync();
+                await subscriptionService.CreatePlan(userToken, Subscription);            
             }
-            catch (Exception ex)
+            catch (UtilsLibrary.Exceptions.NotFoundException ex)
             {
-                await _context.Database.RollbackTransactionAsync();
-                throw;
+                ViewData["tokenMsg"] = ex.Message;
+                return PrepareView();
             }
-            finally
+            catch (NotSuitableInputException ex)
             {
-                await _context.Database.CloseConnectionAsync();
-            }
+                ViewData["errorMsg"] = ex.Message;
+                return PrepareView();
+            }       
             return RedirectToPage("./Index");
         }
     }

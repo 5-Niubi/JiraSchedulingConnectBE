@@ -9,65 +9,153 @@
             <p class="lead">Below is an example form built entirely with Bootstrap’s form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p>
         </div>
 
-        <div class="row g-5">
-            <div class="col-md-5 col-lg-4 order-md-last">
-                <h4 class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-primary">Transfer Information</span>
-                </h4>
-                <div class="card" style="width: 18rem;">
-                    <img src="https://www.imgonline.com.ua/examples/qr-code-url.png" class="card-img-top" alt="...">
+        <div class="row">
+
+            <div class="col-md-3  order-md-last">
+                <div class="card mb-4 rounded-3 shadow-sm border-primary">
+                    <div class="card-header py-3 text-white bg-primary border-primary">
+                        <h4 class="my-0 fw-normal">Premium</h4>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <h1 class="card-title pricing-card-title">$12000<small class="text-muted fw-light">/year</small></h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>30 users included</li>
+                            <li>15 GB of storage</li>
+                            <li>Phone and email support</li>
+                            <li>Help center access</li>
+                        </ul>
+                        <a class="w-100 btn btn-lg btn-primary" href="/Upgrade/Checkout">Contact us</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-7 col-lg-8">
-                <h4 class="mb-3">Billing Information</h4>
-                <form class="needs-validation" novalidate="">
-                    <div class="row g-3">
-                        <div class="col-sm-6">
-                            <label for="firstName" class="form-label">First name</label>
-                            <input type="text" class="form-control" id="firstName" placeholder="" value="" required="">
-                            <div class="invalid-feedback">
-                                Valid first name is required.
+
+            <div class="col-md-9">
+                <div class="accordion accordion-flush" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <h4>Global payment</h4>
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <div class="text-danger">@ViewData["msg"]</div>
+                                <form id="payment-form" method="post" asp-controller="Home" asp-action="Create">
+                                    <div id="bt-dropin"></div>
+                                    @Html.HiddenFor(Model => Model.PaymentMethod, new { @id = "nonce" })
+                                    <div class="mb-3">
+                                        <label for="userToken" class="form-label">User Token</label>
+                                        <input asp-for="@Model.UserToken" type="text" class="form-control" id="userToken"
+                                            placeholder="HFKEIJEIOHJHHFE" required="">
+                                        <div class="text-danger">
+                                            @ViewBag.tokenMsg
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary btn-lg" type="submit"><span>Confirm payment</span></button>
+                                </form>
                             </div>
                         </div>
-
-                        <div class="col-sm-6">
-                            <label for="lastName" class="form-label">Last name</label>
-                            <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
-                            <div class="invalid-feedback">
-                                Valid last name is required.
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <label for="email" class="form-label">Email<span class="text-muted">(Optional)</span></label>
-                            <input type="email" class="form-control" id="email" placeholder="you@example.com">
-                        </div>
-
-                        <div class="col-12">
-                            <label for="userToken" class="form-label">User Token</label>
-                            <input type="text" class="form-control" id="userToken" placeholder="HFKEIJEIOHJHHFE" required="">
-                        </div>
-
-                        <div class="col-12">
-                            <label for="transferCode" class="form-label">Transfer Code<span class="text-muted">(Optional)</span></label>
-                            <input type="text" class="form-control" id="transferCode" placeholder="614893">
-                        </div>                  
                     </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <h4>QRCode banking (Vietnam Only)</h4>
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body row">
+                                <div class="col-md-5 order-md-last">
+                                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-primary">Transfer Information</span>
+                                    </h4>
+                                    <div class="card">
+                                        <img src="https://www.imgonline.com.ua/examples/qr-code-url.png" class="card-img-top" alt="...">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Card title</h5>
+                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <h4 class="mb-3">Billing Information</h4>
 
-                    <hr class="my-4">
+                                    <form class="needs-validation" novalidate="">
+                                        <div class="row g-3">
+                                            <div class="col-sm-6">
+                                                <label for="firstName" class="form-label">First name</label>
+                                                <input type="text" class="form-control" id="firstName" placeholder="" value="" required="">
+                                                <div class="invalid-feedback">
+                                                    Valid first name is required.
+                                                </div>
+                                            </div>
 
-                    <p class="lead"></p>
+                                            <div class="col-sm-6">
+                                                <label for="lastName" class="form-label">Last name</label>
+                                                <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
+                                                <div class="invalid-feedback">
+                                                    Valid last name is required.
+                                                </div>
+                                            </div>
 
-                    <hr class="my-4">
+                                            <div class="col-12">
+                                                <label for="email" class="form-label">Email<span class="text-muted">(Optional)</span></label>
+                                                <input type="email" class="form-control" id="email" placeholder="you@example.com">
+                                            </div>
 
-                    <button class="w-100 btn btn-primary btn-lg" id="btnUpgradeCheckout"
-                    onclick="mailTo()" type="button">Continue to checkout</button>
-                </form>
+                                            <div class="col-12">
+                                                <label for="userToken" class="form-label">User Token</label>
+                                                <input asp-for="@Model.UserToken" type="text" class="form-control" id="userToken"
+                                                    placeholder="HFKEIJEIOHJHHFE" required="">
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label for="transferCode" class="form-label">Transfer Code<span class="text-muted">(Optional)</span></label>
+                                                <input type="text" class="form-control" id="transferCode" placeholder="614893">
+                                            </div>
+                                        </div>
+
+                                        <hr class="my-4">
+
+                                        <p class="lead"></p>
+
+                                        <hr class="my-4">
+
+                                        <button class="w-100 btn btn-primary btn-lg" id="btnUpgradeCheckout"
+                                                onclick="mailTo()" type="button">
+                                            Continue to checkout
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
     </main>
 </div>
+
+<script src="https://js.braintreegateway.com/web/dropin/1.22.0/js/dropin.min.js"></script>
+<script>
+    var client_token = "@ViewData["ClientToken"]";
+    var form = document.querySelector('#payment-form');
+
+    braintree.dropin.create({
+        authorization: client_token,
+        container: '#bt-dropin'
+    }, function (createErr, instance) {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            instance.requestPaymentMethod(function (err, payload) {
+                if (err) {
+                    return;
+                }
+
+                document.querySelector('#nonce').value = payload.nonce;
+                form.submit();
+            });
+        });
+    });
+</script>
