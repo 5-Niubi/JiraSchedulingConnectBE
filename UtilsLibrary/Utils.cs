@@ -1,9 +1,15 @@
-﻿using System.Dynamic;
+﻿using Microsoft.AspNetCore.Http;
+using System.Dynamic;
+using static System.Net.WebRequestMethods;
 
 namespace UtilsLibrary
 {
     public class Utils
     {
+        public static string GetSelfDomain(HttpContext http)
+        {
+            return $"{http.Request.Scheme}://{http.Request.Host.Value}";
+        }
 
         //Hàm dùng để convert chữ tiếng việt có dấu thành chữ tiếng việt không dấu.
         public static string ConvertVN(string chucodau)
