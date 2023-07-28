@@ -95,7 +95,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
         
       - name: Connect & Pull & Deploy
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout $(git rev-parse --abbrev-ref HEAD) && git pull && sudo BACKEND_IMAGE_TAG=${{ github.sha }}  ALGO_IMAGE_TAG=${{ github.sha }} docker-compose -f docker-compose.deployment.yml up -d && sudo docker image prune -a --filter "until=24h" --force true && exit"
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout $(git rev-parse --abbrev-ref HEAD) && git pull && sudo BACKEND_IMAGE_TAG=${{ github.sha }}  ALGO_IMAGE_TAG=${{ github.sha }} docker-compose -f docker-compose.deployment.yml up -d && sudo docker image prune -a --filter "until=24h" --force && exit"
       
       - name: cleanup
         run: rm -rf ~/.ssh
