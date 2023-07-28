@@ -11,11 +11,11 @@
     "ResourceAssignAdmin": {
       "commandName": "Project",
       "launchBrowser": true,
+      "applicationUrl": "https://localhost:5242",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }, 
-      "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:5242"
+      },
+      "dotnetRunMessages": true
     },
     "IIS Express": {
       "commandName": "IISExpress",
@@ -29,7 +29,9 @@
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
       "environmentVariables": {},
-      "publishAllPorts": true
+      "publishAllPorts": true,
+      "sslPort": 5003,
+      "httpPort": 5242
     }
   }
 }
