@@ -129,6 +129,10 @@ namespace JiraSchedulingConnectAppService.Services
 
             request.Content = content;
             var response = await client.SendAsync(request);
+            if(!response.IsSuccessStatusCode)
+            {
+                throw new Exception(domain);
+            }
             response.EnsureSuccessStatusCode();
 
             var reponseAccessToken = JsonSerializer
