@@ -61,6 +61,7 @@ namespace JiraSchedulingConnectAppService.Services
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                 new Claim(Const.Claims.CLOUD_ID, cloudId)
+
             };
             var tokenKey = Encoding.UTF8.GetBytes(configuration["JWT:Key"]);
             var securityKey = new SymmetricSecurityKey(tokenKey);
@@ -124,5 +125,8 @@ namespace JiraSchedulingConnectAppService.Services
             string cloudIdRaw = GetClaim(Const.Claims.CLOUD_ID);
             return cloudIdRaw;
         }
+
+
+        
     }
 }

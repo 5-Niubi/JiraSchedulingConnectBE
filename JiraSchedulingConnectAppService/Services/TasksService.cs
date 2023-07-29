@@ -99,6 +99,8 @@ namespace JiraSchedulingConnectAppService.Services
             var task = mapper.Map<ModelLibrary.DBModels.Task>(taskRequest);
             task.CloudId = cloudId;
 
+            await _ValidateEmptyInputTask(task);
+
             // validate exited name task  project's 
             await _ValidateExitedTaskName(task);
 
@@ -123,7 +125,63 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
+        private async System.Threading.Tasks.Task<bool> _ValidateEmptyInputTask(ModelLibrary.DBModels.Task task)
+        {
 
+            var Messages = "";
+
+            if (task.Duration == null)
+            {
+                Messages += "Duration Not Empty \n";
+
+            }
+
+            if (task.MilestoneId == null)
+            {
+                Messages += "MilestoneId Not Empty\n";
+
+            }
+
+            if (task.Name == null || task.Name.Trim() == "")
+            {
+                Messages += "Name Not Empty \n";
+
+            }
+
+            if (task.ProjectId == null)
+            {
+                Messages += "ProjectId Not Empty \n";
+
+            }
+
+            if (task.TaskPrecedenceTasks.Count() == 0)
+            {
+                Messages += "TaskPrecedenceTasks Not Empty \n";
+
+            }
+
+            if (task.TasksSkillsRequireds.Count() == 0)
+            {
+                Messages += "TaskPrecedenceTasks Not Empty \n";
+
+            }
+
+
+            if(Messages != "")
+            {
+
+                throw new NotSuitableInputException(new TaskInputErrorDTO()
+                {
+                    Messages = Messages
+                });
+            }
+
+
+            return true;
+
+
+
+        }
 
         public async Task<TaskPertViewDTO> GetTaskDetail(int Id)
         {
