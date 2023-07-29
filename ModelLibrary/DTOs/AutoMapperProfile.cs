@@ -44,6 +44,7 @@ namespace ModelLibrary.DTOs
                 {
                     Id = s.SkillId,
                     Name = s.Skill.Name,
+                    CloudId = s.Skill.CloudId,
                     Level = s.Level,
                     CreateDatetime = s.Skill.CreateDatetime,
                     IsDelete = s.IsDelete,
