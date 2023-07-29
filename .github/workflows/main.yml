@@ -71,7 +71,7 @@ jobs:
           tags: ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
   
-    build-admin-webapp:
+  build-admin-webapp:
     name: Build Admin Webapp service
     runs-on: ubuntu-latest
 
