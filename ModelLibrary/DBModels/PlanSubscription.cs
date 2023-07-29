@@ -7,6 +7,7 @@ namespace ModelLibrary.DBModels
     {
         public PlanSubscription()
         {
+            PlanPermissions = new HashSet<PlanPermission>();
             Subscriptions = new HashSet<Subscription>();
         }
 
@@ -18,6 +19,7 @@ namespace ModelLibrary.DBModels
         public bool? IsDelete { get; set; }
         public DateTime? DeleteDatetime { get; set; }
 
+        public virtual ICollection<PlanPermission> PlanPermissions { get; set; }
         public virtual ICollection<Subscription> Subscriptions { get; set; }
     }
 }
