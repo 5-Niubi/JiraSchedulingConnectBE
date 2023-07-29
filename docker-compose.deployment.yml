@@ -16,6 +16,11 @@ services:
     networks:
       - internal-network
 
+  admin_webapp:
+    image: pham2604/admin_webapp:${WEBAPP_IMAGE_TAG}
+    ports:
+      - "8080:80"
+
 networks:
   internal-network:
     driver: bridge
