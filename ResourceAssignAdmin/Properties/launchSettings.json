@@ -30,8 +30,8 @@
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
       "environmentVariables": {},
       "sslPort": 5003,
-      "httpPort": 5242,
-      "publishAllPorts": true
+      "publishAllPorts": true,
+      "httpPort": 5242
     }
   }
 }

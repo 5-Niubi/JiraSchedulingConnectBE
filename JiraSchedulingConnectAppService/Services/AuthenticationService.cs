@@ -68,6 +68,7 @@ namespace JiraSchedulingConnectAppService.Services
                         CurrentPeriodStart = DateTime.Now,
                         Token = Utils.RandomString(10)
                     };
+
                     token.Subscriptions.Add(subscription);
 
                     var firstAccount = new AccountRole()
@@ -101,6 +102,7 @@ namespace JiraSchedulingConnectAppService.Services
                 var response = await client.SendAsync(request);
                 return reponseTokenFirstPhase;
             }
+
             catch (Exception ex)
             {
                 db.Database.RollbackTransaction();
@@ -115,7 +117,7 @@ namespace JiraSchedulingConnectAppService.Services
         async private Task<RepsoneAccessToken?> InitialAcess(string code)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.atlassian.com/oauth/token");
-            var domain = Utils.GetSelfDomain(http);
+            var domain = config.GetValue<string>("Environment:SelfDomain");
             var exchangeTokenDTO = new ExchangeAccessTokenDTO
             {
                 grant_type = "authorization_code",

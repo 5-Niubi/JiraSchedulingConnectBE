@@ -41,12 +41,14 @@
     <PackageReference Include="NLog.Config" Version="4.7.15" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.3.2" />
     <PackageReference Include="Elastic.CommonSchema.NLog" Version="8.6.0" />
+    <PackageReference Include="HeimGuard" Version="0.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Repository\" />
     <Folder Include="Repository\Interfaces\" />
     <Folder Include="wwwroot\" />
+    <Folder Include="Services\Policy\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -66,5 +68,6 @@
   <ItemGroup>
     <None Remove="Repository\" />
     <None Remove="Repository\Interfaces\" />
+    <None Remove="Services\Policy\" />
   </ItemGroup>
 </Project>
