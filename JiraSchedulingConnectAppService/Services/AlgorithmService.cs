@@ -5,6 +5,7 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Thread;
 using System.Dynamic;
 using UtilsLibrary.Exceptions;
+using ModelLibrary.DTOs;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -12,6 +13,8 @@ namespace JiraSchedulingConnectAppService.Services
     {
         private readonly IAPIMicroserviceService apiMicro;
         private readonly IThreadService threadService;
+
+
 
         public AlgorithmService(JiraDemoContext db,
             IHttpContextAccessor httpContextAccessor, IAPIMicroserviceService apiMicro,
@@ -75,6 +78,8 @@ namespace JiraSchedulingConnectAppService.Services
             catch {/* Do nothing*/ }
         }
 
+
+        [Feature("EstimateWorkforce")]
         public async Task<EstimatedResultDTO> EstimateWorkforce(int projectId)
         {
             

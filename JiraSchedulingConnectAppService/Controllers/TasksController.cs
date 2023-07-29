@@ -148,7 +148,35 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
+
+
         
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteTask(int Id)
+        {
+
+            try
+            {
+                var resopnse = await TasksService.DeleteTask(Id);
+                return Ok(resopnse);
+            }
+
+            catch (NotSuitableInputException ex)
+            {
+                this._Logger.LogWarning(ex.Message);
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                this._Logger.LogError(ex.Message);
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> SaveTasks(TasksSaveRequest taskRequest)
         {

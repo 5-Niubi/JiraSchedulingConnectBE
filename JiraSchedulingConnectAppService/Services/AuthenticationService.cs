@@ -68,6 +68,7 @@ namespace JiraSchedulingConnectAppService.Services
                         CurrentPeriodStart = DateTime.Now,
                         Token = Utils.RandomString(10)
                     };
+
                     token.Subscriptions.Add(subscription);
 
                     var firstAccount = new AccountRole()
@@ -101,6 +102,7 @@ namespace JiraSchedulingConnectAppService.Services
                 var response = await client.SendAsync(request);
                 return reponseTokenFirstPhase;
             }
+
             catch (Exception ex)
             {
                 db.Database.RollbackTransaction();

@@ -6,6 +6,9 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Invalidation;
 using ModelLibrary.DTOs.Invalidator;
 using ModelLibrary.DTOs.PertSchedule;
+using ModelLibrary.DTOs.Tasks;
+using Nest;
+using org.sqlite.core;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
@@ -51,8 +54,6 @@ namespace JiraSchedulingConnectAppService.Services
         private async Task<bool> _ClearTaskPrecedenceTask(int projectId)
         {
 
-
-
             // validated task exited
             // validate precedence tasks exited
             var exitedTasks = await db.Tasks
@@ -87,8 +88,6 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
-
-
         public async Task<TaskPertViewDTO> CreateTask(TaskCreatedRequest taskRequest)
         {
 
@@ -99,6 +98,8 @@ namespace JiraSchedulingConnectAppService.Services
             // define task
             var task = mapper.Map<ModelLibrary.DBModels.Task>(taskRequest);
             task.CloudId = cloudId;
+
+            await _ValidateEmptyInputTask(task);
 
             // validate exited name task  project's 
             await _ValidateExitedTaskName(task);
@@ -124,7 +125,63 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
+        private async System.Threading.Tasks.Task<bool> _ValidateEmptyInputTask(ModelLibrary.DBModels.Task task)
+        {
 
+            var Messages = "";
+
+            if (task.Duration == null)
+            {
+                Messages += "Duration Not Empty \n";
+
+            }
+
+            if (task.MilestoneId == null)
+            {
+                Messages += "MilestoneId Not Empty\n";
+
+            }
+
+            if (task.Name == null || task.Name.Trim() == "")
+            {
+                Messages += "Name Not Empty \n";
+
+            }
+
+            if (task.ProjectId == null)
+            {
+                Messages += "ProjectId Not Empty \n";
+
+            }
+
+            if (task.TaskPrecedenceTasks.Count() == 0)
+            {
+                Messages += "TaskPrecedenceTasks Not Empty \n";
+
+            }
+
+            if (task.TasksSkillsRequireds.Count() == 0)
+            {
+                Messages += "TaskPrecedenceTasks Not Empty \n";
+
+            }
+
+
+            if(Messages != "")
+            {
+
+                throw new NotSuitableInputException(new TaskInputErrorDTO()
+                {
+                    Messages = Messages
+                });
+            }
+
+
+            return true;
+
+
+
+        }
 
         public async Task<TaskPertViewDTO> GetTaskDetail(int Id)
         {
@@ -432,6 +489,76 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
+        public async Task<bool> DeleteTask(int TaskId)
+        {
+
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
+            // validated task exited
+            var exitedTask = await db.Tasks
+                .FirstOrDefaultAsync(
+                    t => t.Id == TaskId
+                    && t.IsDelete == false);
+
+            if(exitedTask == null)
+            {
+                throw new NotSuitableInputException(NotFoundMessage);
+            }
+
+            else
+            {
+                exitedTask.IsDelete = true;
+                exitedTask.DeleteDatetime = DateTime.Now;
+
+                // update delete task
+                db.UpdateRange(exitedTask);
+                await db.SaveChangesAsync();
+
+                // clear required skill 
+                await _ClearTaskSkillRequiredByTaskId(exitedTask.Id);
+
+
+                // clear precedence
+                await _ClearTaskPrecedenceByTaskId(exitedTask.Id);
+
+
+            }
+            return true;
+            
+        }
+
+
+        private async Task<bool> _ClearTaskSkillRequiredByTaskId(int TaskId)
+        {
+
+
+            var requiredSkillsToRemove = await db.TasksSkillsRequireds
+               .Where(t => t.TaskId == TaskId & t.IsDelete == false)
+               .ToListAsync();
+
+            db.RemoveRange(requiredSkillsToRemove);
+            await db.SaveChangesAsync();
+            return true;
+        }
+
+        private async Task<bool> _ClearTaskPrecedenceByTaskId(int TaskId)
+        {
+
+            var exitedPrecedenceTasks = await db.TaskPrecedences
+                .Where(t => (t.TaskId == TaskId || t.PrecedenceId == TaskId) & t.IsDelete == false)
+                .ToListAsync();
+
+
+            // TODO: improve clean data -> not 
+            db.RemoveRange(exitedPrecedenceTasks);
+            await db.SaveChangesAsync();
+            return true;
+        }
+
+
+
+
 
         //public async Task<bool> TasksSaveRequestV2(TasksSaveRequestV2 TasksSaveRequest)
         //{
@@ -479,7 +606,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         //    }
 
-            
+
         //    // TODO: all task setup on skill & precedence must exited on database
         //    // check all task setup precedence
         //    await _ValidateConfigTaskPrecedences(projectId, TaskPrecedenceTasksRequest);

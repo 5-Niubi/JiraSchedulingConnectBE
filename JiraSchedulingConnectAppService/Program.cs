@@ -1,8 +1,11 @@
 using AlgorithmServiceServer.Services.Interfaces;
+using HeimGuard;
 using JiraSchedulingConnectAppService.Jobs;
 using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Interfaces;
+using JiraSchedulingConnectAppService.Services.Policy;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ModelLibrary;
@@ -58,6 +61,7 @@ try
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
         };
     });
+
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
@@ -91,6 +95,21 @@ try
     builder.Services.AddTransient<IScheduleService, ScheduleService>();
     builder.Services.AddTransient<IMilestonesService, MilestonesService>();
     builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();
+    builder.Services.AddTransient<IAuthorizationHandler, MaximumScheduleHandler>();
+
+    // Config P
+    builder.Services.AddHeimGuard<UserPolicyHandler>()
+     .AutomaticallyCheckPermissions()
+     .MapAuthorizationPolicies();
+
+    builder.Services.AddAuthorization(
+        options =>
+        {
+            options.AddPolicy("GetABC",
+                              policy => policy.Requirements.Add(new MaximumScheduleTimeRequirement(1)));
+        });
+
+    
 
     var app = builder.Build();
 
