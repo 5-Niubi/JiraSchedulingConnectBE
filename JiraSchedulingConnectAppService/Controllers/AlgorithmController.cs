@@ -22,7 +22,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpGet]
-        
+        [Authorize("ExecuteAlgorithm")]
         public async Task<IActionResult> ExecuteAlgorithm(int parameterId)
         {
             try

@@ -10,7 +10,6 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    [Authorize(Policy = "RecipesFullAccess")]
     public class Policy : ControllerBase
     {
         private readonly ILoggerManager _Logger;
@@ -27,7 +26,6 @@ namespace JiraSchedulingConnectAppService.Controllers
             return Ok();
         }
 
-       
 
     }
 }
