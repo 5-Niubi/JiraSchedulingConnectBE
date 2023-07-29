@@ -95,7 +95,7 @@ try
     builder.Services.AddTransient<IScheduleService, ScheduleService>();
     builder.Services.AddTransient<IMilestonesService, MilestonesService>();
     builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();
-    builder.Services.AddTransient<IAuthorizationHandler, MaximumScheduleHandler>();
+    builder.Services.AddTransient<IAuthorizationHandler, ScheduleTimeRequirementHandler>();
 
     // Config P
     builder.Services.AddHeimGuard<UserPolicyHandler>()
@@ -105,8 +105,8 @@ try
     builder.Services.AddAuthorization(
         options =>
         {
-            options.AddPolicy("GetABC",
-                              policy => policy.Requirements.Add(new MaximumScheduleTimeRequirement(1)));
+            options.AddPolicy(
+                "LimitedScheduleTimeByMonth",  policy => policy.Requirements.Add(new ScheduleTimeRequirement(3)));
         });
 
     

@@ -48,7 +48,7 @@
     <Folder Include="Repository\" />
     <Folder Include="Repository\Interfaces\" />
     <Folder Include="wwwroot\" />
-    <Folder Include="Services\Policy\" />
+    <Folder Include="Services\Authorization\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -68,6 +68,6 @@
   <ItemGroup>
     <None Remove="Repository\" />
     <None Remove="Repository\Interfaces\" />
-    <None Remove="Services\Policy\" />
+    <None Remove="Services\Authorization\" />
   </ItemGroup>
 </Project>

@@ -15,11 +15,16 @@ namespace JiraSchedulingConnectAppService.Services
 {
     public class TasksService : ITasksService
     {
-        public const string NotFoundMessage = "Task Not Found!";
-        public const string MissingMessage = "Missing Task!";
-        public const string NotFoundSkillMessage = "Skill Not Found!";
+        public const string TaskNotFoundMessage = "Task Not Found!";
+
+        public const string SkillNotFoundMessage = "Skill Not Found!";
         public const string LevelSkillNotValidMessage = "Level Skill Not Valid!";
         public const string RequiredSkillNotValidMessage = "Skill Not Validate!";
+        public const string RequiredSkillInputEmptyMessage = "Empty Required Skills";
+
+        public const string MissingMessage = "Missing Task!";
+        
+        
         public const string PrecedenceMissingTaskMessage = "Task Not Set Precedence!";
         public const string RequiredSkillMissingTaskMessage = "Task Not Set Required SKill!";
 
@@ -179,8 +184,6 @@ namespace JiraSchedulingConnectAppService.Services
 
             return true;
 
-
-
         }
 
         public async Task<TaskPertViewDTO> GetTaskDetail(int Id)
@@ -195,7 +198,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             if (task == null)
             {
-                throw new Exception(NotFoundMessage);
+                throw new Exception(TaskNotFoundMessage);
             }
 
             var taskPertViewDTO = mapper.Map<TaskPertViewDTO>(task);
@@ -240,76 +243,76 @@ namespace JiraSchedulingConnectAppService.Services
 
 
 
-        private async Task<bool> _UpsertSkillRequireds(ModelLibrary.DBModels.Task task, List<TasksSkillsRequired> tasksSkillsRequireds)
-        {
-            // delete skillRequiredsToRemove  
-            foreach (var oldSkillRequired in task.TasksSkillsRequireds)
-            {
-                var exitedSkillRequired = tasksSkillsRequireds.FirstOrDefault(news => news.SkillId == oldSkillRequired.SkillId);
-                if (exitedSkillRequired != null)
-                {
-                    oldSkillRequired.Level = exitedSkillRequired.Level;
+        //private async Task<bool> _UpsertSkillRequireds(ModelLibrary.DBModels.Task task, List<TasksSkillsRequired> tasksSkillsRequireds)
+        //{
+        //    // delete skillRequiredsToRemove  
+        //    foreach (var oldSkillRequired in task.TasksSkillsRequireds)
+        //    {
+        //        var exitedSkillRequired = tasksSkillsRequireds.FirstOrDefault(news => news.SkillId == oldSkillRequired.SkillId);
+        //        if (exitedSkillRequired != null)
+        //        {
+        //            oldSkillRequired.Level = exitedSkillRequired.Level;
 
-                }
-                else
-                {
-                    oldSkillRequired.IsDelete = true;
-                }
+        //        }
+        //        else
+        //        {
+        //            oldSkillRequired.IsDelete = true;
+        //        }
 
-            }
-
-
-            // update exited skill required task
-            var skillRequiredsToUpdate = task.TasksSkillsRequireds.Select(newS => new TasksSkillsRequired { TaskId = task.Id, SkillId = newS.SkillId, Level = newS.Level })
-            .ToList();
-
-            db.UpdateRange(skillRequiredsToUpdate);
-            await db.SaveChangesAsync();
-
-            // add new skill required task
-            var skillRequiredsToAdd = tasksSkillsRequireds
-            .Where(newS => !task.TasksSkillsRequireds.Any(old => old.SkillId == newS.SkillId))
-            .Select(newS => new TasksSkillsRequired { TaskId = task.Id, SkillId = newS.SkillId, Level = newS.Level })
-            .ToList();
+        //    }
 
 
-            db.TasksSkillsRequireds.AddRange(skillRequiredsToAdd);
-            await db.SaveChangesAsync();
+        //    // update exited skill required task
+        //    var skillRequiredsToUpdate = task.TasksSkillsRequireds.Select(newS => new TasksSkillsRequired { TaskId = task.Id, SkillId = newS.SkillId, Level = newS.Level })
+        //    .ToList();
 
-            return true;
-        }
+        //    db.UpdateRange(skillRequiredsToUpdate);
+        //    await db.SaveChangesAsync();
 
-
-        private async Task<bool> _UpsertPrecedenceTasks(ModelLibrary.DBModels.Task task, List<TaskPrecedence> taskPrecedences)
-        {
-            // delete skillRequiredsToRemove  
-            foreach (var oldPrecedenceTask in task.TaskPrecedenceTasks)
-            {
-                var exitedPrecedenceTask = taskPrecedences.FirstOrDefault(news => news.PrecedenceId == oldPrecedenceTask.PrecedenceId);
-                if (exitedPrecedenceTask == null)
-                {
-                    exitedPrecedenceTask.IsDelete = true;
-
-                }
-
-            }
-
-            // update exited precedence task
-            db.UpdateRange(task.TaskPrecedenceTasks);
-            await db.SaveChangesAsync();
-
-            // add new skill required task
-            var raskPrecedenceTasksToAdd = taskPrecedences
-            .Where(newS => !task.TaskPrecedenceTasks.Any(old => old.PrecedenceId == newS.PrecedenceId))
-            .Select(newS => new TaskPrecedence { TaskId = task.Id, PrecedenceId = newS.PrecedenceId })
-            .ToList();
+        //    // add new skill required task
+        //    var skillRequiredsToAdd = tasksSkillsRequireds
+        //    .Where(newS => !task.TasksSkillsRequireds.Any(old => old.SkillId == newS.SkillId))
+        //    .Select(newS => new TasksSkillsRequired { TaskId = task.Id, SkillId = newS.SkillId, Level = newS.Level })
+        //    .ToList();
 
 
-            db.TaskPrecedences.AddRange(raskPrecedenceTasksToAdd);
-            await db.SaveChangesAsync();
+        //    db.TasksSkillsRequireds.AddRange(skillRequiredsToAdd);
+        //    await db.SaveChangesAsync();
 
-            return true;
-        }
+        //    return true;
+        //}
+
+
+        //private async Task<bool> _UpsertPrecedenceTasks(ModelLibrary.DBModels.Task task, List<TaskPrecedence> taskPrecedences)
+        //{
+        //    // delete skillRequiredsToRemove  
+        //    foreach (var oldPrecedenceTask in task.TaskPrecedenceTasks)
+        //    {
+        //        var exitedPrecedenceTask = taskPrecedences.FirstOrDefault(news => news.PrecedenceId == oldPrecedenceTask.PrecedenceId);
+        //        if (exitedPrecedenceTask == null)
+        //        {
+        //            exitedPrecedenceTask.IsDelete = true;
+
+        //        }
+
+        //    }
+
+        //    // update exited precedence task
+        //    db.UpdateRange(task.TaskPrecedenceTasks);
+        //    await db.SaveChangesAsync();
+
+        //    // add new skill required task
+        //    var raskPrecedenceTasksToAdd = taskPrecedences
+        //    .Where(newS => !task.TaskPrecedenceTasks.Any(old => old.PrecedenceId == newS.PrecedenceId))
+        //    .Select(newS => new TaskPrecedence { TaskId = task.Id, PrecedenceId = newS.PrecedenceId })
+        //    .ToList();
+
+
+        //    db.TaskPrecedences.AddRange(raskPrecedenceTasksToAdd);
+        //    await db.SaveChangesAsync();
+
+        //    return true;
+        //}
 
 
 
@@ -318,58 +321,130 @@ namespace JiraSchedulingConnectAppService.Services
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
+
             // define task
             var changingTask = mapper.Map<ModelLibrary.DBModels.Task>(taskRequest);
             changingTask.CloudId = cloudId;
 
             // validated task exited
             var oldTask = await db.Tasks
-                .Include(t => t.TaskPrecedenceTasks)
-                .Include(t => t.TasksSkillsRequireds)
-                .FirstOrDefaultAsync(
-                    t => t.Id == changingTask.Id
-                    && t.IsDelete == false);
+            .Include(t => t.TaskPrecedenceTasks)
+            .Include(t => t.TasksSkillsRequireds)
+            .FirstOrDefaultAsync(
+                t => t.Id == changingTask.Id
+                && t.IsDelete == false
+                && t.ProjectId == changingTask.ProjectId);
 
-            // Validate milestoneId exited
-            await _ValidateExitedMilestone(taskRequest);
+            if(oldTask == null)
+            {
+                throw new NotSuitableInputException(new TaskInputErrorDTO
+                {
+                    TaskId = changingTask.Id,
+                    Messages = TaskNotFoundMessage
+                });
+            }
 
-            // validate exited predences in this project
+          
+            if(changingTask.MilestoneId != null)
+            {
+                // Validate milestoneId exited
+                await _ValidateExitedMilestone(taskRequest);
+
+            }
+
+
+            // validate required skills task's
+            if (changingTask.TasksSkillsRequireds != null)
+            {
+                if (changingTask.TasksSkillsRequireds.Count() == 0){
+
+                    throw new NoSuitableWorkerException(RequiredSkillInputEmptyMessage);
+                }
+
+                await _ValidateSkillsRequired(changingTask);
+
+            }
+
+            // validate required skills task's
             if (changingTask.TaskPrecedenceTasks != null)
             {
                 await _ValidatePrecedenceTask(changingTask);
             }
 
+            
+            // validate exited predences in this project
+            if (changingTask.TaskPrecedenceTasks != null)
+            {
+                // clear
+                await _ClearTaskPrecedenceByTaskId(taskRequest.Id);
+
+                // insert new
+                List<TaskPrecedence> precedenceTasksToAdd = new List<TaskPrecedence>();
+                    
+                foreach (var precedence in taskRequest.Precedences)
+                {
+                    precedenceTasksToAdd.Add(new TaskPrecedence()
+                    {
+                        TaskId = taskRequest.Id,
+                        PrecedenceId = precedence.PrecedenceId,
+                        IsDelete = false
+                    });
+                }
+
+
+                // insert new precedence tasks
+                await db.AddRangeAsync(precedenceTasksToAdd);
+                await db.SaveChangesAsync();
+
+
+
+            }
+
             // validate required skills task's
             if (changingTask.TasksSkillsRequireds != null)
             {
-                await _ValidateSkillsRequired(changingTask);
+
+                await _ClearTaskSkillRequiredByTaskId(taskRequest.Id);
+
+                // mapping task precedences request -> task precedences database
+                List<TasksSkillsRequired> tasksSkillsRequiredsToAdd = new List<TasksSkillsRequired>();
+
+                foreach (var skill in taskRequest.SkillRequireds)
+                {
+                    var taskSkillRequired = new TasksSkillsRequired()
+                    {
+                        TaskId = taskRequest.Id,
+                        SkillId = skill.SkillId,
+                        Level = skill.Level,
+                        IsDelete = false
+
+                    };
+                    tasksSkillsRequiredsToAdd.Add(taskSkillRequired);
+
+                        
+                }
+
+                // insert new precedence tasks
+                await db.AddRangeAsync(tasksSkillsRequiredsToAdd);
+                await db.SaveChangesAsync();
             }
 
-            // validated task name exited
-            if(changingTask.Name != null)
-            {
-                await _ValidateExitedTaskName(changingTask);
-            }
-            else
-            {
-                changingTask.Name = oldTask.Name;
-            }
-            
+                    
+
+            oldTask.Name = (changingTask.Name == null) ?
+            oldTask.Name : changingTask.Name;
 
             oldTask.Duration = (changingTask.Duration == null) ?
                 oldTask.Duration : changingTask.Duration;
 
-            oldTask.Duration = (changingTask.Duration == null) ?
-                oldTask.Duration : changingTask.Duration;
+            oldTask.MilestoneId = (changingTask.MilestoneId == null) ?
+                oldTask.MilestoneId : changingTask.MilestoneId;
 
-            // update and insert required skills
-            _UpsertSkillRequireds(oldTask, changingTask.TasksSkillsRequireds.ToList());
-
-
-            // update and insert precedence task
-            _UpsertPrecedenceTasks(oldTask, changingTask.TaskPrecedenceTasks.ToList());
-
-            var taskPertViewDTO = mapper.Map<TaskPertViewDTO>(changingTask);
+  
+            db.Tasks.Update(oldTask);
+            await db.SaveChangesAsync();
+         
+            var taskPertViewDTO = mapper.Map<TaskPertViewDTO>(oldTask);
             return taskPertViewDTO;
         }
 
@@ -406,9 +481,6 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async Task<List<TasksSkillsRequired>> _SaveTasksSkillsRequireds(List<TaskSkillsRequiredRequestDTO> taskSkillsRequiredsRequest)
         {
-
-
-
             // mapping task precedences request -> task precedences database
             List<TasksSkillsRequired> tasksSkillsRequiredsToAdd = new List<TasksSkillsRequired>();
             foreach (var taskSkillsRequired in taskSkillsRequiredsRequest)
@@ -430,8 +502,6 @@ namespace JiraSchedulingConnectAppService.Services
             // insert new precedence tasks
             await db.AddRangeAsync(tasksSkillsRequiredsToAdd);
             await db.SaveChangesAsync();
-
-
             return tasksSkillsRequiredsToAdd;
 
 
@@ -464,16 +534,15 @@ namespace JiraSchedulingConnectAppService.Services
             // check precedence task is validate
             await _ValidateExitedPrecedenceTask(TaskPrecedenceTasksRequest);
 
-            // clean all precedence tasks of project id
-            await _ClearTaskPrecedenceTask(projectId);
-
+            // validate exited skill 
+            await _ValidateExitedSkill(TaskSkillsRequiredsRequest);
 
             // check all Tasks project's must setup Required Skills
             await _ValidateConfigAllTaskSkillsRequireds(projectId, TaskSkillsRequiredsRequest);
 
 
-            // validate exited skill 
-            await _ValidateExitedSkill(TaskSkillsRequiredsRequest);
+            // clean all precedence tasks of project id
+            await _ClearTaskPrecedenceTask(projectId);
 
             // clean all precedence tasks of project id
             await _ClearTaskSkillRequired(TaskSkillsRequiredsRequest);
@@ -503,7 +572,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             if(exitedTask == null)
             {
-                throw new NotSuitableInputException(NotFoundMessage);
+                throw new NotSuitableInputException(TaskNotFoundMessage);
             }
 
             else
@@ -534,7 +603,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
             var requiredSkillsToRemove = await db.TasksSkillsRequireds
-               .Where(t => t.TaskId == TaskId & t.IsDelete == false)
+               .Where(t => t.TaskId == TaskId)
                .ToListAsync();
 
             db.RemoveRange(requiredSkillsToRemove);
@@ -546,7 +615,7 @@ namespace JiraSchedulingConnectAppService.Services
         {
 
             var exitedPrecedenceTasks = await db.TaskPrecedences
-                .Where(t => (t.TaskId == TaskId || t.PrecedenceId == TaskId) & t.IsDelete == false)
+                .Where(t => t.TaskId == TaskId || t.PrecedenceId == TaskId)
                 .ToListAsync();
 
 
@@ -741,7 +810,7 @@ namespace JiraSchedulingConnectAppService.Services
         private async Task<bool> _ValidateSkillsRequired(ModelLibrary.DBModels.Task task)
         {
             var Errors = new List<TaskInputErrorDTO>();
-
+            
 
             //validate exited on database
             var exitedSkills = await db.Skills
@@ -759,7 +828,7 @@ namespace JiraSchedulingConnectAppService.Services
                         new SkillRequestErrorDTO
                         {
                             SkillId = skill.SkillId,
-                            Messages = NotFoundMessage
+                            Messages = SkillNotFoundMessage
                         });
 
 
