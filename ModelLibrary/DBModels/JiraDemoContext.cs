@@ -26,6 +26,7 @@ namespace ModelLibrary.DBModels
         public virtual DbSet<Milestone> Milestones { get; set; } = null!;
         public virtual DbSet<Parameter> Parameters { get; set; } = null!;
         public virtual DbSet<ParameterResource> ParameterResources { get; set; } = null!;
+        public virtual DbSet<PlanPermission> PlanPermissions { get; set; } = null!;
         public virtual DbSet<PlanSubscription> PlanSubscriptions { get; set; } = null!;
         public virtual DbSet<Project> Projects { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
@@ -59,6 +60,7 @@ namespace ModelLibrary.DBModels
             modelBuilder.Entity<Milestone>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Parameter>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<ParameterResource>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<PlanPermission>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<PlanSubscription>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
@@ -71,6 +73,8 @@ namespace ModelLibrary.DBModels
             modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
+
+
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
@@ -419,6 +423,37 @@ namespace ModelLibrary.DBModels
                     .HasForeignKey(d => d.ResourceId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_project_resource_workforce");
+            });
+
+            modelBuilder.Entity<PlanPermission>(entity =>
+            {
+                entity.ToTable("plan_permissions");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreateDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.DeleteDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("delete_datetime");
+
+                entity.Property(e => e.IsDelete)
+                    .HasColumnName("is_delete")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Permission)
+                    .HasMaxLength(100)
+                    .HasColumnName("permission");
+
+                entity.Property(e => e.PlanSubscriptionId).HasColumnName("plan_subscription_id");
+
+                entity.HasOne(d => d.PlanSubscription)
+                    .WithMany(p => p.PlanPermissions)
+                    .HasForeignKey(d => d.PlanSubscriptionId)
+                    .HasConstraintName("FK__PlanPermi__plan___44952D46");
             });
 
             modelBuilder.Entity<PlanSubscription>(entity =>

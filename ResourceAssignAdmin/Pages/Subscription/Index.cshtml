@@ -21,7 +21,7 @@
     </div>
     <div class="col-md-2">
         <div class=" input-group mb-3">
-            <span class="input-group-text" id="basic-addon1">Plan</span>
+            <span class="input-group-text" >Plan</span>
             <select class="form-select" id="planSearchSelect">
                 <option value="">All...</option>
                 @foreach (var plan in ViewBag.PlanId)
@@ -35,6 +35,17 @@
                         <option value="@plan.Id">@plan.Name</option>
                     }
                 }
+            </select>       
+        </div>
+        
+    </div>
+    <div class="col-md-3">
+        <div class="input-group mb-3">
+            <span class="input-group-text" >Status</span>
+            <select class="form-select" id="statusSearchSelect">
+                <!option value="" @if (ViewBag.status != "all" || ViewBag.status != "deactive") {<text>selected</text>} >Avtive</!option>
+                <!option value="all" @if (ViewBag.status == "all") {<text>selected</text>}>All</!option>
+                <!option value="deactive" @if (ViewBag.status == "deactive") {<text>selected</text>}>Deactive</!option>
             </select>
         </div>
     </div>
@@ -67,7 +78,7 @@
     <tbody>
         @foreach (var item in Model.Subscription)
         {
-            <tr @if (item.CancelAt == null) {<text>class="table-primary"</text>}>
+            <tr >
                 <td>
                     @Html.DisplayFor(modelItem => item.AtlassianToken.UserToken)
                 </td>
@@ -79,14 +90,21 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CurrentPeriodEnd)
-                </td>
+                </td> 
                 <td>
-                    @Html.DisplayFor(modelItem => item.CancelAt)
+                    @if (item.CancelAt == null) {
+                        <p class="text-success">Active</p>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.CancelAt)
+                    }                 
                 </td>            
                 <td>
-                    <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a>
-                    @*| <a asp-page="./Details" asp-route-id="@item.Id">Details</a>*@
-                    
+                    @if (item.CancelAt == null) {
+                        <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a>
+                    }
+                    @*| <a asp-page="./Details" asp-route-id="@item.Id">Details</a>*@             
                 </td>
             </tr>
         }
@@ -103,6 +121,7 @@
         let url = new URL(location.href);
         url.searchParams.set("token", $("#tokenSearchInput").val());
         url.searchParams.set("plan", $("#planSearchSelect").val());
+        url.searchParams.set("status", $("#statusSearchSelect").val());
         location.href = url.toString();
     });
 </script>

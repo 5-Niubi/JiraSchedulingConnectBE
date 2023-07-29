@@ -117,7 +117,7 @@ namespace JiraSchedulingConnectAppService.Services
         async private Task<RepsoneAccessToken?> InitialAcess(string code)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.atlassian.com/oauth/token");
-            var domain = Utils.GetSelfDomain(http);
+            var domain = config.GetValue<string>("Environment:SelfDomain");
             var exchangeTokenDTO = new ExchangeAccessTokenDTO
             {
                 grant_type = "authorization_code",
