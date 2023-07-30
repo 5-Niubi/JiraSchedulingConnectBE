@@ -128,7 +128,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: GatewayAppService/.
           file: "GatewayAppService/Dockerfile"
           push: true
           tags: ${{ vars.REGISTRY }}/gateway_service:${{ github.sha }}
