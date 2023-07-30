@@ -21,7 +21,8 @@
     </div>
 
     <div class="row">
-        <div class="col-md-6"><canvas id="userDonut"></canvas></div>
+        <div class="col-md-8"><canvas id="userLine"></canvas></div>
+        <div class="col-md-4"><canvas id="userDonut"></canvas></div>
     </div>
 
     <h2>Top new active user</h2>
@@ -49,5 +50,6 @@
     </div>
 </main>
 <script>
-    drawUserDonutChart(@ViewBag.TotalUsers)
+    drawUserDonutChart(@ViewBag.TotalUsers);
+    drawUserLineChart();
 </script>
