@@ -372,7 +372,6 @@ namespace JiraSchedulingConnectAppService.Services
             }
 
             
-            // validate exited predences in this project
             if (changingTask.TaskPrecedenceTasks != null)
             {
                 // clear
@@ -391,16 +390,12 @@ namespace JiraSchedulingConnectAppService.Services
                     });
                 }
 
-
                 // insert new precedence tasks
                 await db.AddRangeAsync(precedenceTasksToAdd);
                 await db.SaveChangesAsync();
 
-
-
             }
 
-            // validate required skills task's
             if (changingTask.TasksSkillsRequireds != null)
             {
 

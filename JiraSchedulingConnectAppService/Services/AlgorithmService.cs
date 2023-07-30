@@ -79,7 +79,6 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
-        [Feature("EstimateWorkforce")]
         public async Task<EstimatedResultDTO> EstimateWorkforce(int projectId)
         {
             
