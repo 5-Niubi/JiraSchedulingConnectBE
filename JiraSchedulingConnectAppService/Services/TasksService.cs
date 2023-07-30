@@ -30,7 +30,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         public const string ProjectNotFoundMessage = "Project Not Found!";
         public const string NotUniqueTaskNameMessage = "Task Name Must Unique!";
-        public const string PredenceNotExitedMessage = "Predence Task  not valid!";
+        public const string PredenceNotFoundMessage = "Predence Task  not Found!";
         public const string MilestoneNotValidMessage = "Milestone Task's not valid!";
 
         private readonly JiraDemoContext db;
@@ -107,7 +107,7 @@ namespace JiraSchedulingConnectAppService.Services
             await _ValidateEmptyInputTask(task);
 
             // validate exited name task  project's 
-            await _ValidateExitedTaskName(task);
+            //await _ValidateExitedTaskName(task);
 
             // validate milestone task
             await _ValidateMilestoneTask(task);
@@ -137,41 +137,35 @@ namespace JiraSchedulingConnectAppService.Services
 
             if (task.Duration == null)
             {
-                Messages += "Duration Not Empty \n";
+                Messages += "Duration is Empty \n";
 
             }
 
             if (task.MilestoneId == null)
             {
-                Messages += "MilestoneId Not Empty\n";
+                Messages += "MilestoneId is Empty\n";
 
             }
 
             if (task.Name == null || task.Name.Trim() == "")
             {
-                Messages += "Name Not Empty \n";
+                Messages += "Name is Empty \n";
 
             }
 
             if (task.ProjectId == null)
             {
-                Messages += "ProjectId Not Empty \n";
-
-            }
-
-            if (task.TaskPrecedenceTasks.Count() == 0)
-            {
-                Messages += "TaskPrecedenceTasks Not Empty \n";
+                Messages += "ProjectId is Empty \n";
 
             }
 
             if (task.TasksSkillsRequireds.Count() == 0)
             {
-                Messages += "TaskPrecedenceTasks Not Empty \n";
+                Messages += "TasksSkillsRequireds is Empty \n";
 
             }
 
-
+         
             if(Messages != "")
             {
 
@@ -240,79 +234,6 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
-
-
-
-        //private async Task<bool> _UpsertSkillRequireds(ModelLibrary.DBModels.Task task, List<TasksSkillsRequired> tasksSkillsRequireds)
-        //{
-        //    // delete skillRequiredsToRemove  
-        //    foreach (var oldSkillRequired in task.TasksSkillsRequireds)
-        //    {
-        //        var exitedSkillRequired = tasksSkillsRequireds.FirstOrDefault(news => news.SkillId == oldSkillRequired.SkillId);
-        //        if (exitedSkillRequired != null)
-        //        {
-        //            oldSkillRequired.Level = exitedSkillRequired.Level;
-
-        //        }
-        //        else
-        //        {
-        //            oldSkillRequired.IsDelete = true;
-        //        }
-
-        //    }
-
-
-        //    // update exited skill required task
-        //    var skillRequiredsToUpdate = task.TasksSkillsRequireds.Select(newS => new TasksSkillsRequired { TaskId = task.Id, SkillId = newS.SkillId, Level = newS.Level })
-        //    .ToList();
-
-        //    db.UpdateRange(skillRequiredsToUpdate);
-        //    await db.SaveChangesAsync();
-
-        //    // add new skill required task
-        //    var skillRequiredsToAdd = tasksSkillsRequireds
-        //    .Where(newS => !task.TasksSkillsRequireds.Any(old => old.SkillId == newS.SkillId))
-        //    .Select(newS => new TasksSkillsRequired { TaskId = task.Id, SkillId = newS.SkillId, Level = newS.Level })
-        //    .ToList();
-
-
-        //    db.TasksSkillsRequireds.AddRange(skillRequiredsToAdd);
-        //    await db.SaveChangesAsync();
-
-        //    return true;
-        //}
-
-
-        //private async Task<bool> _UpsertPrecedenceTasks(ModelLibrary.DBModels.Task task, List<TaskPrecedence> taskPrecedences)
-        //{
-        //    // delete skillRequiredsToRemove  
-        //    foreach (var oldPrecedenceTask in task.TaskPrecedenceTasks)
-        //    {
-        //        var exitedPrecedenceTask = taskPrecedences.FirstOrDefault(news => news.PrecedenceId == oldPrecedenceTask.PrecedenceId);
-        //        if (exitedPrecedenceTask == null)
-        //        {
-        //            exitedPrecedenceTask.IsDelete = true;
-
-        //        }
-
-        //    }
-
-        //    // update exited precedence task
-        //    db.UpdateRange(task.TaskPrecedenceTasks);
-        //    await db.SaveChangesAsync();
-
-        //    // add new skill required task
-        //    var raskPrecedenceTasksToAdd = taskPrecedences
-        //    .Where(newS => !task.TaskPrecedenceTasks.Any(old => old.PrecedenceId == newS.PrecedenceId))
-        //    .Select(newS => new TaskPrecedence { TaskId = task.Id, PrecedenceId = newS.PrecedenceId })
-        //    .ToList();
-
-
-        //    db.TaskPrecedences.AddRange(raskPrecedenceTasksToAdd);
-        //    await db.SaveChangesAsync();
-
-        //    return true;
-        //}
 
 
 
@@ -761,7 +682,7 @@ namespace JiraSchedulingConnectAppService.Services
                         {
                             PrecedenceId = precedenceTask.PrecedenceId,
                             TaskId = precedenceTask.TaskId,
-                            Messages = PredenceNotExitedMessage
+                            Messages = PredenceNotFoundMessage
                         });
 
 
