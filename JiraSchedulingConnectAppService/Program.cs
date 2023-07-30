@@ -2,6 +2,7 @@ using AlgorithmServiceServer.Services.Interfaces;
 using HeimGuard;
 using JiraSchedulingConnectAppService.Jobs;
 using JiraSchedulingConnectAppService.Services;
+using JiraSchedulingConnectAppService.Services.Authorization;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using JiraSchedulingConnectAppService.Services.Policy;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -95,7 +96,10 @@ try
     builder.Services.AddTransient<IScheduleService, ScheduleService>();
     builder.Services.AddTransient<IMilestonesService, MilestonesService>();
     builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();
-    builder.Services.AddTransient<IAuthorizationHandler, ScheduleTimeRequirementHandler>();
+    builder.Services.AddTransient<IAuthorizationHandler, ScheduleLimitHandler>();
+    builder.Services.AddTransient<IPermissionService, PermissionService>();
+    builder.Services.AddTransient<IAuthorizationHandler, ProjectLimitHandler>();
+    
 
     // Config P
     builder.Services.AddHeimGuard<UserPolicyHandler>()
@@ -106,7 +110,9 @@ try
         options =>
         {
             options.AddPolicy(
-                "LimitedScheduleTimeByMonth",  policy => policy.Requirements.Add(new ScheduleTimeRequirement(3)));
+                "LimitedScheduleTimeByMonth",  policy => policy.Requirements.Add(new ScheduleLimitRequirement(3)));
+            options.AddPolicy(
+                "LimitedCreateProject", policy => policy.Requirements.Add(new ProjectLimitRequirement(1)));
         });
 
     

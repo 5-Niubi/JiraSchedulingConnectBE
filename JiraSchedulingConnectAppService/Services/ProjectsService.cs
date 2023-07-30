@@ -6,6 +6,7 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Projects;
 using UtilsLibrary.Exceptions;
+using Microsoft.CodeAnalysis;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -53,7 +54,7 @@ namespace JiraSchedulingConnectAppService.Services
                 ).Include(p => p.Tasks)
                 .OrderByDescending(e => e.Id);
 
-            var queryPagingResult = Utils.MyQuery<Project>.Paging(query, currentPage);
+            var queryPagingResult = Utils.MyQuery<ModelLibrary.DBModels.Project>.Paging(query, currentPage);
             var projectsResult = await queryPagingResult.Item1.ToListAsync();
             var projectDTO = mapper.Map<List<ProjectListHomePageDTO>>(projectsResult);
 
@@ -77,12 +78,14 @@ namespace JiraSchedulingConnectAppService.Services
             return projectDTO;
         }
 
+
+       
         public async Task<ProjectDetailDTO> CreateProject(ProjectsListCreateProject projectRequest)
         {
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
-            var project = mapper.Map<Project>(projectRequest);
+            var project = mapper.Map<ModelLibrary.DBModels.Project>(projectRequest);
             project.CloudId = cloudId;
 
             if (projectRequest.Name == string.Empty)
@@ -121,7 +124,7 @@ namespace JiraSchedulingConnectAppService.Services
             projectRequest.Name = projectRequest.Name.Trim();
             projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
 
-            var projectUpdate = mapper.Map<Project>(projectRequest);
+            var projectUpdate = mapper.Map<ModelLibrary.DBModels.Project>(projectRequest);
             projectUpdate.CloudId = cloudId;
 
             var projectInDB = await db.Projects.FirstOrDefaultAsync(p => p.Id == projectId) ??
@@ -172,6 +175,15 @@ namespace JiraSchedulingConnectAppService.Services
             await db.SaveChangesAsync();
             var projectUpdatedDTO = mapper.Map<ProjectDeleteResDTO>(projectUpdatedEntity.Entity);
             return projectUpdatedDTO;
+        }
+
+        public async Task<int> GetCreatedProjectNumber()
+        {
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
+            var CreatedProjectnumber = await db.Projects.Where(p => p.CloudId == cloudId && p.IsDelete == false).CountAsync();
+            return CreatedProjectnumber;
         }
     }
 }

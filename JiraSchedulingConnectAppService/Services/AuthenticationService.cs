@@ -154,7 +154,6 @@ namespace JiraSchedulingConnectAppService.Services
 
             request.Content = content;
             var response = await client.SendAsync(request);
-
             var reponseAccessToken = JsonSerializer
                 .Deserialize<RepsoneAccessToken>(await response.Content.ReadAsStringAsync());
             return reponseAccessToken;
@@ -162,7 +161,6 @@ namespace JiraSchedulingConnectAppService.Services
 
         async private Task<AccessiableResourceResponseDTO[]?> GetUserAccessiableResource(string accessToken)
         {
-
             var request = new HttpRequestMessage(HttpMethod.Get, "https://api.atlassian.com/oauth/token/accessible-resources");
             request.Headers.Add("Authorization", $"Bearer {accessToken}");
 
