@@ -22,6 +22,20 @@ services:
       - "8080:80"
       - "2096:80"
 
+
+  gateway_service:
+    build:
+      context: GatewayAppService/
+      dockerfile: Dockerfile
+    
+    image: pham2604/gateway_service:${GATEWAY_IMAGE_TAG}
+    ports:
+      - 443:443
+      - 1234:80
+      
+    command: /bin/sh -c "nginx -g 'daemon off;'"     
+
+
 networks:
   internal-network:
     driver: bridge
