@@ -4,6 +4,7 @@ using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
 using ModelLibrary.DTOs.Milestones;
 using ModelLibrary.DTOs.Parameters;
+using ModelLibrary.DTOs.Permission;
 using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Schedules;
@@ -123,6 +124,9 @@ namespace ModelLibrary.DTOs
                 .ForMember(s => s.Plan, s => s.MapFrom(s => s.Plan))
                 .ForMember(s => s.Token, s => s.MapFrom(s => s.AtlassianToken.UserToken));
             CreateMap<Schedule, SchedulesListResDTO>();
+
+
+            CreateMap<PlanPermission, PlanPermissionResponseDTO>();
         }
     }
 }

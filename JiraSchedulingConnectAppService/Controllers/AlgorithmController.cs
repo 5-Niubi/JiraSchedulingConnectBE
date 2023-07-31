@@ -10,6 +10,7 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
+    
     public class AlgorithmController : ControllerBase
     {
         private readonly IAlgorithmService algorithmService;
@@ -23,6 +24,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
         [HttpGet]
         [Authorize("ExecuteAlgorithm")]
+        [Authorize(Policy = ("LimitedScheduleTimeByMonth"))]
         public async Task<IActionResult> ExecuteAlgorithm(int parameterId)
         {
             try

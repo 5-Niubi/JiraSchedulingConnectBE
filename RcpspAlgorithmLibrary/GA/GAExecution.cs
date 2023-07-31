@@ -118,7 +118,6 @@ namespace RcpspAlgorithmLibrary.GA
             int numOfGen = 0;
             while (numOfGen < GAHelper.NUM_OF_GENARATION)
             {
-                Console.WriteLine(numOfGen);
                 population = geneticAlgorithm.Evolve(population, d);
                 population.SortChromosomesByFitness(d);
                 numOfGen++;

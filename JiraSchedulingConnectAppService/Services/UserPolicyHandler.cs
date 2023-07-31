@@ -37,7 +37,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             // this gets their permissions based on their roles. in this example, it's just using a static list
             var permissions = await db.PlanPermissions
-                .Where( p => p.PlanSubscriptionId == subscription.Id && p.IsDelete == false).Select(pr => pr.Permission).ToArrayAsync();
+                .Where( p => p.PlanSubscriptionId == subscription.PlanId && p.IsDelete == false).Select(pr => pr.Permission).ToArrayAsync();
 
             return await System.Threading.Tasks.Task.FromResult(permissions.Distinct());
         }
