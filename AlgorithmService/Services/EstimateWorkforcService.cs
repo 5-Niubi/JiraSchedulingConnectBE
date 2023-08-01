@@ -3,8 +3,8 @@ using AlgorithmServiceServer.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
-using RcpEstimator;
-using RcpspAlgorithmLibrary;
+using AlgorithmLibrary;
+using AlgorithmLibrary;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 

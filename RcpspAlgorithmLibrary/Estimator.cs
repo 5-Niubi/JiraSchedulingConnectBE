@@ -1,14 +1,9 @@
 ﻿using System.Collections.Concurrent;
 
-
-namespace RcpEstimator
+namespace AlgorithmLibrary
 {
-
-
-
     public class ScheduleEstimator
     {
-
         const string AlgorithmnException = "Algorithmn Estimate Error!!!";
 
         public int NumOfTasks = 0;

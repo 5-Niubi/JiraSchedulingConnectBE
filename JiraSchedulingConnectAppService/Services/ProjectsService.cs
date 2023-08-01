@@ -81,7 +81,7 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
-       
+
         public async Task<ProjectDetailDTO> CreateProject(ProjectsListCreateProject projectRequest)
         {
             var jwt = new JWTManagerService(httpContext);
@@ -125,6 +125,12 @@ namespace JiraSchedulingConnectAppService.Services
 
             projectRequest.Name = projectRequest.Name.Trim();
             projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
+            if (projectRequest.Name == string.Empty)
+            {
+                throw new Exception(Const.MESSAGE.PROJECT_NAME_EMPTY);
+            }
+            if (!Utils.IsUpperFirstLetter(projectRequest.Name))
+                throw new Exception(Const.MESSAGE.PROJECT_NAME_UPPER_1ST_CHAR);
 
             var projectUpdate = mapper.Map<ModelLibrary.DBModels.Project>(projectRequest);
             projectUpdate.CloudId = cloudId;

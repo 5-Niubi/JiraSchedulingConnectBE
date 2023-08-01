@@ -1,7 +1,8 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using ModelLibrary.DTOs.PertSchedule;
 
 namespace RcpspAlgorithmLibrary
+
 {
     public class DirectedGraph
     {
