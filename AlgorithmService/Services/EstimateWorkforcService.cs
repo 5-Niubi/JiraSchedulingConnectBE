@@ -118,7 +118,6 @@ namespace AlgorithmServiceServer.Services
         public async Task<EstimatedResultDTO> ExecuteOverall(int projectId)
         {
 
-            var resutls = await Execute(projectId);
 
             var WorkforceOutputList = new List<WorkforceOutputFromEsDTO>();
 
