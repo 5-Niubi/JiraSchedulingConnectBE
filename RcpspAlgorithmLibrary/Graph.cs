@@ -1,13 +1,14 @@
-﻿namespace RcpspAlgorithmLibrary
+﻿using System.Diagnostics;
+using ModelLibrary.DTOs.PertSchedule;
+
+namespace RcpspAlgorithmLibrary
 {
     public class DirectedGraph
     {
         public int NumberOfNode;
         public int startNode;
         private List<List<int>> graph = new List<List<int>>();
-
-
-
+        
         public DirectedGraph(int startNode)
         {
             this.startNode = startNode;
@@ -19,12 +20,37 @@
         public void AddEdge(int u, int v)
         {
             this.Graph[u].Add(v);
-
         }
 
-        public void LoadData(int[][] adjacencyMatrix)
+        public void LoadData(List<TaskPrecedencesTaskRequestDTO> TaskList)
         {
-            this.NumberOfNode = adjacencyMatrix.Length;
+
+            int[][] adjacencyMatrix = new int[TaskList.Count][]; // Boolean bin matrix
+
+
+            for (int i = 0; i < TaskList.Count; i++)
+            {
+
+                adjacencyMatrix[i] = new int[TaskList.Count];
+
+                for (int j = 0; j < TaskList.Count; j++)
+                {
+                    if (j != i)
+                    {
+                        adjacencyMatrix[i][j] = (TaskList[i]
+                        .TaskPrecedences.Where(e => e == TaskList[j].TaskId)
+                        .Count() > 0) ? 1 : 0;
+                    }
+                    else
+                    {
+                        adjacencyMatrix[i][j] = 0;
+                    }
+
+                }
+            }
+
+            NumberOfNode = TaskList.Count;
+
 
             for (int i = 0; i < NumberOfNode; i++)
             {
@@ -86,7 +112,7 @@
         }
 
 
-        private bool IsCycle(List<bool> visited, List<bool> path, int start)
+        public bool IsCycle(List<bool> visited, List<bool> path, int start)
         {
 
             if (path[start] == true)

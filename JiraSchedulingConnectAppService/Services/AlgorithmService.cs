@@ -115,5 +115,35 @@ namespace JiraSchedulingConnectAppService.Services
 
 
         }
+
+        public async Task<EstimatedResultDTO> GetEstimateOverallWorkforce(int projectId)
+        {
+            try
+            {
+                var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforceOverall?projectId={projectId}");
+                dynamic responseContent;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseContent = await response.Content.ReadFromJsonAsync<EstimatedResultDTO>();
+                }
+
+                else
+                {
+                    throw new Exception(response.StatusCode.ToString());
+                }
+                return responseContent;
+
+            }
+            catch (MicroServiceAPIException ex)
+            {
+                throw new Exception(ex.mircoserviceResponse);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

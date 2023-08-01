@@ -9,6 +9,7 @@ using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Tasks;
 using Nest;
 using org.sqlite.core;
+using RcpspAlgorithmLibrary;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
@@ -543,6 +544,20 @@ namespace JiraSchedulingConnectAppService.Services
 
 
 
+        public async Task<bool> IsValidDAG(TasksSaveRequest TasksSaveRequest)
+        {
+
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
+            var taskPrecedences = TasksSaveRequest.TaskPrecedenceTasks;
+
+            var graph = new DirectedGraph(0);
+
+            graph.LoadData(taskPrecedences);
+            return graph.IsDAG();
+
+        }
 
 
         //public async Task<bool> TasksSaveRequestV2(TasksSaveRequestV2 TasksSaveRequest)
