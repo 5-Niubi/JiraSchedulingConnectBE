@@ -234,8 +234,11 @@ namespace JiraSchedulingConnectAppService.Services
                     Level = skill.Level
                 });
             }
-            
+
+
+
             var newWorkforce = mapper.Map<Workforce>(workforceRequest);
+            newWorkforce.Active = 1;
 
 
             var insertedNewWorkforce = db.Workforces.Add(newWorkforce);
