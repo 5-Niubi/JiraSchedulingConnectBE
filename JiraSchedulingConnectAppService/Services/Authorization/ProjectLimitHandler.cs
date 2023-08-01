@@ -41,7 +41,7 @@ namespace JiraSchedulingConnectAppService.Services.Authorization
             // get Role
             var subcription = await _subscriptionService.GetCurrentSubscription();
 
-            if (subcription.Plan.Name == "Premium")
+            if (subcription.Plan.Name != "Free")
             {
                 context.Succeed(requirement);
                 return;
