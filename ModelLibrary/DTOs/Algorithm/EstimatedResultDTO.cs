@@ -30,5 +30,14 @@ namespace AlgorithmServiceServer
 
 
     }
+
+
+    public class EstimatedOverallResultDTO
+
+    {
+        public List<WorkforceOutputFromEsDTO> WorkforceOutputList { get; set; }
+
+
+    }
 }
 

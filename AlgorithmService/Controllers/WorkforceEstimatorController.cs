@@ -40,5 +40,27 @@ namespace AlgorithmServiceServer.Controllers
                 return BadRequest(response);
             }
         }
+
+
+        [HttpGet]
+        async public Task<IActionResult> GetEstimateWorkforceOverall(int projectId)
+        {
+            try
+            {
+                return Ok(await estimateWorkforceService.ExecuteOverall(projectId));
+            }
+            catch (NotSuitableInputException ex)
+            {
+                var response = new ResponseMessageDTO(ex.Errors);
+                return BadRequest(response);
+            }
+
+            catch (Exception ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+
+                return BadRequest(response);
+            }
+        }
     }
 }

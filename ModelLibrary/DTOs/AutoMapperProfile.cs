@@ -24,13 +24,15 @@ namespace ModelLibrary.DTOs
             CreateMap<Project, ProjectDetailDTO>();
             CreateMap<WorkforceDTORequest, Workforce>();
 
-            CreateMap<SkillRequestDTO, WorkforceSkill>();
-            
+            CreateMap<SkillRequestDTO, WorkforceSkill>()
+            .ForMember(dest => dest.Level, opt => opt.MapFrom(src => src.Level == null ? 1 : src.Level));
+
+
             CreateMap<WorkforceRequestDTO, Workforce>()
                 .ForMember(x => x.WorkforceSkills, t => t.MapFrom(t => t.Skills.Select(s => new WorkforceSkill
                 {
                     SkillId = s.SkillId,
-                    Level = s.Level,
+                    Level = s.Level == null ? 1 : s.Level,
 
                 })))
                 .ForMember(
@@ -46,7 +48,7 @@ namespace ModelLibrary.DTOs
                 {
                     Id = s.SkillId,
                     Name = s.Skill.Name,
-             
+            
                     Level = s.Level,
       
                 })))
