@@ -177,21 +177,24 @@ namespace JiraSchedulingConnectAppService.Services
             var SkillErrors = new List<SkillRequestErrorDTO>();
 
             var newSkills = WorkforceRequest.NewSkills;
+            var newSkillNames = await db.Skills.Where(s => newSkills.Select(sk => sk.Name).Contains(s.Name)  && s.CloudId == cloudId && s.IsDelete == false).ToArrayAsync();
 
-            foreach (var newSkill in newSkills)
+            if(newSkillNames.Count() != 0)
             {
-                var exitedName = await db.Skills.FirstOrDefaultAsync(s => s.Name == newSkill.Name && s.CloudId == cloudId && s.IsDelete == false);
-
-                // Validate unique name skill
-                if (exitedName != null)
+                foreach (var newSkill in newSkillNames)
                 {
+
+                    
                     SkillErrors.Add(
                         new SkillRequestErrorDTO
                         {
                             Messages = $"Skill name '{newSkill.Name}' is duplicated."
                         });
+                    
                 }
+
             }
+            
 
             if (SkillErrors.Count != 0)
             {
@@ -226,14 +229,18 @@ namespace JiraSchedulingConnectAppService.Services
             var newSkills = await _insertSkills(workforceRequest.NewSkills);
 
             // mapping added new skill -> input skill workforce into workforce input
-            foreach(var skill in newSkills)
+            for (int i = 0; i < newSkills.Count; i++ )
             {
+                
                 workforceRequest.Skills.Add(new SkillRequestDTO
                 {
-                    SkillId = skill.Id,
-                    Level = skill.Level
-                });
+                    SkillId = newSkills[i].Id,
+                    Level = newSkills[i].Level,
+
+            });
             }
+
+
 
 
             var newWorkforce = mapper.Map<Workforce>(workforceRequest);
@@ -252,8 +259,11 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async System.Threading.Tasks.Task _ValidateCreatedWorkforceProperties(WorkforceRequestDTO workforceRequest)
         {
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
             // email not exited
-            var existingWorkforceWithEmail = await db.Workforces.FirstOrDefaultAsync(w => w.Email == workforceRequest.Email);
+            var existingWorkforceWithEmail = await db.Workforces.FirstOrDefaultAsync(w => w.Email == workforceRequest.Email & w.CloudId == cloudId);
+
             if (existingWorkforceWithEmail != null)
             {
                 throw new DuplicateException($"Email '{workforceRequest.Email}' is already in use.");
@@ -277,7 +287,7 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
-        private async System.Threading.Tasks.Task _ValidateUpdateddWorkforceProperties(WorkforceRequestDTO workforceRequest)
+        private async System.Threading.Tasks.Task _ValidateUpdatedWorkforceProperties(WorkforceRequestDTO workforceRequest)
         {
             // email not exited
             var existingWorkforceWithEmail = await db.Workforces.FirstOrDefaultAsync(w => w.Email == workforceRequest.Email && w.Id != workforceRequest.Id);
@@ -375,13 +385,11 @@ namespace JiraSchedulingConnectAppService.Services
             var cloudId = jwt.GetCurrentCloudId();
 
             // validate exited workforce
-            var workforceDB = db.Workforces.Include(s => s.WorkforceSkills).FirstOrDefault(s => s.Id == workforceRequest.Id) ??
+            var workforceDB = db.Workforces.Include(s => s.WorkforceSkills).FirstOrDefault(s => s.Id == workforceRequest.Id & s.CloudId == s.CloudId) ??
                 throw new NotFoundException($"Can not find project :{workforceRequest.Id}");
 
-
-
-            await _ValidateUpdateddWorkforceProperties(workforceRequest);
-
+            await _ValidateUpdatedWorkforceProperties(workforceRequest);
+      
 
             //validate new skills
             await _ValidateNewSkill(workforceRequest);
@@ -395,22 +403,22 @@ namespace JiraSchedulingConnectAppService.Services
 
             // Insert new skill to database
             var newSkills = await _insertSkills(workforceRequest.NewSkills);
-            // mapping added new skill -> input skill workforce into workforce input
-            foreach (var skill in newSkills)
+
+
+            //// mapping added new skill -> input skill workforce into workforce input
+            for (int i = 0; i < newSkills.Count; i++)
             {
                 workforceRequest.Skills.Add(new SkillRequestDTO
                 {
-                    SkillId = skill.Id,
-                    Level = skill.Level
+                    SkillId = newSkills[i].Id,
+                    Level = newSkills[i].Level
+
                 });
             }
 
 
             // clear skill workforce
             await _ClearSkillsWorkforce(workforceDB.Id);
-
-            // insert new skill workforce
-            //await _insertSkills(workforceRequest.Skills);
 
 
             workforceDB.WorkingEffort = "[" + string.Join(", ", workforceRequest.WorkingEfforts) + "]";
