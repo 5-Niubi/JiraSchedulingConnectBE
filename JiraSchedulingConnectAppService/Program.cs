@@ -1,6 +1,5 @@
 using AlgorithmServiceServer.Services.Interfaces;
 using HeimGuard;
-using JiraSchedulingConnectAppService.Jobs;
 using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Authorization;
 using JiraSchedulingConnectAppService.Services.Interfaces;
@@ -14,7 +13,6 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using NLog;
 using NLog.Web;
-using Quartz;
 using System.Text;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
@@ -29,25 +27,6 @@ try
         logging.ClearProviders();
     }).UseNLog();
     builder.Services.AddLogging();
-
-    // Config using Quartz
-    builder.Services.AddQuartz(q =>
-    {
-        // Configure Quartz options here, if needed
-        q.UseMicrosoftDependencyInjectionScopedJobFactory();
-        var jobKey = new JobKey("downgradeSubscription");
-        q.AddJob<CheckSubscriptionJob>(opts => opts.WithIdentity(jobKey));
-
-        q.AddTrigger(opts => opts
-            .ForJob(jobKey)
-            .WithIdentity("downgradeSubscription-trigger")
-            //This Cron interval can be described as "run every minute" (when second is zero)
-            .WithCronSchedule("0 * * ? * *")
-        );
-    });
-    // Add Quartz hosted service
-    builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
-    // --------------
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

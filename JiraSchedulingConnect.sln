@@ -9,7 +9,7 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlgorithmServiceServer", "AlgorithmService\AlgorithmServiceServer.csproj", "{5E61BF81-D47C-421A-A943-F9E73DC8515F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RcpspAlgorithmLibrary", "RcpspAlgorithmLibrary\RcpspAlgorithmLibrary.csproj", "{9A0133E3-D548-48EC-8AF7-B5532FBDBE02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlgorithmLibrary", "RcpspAlgorithmLibrary\AlgorithmLibrary.csproj", "{9A0133E3-D548-48EC-8AF7-B5532FBDBE02}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelLibrary", "ModelLibrary\ModelLibrary.csproj", "{9EB2237C-D25F-4AE0-AACB-DB29444D9714}"
 EndProject

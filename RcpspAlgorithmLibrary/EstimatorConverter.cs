@@ -3,7 +3,7 @@ using AlgorithmServiceServer.DTOs.AlgorithmController;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
 
-namespace RcpspAlgorithmLibrary
+namespace AlgorithmLibrary
 {
     public class EstimatorConverter
     {

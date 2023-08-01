@@ -1,4 +1,4 @@
-﻿namespace RcpspAlgorithmLibrary.GA
+﻿namespace AlgorithmLibrary.GA
 
 {
     public class Data

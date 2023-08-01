@@ -29,7 +29,7 @@
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
       "environmentVariables": {},
-      "sslPort": 5003,
+      "sslPort": 5010,
       "publishAllPorts": true,
       "httpPort": 5242
     }

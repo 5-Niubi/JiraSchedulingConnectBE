@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using ModelLibrary.DBModels;
+using Quartz;
 using ResourceAssignAdmin.Filter;
+using ResourceAssignAdmin.Jobs;
 using ResourceAssignAdmin.Services;
-using static ModelLibrary.DTOs.Export.MSPXMLModelDTO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,13 +14,33 @@ builder.Services.AddDbContext<JiraDemoContext>(opt => opt.UseSqlServer(
 );
 builder.Services.AddRazorPages().AddRazorPagesOptions(o =>
 {
-    o.Conventions.AddFolderApplicationModelConvention("/", model => model.Filters.Add(new SessionFilter()));
+    o.Conventions.AddFolderApplicationModelConvention("/login", model => model.Filters.Add(new SessionFilter()));
 });
 
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);//You can set Time   
 });
+
+// Config using Quartz
+builder.Services.AddQuartz(q =>
+{
+    // Configure Quartz options here, if needed
+    q.UseMicrosoftDependencyInjectionScopedJobFactory();
+    var jobKey = new JobKey("downgradeSubscription");
+    q.AddJob<CheckSubscriptionJob>(opts => opts.WithIdentity(jobKey));
+
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("downgradeSubscription-trigger")
+        //This Cron interval can be described as "run every minute" (when second is zero)
+        .WithCronSchedule("0 * * * * ?")
+    );
+});
+// Add Quartz hosted service
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+// --------------
+
 
 builder.Services.AddTransient<IBraintreeService, BraintreeService>();
 builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();

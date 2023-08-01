@@ -1,4 +1,4 @@
-﻿namespace RcpspAlgorithmLibrary.Models
+﻿namespace AlgorithmLibrary.Models
 {
     internal class TaskModel
     {
