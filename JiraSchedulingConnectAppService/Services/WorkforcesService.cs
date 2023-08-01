@@ -236,15 +236,17 @@ namespace JiraSchedulingConnectAppService.Services
             }
 
 
-
             var newWorkforce = mapper.Map<Workforce>(workforceRequest);
             newWorkforce.Active = 1;
+
+
 
 
             var insertedNewWorkforce = db.Workforces.Add(newWorkforce);
             await db.SaveChangesAsync();
 
             var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(insertedNewWorkforce.Entity);
+
             return workforceDTOResponse;
         }
 
@@ -333,14 +335,7 @@ namespace JiraSchedulingConnectAppService.Services
             {
                 var workforce = await db.Workforces.Include(s=>s.WorkforceSkills).ThenInclude(s=>s.Skill).Where(e => e.Id.ToString() == workforce_id).FirstOrDefaultAsync();
                 var workforceResponse = mapper.Map<WorkforceDTOResponse>(workforce);
-                //CONVERT TO WORKING HOURS PER DAYS (ROUND NUMBER TO 2 DECIMAL PLACES)
-                if (workforceResponse.WorkingEfforts != null)
-                {
-                    for (int i = 0; i < workforceResponse.WorkingEfforts.Count(); i++)
-                    {
-                        workforceResponse.WorkingEfforts[i] = (float)Math.Round((workforceResponse.WorkingEfforts[i] * 8), 2);
-                    }
-                }
+                
                 return workforceResponse;
             }
             catch (Exception e)

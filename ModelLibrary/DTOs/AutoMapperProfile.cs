@@ -46,7 +46,7 @@ namespace ModelLibrary.DTOs
                 {
                     Id = s.SkillId,
                     Name = s.Skill.Name,
-             
+            
                     Level = s.Level,
       
                 })))

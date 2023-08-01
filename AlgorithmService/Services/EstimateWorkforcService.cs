@@ -1,5 +1,6 @@
 ﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
 using AlgorithmServiceServer.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using RcpEstimator;
@@ -114,6 +115,73 @@ namespace AlgorithmServiceServer.Services
 
         }
 
+        public async Task<WorkforceWithMilestoneDTO> ExecuteOverall(int projectId)
+        {
+
+            var resutls = await Execute(projectId);
+
+            var WorkforceOutputList = new List<WorkforceOutputFromEsDTO>();
+
+            var cloudId = new JWTManagerService(http).GetCurrentCloudId();
+
+            var projectFromDB = await db.Projects
+                .Where(p => p.CloudId == cloudId)
+                .Include(p => p.Tasks)
+                .FirstOrDefaultAsync();
+
+            var skillFromDB = db.Skills
+                .Where(s => s.CloudId == cloudId)
+                .ToList();
+
+            var taskFromDB = db.Tasks
+                .Where(t => t.ProjectId == projectId)
+                .Include(t => t.TaskPrecedenceTasks)
+                .Include(t => t.TasksSkillsRequireds)
+                .ToList();
+
+
+            if (taskFromDB.Count == 0)
+            {
+                throw new NotSuitableInputException(EmptyTaskInProjectMessage);
+
+            }
+
+            var inputToEstimator = new InputToEstimatorDTO();
+            inputToEstimator.SkillList = skillFromDB;
+            inputToEstimator.TaskList = taskFromDB;
+
+            // convert from input data (db) -> input estimator's
+            var converter = new EstimatorConverter(inputToEstimator);
+            var outputToEstimator = converter.ToEs();
+
+
+            var TaskDuration = outputToEstimator.TaskDuration;
+            var TaskExper = outputToEstimator.TaskExper;
+            var TaskAdjacency = outputToEstimator.TaskAdjacency;
+            var TaskMilestone = outputToEstimator.TaskMilestone;
+
+            // forward BFS method
+            ScheduleEstimator estimator = new ScheduleEstimator(TaskDuration, TaskMilestone, TaskExper, TaskAdjacency);
+            estimator.ForwardMethod();
+
+            // fit estimate
+            Dictionary<int, List<int[]>> Results = estimator.Fit();
+
+            List<int[]> overallResults = new List<int[]>();
+            foreach (int milestoneId in Results.Keys)
+            {
+                List<int[]> result = Results[milestoneId];
+                overallResults.AddRange(result);
+
+                
+            }
+
+            var output = converter.FromEs(1, overallResults);
+
+            return output;
+
+
+        }
     }
 }
 
