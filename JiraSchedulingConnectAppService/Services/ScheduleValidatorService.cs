@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.PertSchedule;
 using AlgorithmLibrary;
+using RcpspAlgorithmLibrary;
 
 namespace AlgorithmServiceServer.Services.Interfaces
 {
