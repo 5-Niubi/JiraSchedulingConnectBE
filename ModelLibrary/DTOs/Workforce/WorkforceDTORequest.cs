@@ -15,7 +15,7 @@ namespace ModelLibrary.DTOs.Parameters
         public int? WorkingType { get; set; }
         public List<float>? WorkingEfforts { get; set; }
         public List<SkillRequestDTO>? Skills { get; set; }
-        public List<NewSkillDTORequest>? NewSkills { get; set; }
+        public List<NewSkillRequestDTO>? NewSkills { get; set; }
     }
 }
 

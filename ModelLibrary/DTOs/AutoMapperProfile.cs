@@ -24,12 +24,15 @@ namespace ModelLibrary.DTOs
             CreateMap<Project, ProjectDetailDTO>();
             CreateMap<WorkforceDTORequest, Workforce>();
 
-            CreateMap<SkillRequestDTO, WorkforceSkill>();
+            CreateMap<SkillRequestDTO, WorkforceSkill>()
+            .ForMember(dest => dest.Level, opt => opt.MapFrom(src => src.Level == null ? 1 : src.Level));
+
+
             CreateMap<WorkforceRequestDTO, Workforce>()
                 .ForMember(x => x.WorkforceSkills, t => t.MapFrom(t => t.Skills.Select(s => new WorkforceSkill
                 {
                     SkillId = s.SkillId,
-                    Level = s.Level,
+                    Level = s.Level == null ? 1 : s.Level,
 
                 })))
                 .ForMember(
@@ -45,11 +48,9 @@ namespace ModelLibrary.DTOs
                 {
                     Id = s.SkillId,
                     Name = s.Skill.Name,
-                    CloudId = s.Skill.CloudId,
+            
                     Level = s.Level,
-                    CreateDatetime = s.Skill.CreateDatetime,
-                    IsDelete = s.IsDelete,
-                    DeleteDatetime = s.DeleteDatetime,
+      
                 })))
                 .ForMember(dest => dest.WorkingEfforts, opt => opt.MapFrom(src =>
                 string.IsNullOrEmpty(src.WorkingEffort) ? null : JsonConvert.DeserializeObject<List<float>>(src.WorkingEffort)));
@@ -63,6 +64,9 @@ namespace ModelLibrary.DTOs
             CreateMap<Skill, SkillDTOResponse>();
             CreateMap<SkillDTOResponse, Skill>();
             CreateMap<SkillCreatedRequest, Skill>();
+            CreateMap<NewSkillRequestDTO, Skill>();
+            CreateMap<Skill, NewSkillResponeDTO>();
+
             CreateMap<Milestone, MilestoneDTO>();
             CreateMap<MilestoneDTO, Milestone>();
             CreateMap<MilestoneCreatedRequest, Milestone>();

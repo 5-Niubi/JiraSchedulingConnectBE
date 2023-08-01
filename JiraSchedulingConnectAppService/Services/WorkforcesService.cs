@@ -10,13 +10,19 @@ using Newtonsoft.Json;
 using UtilsLibrary.Exceptions;
 using jdk.nashorn.tools;
 using ModelLibrary.DTOs.Skills;
+using org.apache.commons.math3.geometry.spherical.oned;
+using static ModelLibrary.DTOs.Export.JiraAPICreateBulkTaskResDTO;
+using com.sun.org.apache.bcel.@internal.generic;
+using System.Linq;
 
 namespace JiraSchedulingConnectAppService.Services
 {
     public class WorkforcesService : IWorkforcesService
     {
 
-        public const string WorkforceTyNotVaMessage = "Workforce Typalidatee Is Not Validated!!!";
+
+        public const string WorkforceTypeNotValidMessage = "Workforce Type Is Not Validated!!!";
+
         public const string EffortNotValidMessage = "Effort Is Not Validated!!!";
         public const string EffortElementNotValidMessage = "Effort must only have 7 elements!!!";
         public const string SkillNotFoundVaMessage = "Skill Workforce Is Not Found!!!";
@@ -69,7 +75,7 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
-        private async Task<List<SkillRequestErrorDTO>> _ValidateWorkforceSkills(WorkforceRequestDTO WorkforceRequest)
+        private async Task<bool> _ValidateWorkforceSkills(WorkforceRequestDTO WorkforceRequest)
         {
 
             var jwt = new JWTManagerService(httpContext);
@@ -109,12 +115,19 @@ namespace JiraSchedulingConnectAppService.Services
 
             }
 
+            if (SkillErrors.Count > 0)
+            {
+                throw new NotSuitableInputException(
+                        SkillErrors
+                    );
+            }
 
-            return SkillErrors;
+
+            return true;
 
         }
 
-        private async Task<List<WorkingEffortErrorDTO>> _ValidateWorkforceEfforts(WorkforceRequestDTO WorkforceRequest)
+        private async Task<bool> _ValidateWorkforceEfforts(WorkforceRequestDTO WorkforceRequest)
         {
             var EffortErrors = new List<WorkingEffortErrorDTO>();
 
@@ -146,180 +159,184 @@ namespace JiraSchedulingConnectAppService.Services
 
             }
 
+            if (EffortErrors.Count != 0 )
+            {
+                throw new NotSuitableInputException(
+                    EffortErrors
+                    );
+            }
 
-            return EffortErrors;
+
+            return true;
         }
 
-        private async Task<List<SkillRequestErrorDTO>> ValidatesSkillUniqueName(List<NewSkillDTORequest> newSkills)
+        private async Task<bool> _ValidateNewSkill(WorkforceRequestDTO WorkforceRequest)
         {
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
             var SkillErrors = new List<SkillRequestErrorDTO>();
-            foreach (var newSkill in newSkills)
+
+            var newSkills = WorkforceRequest.NewSkills;
+            var newSkillNames = await db.Skills.Where(s => newSkills.Select(sk => sk.Name).Contains(s.Name)  && s.CloudId == cloudId && s.IsDelete == false).ToArrayAsync();
+
+            if(newSkillNames.Count() != 0)
             {
-                var exitedName = await db.Skills.FirstOrDefaultAsync(s => s.Name == newSkill.Name && s.CloudId == cloudId && s.IsDelete == false);
-                // Validate unique name skill
-                if (exitedName != null)
+                foreach (var newSkill in newSkillNames)
                 {
+
+                    
                     SkillErrors.Add(
                         new SkillRequestErrorDTO
                         {
                             Messages = $"Skill name '{newSkill.Name}' is duplicated."
                         });
+                    
                 }
+
             }
-            return SkillErrors;
+            
+
+            if (SkillErrors.Count != 0)
+            {
+                throw new NotSuitableInputException(
+                    new WorkforceInputErrorDTO()
+                    {
+                        SkillErrors = SkillErrors,
+                    }
+                    );
+            }
+
+            return true;
         }
 
         public async Task<WorkforceDTOResponse> CreateWorkforce(WorkforceRequestDTO? workforceRequest)
         {
 
-            var jwt = new JWTManagerService(httpContext);
-            var cloudId = jwt.GetCurrentCloudId();
-
-            // TODO: validate email
-            // TODO: validate working type
-            //validate efforts
-            var EffortErrors = await _ValidateWorkforceEfforts(workforceRequest);
-            // validate skills
-            var SkillErrors = await _ValidateWorkforceSkills(workforceRequest);
+ 
             //validate new skills
-            var newSkillErrors = await ValidatesSkillUniqueName(workforceRequest.NewSkills);
-            if (EffortErrors.Count != 0 || SkillErrors.Count != 0 || newSkillErrors.Count !=0)
+            await _ValidateCreatedWorkforceProperties(workforceRequest);
+
+            //validate new skills
+            await _ValidateNewSkill(workforceRequest);
+
+            //validate efforts
+            await _ValidateWorkforceEfforts(workforceRequest);
+            // validate skills
+            await _ValidateWorkforceSkills(workforceRequest);
+
+         
+            // Insert new skill to database
+            var newSkills = await _insertSkills(workforceRequest.NewSkills);
+
+            // mapping added new skill -> input skill workforce into workforce input
+            for (int i = 0; i < newSkills.Count; i++ )
             {
-                throw new NotSuitableInputException(
-                    new WorkforceInputErrorDTO()
-                    {
-                        Skills = SkillErrors,
-                        Efforts = EffortErrors,
-                        newSkills = newSkillErrors
-                    }
-                    );
+                
+                workforceRequest.Skills.Add(new SkillRequestDTO
+                {
+                    SkillId = newSkills[i].Id,
+                    Level = newSkills[i].Level,
+
+            });
             }
 
-            //DEFAULT NEW WORKFORCE ID = 0:
-            workforceRequest.Id = 0;
 
-            //CHECK DUPILATE EMAIL
+
+
+            var newWorkforce = mapper.Map<Workforce>(workforceRequest);
+            newWorkforce.Active = 1;
+
+
+
+
+            var insertedNewWorkforce = db.Workforces.Add(newWorkforce);
+            await db.SaveChangesAsync();
+
+            var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(insertedNewWorkforce.Entity);
+
+            return workforceDTOResponse;
+        }
+
+        private async System.Threading.Tasks.Task _ValidateCreatedWorkforceProperties(WorkforceRequestDTO workforceRequest)
+        {
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+            // email not exited
             var existingWorkforceWithEmail = await db.Workforces.FirstOrDefaultAsync(w => w.Email == workforceRequest.Email);
+
             if (existingWorkforceWithEmail != null)
             {
                 throw new DuplicateException($"Email '{workforceRequest.Email}' is already in use.");
             }
 
+            // working type in [0 or 1]
+            var ValidatedWorkingTypes = new List<int> { 0, 1 };
 
-
-            //MAPPING PROPERTIES VALUES TO NEW VARIABLE
-            var newWorkforce = new Workforce() { };
-            newWorkforce.AccountId = workforceRequest.AccountId;
-            newWorkforce.Email = workforceRequest.Email;
-            newWorkforce.AccountType = workforceRequest.AccountType;
-            newWorkforce.Active = 1;
-            newWorkforce.CloudId = cloudId;
-            newWorkforce.Name = workforceRequest.Name;
-            newWorkforce.Avatar = workforceRequest.Avatar;
-            newWorkforce.DisplayName = workforceRequest.DisplayName;
-            newWorkforce.UnitSalary = workforceRequest.UnitSalary;
-            newWorkforce.WorkingType = workforceRequest.WorkingType;
-            if (workforceRequest.WorkingType == 1)//THIS WORKFORCE WORKS PART-TIME
+            if (!ValidatedWorkingTypes.Contains((int) workforceRequest.WorkingType))
             {
-                //CALCULATE WORKING EFFORT (HOUR) TO FLOAT - DEFAULT WORKING HOURS PER DAYS IS 8 HOURS (ROUND NUMBER TO 2 DECIMAL PLACES)
-                if (workforceRequest.WorkingEfforts != null)
-                {
-                    for (int i = 0; i < workforceRequest.WorkingEfforts.Count(); i++)
+                throw new NotSuitableInputException(
+                    new WorkforceInputErrorDTO()
                     {
-                        workforceRequest.WorkingEfforts[i] = (float)Math.Round((workforceRequest.WorkingEfforts[i] / 8), 2);
+                        Messages = WorkforceTypeNotValidMessage
                     }
-                }
-                //CONVERT ARRAY TO STRING JSON
-                string jsonString = JsonConvert.SerializeObject(workforceRequest.WorkingEfforts);
-                newWorkforce.WorkingEffort = jsonString;
+                    ) ;
+
+
             }
-            else if (workforceRequest.WorkingType == 0) //THIS WORKFORCE WORKS FULL-TIME
+            
+        }
+
+
+        private async System.Threading.Tasks.Task _ValidateUpdatedWorkforceProperties(WorkforceRequestDTO workforceRequest)
+        {
+            // email not exited
+            var existingWorkforceWithEmail = await db.Workforces.FirstOrDefaultAsync(w => w.Email == workforceRequest.Email && w.Id != workforceRequest.Id);
+            if (existingWorkforceWithEmail != null)
             {
-                newWorkforce.WorkingEffort = "[1, 1, 1, 1, 1, 1, 1]";
-            }
-            if (workforceRequest.Skills != null)
-            {
-                var skillWorkforceInsert = new List<WorkforceSkill>();
-                foreach (var item in workforceRequest.Skills)
-                {
-                    skillWorkforceInsert.Add(new WorkforceSkill
-                    {
-                        WorkforceId = workforceRequest.Id,
-                        SkillId = item.SkillId,
-                        Level = item.Level,
-                        CreateDatetime = DateTime.Now,
-                    });
-                }
-                //CHANGE WORKFORCESKILLS OF WORKFORCE
-                newWorkforce.WorkforceSkills = skillWorkforceInsert;
+                throw new DuplicateException($"Email '{workforceRequest.Email}' is already in use.");
             }
 
-            //ADD NEW WORKFORCE INTO DB
-            var workforceEntity = await db.Workforces.AddAsync(newWorkforce);
+            // working type in [0 or 1]
+            var ValidatedWorkingTypes = new List<int> { 0, 1 };
+            
+            if (workforceRequest.WorkingType != null &&  !ValidatedWorkingTypes.Contains((int)workforceRequest.WorkingType))
+            {
+                throw new NotSuitableInputException(
+                    new WorkforceInputErrorDTO()
+                    {
+                        Messages = WorkforceTypeNotValidMessage
+                    }
+                    );
+
+
+            }
+
+        }
+
+
+        private async Task<List<NewSkillResponeDTO>> _insertSkills(List<NewSkillRequestDTO> SkillRequests)
+        {
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
+            // mapping
+            var newSkills = mapper.Map<List<Skill>>(SkillRequests);
+
+            for (var i = 0; i < SkillRequests.Count; i++)
+            {
+                newSkills[i].CloudId = cloudId;
+                newSkills[i].IsDelete = false;
+
+
+            }
+
+            await db.Skills.AddRangeAsync(newSkills);
             await db.SaveChangesAsync();
 
-            //INSERT NEWS SKILLS WITH PROPERTY NEWSKILLDTOREQUEST(Name, Level)
-            var newSkillsInsert = new List<Skill>();
-            if (workforceRequest.NewSkills != null)
-            {
-                foreach (var newSkill in workforceRequest.NewSkills)
-                {
-                    //INSERT TO DB
-                    newSkillsInsert.Add(new Skill
-                    {
-                        CloudId = cloudId,
-                        Name = newSkill.Name,
-                        CreateDatetime = DateTime.Now,
-                    });
-                }
-            }
-            await db.Skills.AddRangeAsync(newSkillsInsert);
-            await db.SaveChangesAsync();
 
-            //USING DICTIONARY TO MAP NAME TO SKILLID
-            var insertedSkills = await db.Skills.ToListAsync();
-            var skillNameToIdMap = new Dictionary<string, int>();
-            var skillNamesSet = new HashSet<string>();
+            var reponse = mapper.Map <List<NewSkillResponeDTO>>(newSkills);
+            return reponse;
 
-            foreach (var skill in insertedSkills)
-            {
-
-                if (!skillNamesSet.Contains(skill.Name))
-                {
-                    skillNameToIdMap[skill.Name] = skill.Id;
-                    skillNamesSet.Add(skill.Name);
-                }
-            }
-
-            //INSERT NEW WORKFORCE SKILLS
-            if (insertedSkills.Any())
-            {
-                var newWorkforceSkills = new List<WorkforceSkill>();
-                if (workforceRequest.NewSkills != null)
-                {
-                    foreach (var newSkill in workforceRequest.NewSkills)
-                    {
-                        if (skillNameToIdMap.TryGetValue(newSkill.Name, out var skillId))
-                        {
-
-                            newWorkforceSkills.Add(new WorkforceSkill
-                            {
-                                WorkforceId = workforceEntity.Entity.Id, //GET NEW CREATED WORKFORK ID
-                                SkillId = skillId,
-                                Level = newSkill.Level,
-                                CreateDatetime = DateTime.Now,
-                            });
-                        }
-                    }
-                }
-                await db.WorkforceSkills.AddRangeAsync(newWorkforceSkills);
-                await db.SaveChangesAsync();
-            }
-
-            var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(newWorkforce);
-            return workforceDTOResponse;
         }
 
         public async Task<WorkforceDTOResponse> GetWorkforceById(string workforce_id)
@@ -328,14 +345,7 @@ namespace JiraSchedulingConnectAppService.Services
             {
                 var workforce = await db.Workforces.Include(s=>s.WorkforceSkills).ThenInclude(s=>s.Skill).Where(e => e.Id.ToString() == workforce_id).FirstOrDefaultAsync();
                 var workforceResponse = mapper.Map<WorkforceDTOResponse>(workforce);
-                //CONVERT TO WORKING HOURS PER DAYS (ROUND NUMBER TO 2 DECIMAL PLACES)
-                if (workforceResponse.WorkingEfforts != null)
-                {
-                    for (int i = 0; i < workforceResponse.WorkingEfforts.Count(); i++)
-                    {
-                        workforceResponse.WorkingEfforts[i] = (float)Math.Round((workforceResponse.WorkingEfforts[i] * 8), 2);
-                    }
-                }
+                
                 return workforceResponse;
             }
             catch (Exception e)
@@ -366,142 +376,77 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
+
+      
         public async Task<WorkforceDTOResponse> UpdateWorkforce(WorkforceRequestDTO workforceRequest)
         {
-            try
+            
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
+            // validate exited workforce
+            var workforceDB = db.Workforces.Include(s => s.WorkforceSkills).FirstOrDefault(s => s.Id == workforceRequest.Id & s.CloudId == s.CloudId) ??
+                throw new NotFoundException($"Can not find project :{workforceRequest.Id}");
+
+            await _ValidateUpdatedWorkforceProperties(workforceRequest);
+      
+
+            //validate new skills
+            await _ValidateNewSkill(workforceRequest);
+
+            //validate efforts
+            await _ValidateWorkforceEfforts(workforceRequest);
+
+            // validate skills
+            await _ValidateWorkforceSkills(workforceRequest);
+
+
+            // Insert new skill to database
+            var newSkills = await _insertSkills(workforceRequest.NewSkills);
+
+
+            //// mapping added new skill -> input skill workforce into workforce input
+            for (int i = 0; i < newSkills.Count; i++)
             {
-                var jwt = new JWTManagerService(httpContext);
-                var cloudId = jwt.GetCurrentCloudId();
-
-                var workforceDB = db.Workforces.Include(s => s.WorkforceSkills).FirstOrDefault(s => s.Id == workforceRequest.Id) ??
-                    throw new NotFoundException($"Can not find project :{workforceRequest.Id}");
-
-                //CHECK DUPILATE EMAIL
-                var existingWorkforceWithEmail = await db.Workforces.FirstOrDefaultAsync(w => w.Email == workforceRequest.Email);
-                if (existingWorkforceWithEmail != null && existingWorkforceWithEmail.Id != workforceRequest.Id)
+                workforceRequest.Skills.Add(new SkillRequestDTO
                 {
-                    throw new DuplicateException($"Email '{workforceRequest.Email}' is already in use.");
-                }
+                    SkillId = newSkills[i].Id,
+                    Level = newSkills[i].Level
 
-                //CHECKING NAME NEW SKILLS
-                ValidatesSkillUniqueName(workforceRequest.NewSkills);
-
-                workforceDB.AccountId = workforceRequest.AccountId;
-                workforceDB.Email = workforceRequest.Email;
-                workforceDB.AccountType = workforceRequest.AccountType;
-                workforceDB.Name = workforceRequest.Name;
-                workforceDB.Avatar = workforceRequest.Avatar;
-                workforceDB.DisplayName = workforceRequest.DisplayName;
-                workforceDB.UnitSalary = workforceRequest.UnitSalary;
-                workforceDB.WorkingType = workforceRequest.WorkingType;
-                if (workforceRequest.WorkingType == 1)//THIS WORKFORCE WORKS PART-TIME
-                {
-                    //CALCULATE WORKING EFFORT (HOUR) TO FLOAT - DEFAULT WORKING HOURS PER DAYS IS 8 HOURS (ROUND NUMBER TO 2 DECIMAL PLACES)
-                    if (workforceRequest.WorkingEfforts != null)
-                    {
-                        for (int i = 0; i < workforceRequest.WorkingEfforts.Count(); i++)
-                        {
-                            workforceRequest.WorkingEfforts[i] = (float)Math.Round((workforceRequest.WorkingEfforts[i] / 8), 2);
-                        }
-                    }
-                    //CONVERT ARRAY TO STRING JSON
-                    string jsonString = JsonConvert.SerializeObject(workforceRequest.WorkingEfforts);
-                    workforceDB.WorkingEffort = jsonString;
-                }
-                else if (workforceRequest.WorkingType == 0) //THIS WORKFORCE WORKS FULL-TIME
-                {
-                    workforceDB.WorkingEffort = "[1, 1, 1, 1, 1, 1, 1]";
-                }
-                if (workforceRequest.Skills != null)
-                {
-                    var skillWorkforceInsert = new List<WorkforceSkill>();
-                    foreach (var item in workforceRequest.Skills)
-                    {
-                        skillWorkforceInsert.Add(new WorkforceSkill
-                        {
-                            WorkforceId = workforceRequest.Id,
-                            SkillId = item.SkillId,
-                            Level = item.Level,
-                            CreateDatetime = DateTime.Now,
-                        });
-                    }
-                    //CHANGE WORKFORCESKILLS OF WORKFORCE
-                    workforceDB.WorkforceSkills = skillWorkforceInsert;
-                }
-
-                //UPDATE WORKFORCE INFO INTO WORKFORCES DB
-                db.Workforces.Update(workforceDB);
-                await db.SaveChangesAsync();
-
-                //INSERT NEWS SKILLS WITH PROPERTY NEWSKILLDTOREQUEST(Name, Level)
-                var newSkillsInsert = new List<Skill>();
-                if (workforceRequest.NewSkills != null)
-                {
-                    foreach (var newSkill in workforceRequest.NewSkills)
-                    {
-                        //CHECKING NAME SKILL DB
-                        var exitedName = await db.Skills.FirstOrDefaultAsync(s => s.Name == newSkill.Name && s.CloudId == cloudId && s.IsDelete == false);
-                        // Validate unique name skill
-                        if (exitedName != null)
-                        {
-                            throw new Exception(NotUniqueSkillNameMessage);
-                        }
-                        newSkillsInsert.Add(new Skill
-                        {
-                            CloudId = cloudId,
-                            Name = newSkill.Name,
-                            CreateDatetime = DateTime.Now,
-                        });
-                    }
-                }
-                await db.Skills.AddRangeAsync(newSkillsInsert);
-                await db.SaveChangesAsync();
-
-                //USING DICTIONARY TO MAP NAME TO SKILLID
-                var insertedSkills = await db.Skills.ToListAsync();
-                var skillNameToIdMap = new Dictionary<string, int>();
-                var skillNamesSet = new HashSet<string>();
-
-                foreach (var skill in insertedSkills)
-                {
-                    if (!skillNamesSet.Contains(skill.Name))
-                    {
-                        skillNameToIdMap[skill.Name] = skill.Id;
-                        skillNamesSet.Add(skill.Name);
-                    }
-                }
-
-                //INSERT NEW WORKFORCE SKILLS
-                if (insertedSkills.Any())
-                {
-                    var newWorkforceSkills = new List<WorkforceSkill>();
-                    if (workforceRequest.NewSkills != null)
-                    {
-                        foreach (var newSkill in workforceRequest.NewSkills)
-                        {
-                            if (skillNameToIdMap.TryGetValue(newSkill.Name, out var skillId))
-                            {
-                                newWorkforceSkills.Add(new WorkforceSkill
-                                {
-                                    WorkforceId = workforceRequest.Id,
-                                    SkillId = skillId,
-                                    Level = newSkill.Level,
-                                    CreateDatetime = DateTime.Now,
-                                });
-                            }
-                        }
-                    }
-                    await db.WorkforceSkills.AddRangeAsync(newWorkforceSkills);
-                    await db.SaveChangesAsync();
-                }
-
-                var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(workforceDB);
-                return workforceDTOResponse;
+                });
             }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
+
+
+            // clear skill workforce
+            await _ClearSkillsWorkforce(workforceDB.Id);
+
+
+            workforceDB.WorkingEffort = "[" + string.Join(", ", workforceRequest.WorkingEfforts) + "]";
+            workforceDB.Name = workforceRequest.Name ?? workforceDB.Name;
+            workforceDB.Email = workforceRequest.Email ?? workforceDB.Email;
+            workforceDB.UnitSalary = workforceRequest.UnitSalary ?? workforceDB.UnitSalary;
+            workforceDB.WorkingType = workforceRequest.WorkingType ?? workforceDB.WorkingType;
+            workforceDB.DisplayName = workforceRequest.DisplayName ?? workforceDB.DisplayName;
+            workforceDB.Avatar = workforceRequest.Avatar ?? workforceDB.Avatar;
+
+            workforceDB.WorkforceSkills = mapper.Map<List<WorkforceSkill>>(workforceRequest.Skills);
+            // Update 
+            var entity  =  db.Workforces.Update(workforceDB);
+            await db.SaveChangesAsync();
+
+            // mapping reponse
+            var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(entity.Entity);
+            return workforceDTOResponse;
+           
+        }
+
+        private async System.Threading.Tasks.Task _ClearSkillsWorkforce(int workforceId)
+        {
+
+            var skillsWorkforce = db.WorkforceSkills.Where(swf => swf.WorkforceId == workforceId);
+
+            db.WorkforceSkills.RemoveRange(skillsWorkforce);
+            await db.SaveChangesAsync();
         }
     }
 
