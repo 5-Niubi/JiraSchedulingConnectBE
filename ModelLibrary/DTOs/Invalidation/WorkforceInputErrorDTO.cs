@@ -29,8 +29,8 @@
         public bool? IsDelete { get; set; }
 
         public string? WorkingType { get; set; }
-        public List<SkillRequestErrorDTO>? Skills { get; set; }
-        public List<WorkingEffortErrorDTO>? Efforts { get; set; }
+        public List<SkillRequestErrorDTO>? SkillErrors { get; set; }
+        public List<WorkingEffortErrorDTO>? EffortsErrors { get; set; }
         public List<SkillRequestErrorDTO>? newSkills { get; set; }
 
         public String? Messages { get; set; }

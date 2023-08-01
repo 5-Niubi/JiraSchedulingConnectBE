@@ -88,6 +88,14 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var response = await workforcesService.GetWorkforceById(id);
                 return Ok(response);
             }
+
+            catch (NotSuitableInputException ex)
+            {
+                this._Logger.LogWarning(ex.Message);
+                var response = ex.Errors;
+                return BadRequest(response);
+            }
+
             catch (Exception ex)
             {
                 this._Logger.LogError(ex.Message);
@@ -105,6 +113,14 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var response = await workforcesService.DeleteWorkforce(id);
                 return Ok(response);
             }
+
+            catch (NotSuitableInputException ex)
+            {
+                this._Logger.LogWarning(ex.Message);
+                var response = ex.Errors;
+                return BadRequest(response);
+            }
+
             catch (Exception ex)
             {
                 this._Logger.LogError(ex.Message);
@@ -122,7 +138,12 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var response = await workforcesService.UpdateWorkforce(workforce);
                 return Ok(response);
             }
-
+            catch (NotSuitableInputException ex)
+            {
+                this._Logger.LogWarning(ex.Message);
+                var response = ex.Errors;
+                return BadRequest(response);
+            }
             catch (Exception ex)
             {
                 this._Logger.LogError(ex.Message);
