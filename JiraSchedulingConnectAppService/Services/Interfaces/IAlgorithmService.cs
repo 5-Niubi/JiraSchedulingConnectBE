@@ -7,9 +7,6 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
     {
         public ThreadStartDTO ExecuteAlgorithm(int parameterId);
         public Task<EstimatedResultDTO> EstimateWorkforce(int projectId);
-
-
-
-
+        public Task<EstimatedResultDTO> GetEstimateOverallWorkforce(int projectId);
     }
 }

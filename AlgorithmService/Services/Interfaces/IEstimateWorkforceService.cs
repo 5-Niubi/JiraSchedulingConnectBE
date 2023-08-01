@@ -5,7 +5,7 @@
 
         public void PrepareDataFromDB(int projectId);
         public Task<EstimatedResultDTO> Execute(int projectId);
-        public Task<WorkforceWithMilestoneDTO> ExecuteOverall(int projectId);
+        public Task<EstimatedResultDTO> ExecuteOverall(int projectId);
     }
 }
 

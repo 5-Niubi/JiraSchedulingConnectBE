@@ -7,7 +7,7 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
 
         public Task<TaskPertViewDTO> CreateTask(TaskCreatedRequest taskRequest);
         public Task<TaskPertViewDTO> UpdateTask(TaskUpdatedRequest taskRequest);
-
+        public Task<bool> IsValidDAG(TasksSaveRequest taskRequest);
         public Task<TaskPertViewDTO> GetTaskDetail(int Id);
         public Task<List<TaskPertViewDTO>> GetTasksPertChart(int projectId);
         public Task<bool> SaveTasks(TasksSaveRequest taskRequest);

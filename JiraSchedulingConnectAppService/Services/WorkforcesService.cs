@@ -212,7 +212,8 @@ namespace JiraSchedulingConnectAppService.Services
         public async Task<WorkforceDTOResponse> CreateWorkforce(WorkforceRequestDTO? workforceRequest)
         {
 
- 
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
             //validate new skills
             await _ValidateCreatedWorkforceProperties(workforceRequest);
 
@@ -235,18 +236,15 @@ namespace JiraSchedulingConnectAppService.Services
                 workforceRequest.Skills.Add(new SkillRequestDTO
                 {
                     SkillId = newSkills[i].Id,
-                    Level = newSkills[i].Level,
+                    Level = workforceRequest.NewSkills[i].Level,
 
             });
             }
 
 
-
-
             var newWorkforce = mapper.Map<Workforce>(workforceRequest);
             newWorkforce.Active = 1;
-
-
+            newWorkforce.CloudId = cloudId;
 
 
             var insertedNewWorkforce = db.Workforces.Add(newWorkforce);
@@ -405,13 +403,14 @@ namespace JiraSchedulingConnectAppService.Services
             var newSkills = await _insertSkills(workforceRequest.NewSkills);
 
 
-            //// mapping added new skill -> input skill workforce into workforce input
+            // mapping added new skill -> input skill workforce into workforce input
             for (int i = 0; i < newSkills.Count; i++)
             {
+
                 workforceRequest.Skills.Add(new SkillRequestDTO
                 {
                     SkillId = newSkills[i].Id,
-                    Level = newSkills[i].Level
+                    Level = workforceRequest.NewSkills[i].Level,
 
                 });
             }

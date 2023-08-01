@@ -115,7 +115,7 @@ namespace AlgorithmServiceServer.Services
 
         }
 
-        public async Task<WorkforceWithMilestoneDTO> ExecuteOverall(int projectId)
+        public async Task<EstimatedResultDTO> ExecuteOverall(int projectId)
         {
 
             var resutls = await Execute(projectId);
@@ -176,9 +176,15 @@ namespace AlgorithmServiceServer.Services
                 
             }
 
-            var output = converter.FromEs(1, overallResults);
+            // Post processing
+            var estimatedResultDTO = new EstimatedResultDTO();
+            
+            var newList = new List<WorkforceWithMilestoneDTO>() { };
+            newList.Add(converter.FromEs(1, overallResults));
 
-            return output;
+            estimatedResultDTO.WorkforceWithMilestoneList= newList;
+
+            return estimatedResultDTO;
 
 
         }
