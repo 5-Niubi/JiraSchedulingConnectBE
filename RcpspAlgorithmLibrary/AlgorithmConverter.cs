@@ -5,7 +5,7 @@ using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
 using System.Text.Json;
 
-namespace RcpspAlgorithmLibrary
+namespace AlgorithmLibrary
 {
     public class AlgorithmConverter
     {

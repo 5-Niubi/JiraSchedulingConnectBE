@@ -5,8 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
 using Newtonsoft.Json;
-using RcpspAlgorithmLibrary;
-using RcpspAlgorithmLibrary.GA;
+using AlgorithmLibrary;
+using AlgorithmLibrary.GA;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 

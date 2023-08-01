@@ -1,4 +1,4 @@
-﻿namespace RcpspAlgorithmLibrary
+﻿namespace AlgorithmLibrary
 {
     public class DirectedGraph
     {

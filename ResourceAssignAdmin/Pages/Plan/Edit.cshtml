@@ -2,10 +2,10 @@
 @model ResourceAssignAdmin.Pages.Plan.EditModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Plan";
 }
 
-<h1>Edit</h1>
+<h1>Edit Plan @Model.PlanSubscription.Name</h1>
 
 <h4>PlanSubscription</h4>
 <hr />
@@ -31,18 +31,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="PlanSubscription.CreateDatetime" class="control-label"></label>
-                <input asp-for="PlanSubscription.CreateDatetime" class="form-control" />
+                <input value="@Model.PlanSubscription.CreateDatetime" class="form-control" readonly disabled/>
                 <span asp-validation-for="PlanSubscription.CreateDatetime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PlanSubscription.IsDelete" class="control-label"></label>
-                <input asp-for="PlanSubscription.IsDelete" class="form-control" />
-                <span asp-validation-for="PlanSubscription.IsDelete" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PlanSubscription.DeleteDatetime" class="control-label"></label>
-                <input asp-for="PlanSubscription.DeleteDatetime" class="form-control" />
-                <span asp-validation-for="PlanSubscription.DeleteDatetime" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

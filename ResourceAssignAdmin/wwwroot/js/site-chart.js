@@ -24,7 +24,7 @@ function drawUserDonutChart(totalUsersArray) {
     let chart = new Chart(document.getElementById("userDonut"), configChart);
 }
 
-function drawUserLineChart() {
+function drawUserLineChart(year, arrData, arrDataPre) {
     const labels = [
         'January',
         'February',
@@ -32,22 +32,47 @@ function drawUserLineChart() {
         'April',
         'May',
         'June',
-        'July'
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
     ];
     const data = {
         labels: labels,
         datasets: [{
-            label: 'My First Dataset',
-            data: [65, 59, 80, 81, 56, 55, 40],
+            label: 'New User',
+            data: arrData,
             fill: false,
             borderColor: 'rgb(75, 192, 192)',
             tension: 0.1
-        }]
+        },
+        {
+            label: 'Premium User',
+            data: arrDataPre,
+            fill: false,
+            borderColor: 'rgb(255, 205, 86)',
+            tension: 0.1
+        }
+        ]
     };
 
     const configChart = {
         type: 'line',
         data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: `New User in ${year}`
+                }
+            }
+        },
     };
 
     let chart = new Chart(document.getElementById("userLine"), configChart);

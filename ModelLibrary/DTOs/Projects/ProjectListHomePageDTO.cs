@@ -10,6 +10,10 @@
 
         public DateTime? StartDate { get; set; }
 
+        public DateTime? Deadline { get; set; }
+
+        public DateTime? CreateDatetime { get; set; }
+
         public int TaskCount { get; set; }
     }
 }

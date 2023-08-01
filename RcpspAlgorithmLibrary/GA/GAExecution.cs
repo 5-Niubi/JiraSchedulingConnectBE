@@ -1,6 +1,6 @@
 ﻿using ModelLibrary.DTOs.Algorithm;
 
-namespace RcpspAlgorithmLibrary.GA
+namespace AlgorithmLibrary.GA
 {
     public class GAExecution
     {

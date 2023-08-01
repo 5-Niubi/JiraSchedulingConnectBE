@@ -4,7 +4,7 @@ using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.PertSchedule;
-using RcpspAlgorithmLibrary;
+using AlgorithmLibrary;
 
 namespace AlgorithmServiceServer.Services.Interfaces
 {

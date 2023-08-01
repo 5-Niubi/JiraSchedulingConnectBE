@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
 	<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 	<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.15" />
+	<PackageReference Include="Quartz.AspNetCore" Version="3.6.3" />
   </ItemGroup>
 
   <ItemGroup>

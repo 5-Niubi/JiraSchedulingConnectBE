@@ -32,7 +32,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (Exception ex)
             {
-                
+
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
