@@ -14,6 +14,8 @@
 
         public string? BudgetUnit { get; set; } = "$";
 
+        public double? BaseWorkingHour { get; set; } = 8;
+
         public DateTime? Deadline { get; set; }
 
         public double? ObjectiveTime { get; set; }

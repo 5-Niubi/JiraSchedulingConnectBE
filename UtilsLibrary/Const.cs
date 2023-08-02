@@ -38,6 +38,7 @@
             public const string NOTFOUND_SCHEDULE = "Not found schedule";
             public const string PROJECT_NAME_EMPTY = "Project Name empty!";
             public const string PROJECT_NAME_UPPER_1ST_CHAR = "Project Name must start by an uppercase letter";
+            public const string PROJECT_WORKING_HOUR_ERR = "Invalid working hour";
         }
 
         public static class THREAD_STATUS

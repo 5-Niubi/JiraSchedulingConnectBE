@@ -4,6 +4,7 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
 using System.Text.Json;
+using UtilsLibrary;
 
 namespace AlgorithmLibrary
 {
@@ -119,9 +120,9 @@ namespace AlgorithmLibrary
                 int k = 0;
                 for (int j = 0; j < Deadline; j++)
                 {
-                    workerEffort[i, j] = workingEffort[k++];
+                    workerEffort[i, j] = Math.Round(workingEffort?[k++] ?? 0 / 8, 3);
                     // reset k
-                    if (k >= workingEffort.Length)
+                    if (k >= (workingEffort?.Length ?? 0))
                     {
                         k = 0;
                     }

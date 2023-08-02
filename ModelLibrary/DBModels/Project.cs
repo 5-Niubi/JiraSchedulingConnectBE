@@ -23,6 +23,7 @@ namespace ModelLibrary.DBModels
         public double? ObjectiveTime { get; set; }
         public double? ObjectiveCost { get; set; }
         public double? ObjectiveQuality { get; set; }
+        public double? BaseWorkingHour { get; set; }
         public string? CloudId { get; set; }
         public bool? IsDelete { get; set; }
         public DateTime? CreateDatetime { get; set; }

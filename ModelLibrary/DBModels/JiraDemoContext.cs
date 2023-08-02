@@ -74,7 +74,6 @@ namespace ModelLibrary.DBModels
             modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
 
-
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
@@ -494,6 +493,8 @@ namespace ModelLibrary.DBModels
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("account_id");
+
+                entity.Property(e => e.BaseWorkingHour).HasColumnName("base_working_hour");
 
                 entity.Property(e => e.Budget).HasColumnName("budget");
 
