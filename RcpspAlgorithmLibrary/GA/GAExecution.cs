@@ -94,7 +94,7 @@ namespace AlgorithmLibrary.GA
                         }
 
                         var cosineSimilarity = dotProduct / (Math.Sqrt(norm1) * Math.Sqrt(norm2));
-                        taskSimilarityMatrix[t1, t2] = cosineSimilarity; ;
+                        taskSimilarityMatrix[t1, t2] = Math.Round(cosineSimilarity, 1);
                     }
                 }
             }
