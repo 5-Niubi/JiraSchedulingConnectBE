@@ -33,7 +33,7 @@ namespace JiraSchedulingConnectAppService.Services
             //QUERY LIST PROJECT WITH CLOUD_ID
             var query = db.Projects.Where(e => e.CloudId == cloudId
                 && (projectName.Equals(string.Empty) || e.Name.Contains(projectName)
-                && e.IsDelete == false                )
+                && e.IsDelete == false)
                 ).Include(p => p.Tasks)
                 .OrderByDescending(e => e.Id);
             var projectsResult = await query.ToListAsync();
@@ -90,15 +90,7 @@ namespace JiraSchedulingConnectAppService.Services
             var project = mapper.Map<ModelLibrary.DBModels.Project>(projectRequest);
             project.CloudId = cloudId;
 
-            if (projectRequest.Name == string.Empty)
-            {
-                throw new Exception(Const.MESSAGE.PROJECT_NAME_EMPTY);
-            }
-            if (!Utils.IsUpperFirstLetter(projectRequest.Name))
-                throw new Exception(Const.MESSAGE.PROJECT_NAME_UPPER_1ST_CHAR);
-
-            projectRequest.Name = projectRequest.Name.Trim();
-            projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
+            projectRequest = ValidateProjectInput(projectRequest);
 
             // Check Name project's exited
             // if not exited -> insert
@@ -123,14 +115,7 @@ namespace JiraSchedulingConnectAppService.Services
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
-            projectRequest.Name = projectRequest.Name.Trim();
-            projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
-            if (projectRequest.Name == string.Empty)
-            {
-                throw new Exception(Const.MESSAGE.PROJECT_NAME_EMPTY);
-            }
-            if (!Utils.IsUpperFirstLetter(projectRequest.Name))
-                throw new Exception(Const.MESSAGE.PROJECT_NAME_UPPER_1ST_CHAR);
+            projectRequest = ValidateProjectInput(projectRequest);
 
             var projectUpdate = mapper.Map<ModelLibrary.DBModels.Project>(projectRequest);
             projectUpdate.CloudId = cloudId;
@@ -164,6 +149,27 @@ namespace JiraSchedulingConnectAppService.Services
             await db.SaveChangesAsync();
             var projectUpdatedDTO = mapper.Map<ProjectDetailDTO>(projectUpdatedEntity.Entity);
             return projectUpdatedDTO;
+        }
+
+        private ProjectsListCreateProject ValidateProjectInput(ProjectsListCreateProject projectRequest)
+        {
+            projectRequest.Name = projectRequest.Name.Trim();
+            projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
+
+            if (projectRequest.Name == string.Empty)
+            {
+                throw new Exception(Const.MESSAGE.PROJECT_NAME_EMPTY);
+            }
+            if (!Utils.IsUpperFirstLetter(projectRequest.Name))
+                throw new Exception(Const.MESSAGE.PROJECT_NAME_UPPER_1ST_CHAR);
+            if (projectRequest.BaseWorkingHour > 24
+                || projectRequest.BaseWorkingHour <= 0
+                )
+            {
+                throw new Exception(Const.MESSAGE.PROJECT_WORKING_HOUR_ERR);
+            }
+
+            return projectRequest;
         }
 
         public async Task<ProjectDeleteResDTO> DeleteProject(int projectId)
