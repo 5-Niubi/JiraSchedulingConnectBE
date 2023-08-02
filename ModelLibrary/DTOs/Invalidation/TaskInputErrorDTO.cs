@@ -31,5 +31,11 @@
         public String? Messages { get; set; }
 
     }
+
+    public class TaskSaveInputErrorDTO
+    {
+        public String? Messages { get; set; }
+
+    }
 }
 
