@@ -141,6 +141,7 @@ namespace JiraSchedulingConnectAppService.Services
             projectInDB.BudgetUnit = projectUpdate.BudgetUnit;
             projectInDB.StartDate = projectUpdate.StartDate;
             projectInDB.ImageAvatar = projectUpdate.ImageAvatar;
+            projectInDB.BaseWorkingHour = projectUpdate.BaseWorkingHour;
             projectInDB.ObjectiveCost = projectUpdate.ObjectiveCost;
             projectInDB.ObjectiveQuality = projectUpdate.ObjectiveQuality;
             projectInDB.ObjectiveTime = projectUpdate.ObjectiveTime;
@@ -163,10 +164,13 @@ namespace JiraSchedulingConnectAppService.Services
             if (!Utils.IsUpperFirstLetter(projectRequest.Name))
                 throw new Exception(Const.MESSAGE.PROJECT_NAME_UPPER_1ST_CHAR);
             if (projectRequest.BaseWorkingHour > 24
-                || projectRequest.BaseWorkingHour <= 0
-                )
+                || projectRequest.BaseWorkingHour <= 0)
             {
                 throw new Exception(Const.MESSAGE.PROJECT_WORKING_HOUR_ERR);
+            }
+            if (projectRequest.Budget < 0)
+            {
+                throw new Exception(Const.MESSAGE.PROJECT_BUDGET_ERR);
             }
 
             return projectRequest;

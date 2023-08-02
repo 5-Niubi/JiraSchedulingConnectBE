@@ -22,6 +22,8 @@ namespace AlgorithmLibrary
         public int NumOfEquipments { get; private set; }
         public int NumOfFunctions { get; private set; }
 
+        public double BaseWorkingHours { get; private set;}
+
         public List<ModelLibrary.DBModels.Task> TaskList { get; private set; }
         public List<Workforce> WorkerList { get; private set; }
         public List<Equipment> EquipmentList { get; private set; }
@@ -52,6 +54,7 @@ namespace AlgorithmLibrary
             objtCost = inputToOR.ObjectiveCost;
             objtQuality = inputToOR.ObjectiveQuality;
 
+            BaseWorkingHours = inputToOR.BaseWorkingHours;
         }
 
         public OutputToORDTO ToOR()
@@ -120,7 +123,7 @@ namespace AlgorithmLibrary
                 int k = 0;
                 for (int j = 0; j < Deadline; j++)
                 {
-                    workerEffort[i, j] = Math.Round(workingEffort?[k++] ?? 0 / 8, 3);
+                    workerEffort[i, j] = Math.Round(workingEffort?[k++] ?? 0 / BaseWorkingHours, 3);
                     // reset k
                     if (k >= (workingEffort?.Length ?? 0))
                     {

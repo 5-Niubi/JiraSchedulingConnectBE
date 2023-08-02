@@ -63,7 +63,7 @@ namespace AlgorithmServiceServer.Services
             inputTo.ObjectiveTime = parameterEntity.ObjectiveTime;
             inputTo.ObjectiveCost = parameterEntity.ObjectiveCost;
             inputTo.ObjectiveQuality = parameterEntity.ObjectiveQuality;
-
+            inputTo.BaseWorkingHours = projectFromDB?.BaseWorkingHour?? Const.DEFAULT_BASE_WORKING_HOUR;
             var converter = new AlgorithmConverter(inputTo, mapper);
 
             var outputToAlgorithm = converter.ToOR();

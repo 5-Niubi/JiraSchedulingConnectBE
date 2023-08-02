@@ -7,6 +7,7 @@ namespace AlgorithmServiceServer.DTOs.AlgorithmController
         public DateTime StartDate { get; set; }
         public int Deadline { get; set; }
         public int Budget { get; set; }
+        public double BaseWorkingHours { get; set; }
 
         public List<ModelLibrary.DBModels.Task> TaskList { get; set; }
         public List<Workforce> WorkerList { get; set; }
