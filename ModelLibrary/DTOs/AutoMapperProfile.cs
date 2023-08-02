@@ -77,6 +77,8 @@ namespace ModelLibrary.DTOs
             CreateMap<TasksSkillsRequired, SkillRequiredDTO>();
             CreateMap<SkillRequiredDTO, TasksSkillsRequired>();
 
+            CreateMap<SkillRequiredRequestDTO, SkillRequiredDTO > ();
+
             CreateMap<DBModels.Task, TaskPertViewDTO>()
                 .ForMember(tp => tp.Precedences, t => t.MapFrom(t => t.TaskPrecedenceTasks))
                 .ForMember(tp => tp.SkillRequireds, t => t.MapFrom(t => t.TasksSkillsRequireds));

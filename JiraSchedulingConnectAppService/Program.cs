@@ -78,12 +78,12 @@ try
     builder.Services.AddTransient<IAuthorizationHandler, ScheduleLimitHandler>();
     builder.Services.AddTransient<IPermissionService, PermissionService>();
     builder.Services.AddTransient<IAuthorizationHandler, ProjectLimitHandler>();
-    
+    //builder.Services.AddTransient<IAuthorizationHandler, ProjectLimitHandler>();
 
-    // Config P
-    builder.Services.AddHeimGuard<UserPolicyHandler>()
-     .AutomaticallyCheckPermissions()
-     .MapAuthorizationPolicies();
+    // Config Policy
+    //builder.Services.AddHeimGuard<UserPolicyHandler>()
+    // .AutomaticallyCheckPermissions()
+    // .MapAuthorizationPolicies();
 
     builder.Services.AddAuthorization(
         options =>

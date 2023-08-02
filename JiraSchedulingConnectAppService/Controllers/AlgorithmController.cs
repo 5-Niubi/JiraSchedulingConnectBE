@@ -23,12 +23,12 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpGet]
-        [Authorize("ExecuteAlgorithm")]
-        [Authorize(Policy = ("LimitedScheduleTimeByMonth"))]
+        
         public async Task<IActionResult> ExecuteAlgorithm(int parameterId)
         {
             try
             {
+                await algorithmService.IsValidExecuteAuthorize();
                 return Ok(algorithmService.ExecuteAlgorithm(parameterId));
             }
             catch (MicroServiceAPIException ex)
@@ -49,7 +49,9 @@ namespace JiraSchedulingConnectAppService.Controllers
         public async Task<IActionResult> GetEstimateWorkforce(int projectId)
         {
             try
+
             {
+                
                 return Ok(await algorithmService.EstimateWorkforce(projectId));
             }
             catch (Exception ex)

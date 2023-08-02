@@ -7,6 +7,8 @@ using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Projects;
 using UtilsLibrary.Exceptions;
 using Microsoft.CodeAnalysis;
+using Microsoft.AspNetCore.Authorization;
+using ModelLibrary.DTOs.Invalidation;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -15,12 +17,13 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly JiraDemoContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
-
-        public ProjectsService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        private readonly IAuthorizationService _authorizationService;
+        public ProjectsService(JiraDemoContext dbContext, IMapper mapper, IAuthorizationService _authorizationService, IHttpContextAccessor httpContextAccessor)
         {
-            db = dbContext;
+            this.db = dbContext;
             this.mapper = mapper;
-            httpContext = httpContextAccessor.HttpContext;
+            this.httpContext = httpContextAccessor.HttpContext;
+            this._authorizationService = _authorizationService;
 
         }
 
@@ -86,6 +89,21 @@ namespace JiraSchedulingConnectAppService.Services
         {
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
+
+            var planId = await db.Subscriptions.Include(s => s.AtlassianToken)
+                .Include(s => s.Plan)
+                .Where(s => s.AtlassianToken.CloudId == cloudId && s.CancelAt == null)
+                .Select(S => S.PlanId).FirstOrDefaultAsync();
+            int ActivateProjectUsage = await GetActiveProjectUsage();
+
+            await _authorizationService.AuthorizeAsync(httpContext.User, new ModelLibrary.DTOs.Algorithm.UserUsage()
+            {
+                Plan = (int) planId,
+                ProjectActiveUsage = ActivateProjectUsage
+
+            }, "LimitedCreateProject");
+
+          
 
             var project = mapper.Map<ModelLibrary.DBModels.Project>(projectRequest);
             project.CloudId = cloudId;
@@ -185,7 +203,7 @@ namespace JiraSchedulingConnectAppService.Services
             return projectUpdatedDTO;
         }
 
-        public async Task<int> GetCreatedProjectNumber()
+        public async Task<int> GetActiveProjectUsage()
         {
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();

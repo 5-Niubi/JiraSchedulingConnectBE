@@ -119,31 +119,7 @@ namespace JiraSchedulingConnectAppService.Services
 		}
 
 
-        public async Task<int> GetScheduleMonthlyUsage()
-        {
-            try
-            {
-                var jwt = new JWTManagerService(httpContext);
-                var cloudId = jwt.GetCurrentCloudId();
-
-
-                var ProjectIds = await db.Projects.Where(pr => pr.CloudId == cloudId).Select(p => p.Id).ToArrayAsync();
-
-                DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-                DateTime currentMonthEnd = currentMonthStart.AddMonths(1).AddTicks(-1);
-
-                var MonthlyUsage = await db.Parameters
-                    .Where(pr => ProjectIds.Contains(pr.Id) && pr.CreateDatetime >= currentMonthStart && pr.CreateDatetime <= currentMonthEnd).Distinct()
-                    .CountAsync();
-
-
-                return MonthlyUsage;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message, ex);
-            }
-        }
+        
 
     }
 }

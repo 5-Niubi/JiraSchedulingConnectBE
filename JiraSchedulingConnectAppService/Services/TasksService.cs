@@ -439,8 +439,17 @@ namespace JiraSchedulingConnectAppService.Services
         public async Task<bool> SaveTasks(TasksSaveRequest TasksSaveRequest)
         {
 
-            var projectId = TasksSaveRequest.ProjectId;
 
+
+            // validate project exited by cloud id
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
+            var projectInDB = await db.Projects.FirstOrDefaultAsync(p => p.Id == TasksSaveRequest.ProjectId && p.CloudId == cloudId) ??
+            throw new NotFoundException($"Can not find project :{TasksSaveRequest.ProjectId}");
+
+
+            var projectId = TasksSaveRequest.ProjectId;
             var TaskPrecedenceTasksRequest = TasksSaveRequest.TaskPrecedenceTasks;
             var TaskSkillsRequiredsRequest = TasksSaveRequest.TaskSkillsRequireds;
 
@@ -870,8 +879,8 @@ namespace JiraSchedulingConnectAppService.Services
                         Errors.Add(new TaskSkillRequiredErrorDTO
                         {
                             TaskId = taskSkillsRequired.TaskId,
-                            SkillRequireds = mapper.Map<List<SkillRequiredDTO>>(skillsRequired),
-                            Messages = skill.SkillId + "Not Found",
+                            SkillRequired = mapper.Map<SkillRequiredDTO>(skill),
+                            Messages = skill.SkillId + " Not Found",
 
                         });
                     }
