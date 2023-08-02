@@ -6,6 +6,9 @@ using ModelLibrary.DTOs.Thread;
 using System.Dynamic;
 using UtilsLibrary.Exceptions;
 using ModelLibrary.DTOs;
+using org.sqlite.core;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -14,7 +17,11 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly IAPIMicroserviceService apiMicro;
         private readonly IThreadService threadService;
 
+        private readonly JiraDemoContext db;
+        private readonly HttpContext? httpContext;
 
+     
+        
 
         public AlgorithmService(JiraDemoContext db,
             IHttpContextAccessor httpContextAccessor, IAPIMicroserviceService apiMicro,
@@ -22,7 +29,12 @@ namespace JiraSchedulingConnectAppService.Services
         {
             this.apiMicro = apiMicro;
             this.threadService = threadService;
+            this.db = db;
+            this.httpContext = httpContextAccessor.HttpContext;
         }
+
+
+
 
         public ThreadStartDTO ExecuteAlgorithm(int parameterId)
         {
@@ -85,6 +97,15 @@ namespace JiraSchedulingConnectAppService.Services
 
             try
             {
+
+                // validate project id exited
+                var jwt = new JWTManagerService(httpContext);
+                var cloudId = jwt.GetCurrentCloudId();
+
+                var projectInDB = await db.Projects.FirstOrDefaultAsync(p => p.Id == projectId && p.CloudId == cloudId) ??
+                throw new NotFoundException($"Can not find project :{projectId}");
+
+
                 var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforce?projectId={projectId}");
                 dynamic responseContent;
 
@@ -114,6 +135,43 @@ namespace JiraSchedulingConnectAppService.Services
 
 
 
+        }
+
+        public async Task<EstimatedResultDTO> GetEstimateOverallWorkforce(int projectId)
+        {
+            try
+            {
+                // validate project id exited
+                var jwt = new JWTManagerService(httpContext);
+                var cloudId = jwt.GetCurrentCloudId();
+
+                var projectInDB = await db.Projects.FirstOrDefaultAsync(p => p.Id == projectId && p.CloudId == cloudId) ??
+                throw new NotFoundException($"Can not find project :{projectId}");
+
+                var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforceOverall?projectId={projectId}");
+                dynamic responseContent;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseContent = await response.Content.ReadFromJsonAsync<EstimatedResultDTO>();
+                }
+
+                else
+                {
+                    throw new Exception(response.StatusCode.ToString());
+                }
+                return responseContent;
+
+            }
+            catch (MicroServiceAPIException ex)
+            {
+                throw new Exception(ex.mircoserviceResponse);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }
