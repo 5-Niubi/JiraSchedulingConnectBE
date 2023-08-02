@@ -11,6 +11,5 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
         public Task<ScheduleResultSolutionDTO> GetSchedule(int scheduleId);
 		public Task<ScheduleResultSolutionDTO> SaveScheduleSolution(ScheduleRequestDTO scheduleRequestDTO);
 
-        public Task<int> GetScheduleMonthlyUsage();
     }
 }

@@ -71,7 +71,6 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "LimitedCreateProject")]
         public async Task<IActionResult> CreateProject([FromBody] ProjectsListCreateProject projectRequest)
         {
             try

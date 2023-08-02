@@ -76,7 +76,6 @@ namespace JiraSchedulingConnectAppService.Services
                     {
 
                         TaskId = task.Id,
-                        SkillRequireds = mapper.Map<List<SkillRequiredDTO>>(skillsRequireds),
                         Messages = NotResourceAdaptivedMessage
                     });
 

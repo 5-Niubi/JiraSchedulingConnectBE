@@ -1,6 +1,12 @@
 ﻿using System;
+using System.Net;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using ModelLibrary.DTOs.Algorithm;
+using ModelLibrary.DTOs.Invalidation;
+using ModelLibrary.DTOs.Parameters;
+using UtilsLibrary.Exceptions;
+using static UtilsLibrary.Const;
 
 namespace JiraSchedulingConnectAppService.Services.Authorization
 {
@@ -9,54 +15,57 @@ namespace JiraSchedulingConnectAppService.Services.Authorization
         public int maxLimit { get; set; }
         public ProjectLimitRequirement(int maxLimit)
 		{
-            maxLimit = maxLimit;
+            this.maxLimit = maxLimit;
 
         }
 	}
 
 
-    public class ProjectLimitHandler : AuthorizationHandler<ProjectLimitRequirement>
+    public class ProjectLimitHandler : AuthorizationHandler<ProjectLimitRequirement, UserUsage>
     {
 
 
         private readonly HttpContext? httpContext;
-        private readonly IProjectServices _projectService;
-        private readonly ISubscriptionService _subscriptionService;
 
 
-        public ProjectLimitHandler( IHttpContextAccessor httpContextAccessor,
-            IProjectServices ProjectService, ISubscriptionService SubscriptionService)
+
+        public ProjectLimitHandler( IHttpContextAccessor httpContextAccessor)
         {
             httpContext = httpContextAccessor.HttpContext;
-            _projectService = ProjectService;
-            _subscriptionService = SubscriptionService;
+         
         }
 
-        protected override async System.Threading.Tasks.Task HandleRequirementAsync(AuthorizationHandlerContext context, ProjectLimitRequirement requirement)
+        protected override System.Threading.Tasks.Task HandleRequirementAsync(
+            AuthorizationHandlerContext context,
+            ProjectLimitRequirement requirement,
+            UserUsage resource
+            )
         {
 
-            // TODO: Get r
-            var cloudId = context.User.Claims.FirstOrDefault(c => c.Type == "cloud_id").Value;
-
-            // get Role
-            var subcription = await _subscriptionService.GetCurrentSubscription();
-
-            if (subcription.Plan.Name == "Premium")
-            {
-                context.Succeed(requirement);
-                return;
-            }
-
-            int createdNumber = await _projectService.GetCreatedProjectNumber();
-
-            if (createdNumber < requirement.maxLimit)
+            if (resource.Plan != SUBSCRIPTION.PLAN_FREE)
             {
                 context.Succeed(requirement);
             }
 
-            return;
+
+            else if (resource.ProjectActiveUsage < requirement.maxLimit)
+            {
+                context.Succeed(requirement);
+            }
+
+            else
+            {
+                throw new UnAuthorizedException($"You have create {resource.ProjectActiveUsage}. With Free Plan Only can create maximum {requirement.maxLimit} new project");
+             
+            }
+
+            
+            
+            return System.Threading.Tasks.Task.CompletedTask;
 
         }
+
+       
     }
 
 }
