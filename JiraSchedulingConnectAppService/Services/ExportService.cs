@@ -43,7 +43,7 @@ namespace JiraSchedulingConnectAppService.Services
             this.mapper = mapper;
         }
 
-        public async Task<ThreadStartDTO> ToJira(int scheduleId, int projectId)
+        public async Task<ThreadStartDTO> ToJira(int scheduleId, string projectKey, string projectName)
         {
             var schedule = await db.Schedules.Where(s => s.Id == scheduleId)
                .Include(s => s.Parameter).ThenInclude(p => p.Project)
@@ -76,7 +76,7 @@ namespace JiraSchedulingConnectAppService.Services
             string threadId = ThreadService.CreateThreadId();
             threadId = threadService.StartThread(threadId,
                 async () => await ProcessToJiraThread(
-                    threadId, schedule, accountId, workforceResultDict, workforceEmailDiction, projectId
+                    threadId, schedule, accountId, workforceResultDict, workforceEmailDiction, projectKey, projectName
                     ));
 
             return new ThreadStartDTO(threadId);
@@ -114,7 +114,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async Task ProcessToJiraThread(string threadId, Schedule schedule, string? accountId,
             Dictionary<int, WorkforceScheduleResultDTO> workforceResultDict,
-            Dictionary<string, WorkforceScheduleResultDTO> workforceEmailDict, int projectId)
+            Dictionary<string, WorkforceScheduleResultDTO> workforceEmailDict, string projectKey, string projectName)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace JiraSchedulingConnectAppService.Services
                 {
                     var tasks = JsonConvert.DeserializeObject<List<TaskScheduleResultDTO>>(schedule.Tasks);
                     thread.Progress = "Prepare Jira screen fields";
-                    var prepareResult = await JiraPrepareForSync(schedule.Parameter.Project, accountId, thread, projectId);
+                    var prepareResult = await JiraPrepareForSync(schedule.Parameter.Project, accountId, thread, projectName, projectKey);
 
                     thread.Progress = "Create worker selection";
                     var workerCreatedDict = await JiraCreateWorkForce(prepareResult.WorkerFieldContext,
@@ -286,11 +286,15 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
         private async Task<JiraAPIPrepareResultDTO> JiraPrepareForSync(
-            ModelLibrary.DBModels.Project project, string accountId, ThreadModel thread, int projectId)
+            ModelLibrary.DBModels.Project project, string accountId, ThreadModel thread,
+            string projectNameCreate, string projectKeyCreate)
         {
             /* TODO: - Tối ưu việc config field
                      - Tối ưu việc quản lý các scheme
              */
+            thread.Progress = "Creating Project";
+            var projectId = await JiraCreateProject(projectKeyCreate, projectNameCreate);
+
             thread.Progress = "Verifying Project";
             (var projectKey, var projectName) = await JiraVerifyProject(projectId);
 
@@ -552,6 +556,32 @@ namespace JiraSchedulingConnectAppService.Services
 
             respone = await jiraAPI.Post("rest/api/3/issuetype", body);
             var id = (await respone.Content.ReadFromJsonAsync<JiraAPICreateIssueTypeResDTO>()).Id;
+            return id;
+        }
+
+        private async Task<int> JiraCreateProject(string projectKey, string projectName)
+        {
+            HttpResponseMessage respone;
+            // Kiểm tra tồn tại, nếu tồn tại thì lấy luôn
+            try
+            {
+                respone = await jiraAPI.Get($"rest/api/3/project/{projectKey}");
+                var result = await respone.Content.ReadFromJsonAsync<JiraAPIGetProjectResDTO.Root>();
+                return Convert.ToInt32(result.id);
+            }
+            catch (JiraAPIException)
+            {                
+            }
+
+            // If not exist, than create a new one
+            dynamic body = new ExpandoObject();
+            body.name = projectName;
+            body.key = projectKey;
+            body.projectTemplateKey = "com.pyxis.greenhopper.jira:gh-simplified-basic";
+            body.projectTypeKey = "software";
+
+            respone = await jiraAPI.Post("rest/api/3/project", body);
+            var id = (await respone.Content.ReadFromJsonAsync<JiraAPICreatProjectResponseDTO>()).Id;
             return id;
         }
 

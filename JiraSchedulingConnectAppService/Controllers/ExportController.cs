@@ -19,11 +19,11 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
         [Authorize]
         [HttpGet]
-        async public Task<IActionResult> ExportToJira(int scheduleId, int projectId)
+        async public Task<IActionResult> ExportToJira(int scheduleId, string projectKey, string projectName)
         {
             try
             {
-                var response = await exportService.ToJira(scheduleId, projectId);
+                var response = await exportService.ToJira(scheduleId, projectKey, projectName);
                 return Ok(response);
             }
 
