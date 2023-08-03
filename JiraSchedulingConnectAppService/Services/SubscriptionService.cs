@@ -28,7 +28,7 @@ namespace JiraSchedulingConnectAppService.Services
                 .Where(s => s.AtlassianToken.CloudId == cloudId && s.CancelAt == null)
                 .OrderByDescending(s => s.CreateDatetime)
                 .FirstOrDefaultAsync();
-            if(subscription == null)
+            if (subscription == null)
             {
                 throw new NotFoundException();
             }

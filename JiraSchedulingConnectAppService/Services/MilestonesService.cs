@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using java.nio.file;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Milestones;
 
 
@@ -12,6 +14,7 @@ namespace JiraSchedulingConnectAppService.Services
     {
 
         public const string NotFoundMessage = "Milestone Not Found!!!";
+        public const string NotValidateDeleteMilestone = "Exited Tasks in Milestone, Can't Delete this Milestone";
 
         private readonly ModelLibrary.DBModels.JiraDemoContext db;
         private readonly IMapper mapper;
@@ -51,6 +54,10 @@ namespace JiraSchedulingConnectAppService.Services
             {
                 var milestone = mapper.Map<ModelLibrary.DBModels.Milestone>(milestoneRequest);
 
+
+                // validate miletone name
+                await _ValidateMileStoneName(-100, milestone.Name, (int)milestone.ProjectId);
+
                 var MilestoneCreatedEntity = await db.Milestones.AddAsync(milestone);
                 await db.SaveChangesAsync();
 
@@ -84,12 +91,17 @@ namespace JiraSchedulingConnectAppService.Services
             try
             {
                 // validate milestone
-                var milestone = await db.Milestones.FirstOrDefaultAsync(s => s.Id == Id && s.IsDelete == false);
+                var milestone = await db.Milestones.Include(m => m.Tasks).FirstOrDefaultAsync(s => s.Id == Id && s.IsDelete == false);
                 if (milestone == null)
                 {
                     throw new Exception(NotFoundMessage);
                 }
 
+                else if(milestone.Tasks.Any(t => t.IsDelete == false))
+                {
+                    throw new Exception(NotValidateDeleteMilestone);
+                }
+ 
 
                 // Update status isdelete
                 milestone.IsDelete = true;
@@ -106,5 +118,71 @@ namespace JiraSchedulingConnectAppService.Services
 
 
         }
+
+
+        public async Task<MilestoneDTO> UpdateMilestone(MilestoneDTO milestone)
+        {
+            try
+            {
+                // validate milestone
+                var Exitedmilestone = await db.Milestones.FirstOrDefaultAsync(s => s.Id == milestone.Id && s.IsDelete == false);
+                if (milestone == null)
+                {
+                    throw new Exception(NotFoundMessage);
+                }
+
+       
+
+                // validate miletone name
+                await _ValidateMileStoneName(milestone.Id, milestone.Name, (int) milestone.ProjectId);
+
+                // Update status isdelete
+                Exitedmilestone.Name = milestone.Name;
+                var milestoneEntity = db.Update(Exitedmilestone);
+                await db.SaveChangesAsync();
+
+                var milestoneRes = mapper.Map<MilestoneDTO>(milestoneEntity.Entity);
+                return milestoneRes;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+
+
+        }
+
+
+        private async Task<bool> _ValidateMileStoneName(int miletoneid, string milestoneName, int projectId)
+        {
+
+            if (milestoneName == null || milestoneName.Trim() == "")
+            {
+                throw new Exception($"Milestonne with name  must inlude characters. Not null or empty");
+            }
+
+            else if (milestoneName != null && milestoneName.Trim() != "")
+            {
+                // validate not exited milestone name
+                var exitedName = await db.Milestones.FirstOrDefaultAsync(s => s.ProjectId == projectId
+                && s.Name == milestoneName.Trim()
+                && s.Id != miletoneid
+                && s.IsDelete == false);
+
+                if (exitedName != null)
+                {
+                    throw new Exception($"Milestonne with name {exitedName.Name} exited in this project");
+                }
+
+            }
+
+            return true;
+        }
+
+       
     }
+
+    
 }

@@ -41,11 +41,11 @@ namespace AlgorithmServiceServer.Services
             var workerFromDB = new List<Workforce>();
             parameterResources.ForEach(e => workerFromDB.Add(e.Resource));
 
-            var taskFromDB = await db.Tasks.Where(t => t.ProjectId == parameterEntity.ProjectId)
+            var taskFromDB = await db.Tasks.Where(t => t.ProjectId == parameterEntity.ProjectId && t.IsDelete == false)
                .Include(t => t.TasksSkillsRequireds).Include(t => t.TaskPrecedenceTasks)
                .Include(t => t.Milestone).ToListAsync();
 
-            var skillFromDB = await db.Skills.Where(s => s.CloudId == cloudId).ToListAsync();
+            var skillFromDB = await db.Skills.Where(s => s.CloudId == cloudId && s.IsDelete == false).ToListAsync();
 
             inputTo.StartDate = (DateTime)parameterEntity.StartDate;
             inputTo.Deadline = (int)Utils.GetDaysBeetween2Dates

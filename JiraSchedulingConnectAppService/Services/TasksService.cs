@@ -27,6 +27,7 @@ namespace JiraSchedulingConnectAppService.Services
         
         
         public const string PrecedenceMissingTaskMessage = "Task Not Set Precedence!";
+        public const string PrecedenceIsCycleMessage = "Tasks be cycle!";
         public const string RequiredSkillMissingTaskMessage = "Task Not Set Required SKill!";
 
         public const string ProjectNotFoundMessage = "Project Not Found!";
@@ -288,35 +289,35 @@ namespace JiraSchedulingConnectAppService.Services
             }
 
             // validate required skills task's
-            if (changingTask.TaskPrecedenceTasks != null)
-            {
-                await _ValidatePrecedenceTask(changingTask);
-            }
+            //if (changingTask.TaskPrecedenceTasks != null)
+            //{
+            //    await _ValidatePrecedenceTask(changingTask);
+            //}
 
-            
-            if (changingTask.TaskPrecedenceTasks != null)
-            {
-                // clear
-                await _ClearTaskPrecedenceByTaskId(taskRequest.Id);
+            // TODO: not save precede
+            //if (changingTask.TaskPrecedenceTasks != null)
+            //{
+            //    // clear
+            //    await _ClearTaskPrecedenceByTaskId(taskRequest.Id);
 
-                // insert new
-                List<TaskPrecedence> precedenceTasksToAdd = new List<TaskPrecedence>();
+            //    // insert new
+            //    List<TaskPrecedence> precedenceTasksToAdd = new List<TaskPrecedence>();
                     
-                foreach (var precedence in taskRequest.Precedences)
-                {
-                    precedenceTasksToAdd.Add(new TaskPrecedence()
-                    {
-                        TaskId = taskRequest.Id,
-                        PrecedenceId = precedence.PrecedenceId,
-                        IsDelete = false
-                    });
-                }
+            //    foreach (var precedence in taskRequest.Precedences)
+            //    {
+            //        precedenceTasksToAdd.Add(new TaskPrecedence()
+            //        {
+            //            TaskId = taskRequest.Id,
+            //            PrecedenceId = precedence.PrecedenceId,
+            //            IsDelete = false
+            //        });
+            //    }
 
-                // insert new precedence tasks
-                await db.AddRangeAsync(precedenceTasksToAdd);
-                await db.SaveChangesAsync();
+            //    // insert new precedence tasks
+            //    await db.AddRangeAsync(precedenceTasksToAdd);
+            //    await db.SaveChangesAsync();
 
-            }
+            //}
 
             if (changingTask.TasksSkillsRequireds != null)
             {
@@ -439,17 +440,27 @@ namespace JiraSchedulingConnectAppService.Services
         public async Task<bool> SaveTasks(TasksSaveRequest TasksSaveRequest)
         {
 
-            var projectId = TasksSaveRequest.ProjectId;
 
+
+            // validate project exited by cloud id
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
+            var projectInDB = await db.Projects.FirstOrDefaultAsync(p => p.Id == TasksSaveRequest.ProjectId && p.CloudId == cloudId) ??
+            throw new NotFoundException($"Can not find project :{TasksSaveRequest.ProjectId}");
+
+
+            var projectId = TasksSaveRequest.ProjectId;
             var TaskPrecedenceTasksRequest = TasksSaveRequest.TaskPrecedenceTasks;
             var TaskSkillsRequiredsRequest = TasksSaveRequest.TaskSkillsRequireds;
+
 
             // TODO: all task setup on skill & precedence must exited on database
             // check all task setup precedence
             await _ValidateConfigTaskPrecedences(projectId, TaskPrecedenceTasksRequest);
 
             // check precedence task is validate
-            await _ValidateExitedPrecedenceTask(TaskPrecedenceTasksRequest);
+            await _ValidateDAG(TaskPrecedenceTasksRequest);
 
             // validate exited skill 
             await _ValidateExitedSkill(TaskSkillsRequiredsRequest);
@@ -544,20 +555,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
 
-        public async Task<bool> IsValidDAG(TasksSaveRequest TasksSaveRequest)
-        {
-
-            var jwt = new JWTManagerService(httpContext);
-            var cloudId = jwt.GetCurrentCloudId();
-
-            var taskPrecedences = TasksSaveRequest.TaskPrecedenceTasks;
-
-            var graph = new DirectedGraph(0);
-
-            graph.LoadData(taskPrecedences);
-            return graph.IsDAG();
-
-        }
+      
 
 
         //public async Task<bool> TasksSaveRequestV2(TasksSaveRequestV2 TasksSaveRequest)
@@ -870,8 +868,8 @@ namespace JiraSchedulingConnectAppService.Services
                         Errors.Add(new TaskSkillRequiredErrorDTO
                         {
                             TaskId = taskSkillsRequired.TaskId,
-                            SkillRequireds = mapper.Map<List<SkillRequiredDTO>>(skillsRequired),
-                            Messages = skill.SkillId + "Not Found",
+                            SkillRequired = mapper.Map<SkillRequiredDTO>(skill),
+                            Messages = skill.SkillId + " Not Found",
 
                         });
                     }
@@ -979,13 +977,26 @@ namespace JiraSchedulingConnectAppService.Services
             return true;
         }
 
-        private async Task<bool> _ValidateExitedPrecedenceTask(List<TaskPrecedencesTaskRequestDTO> taskprecedencesTasksRequest)
+        private async Task<bool> _ValidateDAG(List<TaskPrecedencesTaskRequestDTO> taskprecedencesTasksRequest)
         {
 
 
-            var Errors = new List<TaskInputErrorDTO>();
+            var Errors = new List<TaskSaveInputErrorDTO>();
 
             // TODO: Is validate DAG
+            var graph = new DirectedGraph(0);
+
+            graph.LoadData(taskprecedencesTasksRequest);
+      
+
+            var isDAG =  graph.IsDAG();
+            if (isDAG == false)
+            {
+                Errors.Add(new TaskSaveInputErrorDTO()
+                {
+                    Messages = PrecedenceIsCycleMessage
+                });
+            }
 
             if (Errors.Count != 0)
             {
