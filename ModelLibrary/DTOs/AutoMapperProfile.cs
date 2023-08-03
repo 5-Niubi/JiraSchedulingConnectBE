@@ -48,15 +48,15 @@ namespace ModelLibrary.DTOs
                 {
                     Id = s.SkillId,
                     Name = s.Skill.Name,
-            
                     Level = s.Level,
-      
+
                 })))
                 .ForMember(dest => dest.WorkingEfforts, opt => opt.MapFrom(src =>
                 string.IsNullOrEmpty(src.WorkingEffort) ? null : JsonConvert.DeserializeObject<List<float>>(src.WorkingEffort)));
 
 
-
+            CreateMap<Workforce, WorkforceViewDTOResponse>();
+              
 
             CreateMap<WorkforceDTOResponse, Workforce>();
             CreateMap<EquipmentDTOResponse, Equipment>();

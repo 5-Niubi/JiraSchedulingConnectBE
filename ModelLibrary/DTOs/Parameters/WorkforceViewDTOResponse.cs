@@ -14,5 +14,13 @@ namespace ModelLibrary.DTOs.Parameters
         public List<float> WorkingEfforts { get; set; }
         public List<SkillDTOResponse> Skills { get; set; } = null!;
     }
+
+
+    //public class WorkforceViewDTOResponse
+    //{
+    //    public int Id { get; set; }
+    //    public string? Name { get; set; }
+      
+    //}
 }
 

@@ -96,7 +96,6 @@ namespace JiraSchedulingConnectAppService.Services
         public   ThreadStartDTO ExecuteAlgorithm(int parameterId)
         {
 
-
             string threadId = ThreadService.CreateThreadId();
             threadId = threadService.StartThread(threadId,
                 async () => await ProcessTestConverterThread(threadId, parameterId));
