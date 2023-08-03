@@ -8,7 +8,7 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
         public Task<List<WorkforceViewDTOResponse>> GetWorkforceScheduleByProject();
         public Task<WorkforceDTOResponse> CreateWorkforce(WorkforceRequestDTO w);
         public Task<WorkforceDTOResponse> GetWorkforceById(string workforce_id);
-        public Task<WorkforceDTOResponse> DeleteWorkforce(string workforce_id);
+        public Task<bool> DeleteWorkforce(int workforce_id);
         public Task<WorkforceDTOResponse> UpdateWorkforce(WorkforceRequestDTO w);
         
 

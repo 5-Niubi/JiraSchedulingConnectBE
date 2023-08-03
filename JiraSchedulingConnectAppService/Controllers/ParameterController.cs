@@ -53,11 +53,19 @@ namespace JiraSchedulingConnectAppService.Controllers
                 return Ok(projectCreated);
             }
 
-            catch(NotSuitableInputException ex) {
+            
+            catch(UnAuthorizedException ex) {
                 this._Logger.LogWarning( ex.Message);
+                var response = ex.Errors;
+                return StatusCode(412, response);
+            }
+
+            catch(NotSuitableInputException ex) {
+                this._Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
             }
+
             catch (Exception ex)
             {
                 this._Logger.LogError(ex.Message);

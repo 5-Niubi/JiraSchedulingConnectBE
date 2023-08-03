@@ -80,8 +80,8 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                await milestonesService.DeleteMilestone(id);
-                return Ok();
+                var response = await milestonesService.DeleteMilestone(id);
+                return Ok(response);
             }
             catch (Exception ex)
             {
