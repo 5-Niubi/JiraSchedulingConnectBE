@@ -88,5 +88,25 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteSolution(int solutionId)
+        {
+            try
+            {
+                var response = await scheduleService.Delete(solutionId);
+                return Ok(response);
+            }
+
+            catch (Exception ex)
+            {
+                this._Logger.LogError(ex.Message);
+
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+
     }
 }
