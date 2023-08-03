@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
-using NuGet.Configuration;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers

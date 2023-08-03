@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ModelLibrary.DBModels;
 using UtilsLibrary;
 
 namespace ResourceAssignAdmin.Pages.Subscription
@@ -24,7 +17,7 @@ namespace ResourceAssignAdmin.Pages.Subscription
 
         public async System.Threading.Tasks.Task OnGetAsync(string? token, int? plan, int pageNum = 0, string status = "")
         {
-            if(status == null)
+            if (status == null)
             {
                 status = string.Empty;
             }

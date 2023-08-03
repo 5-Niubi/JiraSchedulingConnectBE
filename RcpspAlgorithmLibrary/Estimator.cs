@@ -173,7 +173,7 @@ namespace AlgorithmLibrary
             return indexes[maxIndex];
         }
 
-            
+
         public int[] mergeHighSkill(int[] workforceSkills, int[] requiredSkills)
         {
             int[] mergedWorkforceSkills = new int[workforceSkills.Length];
@@ -468,7 +468,7 @@ namespace AlgorithmLibrary
             {
                 for (int i = 0; i < this.TaskAdjacency.Length; i++)
                 {
-   
+
                     TaskSortedUnitTime[i] = new int[this.StortedUnitTimeList.Count];
                     for (int j = 0; j < this.StortedUnitTimeList.Count; j++)
                     {

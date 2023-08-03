@@ -2,7 +2,10 @@
 {
     public class PrecedenceRequestDTO
     {
-        public int PrecedenceId { get; set; }
+        public int PrecedenceId
+        {
+            get; set;
+        }
     }
 }
 

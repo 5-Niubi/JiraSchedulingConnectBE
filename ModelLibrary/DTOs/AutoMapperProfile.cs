@@ -56,7 +56,7 @@ namespace ModelLibrary.DTOs
 
 
             CreateMap<Workforce, WorkforceViewDTOResponse>();
-              
+
 
             CreateMap<WorkforceDTOResponse, Workforce>();
             CreateMap<EquipmentDTOResponse, Equipment>();
@@ -75,11 +75,11 @@ namespace ModelLibrary.DTOs
             CreateMap<TaskPrecedence, TaskPrecedenceDTO>();
 
             CreateMap<TasksSkillsRequired, SkillRequiredDTO>().ForMember(
-                tp=> tp.Name, sp=>sp.MapFrom(sp => sp.Skill.Name));
+                tp => tp.Name, sp => sp.MapFrom(sp => sp.Skill.Name));
 
             CreateMap<SkillRequiredDTO, TasksSkillsRequired>();
 
-            CreateMap<SkillRequiredRequestDTO, SkillRequiredDTO > ();
+            CreateMap<SkillRequiredRequestDTO, SkillRequiredDTO>();
 
             CreateMap<DBModels.Task, TaskPertViewDTO>()
                 .ForMember(tp => tp.Precedences, t => t.MapFrom(t => t.TaskPrecedenceTasks))
@@ -123,7 +123,7 @@ namespace ModelLibrary.DTOs
             CreateMap<Schedule, ScheduleResultSolutionDTO>();
             CreateMap<Workforce, WorkforceScheduleResultDTO>();
             CreateMap<Project, ProjectDeleteResDTO>();
-			CreateMap<ScheduleRequestDTO, Schedule>();
+            CreateMap<ScheduleRequestDTO, Schedule>();
             CreateMap<Milestone, MileStoneScheduleResultDTO>();
             CreateMap<PlanSubscription, PlanSubscriptionResDTO>();
 

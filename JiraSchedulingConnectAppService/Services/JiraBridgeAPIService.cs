@@ -1,10 +1,10 @@
-﻿using UtilsLibrary;
-using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
+using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
@@ -31,7 +31,8 @@ namespace JiraSchedulingConnectAppService.Services
             var jwt = new JWTManagerService(http);
             cloudId = jwt.GetCurrentCloudId();
 
-            if (cloudId != null) SetBaseURL();
+            if (cloudId != null)
+                SetBaseURL();
         }
 
         private void SetBaseURL()

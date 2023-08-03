@@ -3,8 +3,14 @@
 
     public class UnauthorizedDTO
     {
-        public string PermissionName { get; set; } // task id of current task
-        public String? Message { get; set; } //  task id it depenedence 
+        public string PermissionName
+        {
+            get; set;
+        } // task id of current task
+        public String? Message
+        {
+            get; set;
+        } //  task id it depenedence 
 
     }
 

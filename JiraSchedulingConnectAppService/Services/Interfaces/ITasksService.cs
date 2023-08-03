@@ -13,7 +13,7 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
 
         public Task<bool> DeleteTask(int taskId);
 
-        
+
         //public Task<bool> TasksSaveRequestV2(TasksSaveRequestV2 taskRequest);
 
 

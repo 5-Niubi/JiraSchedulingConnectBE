@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using java.nio.file;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Milestones;
 
 
@@ -97,11 +95,11 @@ namespace JiraSchedulingConnectAppService.Services
                     throw new Exception(NotFoundMessage);
                 }
 
-                else if(milestone.Tasks.Any(t => t.IsDelete == false))
+                else if (milestone.Tasks.Any(t => t.IsDelete == false))
                 {
                     throw new Exception(NotValidateDeleteMilestone);
                 }
- 
+
 
                 // Update status isdelete
                 milestone.IsDelete = true;
@@ -131,10 +129,10 @@ namespace JiraSchedulingConnectAppService.Services
                     throw new Exception(NotFoundMessage);
                 }
 
-       
+
 
                 // validate miletone name
-                await _ValidateMileStoneName(milestone.Id, milestone.Name, (int) milestone.ProjectId);
+                await _ValidateMileStoneName(milestone.Id, milestone.Name, (int)milestone.ProjectId);
 
                 // Update status isdelete
                 Exitedmilestone.Name = milestone.Name;
@@ -181,8 +179,8 @@ namespace JiraSchedulingConnectAppService.Services
             return true;
         }
 
-       
+
     }
 
-    
+
 }

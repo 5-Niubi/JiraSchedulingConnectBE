@@ -13,7 +13,27 @@
             this.message = message;
             this.data = data;
         }
-        public string Message { get { return message; } set { message = value; } }
-        public dynamic? Data { get { return data; } set { data = value; } }
+        public string Message
+        {
+            get
+            {
+                return message;
+            }
+            set
+            {
+                message = value;
+            }
+        }
+        public dynamic? Data
+        {
+            get
+            {
+                return data;
+            }
+            set
+            {
+                data = value;
+            }
+        }
     }
 }

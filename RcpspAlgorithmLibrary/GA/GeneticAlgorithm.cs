@@ -45,8 +45,10 @@
             Chromosome crossChromosome = new Chromosome(data);
             for (int e = 0; e < chromosome1.Genes.Length; ++e)
             {
-                if (rand.NextDouble() < 0.5) crossChromosome.Genes[e] = chromosome1.Genes[e];
-                else crossChromosome.Genes[e] = chromosome2.Genes[e];
+                if (rand.NextDouble() < 0.5)
+                    crossChromosome.Genes[e] = chromosome1.Genes[e];
+                else
+                    crossChromosome.Genes[e] = chromosome2.Genes[e];
             }
             return crossChromosome;
         }
@@ -63,7 +65,8 @@
                     int c = (int)(rand.NextDouble() * z);
                     mutateChromosome.Genes[wt] = data.SuitableWorkers.ElementAt(wt).ElementAt(c);
                 }
-                else mutateChromosome.Genes[wt] = chromosome.Genes[wt];
+                else
+                    mutateChromosome.Genes[wt] = chromosome.Genes[wt];
             }
             return mutateChromosome;
         }

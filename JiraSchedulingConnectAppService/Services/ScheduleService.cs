@@ -3,9 +3,9 @@ using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
-using UtilsLibrary;
 using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Schedules;
+using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
@@ -38,9 +38,10 @@ namespace JiraSchedulingConnectAppService.Services
             int totalPage = 0, totalRecord = 0;
             if (page != null)
             {
-                (query, totalPage, page, totalRecord) = 
-                    UtilsLibrary.Utils.MyQuery<Schedule>.Paging(query, (int) page);
-            }else
+                (query, totalPage, page, totalRecord) =
+                    UtilsLibrary.Utils.MyQuery<Schedule>.Paging(query, (int)page);
+            }
+            else
             {
                 page = 0;
             }
@@ -52,7 +53,7 @@ namespace JiraSchedulingConnectAppService.Services
             {
                 Values = scheduleDTO,
                 MaxResults = totalRecord,
-                PageIndex = (int) page,
+                PageIndex = (int)page,
                 PageSize = Const.PAGING.NUMBER_RECORD_PAGE,
                 StartAt = 1,
                 Total = totalPage
@@ -64,6 +65,7 @@ namespace JiraSchedulingConnectAppService.Services
         {
             var query =  db.Schedules.Where(s => s.ParameterId == parameterId && s.IsDelete == false);
                 
+
             int totalPage = 0, totalRecord = 0;
             if (page != null)
             {
@@ -99,24 +101,25 @@ namespace JiraSchedulingConnectAppService.Services
             return scheduleDTO;
         }
 
-		public async Task<ScheduleResultSolutionDTO> SaveScheduleSolution(ScheduleRequestDTO scheduleRequestDTO)
-		{
-			try
-			{
-				var schedule = mapper.Map<ModelLibrary.DBModels.Schedule>(scheduleRequestDTO);
+        public async Task<ScheduleResultSolutionDTO> SaveScheduleSolution(ScheduleRequestDTO scheduleRequestDTO)
+        {
+            try
+            {
+                var schedule = mapper.Map<ModelLibrary.DBModels.Schedule>(scheduleRequestDTO);
                 schedule.Since = DateTime.UtcNow;
 
-				var ScheduleCreateEntity = await db.Schedules.AddAsync(schedule);
-				await db.SaveChangesAsync();
+                var ScheduleCreateEntity = await db.Schedules.AddAsync(schedule);
+                await db.SaveChangesAsync();
 
-				var scheduleResultSolution = mapper.Map<ScheduleResultSolutionDTO>(ScheduleCreateEntity.Entity);
-				return scheduleResultSolution;
-			}
-			catch (Exception ex)
-			{
-				throw new Exception(ex.Message, ex);
-			}
-		}
+                var scheduleResultSolution = mapper.Map<ScheduleResultSolutionDTO>(ScheduleCreateEntity.Entity);
+                return scheduleResultSolution;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+        }
+
 
 
         public async Task<bool> Delete(int scheduleId)

@@ -13,7 +13,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         private IValidatorService ValidatorService;
         private readonly ModelLibrary.ILoggerManager _Logger;
         public ValidatorController(IValidatorService validatorService, ModelLibrary.ILoggerManager logger)
-            
+
         {
             this._Logger = logger;
             this.ValidatorService = validatorService;

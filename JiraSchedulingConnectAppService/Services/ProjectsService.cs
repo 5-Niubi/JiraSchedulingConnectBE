@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
-using UtilsLibrary;
 using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Projects;
+using UtilsLibrary;
 using UtilsLibrary.Exceptions;
-using Microsoft.CodeAnalysis;
-using Microsoft.AspNetCore.Authorization;
-using ModelLibrary.DTOs.Invalidation;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -36,7 +35,7 @@ namespace JiraSchedulingConnectAppService.Services
             //QUERY LIST PROJECT WITH CLOUD_ID
             var query = db.Projects.Where(e => e.CloudId == cloudId
                 && (projectName.Equals(string.Empty) || e.Name.Contains(projectName)
-                && e.IsDelete == false                )
+                && e.IsDelete == false)
                 ).Include(p => p.Tasks)
                 .OrderByDescending(e => e.Id);
             var projectsResult = await query.ToListAsync();
@@ -98,25 +97,17 @@ namespace JiraSchedulingConnectAppService.Services
 
             await _authorizationService.AuthorizeAsync(httpContext.User, new ModelLibrary.DTOs.Algorithm.UserUsage()
             {
-                Plan = (int) planId,
+                Plan = (int)planId,
                 ProjectActiveUsage = ActivateProjectUsage
 
             }, "LimitedCreateProject");
 
-          
+
 
             var project = mapper.Map<ModelLibrary.DBModels.Project>(projectRequest);
             project.CloudId = cloudId;
 
-            if (projectRequest.Name == string.Empty)
-            {
-                throw new Exception(Const.MESSAGE.PROJECT_NAME_EMPTY);
-            }
-            if (!Utils.IsUpperFirstLetter(projectRequest.Name))
-                throw new Exception(Const.MESSAGE.PROJECT_NAME_UPPER_1ST_CHAR);
-
-            projectRequest.Name = projectRequest.Name.Trim();
-            projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
+            projectRequest = ValidateProjectInput(projectRequest);
 
             // Check Name project's exited
             // if not exited -> insert
@@ -141,14 +132,7 @@ namespace JiraSchedulingConnectAppService.Services
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
-            projectRequest.Name = projectRequest.Name.Trim();
-            projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
-            if (projectRequest.Name == string.Empty)
-            {
-                throw new Exception(Const.MESSAGE.PROJECT_NAME_EMPTY);
-            }
-            if (!Utils.IsUpperFirstLetter(projectRequest.Name))
-                throw new Exception(Const.MESSAGE.PROJECT_NAME_UPPER_1ST_CHAR);
+            projectRequest = ValidateProjectInput(projectRequest);
 
             var projectUpdate = mapper.Map<ModelLibrary.DBModels.Project>(projectRequest);
             projectUpdate.CloudId = cloudId;
@@ -174,6 +158,7 @@ namespace JiraSchedulingConnectAppService.Services
             projectInDB.BudgetUnit = projectUpdate.BudgetUnit;
             projectInDB.StartDate = projectUpdate.StartDate;
             projectInDB.ImageAvatar = projectUpdate.ImageAvatar;
+            projectInDB.BaseWorkingHour = projectUpdate.BaseWorkingHour;
             projectInDB.ObjectiveCost = projectUpdate.ObjectiveCost;
             projectInDB.ObjectiveQuality = projectUpdate.ObjectiveQuality;
             projectInDB.ObjectiveTime = projectUpdate.ObjectiveTime;
@@ -182,6 +167,30 @@ namespace JiraSchedulingConnectAppService.Services
             await db.SaveChangesAsync();
             var projectUpdatedDTO = mapper.Map<ProjectDetailDTO>(projectUpdatedEntity.Entity);
             return projectUpdatedDTO;
+        }
+
+        private ProjectsListCreateProject ValidateProjectInput(ProjectsListCreateProject projectRequest)
+        {
+            projectRequest.Name = projectRequest.Name.Trim();
+            projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
+
+            if (projectRequest.Name == string.Empty)
+            {
+                throw new Exception(Const.MESSAGE.PROJECT_NAME_EMPTY);
+            }
+            if (!Utils.IsUpperFirstLetter(projectRequest.Name))
+                throw new Exception(Const.MESSAGE.PROJECT_NAME_UPPER_1ST_CHAR);
+            if (projectRequest.BaseWorkingHour > 24
+                || projectRequest.BaseWorkingHour <= 0)
+            {
+                throw new Exception(Const.MESSAGE.PROJECT_WORKING_HOUR_ERR);
+            }
+            if (projectRequest.Budget < 0)
+            {
+                throw new Exception(Const.MESSAGE.PROJECT_BUDGET_ERR);
+            }
+
+            return projectRequest;
         }
 
         public async Task<ProjectDeleteResDTO> DeleteProject(int projectId)

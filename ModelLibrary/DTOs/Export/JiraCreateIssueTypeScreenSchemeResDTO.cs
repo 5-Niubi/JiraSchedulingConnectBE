@@ -2,6 +2,9 @@
 {
     public class JiraCreateIssueTypeScreenSchemeResDTO
     {
-        public string? Id { get; set; }
+        public string? Id
+        {
+            get; set;
+        }
     }
 }

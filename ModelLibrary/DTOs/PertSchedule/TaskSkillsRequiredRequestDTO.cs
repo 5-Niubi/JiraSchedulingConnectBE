@@ -2,8 +2,14 @@
 {
     public class TaskSkillsRequiredRequestDTO
     {
-        public int TaskId { get; set; }
-        public List<SkillRequiredRequestDTO> SkillsRequireds { get; set; }
+        public int TaskId
+        {
+            get; set;
+        }
+        public List<SkillRequiredRequestDTO> SkillsRequireds
+        {
+            get; set;
+        }
     }
 }
 

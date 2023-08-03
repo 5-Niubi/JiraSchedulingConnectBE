@@ -1,10 +1,4 @@
-﻿using UtilsLibrary;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Principal;
-using System.Text;
-using BC = BCrypt.Net.BCrypt;
+﻿using BC = BCrypt.Net.BCrypt;
 
 namespace ResourceAssignAdmin.Common
 {

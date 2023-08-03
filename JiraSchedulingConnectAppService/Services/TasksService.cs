@@ -6,9 +6,6 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Invalidation;
 using ModelLibrary.DTOs.Invalidator;
 using ModelLibrary.DTOs.PertSchedule;
-using ModelLibrary.DTOs.Tasks;
-using Nest;
-using org.sqlite.core;
 using RcpspAlgorithmLibrary;
 using UtilsLibrary.Exceptions;
 
@@ -24,8 +21,8 @@ namespace JiraSchedulingConnectAppService.Services
         public const string RequiredSkillInputEmptyMessage = "Empty Required Skills";
 
         public const string MissingMessage = "Missing Task!";
-        
-        
+
+
         public const string PrecedenceMissingTaskMessage = "Task Not Set Precedence!";
         public const string PrecedenceIsCycleMessage = "Tasks be cycle!";
         public const string RequiredSkillMissingTaskMessage = "Task Not Set Required SKill!";
@@ -167,8 +164,8 @@ namespace JiraSchedulingConnectAppService.Services
 
             }
 
-         
-            if(Messages != "")
+
+            if (Messages != "")
             {
 
                 throw new NotSuitableInputException(new TaskInputErrorDTO()
@@ -258,7 +255,7 @@ namespace JiraSchedulingConnectAppService.Services
                 && t.IsDelete == false
                 && t.ProjectId == changingTask.ProjectId);
 
-            if(oldTask == null)
+            if (oldTask == null)
             {
                 throw new NotSuitableInputException(new TaskInputErrorDTO
                 {
@@ -267,8 +264,8 @@ namespace JiraSchedulingConnectAppService.Services
                 });
             }
 
-          
-            if(changingTask.MilestoneId != null)
+
+            if (changingTask.MilestoneId != null)
             {
                 // Validate milestoneId exited
                 await _ValidateExitedMilestone(taskRequest);
@@ -279,7 +276,8 @@ namespace JiraSchedulingConnectAppService.Services
             // validate required skills task's
             if (changingTask.TasksSkillsRequireds != null)
             {
-                if (changingTask.TasksSkillsRequireds.Count() == 0){
+                if (changingTask.TasksSkillsRequireds.Count() == 0)
+                {
 
                     throw new NoSuitableWorkerException(RequiredSkillInputEmptyMessage);
                 }
@@ -302,7 +300,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             //    // insert new
             //    List<TaskPrecedence> precedenceTasksToAdd = new List<TaskPrecedence>();
-                    
+
             //    foreach (var precedence in taskRequest.Precedences)
             //    {
             //        precedenceTasksToAdd.Add(new TaskPrecedence()
@@ -339,7 +337,7 @@ namespace JiraSchedulingConnectAppService.Services
                     };
                     tasksSkillsRequiredsToAdd.Add(taskSkillRequired);
 
-                        
+
                 }
 
                 // insert new precedence tasks
@@ -347,7 +345,7 @@ namespace JiraSchedulingConnectAppService.Services
                 await db.SaveChangesAsync();
             }
 
-                    
+
 
             oldTask.Name = (changingTask.Name == null) ?
             oldTask.Name : changingTask.Name;
@@ -358,10 +356,10 @@ namespace JiraSchedulingConnectAppService.Services
             oldTask.MilestoneId = (changingTask.MilestoneId == null) ?
                 oldTask.MilestoneId : changingTask.MilestoneId;
 
-  
+
             db.Tasks.Update(oldTask);
             await db.SaveChangesAsync();
-         
+
             var taskPertViewDTO = mapper.Map<TaskPertViewDTO>(oldTask);
             return taskPertViewDTO;
         }
@@ -498,7 +496,7 @@ namespace JiraSchedulingConnectAppService.Services
                     t => t.Id == TaskId
                     && t.IsDelete == false);
 
-            if(exitedTask == null)
+            if (exitedTask == null)
             {
                 throw new NotSuitableInputException(TaskNotFoundMessage);
             }
@@ -522,7 +520,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             }
             return true;
-            
+
         }
 
 
@@ -555,7 +553,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
 
-      
+
 
 
         //public async Task<bool> TasksSaveRequestV2(TasksSaveRequestV2 TasksSaveRequest)
@@ -739,7 +737,7 @@ namespace JiraSchedulingConnectAppService.Services
         private async Task<bool> _ValidateSkillsRequired(ModelLibrary.DBModels.Task task)
         {
             var Errors = new List<TaskInputErrorDTO>();
-            
+
 
             //validate exited on database
             var exitedSkills = await db.Skills
@@ -828,7 +826,7 @@ namespace JiraSchedulingConnectAppService.Services
             // validate exited name task  project's 
             var existingMileStone = await db.Milestones.FirstOrDefaultAsync(
                 t => t.ProjectId == task.ProjectId && t.Id == task.MilestoneId);
-             
+
 
             if (existingMileStone == null)
             {
@@ -897,7 +895,7 @@ namespace JiraSchedulingConnectAppService.Services
             var exitedTasks = await db.Tasks
                 .Where(p => p.ProjectId == ProjectId)
                 .ToListAsync();
-                
+
             // Check all task exited in project must include required skill
             foreach (var task in exitedTasks)
             {
@@ -912,7 +910,7 @@ namespace JiraSchedulingConnectAppService.Services
                         }
                         );
                 }
-                
+
             }
 
 
@@ -987,9 +985,9 @@ namespace JiraSchedulingConnectAppService.Services
             var graph = new DirectedGraph(0);
 
             graph.LoadData(taskprecedencesTasksRequest);
-      
 
-            var isDAG =  graph.IsDAG();
+
+            var isDAG = graph.IsDAG();
             if (isDAG == false)
             {
                 Errors.Add(new TaskSaveInputErrorDTO()

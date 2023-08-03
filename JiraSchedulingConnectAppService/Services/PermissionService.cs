@@ -1,15 +1,12 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using ModelLibrary.DBModels;
-using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.Permission;
-using static ModelLibrary.DTOs.Export.JiraAPICreateBulkTaskResDTO;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
 {
-	public class PermissionService: IPermissionService
+    public class PermissionService : IPermissionService
     {
         private readonly JiraDemoContext db;
         private readonly IMapper mapper;
@@ -30,9 +27,9 @@ namespace JiraSchedulingConnectAppService.Services
         {
 
             // validate plan exited
-            var planExited  = db.PlanSubscriptions.Where(ps => ps.Id == AttachPermissionPlanRequest.PlanId && ps.IsDelete == false).FirstOrDefault();
+            var planExited = db.PlanSubscriptions.Where(ps => ps.Id == AttachPermissionPlanRequest.PlanId && ps.IsDelete == false).FirstOrDefault();
 
-            if(planExited == null)
+            if (planExited == null)
             {
                 throw new NotSuitableInputException(NotFoundPlanMessage);
             }
@@ -47,7 +44,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             if (attachedExited != null)
             {
-                throw new NotSuitableInputException(AttachNotValidMessage); 
+                throw new NotSuitableInputException(AttachNotValidMessage);
             }
 
             // insert
@@ -59,7 +56,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             };
 
-            var entity  = db.PlanPermissions.Add(PermissionPlan);
+            var entity = db.PlanPermissions.Add(PermissionPlan);
             await db.SaveChangesAsync();
 
             // mapping response

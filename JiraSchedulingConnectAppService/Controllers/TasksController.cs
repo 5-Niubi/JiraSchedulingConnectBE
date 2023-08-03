@@ -15,7 +15,8 @@ namespace JiraSchedulingConnectAppService.Controllers
     {
         private readonly ITasksService TasksService;
         private readonly ModelLibrary.ILoggerManager _Logger;
-        public TasksController(ITasksService tasksService, ModelLibrary.ILoggerManager logger){
+        public TasksController(ITasksService tasksService, ModelLibrary.ILoggerManager logger)
+        {
             this._Logger = logger;
             this.TasksService = tasksService;
         }
@@ -150,7 +151,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
 
 
-        
+
 
         [HttpDelete]
         public async Task<IActionResult> DeleteTask(int Id)
@@ -202,7 +203,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
 
-     
+
 
         // TODO SAVE TASK REQUESTS FULL INFO
         //[HttpPost]

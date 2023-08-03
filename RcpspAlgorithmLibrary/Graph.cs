@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using ModelLibrary.DTOs.PertSchedule;
 
 namespace RcpspAlgorithmLibrary
@@ -9,14 +8,17 @@ namespace RcpspAlgorithmLibrary
         public int NumberOfNode;
         public int startNode;
         private List<List<int>> graph = new List<List<int>>();
-        
+
         public DirectedGraph(int startNode)
         {
             this.startNode = startNode;
 
         }
 
-        public List<List<int>> Graph { get => graph; set => graph = value; }
+        public List<List<int>> Graph
+        {
+            get => graph; set => graph = value;
+        }
 
         public void AddEdge(int u, int v)
         {

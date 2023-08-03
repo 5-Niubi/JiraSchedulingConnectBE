@@ -1,5 +1,4 @@
-﻿using System;
-namespace ModelLibrary.DTOs
+﻿namespace ModelLibrary.DTOs
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class FeatureAttribute : Attribute
