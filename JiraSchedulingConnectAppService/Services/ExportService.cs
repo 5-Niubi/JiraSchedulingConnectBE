@@ -16,6 +16,7 @@ using UtilsLibrary.Exceptions;
 using Duration = net.sf.mpxj.Duration;
 using Task = System.Threading.Tasks.Task;
 using System.Text.RegularExpressions;
+using static sun.security.provider.ConfigFile;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -220,19 +221,10 @@ namespace JiraSchedulingConnectAppService.Services
             string fieldContextId,
             string? fieldId, Dictionary<int, WorkforceScheduleResultDTO> workerDict)
         {
-            //var workderDict = new Dictionary<int, WorkforceScheduleResultDTO>();
-            //tasks.ForEach(t => { workderDict.TryAdd(t.workforce.id, t.workforce); });
-
             HttpResponseMessage respone;
-            //respone = await jiraAPI.Get($"rest/api/3/field/{fieldId}/context");
-            //var pagingContextJson = await respone.Content.ReadFromJsonAsync<JiraAPIResponsePagingDTO<JiraAPIGetIssueCustomFieldContextResDTO>>();
-            //var contextFound = pagingContextJson.Values.Where(e => e.Name == "Default Configuration Scheme for Worker").FirstOrDefault();
-            //if (contextFound == null)
-            //{
-            //    throw new NotFoundException("Not Found Context Of Worker Field");
-            //}
 
-            var url = $"rest/api/3/field/{fieldId}/context/{fieldContextId}/option";
+            int startAt = 0;
+            var url = $"rest/api/3/field/{fieldId}/context/{fieldContextId}/option?startAt={startAt}";
             var workerOptionValueList = new List<JiraAPICreateFieldOptionResDTO.Option>();
             var isLast = false;
             // Check is worker exist, if not create a new worker
@@ -242,7 +234,9 @@ namespace JiraSchedulingConnectAppService.Services
                 var pagingWorkerJson = await respone.Content.ReadFromJsonAsync<JiraAPIResponsePagingDTO<JiraAPICreateFieldOptionResDTO.Option>>();
                 isLast = pagingWorkerJson.IsLast;
                 workerOptionValueList.AddRange(pagingWorkerJson.Values);
-                url = pagingWorkerJson.NextPage;
+
+                startAt += pagingWorkerJson.MaxResults;
+                url = $"rest/api/3/field/{fieldId}/context/{fieldContextId}/option?startAt={startAt}";
             } while (!isLast);
 
             dynamic body = new ExpandoObject();
@@ -269,7 +263,6 @@ namespace JiraSchedulingConnectAppService.Services
                 option.value = workerName;
 
                 body.options.Add(option);
-
             }
 
             if (body.options.Count > 0)
@@ -526,6 +519,16 @@ namespace JiraSchedulingConnectAppService.Services
         private async Task<string> JiraCreateFieldContext(string workerFieldId, string projectKey, int projectId, string issueTypeId)
         {
             HttpResponseMessage response;
+
+            response = await jiraAPI.Get($"rest/api/3/field/{workerFieldId}/context/projectmapping");
+            var contextProjetMapping = (await response.Content.ReadFromJsonAsync
+                <JiraAPIResponsePagingDTO<JiraAPIGetCustomFieldContextProjectMappingResDTO.Root>>());
+            var contextProject = contextProjetMapping.Values.FirstOrDefault(e => e.projectId == projectId.ToString());
+            if (contextProject != null)
+            {
+                return contextProject.contextId;
+            }
+
             var contextName = $"{appName} field context for {projectKey} worker field";
 
             dynamic body = new ExpandoObject();
@@ -538,11 +541,12 @@ namespace JiraSchedulingConnectAppService.Services
                 response = await jiraAPI.Post($"rest/api/3/field/{workerFieldId}/context", body);
                 var id = (await response.Content.ReadFromJsonAsync<JiraAPICreateFieldContextResDTO.Root>()).Id;
                 return id;
-            }catch(JiraAPIException ex)
+            }
+            catch (JiraAPIException ex)
             {
                 var responseErr = new JiraAPIErrorResDTO.Root();
                 string contextId = "";
-                if(ex.jiraResponse != null)
+                if (ex.jiraResponse != null)
                 {
                     responseErr = JsonConvert.DeserializeObject<JiraAPIErrorResDTO.Root>(ex.jiraResponse);
                     Regex pattern = new Regex(@"These projects are already associated with a context: (?<contextId>[\w]+).");
@@ -551,7 +555,7 @@ namespace JiraSchedulingConnectAppService.Services
                 }
                 return contextId;
             }
-           
+
         }
 
         private async Task<string> JiraCreateIssueType(string projectKey)
@@ -580,16 +584,16 @@ namespace JiraSchedulingConnectAppService.Services
         {
             HttpResponseMessage respone;
             // Kiểm tra tồn tại, nếu tồn tại thì lấy luôn
-            //try
-            //{
-            //    respone = await jiraAPI.Get($"rest/api/3/project/{projectKey}");
-            //    var result = await respone.Content.ReadFromJsonAsync<JiraAPIGetProjectResDTO.Root>();
-            //    return Convert.ToInt32(result.id);
-            //}
-            //catch (JiraAPIException)
-            //{
-            //    // Ignore exception if it return not found
-            //}
+            try
+            {
+                respone = await jiraAPI.Get($"rest/api/3/project/{projectKey}");
+                var result = await respone.Content.ReadFromJsonAsync<JiraAPIGetProjectResDTO.Root>();
+                return Convert.ToInt32(result.id);
+            }
+            catch (JiraAPIException)
+            {
+                // Ignore exception if it return not found
+            }
 
             // If not exist, than create a new one
             dynamic body = new ExpandoObject();
@@ -601,7 +605,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             respone = await jiraAPI.Post("rest/api/3/project", body);
             var id = (await respone.Content.ReadFromJsonAsync<JiraAPICreatProjectResponseDTO>())?.Id;
-            return id?? 0;
+            return id ?? 0;
         }
 
         private async Task<(string, string)> JiraVerifyProject(int projectId)
