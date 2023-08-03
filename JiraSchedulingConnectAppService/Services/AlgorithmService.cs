@@ -11,6 +11,9 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using ModelLibrary.DTOs.Invalidation;
+using ModelLibrary.DTOs.PertSchedule;
+using RcpspAlgorithmLibrary;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -23,8 +26,8 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly JiraDemoContext db;
         private readonly HttpContext? httpContext;
 
-     
-        
+        public const string PrecedenceIsCycleMessage = "Tasks be cycle!";
+
 
         public AlgorithmService(
             JiraDemoContext db,
@@ -164,6 +167,12 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new NotFoundException($"Can not find project :{projectId}");
 
 
+                // get list task by project
+                var TaskList = await db.Tasks.Include(s => s.TaskPrecedenceTasks).Where(t => t.ProjectId == projectId && t.IsDelete == false).ToArrayAsync();
+                // validate graph tasks is cycle
+
+                await _ValidateDAG(TaskList);
+
                 var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforce?projectId={projectId}");
                 dynamic responseContent;
 
@@ -192,6 +201,35 @@ namespace JiraSchedulingConnectAppService.Services
             
 
 
+
+        }
+
+        private async Task<bool> _ValidateDAG(ModelLibrary.DBModels.Task[]? Tasks)
+        {
+
+
+            var Errors = new List<TaskSaveInputErrorDTO>();
+
+            // TODO: Is validate DAG
+            var graph = new DirectedGraph(0);
+
+            graph.LoadDataV1(Tasks);
+
+            var isDAG = graph.IsDAG();
+            if (isDAG == false)
+            {
+                Errors.Add(new TaskSaveInputErrorDTO()
+                {
+                    Messages = PrecedenceIsCycleMessage
+                });
+            }
+
+            if (Errors.Count != 0)
+            {
+                throw new NotSuitableInputException(Errors);
+            }
+
+            return true;
 
         }
 
