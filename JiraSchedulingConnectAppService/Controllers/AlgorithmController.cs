@@ -54,6 +54,12 @@ namespace JiraSchedulingConnectAppService.Controllers
                 
                 return Ok(await algorithmService.EstimateWorkforce(projectId));
             }
+            catch (NotSuitableInputException ex)
+            {
+                _Logger.LogError(ex.Errors);
+                var response = new ResponseMessageDTO(ex.Errors);
+                return BadRequest(response);
+            }
             catch (Exception ex)
             {
                 _Logger.LogError(ex.Message);

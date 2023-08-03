@@ -27,7 +27,7 @@ namespace JiraSchedulingConnectAppService.Services
         
         
         public const string PrecedenceMissingTaskMessage = "Task Not Set Precedence!";
-        public const string PrecedenceIsCycleMessage = "Tasks be cycle!!!!";
+        public const string PrecedenceIsCycleMessage = "Tasks be cycle!";
         public const string RequiredSkillMissingTaskMessage = "Task Not Set Required SKill!";
 
         public const string ProjectNotFoundMessage = "Project Not Found!";
