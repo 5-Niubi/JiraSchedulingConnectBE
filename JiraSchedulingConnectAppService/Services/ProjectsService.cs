@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
-using UtilsLibrary;
 using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Projects;
+using UtilsLibrary;
 using UtilsLibrary.Exceptions;
-using Microsoft.CodeAnalysis;
-using Microsoft.AspNetCore.Authorization;
-using ModelLibrary.DTOs.Invalidation;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -98,12 +97,12 @@ namespace JiraSchedulingConnectAppService.Services
 
             await _authorizationService.AuthorizeAsync(httpContext.User, new ModelLibrary.DTOs.Algorithm.UserUsage()
             {
-                Plan = (int) planId,
+                Plan = (int)planId,
                 ProjectActiveUsage = ActivateProjectUsage
 
             }, "LimitedCreateProject");
 
-          
+
 
             var project = mapper.Map<ModelLibrary.DBModels.Project>(projectRequest);
             project.CloudId = cloudId;

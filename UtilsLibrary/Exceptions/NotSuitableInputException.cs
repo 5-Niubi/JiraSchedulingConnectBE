@@ -1,6 +1,4 @@
-﻿using static UtilsLibrary.Const;
-
-namespace UtilsLibrary.Exceptions
+﻿namespace UtilsLibrary.Exceptions
 {
     public class NotSuitableInputException : Exception
     {
@@ -21,10 +19,10 @@ namespace UtilsLibrary.Exceptions
 
         public NotSuitableInputException(string message) : base(message)
         {
-            
+
         }
 
-        
+
     }
 }
 

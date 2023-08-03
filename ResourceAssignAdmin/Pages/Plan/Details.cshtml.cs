@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
@@ -18,7 +14,7 @@ namespace ResourceAssignAdmin.Pages.Plan
             _context = context;
         }
 
-      public PlanSubscription PlanSubscription { get; set; } = default!; 
+        public PlanSubscription PlanSubscription { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -32,7 +28,7 @@ namespace ResourceAssignAdmin.Pages.Plan
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 PlanSubscription = plansubscription;
             }

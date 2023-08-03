@@ -24,11 +24,11 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
 
-		[HttpGet]
-		async public Task<IActionResult> GetMilestones(int projectId )
-		{
-			try
-			{
+        [HttpGet]
+        async public Task<IActionResult> GetMilestones(int projectId)
+        {
+            try
+            {
                 var response = await milestonesService.GetMilestones(projectId);
                 return Ok(response);
             }

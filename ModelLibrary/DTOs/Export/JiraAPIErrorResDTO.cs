@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ModelLibrary.DTOs.Export
+﻿namespace ModelLibrary.DTOs.Export
 {
     public class JiraAPIErrorResDTO
     {
@@ -14,8 +8,14 @@ namespace ModelLibrary.DTOs.Export
 
         public class Root
         {
-            public List<string> errorMessages { get; set; }
-            public Errors errors { get; set; }
+            public List<string> errorMessages
+            {
+                get; set;
+            }
+            public Errors errors
+            {
+                get; set;
+            }
         }
 
     }

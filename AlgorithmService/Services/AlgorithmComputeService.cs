@@ -1,12 +1,12 @@
-﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
+﻿using AlgorithmLibrary;
+using AlgorithmLibrary.GA;
+using AlgorithmServiceServer.DTOs.AlgorithmController;
 using AlgorithmServiceServer.Services.Interfaces;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
 using Newtonsoft.Json;
-using AlgorithmLibrary;
-using AlgorithmLibrary.GA;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
@@ -63,7 +63,7 @@ namespace AlgorithmServiceServer.Services
             inputTo.ObjectiveTime = parameterEntity.ObjectiveTime;
             inputTo.ObjectiveCost = parameterEntity.ObjectiveCost;
             inputTo.ObjectiveQuality = parameterEntity.ObjectiveQuality;
-            inputTo.BaseWorkingHours = projectFromDB?.BaseWorkingHour?? Const.DEFAULT_BASE_WORKING_HOUR;
+            inputTo.BaseWorkingHours = projectFromDB?.BaseWorkingHour ?? Const.DEFAULT_BASE_WORKING_HOUR;
             var converter = new AlgorithmConverter(inputTo, mapper);
 
             var outputToAlgorithm = converter.ToOR();

@@ -34,7 +34,8 @@ namespace AlgorithmLibrary.GA
                 }
 
 
-                if (taskWorkers.Count == 0) throw new NoSuitableWorkerException("No Suitable Worker Was Found!");
+                if (taskWorkers.Count == 0)
+                    throw new NoSuitableWorkerException("No Suitable Worker Was Found!");
                 suitableWorkers.Add(taskWorkers);
             }
             return suitableWorkers;

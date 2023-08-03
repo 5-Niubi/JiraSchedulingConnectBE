@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using ModelLibrary;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Permission;
-using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -23,7 +22,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             this._Logger = logger;
             this.permissionService = permissionService;
-            
+
 
         }
 
@@ -43,7 +42,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-       
+
 
     }
 }

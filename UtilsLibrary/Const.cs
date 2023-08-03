@@ -50,7 +50,7 @@
             public const string ERROR = "error";
         }
 
-        public static class  SUBSCRIPTION 
+        public static class SUBSCRIPTION
         {
             public const int PLAN_FREE = 1;
             public const int PLAN_PLUS = 2;

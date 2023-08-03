@@ -2,6 +2,9 @@
 {
     public class JiraAPICreateIssueTypeSchemeResDTO
     {
-        public string? IssueTypeSchemeId { get; set; }
+        public string? IssueTypeSchemeId
+        {
+            get; set;
+        }
     }
 }

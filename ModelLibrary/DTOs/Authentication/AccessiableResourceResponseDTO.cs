@@ -2,11 +2,26 @@
 {
     public class AccessiableResourceResponseDTO
     {
-        public string id { get; set; }
-        public string name { get; set; }
-        public string url { get; set; }
-        public string[] scopes { get; set; }
-        public string avatarUrl { get; set; }
+        public string id
+        {
+            get; set;
+        }
+        public string name
+        {
+            get; set;
+        }
+        public string url
+        {
+            get; set;
+        }
+        public string[] scopes
+        {
+            get; set;
+        }
+        public string avatarUrl
+        {
+            get; set;
+        }
 
         /*
           "id": "1324a887-45db-1bf4-1e99-ef0ff456d421",

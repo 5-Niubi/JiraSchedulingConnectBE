@@ -2,8 +2,14 @@
 {
     public class SkillRequiredRequestDTO
     {
-        public int SkillId { get; set; }
-        public int Level { get; set; }
+        public int SkillId
+        {
+            get; set;
+        }
+        public int Level
+        {
+            get; set;
+        }
     }
 }
 

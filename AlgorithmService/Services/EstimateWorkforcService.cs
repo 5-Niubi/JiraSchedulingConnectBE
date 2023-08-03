@@ -1,10 +1,8 @@
-﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
+﻿using AlgorithmLibrary;
+using AlgorithmServiceServer.DTOs.AlgorithmController;
 using AlgorithmServiceServer.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
-using AlgorithmLibrary;
-using AlgorithmLibrary;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
@@ -172,16 +170,16 @@ namespace AlgorithmServiceServer.Services
                 List<int[]> result = Results[milestoneId];
                 overallResults.AddRange(result);
 
-                
+
             }
 
             // Post processing
             var estimatedResultDTO = new EstimatedResultDTO();
-            
+
             var newList = new List<WorkforceWithMilestoneDTO>() { };
             newList.Add(converter.FromEs(1, overallResults));
 
-            estimatedResultDTO.WorkforceWithMilestoneList= newList;
+            estimatedResultDTO.WorkforceWithMilestoneList = newList;
 
             return estimatedResultDTO;
 

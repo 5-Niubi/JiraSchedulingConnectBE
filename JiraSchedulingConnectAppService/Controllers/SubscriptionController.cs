@@ -20,7 +20,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             this._Logger = logger;
             this.subsService = subscService;
-            
+
         }
 
         [HttpGet]

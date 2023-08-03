@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using java.lang;
-using UtilsLibrary;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
@@ -12,11 +11,11 @@ using net.sf.mpxj.MpxjUtilities;
 using net.sf.mpxj.writer;
 using Newtonsoft.Json;
 using System.Dynamic;
+using System.Text.RegularExpressions;
+using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 using Duration = net.sf.mpxj.Duration;
 using Task = System.Threading.Tasks.Task;
-using System.Text.RegularExpressions;
-using static sun.security.provider.ConfigFile;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -758,7 +757,8 @@ namespace JiraSchedulingConnectAppService.Services
 
             foreach (var t in tasks)
             {
-                if (t.taskIdPrecedences.Count == 0) continue;
+                if (t.taskIdPrecedences.Count == 0)
+                    continue;
                 foreach (var pre in t.taskIdPrecedences)
                 {
                     taskDict[t.id].AddPredecessor(taskDict[pre], RelationType.FINISH_START, null);
@@ -793,10 +793,13 @@ namespace JiraSchedulingConnectAppService.Services
                     respone = await jiraAPI.Post(url, body);
                     break;
                 case "PUT":
-                    respone = await jiraAPI.Put(url, body); break;
+                    respone = await jiraAPI.Put(url, body);
+                    break;
                 case "DELETE":
-                    respone = await jiraAPI.Delete(url); break;
-                default: return "";
+                    respone = await jiraAPI.Delete(url);
+                    break;
+                default:
+                    return "";
             }
             return await respone.Content.ReadAsStringAsync();
         }

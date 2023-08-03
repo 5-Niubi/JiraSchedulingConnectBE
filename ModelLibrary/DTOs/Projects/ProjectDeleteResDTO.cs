@@ -2,6 +2,9 @@
 {
     public class ProjectDeleteResDTO
     {
-        public int id { get; set; }
+        public int id
+        {
+            get; set;
+        }
     }
 }

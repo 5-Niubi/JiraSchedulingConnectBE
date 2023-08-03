@@ -7,30 +7,60 @@ namespace AlgorithmLibrary.GA
         // --- Param ---
         public int Deadline;
         public int Budget;
-        public int numOfTask { get; set; }
-        public int numOfPeople { get; set; }
-        public int numOfSkill { get; set; }
+        public int numOfTask
+        {
+            get; set;
+        }
+        public int numOfPeople
+        {
+            get; set;
+        }
+        public int numOfSkill
+        {
+            get; set;
+        }
 
         // taskDuration
-        public int[] durationTime { get; set; }
+        public int[] durationTime
+        {
+            get; set;
+        }
 
         // taskAdjacency
-        public int[,] adjacency { get; set; }
+        public int[,] adjacency
+        {
+            get; set;
+        }
 
         // task similarity (Chua dung)
-        public double[,] Z { get; set; }
+        public double[,] Z
+        {
+            get; set;
+        }
 
         // task exper (taskSkillWithLevel)
-        public int[,] R { get; set; }
+        public int[,] R
+        {
+            get; set;
+        }
 
         // worker exper (workerSkillWithLevel)
-        public int[,] K { get; set; }
+        public int[,] K
+        {
+            get; set;
+        }
 
         // worker effort (workerEffort)
-        public double[,] U { get; set; }
+        public double[,] U
+        {
+            get; set;
+        }
 
         // workerSalary
-        public int[] salaryEachTime { get; set; }
+        public int[] salaryEachTime
+        {
+            get; set;
+        }
         // ------
 
         public List<List<int>> manAbleDo = new List<List<int>>();

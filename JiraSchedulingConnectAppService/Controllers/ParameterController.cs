@@ -22,7 +22,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             this._Logger = logger;
             this.parametersService = parametersService;
-            
+
 
         }
 
@@ -53,14 +53,16 @@ namespace JiraSchedulingConnectAppService.Controllers
                 return Ok(projectCreated);
             }
 
-            
-            catch(UnAuthorizedException ex) {
-                this._Logger.LogWarning( ex.Message);
+
+            catch (UnAuthorizedException ex)
+            {
+                this._Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return StatusCode(412, response);
             }
 
-            catch(NotSuitableInputException ex) {
+            catch (NotSuitableInputException ex)
+            {
                 this._Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);

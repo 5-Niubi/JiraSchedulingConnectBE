@@ -38,7 +38,8 @@
 
         public void Setup() // get the limit max of sumsalary , deadline , exper ;
         {
-            for (int w = 0; w < NumOfWorkers; ++w) MaxSalary = Math.Max(MaxSalary, WorkerSalary[w]);
+            for (int w = 0; w < NumOfWorkers; ++w)
+                MaxSalary = Math.Max(MaxSalary, WorkerSalary[w]);
             for (int t = 0; t < NumOfTasks; ++t)
             {
                 MaxDeadline += TaskDuration[t];
@@ -66,9 +67,12 @@
             this.weight2 = 1;
             this.weight3 = 1;
 
-            if (choice1) this.weight1 *= 20;
-            if (choice2) this.weight2 *= 20;
-            if (choice3) this.weight3 *= 20;
+            if (choice1)
+                this.weight1 *= 20;
+            if (choice2)
+                this.weight2 *= 20;
+            if (choice3)
+                this.weight3 *= 20;
         }
 
     }

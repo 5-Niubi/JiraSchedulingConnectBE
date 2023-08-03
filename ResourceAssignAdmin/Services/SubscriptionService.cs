@@ -1,6 +1,4 @@
-﻿using Braintree;
-using Humanizer;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
