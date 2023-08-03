@@ -455,9 +455,6 @@ namespace JiraSchedulingConnectAppService.Services
             var TaskSkillsRequiredsRequest = TasksSaveRequest.TaskSkillsRequireds;
 
 
-            
-            
-
             // TODO: all task setup on skill & precedence must exited on database
             // check all task setup precedence
             await _ValidateConfigTaskPrecedences(projectId, TaskPrecedenceTasksRequest);

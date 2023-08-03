@@ -57,6 +57,23 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateMileStone([FromBody] MilestoneDTO milestoneDTO)
+        {
+            try
+            {
+                var response = await milestonesService.UpdateMilestone(milestoneDTO);
+                return Ok(response);
+            }
+
+            catch (Exception ex)
+            {
+                this._Logger.LogError(ex.Message);
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
 
         [HttpDelete]
         async public Task<IActionResult> DeleteMilestone(int id)
