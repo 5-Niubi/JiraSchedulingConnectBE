@@ -163,6 +163,54 @@ namespace RcpspAlgorithmLibrary
 
 
         }
+
+        public void LoadDataV1(ModelLibrary.DBModels.Task[]? TaskList)
+        {
+            int[][] adjacencyMatrix = new int[TaskList.Length][]; // Boolean bin matrix
+
+
+            for (int i = 0; i < TaskList.Length; i++)
+            {
+
+                adjacencyMatrix[i] = new int[TaskList.Length];
+
+                for (int j = 0; j < TaskList.Length; j++)
+                {
+                    if (j != i)
+                    {
+                        adjacencyMatrix[i][j] = (TaskList[i]
+                        .TaskPrecedenceTasks.Where(e => e.PrecedenceId == TaskList[j].Id)
+                        .Count() > 0) ? 1 : 0;
+                    }
+                    else
+                    {
+                        adjacencyMatrix[i][j] = 0;
+                    }
+
+                }
+            }
+
+            NumberOfNode = TaskList.Length;
+
+
+            for (int i = 0; i < NumberOfNode; i++)
+            {
+                Graph.Add(new List<int>());
+            }
+
+
+            for (int i = 0; i < NumberOfNode; i++)
+            {
+                for (int j = 0; j < NumberOfNode; j++)
+                {
+                    if (adjacencyMatrix[j][i] == 1)
+                    {
+                        this.AddEdge(i, j);
+                    }
+                };
+
+            }
+        }
     }
 
 
