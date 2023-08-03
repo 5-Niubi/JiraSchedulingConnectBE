@@ -105,11 +105,10 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteWorkforce(string id)
+        public async Task<IActionResult> DeleteWorkforce(int id)
         {
             try
             {
-                var w = workforcesService.GetWorkforceById(id);
                 var response = await workforcesService.DeleteWorkforce(id);
                 return Ok(response);
             }

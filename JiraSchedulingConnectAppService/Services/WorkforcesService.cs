@@ -22,6 +22,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
         public const string WorkforceTypeNotValidMessage = "Workforce Type Is Not Validated!!!";
+        public const string WorkforceNotFoundMessage = "Workforce Is Not Found!!!";
 
         public const string EffortNotValidMessage = "Effort Is Not Validated!!!";
         public const string EffortElementNotValidMessage = "Effort must only have 7 elements!!!";
@@ -64,7 +65,7 @@ namespace JiraSchedulingConnectAppService.Services
             var cloudId = jwt.GetCurrentCloudId();
 
             var results = await db.Workforces
-            .Where(s => s.CloudId == cloudId)
+            .Where(s => s.CloudId == cloudId && s.IsDelete == false)
             .Select(s => new WorkforceViewDTOResponse(){
                 Id = s.Id,
                 Name = s.Name }) // Projection into an anonymous type
@@ -352,26 +353,21 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        public async Task<WorkforceDTOResponse> DeleteWorkforce(string? workforce_id)
+        public async Task<bool> DeleteWorkforce(int workforce_id)
         {
-            try
-            {
-                var workforce = await db.Workforces.SingleOrDefaultAsync(x => x.Id.ToString() == workforce_id);
-                if (workforce == null)
-                {
-                    return null;
-                }
-                workforce.IsDelete = Const.DELETE_STATE.DELETE;
-                workforce.DeleteDatetime = DateTime.Now;
-                var workforceEntity = db.Workforces.Update(workforce);
-                await db.SaveChangesAsync();
-                var workforceResponse = mapper.Map<WorkforceDTOResponse>(workforceEntity.Entity);
-                return workforceResponse;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
+            // validate exited workforce
+            var workforceDB = db.Workforces.Include(s => s.WorkforceSkills).FirstOrDefault(s => s.Id == workforce_id & s.CloudId == s.CloudId) ??
+                throw new NotFoundException($"Can not find workforce:{workforce_id}");
+
+            workforceDB.IsDelete = Const.DELETE_STATE.DELETE;
+            workforceDB.DeleteDatetime = DateTime.Now;
+            var workforceEntity = db.Workforces.Update(workforceDB);
+            await db.SaveChangesAsync();
+            return true;
+
         }
 
 
@@ -384,7 +380,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             // validate exited workforce
             var workforceDB = db.Workforces.Include(s => s.WorkforceSkills).FirstOrDefault(s => s.Id == workforceRequest.Id & s.CloudId == s.CloudId) ??
-                throw new NotFoundException($"Can not find project :{workforceRequest.Id}");
+                throw new NotFoundException($"Can not find workforce :{workforceRequest.Id}");
 
             await _ValidateUpdatedWorkforceProperties(workforceRequest);
       
