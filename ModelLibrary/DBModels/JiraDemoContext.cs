@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ModelLibrary.DBModels
 {
@@ -637,6 +640,10 @@ namespace ModelLibrary.DBModels
                 entity.Property(e => e.DeleteDatetime)
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(500)
+                    .HasColumnName("description");
 
                 entity.Property(e => e.IsDelete)
                     .HasColumnName("is_delete")
