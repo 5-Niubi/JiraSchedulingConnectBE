@@ -114,7 +114,7 @@ namespace JiraSchedulingConnectAppService.Services
             if (Errors.Count != 0)
             {
                  
-                throw new NotSuitableInputException(new ParamsErrorWithRecommendDTO()
+                throw new UnAuthorizedException(new ParamsErrorWithRecommendDTO()
                 {
                     RecomendWorkforces = recommendResults,
                     TaskSkillRequiredError = Errors
