@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using Newtonsoft.Json;
 
@@ -16,7 +15,10 @@ namespace ResourceAssignAdmin.Pages.Authentication
         }
 
         [BindProperty]
-        public AdminAccount AdminAccount { get; set; }
+        public AdminAccount AdminAccount
+        {
+            get; set;
+        }
 
         public void OnGet()
         {

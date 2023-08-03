@@ -14,7 +14,8 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly IMapper mapper;
 
         public SubscriptionService(JiraDemoContext db,
-            IHttpContextAccessor httpAccess, IMapper mapper) {
+            IHttpContextAccessor httpAccess, IMapper mapper)
+        {
             this.db = db;
             http = httpAccess.HttpContext;
             this.mapper = mapper;

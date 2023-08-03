@@ -1,7 +1,4 @@
-﻿using System;
-using System.Security.Claims;
-using AutoMapper;
-using HeimGuard;
+﻿using HeimGuard;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 
@@ -9,8 +6,14 @@ namespace JiraSchedulingConnectAppService.Services
 {
     public class Permission
     {
-        public string Name { get; set; }
-        public List<string> Roles { get; set; }
+        public string Name
+        {
+            get; set;
+        }
+        public List<string> Roles
+        {
+            get; set;
+        }
     }
 
     public class UserPolicyHandler : IUserPolicyHandler
@@ -18,7 +21,7 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly JiraDemoContext db;
         private readonly HttpContext? httpContext;
 
-        public UserPolicyHandler( JiraDemoContext dbContext, IHttpContextAccessor httpContextAccessor)
+        public UserPolicyHandler(JiraDemoContext dbContext, IHttpContextAccessor httpContextAccessor)
         {
             this.db = dbContext;
             this.httpContext = httpContextAccessor.HttpContext;
@@ -37,12 +40,12 @@ namespace JiraSchedulingConnectAppService.Services
 
             // this gets their permissions based on their roles. in this example, it's just using a static list
             var permissions = await db.PlanPermissions
-                .Where( p => p.PlanSubscriptionId == subscription.PlanId && p.IsDelete == false).Select(pr => pr.Permission).ToArrayAsync();
+                .Where(p => p.PlanSubscriptionId == subscription.PlanId && p.IsDelete == false).Select(pr => pr.Permission).ToArrayAsync();
 
             return await System.Threading.Tasks.Task.FromResult(permissions.Distinct());
         }
 
-        
-	}
+
+    }
 }
 

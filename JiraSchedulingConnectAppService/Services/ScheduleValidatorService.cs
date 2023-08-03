@@ -1,10 +1,6 @@
-﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
-using JiraSchedulingConnectAppService.Services;
-using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.PertSchedule;
-using AlgorithmLibrary;
 using RcpspAlgorithmLibrary;
 
 namespace AlgorithmServiceServer.Services.Interfaces

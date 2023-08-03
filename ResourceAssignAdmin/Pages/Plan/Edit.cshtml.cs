@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 
@@ -29,7 +24,7 @@ namespace ResourceAssignAdmin.Pages.Plan
                 return NotFound();
             }
 
-            var plansubscription =  await _context.PlanSubscriptions.FirstOrDefaultAsync(m => m.Id == id);
+            var plansubscription = await _context.PlanSubscriptions.FirstOrDefaultAsync(m => m.Id == id);
             if (plansubscription == null)
             {
                 return NotFound();
@@ -70,7 +65,7 @@ namespace ResourceAssignAdmin.Pages.Plan
 
         private bool PlanSubscriptionExists(int id)
         {
-          return (_context.PlanSubscriptions?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.PlanSubscriptions?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    
+
     public class AlgorithmController : ControllerBase
     {
         private readonly IAlgorithmService algorithmService;
@@ -23,7 +23,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
         [HttpGet]
-        
+
         public async Task<IActionResult> ExecuteAlgorithm(int parameterId)
         {
             try
@@ -51,7 +51,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             try
 
             {
-                
+
                 return Ok(await algorithmService.EstimateWorkforce(projectId));
             }
             catch (NotSuitableInputException ex)

@@ -1,9 +1,9 @@
-﻿using UtilsLibrary;
-using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services

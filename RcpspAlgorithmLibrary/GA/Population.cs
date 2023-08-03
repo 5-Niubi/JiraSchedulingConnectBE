@@ -26,8 +26,10 @@
             Array.Sort(chromosomes, (chromosome1, chromosome2) =>
             {
                 int flag = 0;
-                if (chromosome1.GetFitness(data) < chromosome2.GetFitness(data)) flag = -1;
-                if (chromosome1.GetFitness(data) > chromosome2.GetFitness(data)) flag = 1;
+                if (chromosome1.GetFitness(data) < chromosome2.GetFitness(data))
+                    flag = -1;
+                if (chromosome1.GetFitness(data) > chromosome2.GetFitness(data))
+                    flag = 1;
                 return flag;
             });
         }

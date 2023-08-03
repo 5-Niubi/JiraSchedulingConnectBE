@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
-using UtilsLibrary;
 using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Projects;
+using UtilsLibrary;
 using UtilsLibrary.Exceptions;
-using Microsoft.CodeAnalysis;
-using Microsoft.AspNetCore.Authorization;
-using ModelLibrary.DTOs.Invalidation;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -98,12 +97,12 @@ namespace JiraSchedulingConnectAppService.Services
 
             await _authorizationService.AuthorizeAsync(httpContext.User, new ModelLibrary.DTOs.Algorithm.UserUsage()
             {
-                Plan = (int) planId,
+                Plan = (int)planId,
                 ProjectActiveUsage = ActivateProjectUsage
 
             }, "LimitedCreateProject");
 
-          
+
 
             var project = mapper.Map<ModelLibrary.DBModels.Project>(projectRequest);
             project.CloudId = cloudId;
@@ -159,6 +158,7 @@ namespace JiraSchedulingConnectAppService.Services
             projectInDB.BudgetUnit = projectUpdate.BudgetUnit;
             projectInDB.StartDate = projectUpdate.StartDate;
             projectInDB.ImageAvatar = projectUpdate.ImageAvatar;
+            projectInDB.BaseWorkingHour = projectUpdate.BaseWorkingHour;
             projectInDB.ObjectiveCost = projectUpdate.ObjectiveCost;
             projectInDB.ObjectiveQuality = projectUpdate.ObjectiveQuality;
             projectInDB.ObjectiveTime = projectUpdate.ObjectiveTime;
@@ -181,10 +181,13 @@ namespace JiraSchedulingConnectAppService.Services
             if (!Utils.IsUpperFirstLetter(projectRequest.Name))
                 throw new Exception(Const.MESSAGE.PROJECT_NAME_UPPER_1ST_CHAR);
             if (projectRequest.BaseWorkingHour > 24
-                || projectRequest.BaseWorkingHour <= 0
-                )
+                || projectRequest.BaseWorkingHour <= 0)
             {
                 throw new Exception(Const.MESSAGE.PROJECT_WORKING_HOUR_ERR);
+            }
+            if (projectRequest.Budget < 0)
+            {
+                throw new Exception(Const.MESSAGE.PROJECT_BUDGET_ERR);
             }
 
             return projectRequest;

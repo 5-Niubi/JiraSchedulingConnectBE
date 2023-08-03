@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using ModelLibrary.DBModels;
 
 namespace ResourceAssignAdmin.Pages.Plan
@@ -25,12 +20,12 @@ namespace ResourceAssignAdmin.Pages.Plan
 
         [BindProperty]
         public PlanSubscription PlanSubscription { get; set; } = default!;
-        
+
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.PlanSubscriptions == null || PlanSubscription == null)
+            if (!ModelState.IsValid || _context.PlanSubscriptions == null || PlanSubscription == null)
             {
                 return Page();
             }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using ModelLibrary.DBModels;
 
 namespace ResourceAssignAdmin.Pages.Subscription
 {
@@ -18,7 +13,7 @@ namespace ResourceAssignAdmin.Pages.Subscription
             _context = context;
         }
 
-      public ModelLibrary.DBModels.Subscription Subscription { get; set; } = default!; 
+        public ModelLibrary.DBModels.Subscription Subscription { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -32,7 +27,7 @@ namespace ResourceAssignAdmin.Pages.Subscription
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 Subscription = subscription;
             }

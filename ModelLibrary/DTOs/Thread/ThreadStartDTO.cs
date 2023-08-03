@@ -2,8 +2,14 @@
 {
     public class ThreadStartDTO
     {
-        public string? ThreadId { get; set; }
-        public string? ThreadName { get; set; }
+        public string? ThreadId
+        {
+            get; set;
+        }
+        public string? ThreadName
+        {
+            get; set;
+        }
 
         public ThreadStartDTO(string threadId)
         {

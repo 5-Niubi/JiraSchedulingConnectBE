@@ -1,5 +1,4 @@
 using AlgorithmServiceServer.Services.Interfaces;
-using HeimGuard;
 using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Authorization;
 using JiraSchedulingConnectAppService.Services.Interfaces;
@@ -35,7 +34,7 @@ try
         {
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidateLifetime = true,
+            ValidateLifetime = false, // Token is immortal
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
@@ -89,12 +88,12 @@ try
         options =>
         {
             options.AddPolicy(
-                "LimitedScheduleTimeByMonth",  policy => policy.Requirements.Add(new ScheduleLimitRequirement(3)));
+                "LimitedScheduleTimeByMonth", policy => policy.Requirements.Add(new ScheduleLimitRequirement(3)));
             options.AddPolicy(
                 "LimitedCreateProject", policy => policy.Requirements.Add(new ProjectLimitRequirement(1)));
         });
 
-    
+
 
     var app = builder.Build();
 
@@ -108,7 +107,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
-    
+
     //app.MapRazorPages();
     // Custom Config:
     app.UseCors(opt => opt.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());

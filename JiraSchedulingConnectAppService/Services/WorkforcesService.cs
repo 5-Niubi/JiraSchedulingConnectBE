@@ -1,19 +1,13 @@
 ﻿using AutoMapper;
-using UtilsLibrary;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Invalidation;
 using ModelLibrary.DTOs.Parameters;
-using Newtonsoft.Json;
-using UtilsLibrary.Exceptions;
-using jdk.nashorn.tools;
 using ModelLibrary.DTOs.Skills;
-using org.apache.commons.math3.geometry.spherical.oned;
-using static ModelLibrary.DTOs.Export.JiraAPICreateBulkTaskResDTO;
-using com.sun.org.apache.bcel.@internal.generic;
-using System.Linq;
+using UtilsLibrary;
+using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -44,7 +38,7 @@ namespace JiraSchedulingConnectAppService.Services
         }
         public async Task<List<WorkforceDTOResponse>> GetAllWorkforces(List<int>? Ids)
         {
-           
+
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
@@ -54,25 +48,27 @@ namespace JiraSchedulingConnectAppService.Services
 
             var queryDTOResponse = mapper.Map<List<WorkforceDTOResponse>>(query);
             return queryDTOResponse;
-           
-            
+
+
         }
 
         public async Task<List<WorkforceViewDTOResponse>> GetWorkforceScheduleByProject()
         {
-           
+
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
             var results = await db.Workforces
             .Where(s => s.CloudId == cloudId && s.IsDelete == false)
-            .Select(s => new WorkforceViewDTOResponse(){
+            .Select(s => new WorkforceViewDTOResponse()
+            {
                 Id = s.Id,
-                Name = s.Name }) // Projection into an anonymous type
+                Name = s.Name
+            }) // Projection into an anonymous type
             .ToListAsync();
 
             return results;
-           
+
         }
 
 
@@ -160,7 +156,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             }
 
-            if (EffortErrors.Count != 0 )
+            if (EffortErrors.Count != 0)
             {
                 throw new NotSuitableInputException(
                     EffortErrors
@@ -178,24 +174,24 @@ namespace JiraSchedulingConnectAppService.Services
             var SkillErrors = new List<SkillRequestErrorDTO>();
 
             var newSkills = WorkforceRequest.NewSkills;
-            var newSkillNames = await db.Skills.Where(s => newSkills.Select(sk => sk.Name).Contains(s.Name)  && s.CloudId == cloudId && s.IsDelete == false).ToArrayAsync();
+            var newSkillNames = await db.Skills.Where(s => newSkills.Select(sk => sk.Name).Contains(s.Name) && s.CloudId == cloudId && s.IsDelete == false).ToArrayAsync();
 
-            if(newSkillNames.Count() != 0)
+            if (newSkillNames.Count() != 0)
             {
                 foreach (var newSkill in newSkillNames)
                 {
 
-                    
+
                     SkillErrors.Add(
                         new SkillRequestErrorDTO
                         {
                             Messages = $"Skill name '{newSkill.Name}' is duplicated."
                         });
-                    
+
                 }
 
             }
-            
+
 
             if (SkillErrors.Count != 0)
             {
@@ -226,20 +222,20 @@ namespace JiraSchedulingConnectAppService.Services
             // validate skills
             await _ValidateWorkforceSkills(workforceRequest);
 
-         
+
             // Insert new skill to database
             var newSkills = await _insertSkills(workforceRequest.NewSkills);
 
             // mapping added new skill -> input skill workforce into workforce input
-            for (int i = 0; i < newSkills.Count; i++ )
+            for (int i = 0; i < newSkills.Count; i++)
             {
-                
+
                 workforceRequest.Skills.Add(new SkillRequestDTO
                 {
                     SkillId = newSkills[i].Id,
                     Level = workforceRequest.NewSkills[i].Level,
 
-            });
+                });
             }
 
 
@@ -271,18 +267,18 @@ namespace JiraSchedulingConnectAppService.Services
             // working type in [0 or 1]
             var ValidatedWorkingTypes = new List<int> { 0, 1 };
 
-            if (!ValidatedWorkingTypes.Contains((int) workforceRequest.WorkingType))
+            if (!ValidatedWorkingTypes.Contains((int)workforceRequest.WorkingType))
             {
                 throw new NotSuitableInputException(
                     new WorkforceInputErrorDTO()
                     {
                         Messages = WorkforceTypeNotValidMessage
                     }
-                    ) ;
+                    );
 
 
             }
-            
+
         }
 
 
@@ -297,8 +293,8 @@ namespace JiraSchedulingConnectAppService.Services
 
             // working type in [0 or 1]
             var ValidatedWorkingTypes = new List<int> { 0, 1 };
-            
-            if (workforceRequest.WorkingType != null &&  !ValidatedWorkingTypes.Contains((int)workforceRequest.WorkingType))
+
+            if (workforceRequest.WorkingType != null && !ValidatedWorkingTypes.Contains((int)workforceRequest.WorkingType))
             {
                 throw new NotSuitableInputException(
                     new WorkforceInputErrorDTO()
@@ -333,7 +329,7 @@ namespace JiraSchedulingConnectAppService.Services
             await db.SaveChangesAsync();
 
 
-            var reponse = mapper.Map <List<NewSkillResponeDTO>>(newSkills);
+            var reponse = mapper.Map<List<NewSkillResponeDTO>>(newSkills);
             return reponse;
 
         }
@@ -342,9 +338,9 @@ namespace JiraSchedulingConnectAppService.Services
         {
             try
             {
-                var workforce = await db.Workforces.Include(s=>s.WorkforceSkills).ThenInclude(s=>s.Skill).Where(e => e.Id.ToString() == workforce_id).FirstOrDefaultAsync();
+                var workforce = await db.Workforces.Include(s => s.WorkforceSkills).ThenInclude(s => s.Skill).Where(e => e.Id.ToString() == workforce_id).FirstOrDefaultAsync();
                 var workforceResponse = mapper.Map<WorkforceDTOResponse>(workforce);
-                
+
                 return workforceResponse;
             }
             catch (Exception e)
@@ -371,10 +367,10 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
-      
+
         public async Task<WorkforceDTOResponse> UpdateWorkforce(WorkforceRequestDTO workforceRequest)
         {
-            
+
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
@@ -383,7 +379,7 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new NotFoundException($"Can not find workforce :{workforceRequest.Id}");
 
             await _ValidateUpdatedWorkforceProperties(workforceRequest);
-      
+
 
             //validate new skills
             await _ValidateNewSkill(workforceRequest);
@@ -426,13 +422,13 @@ namespace JiraSchedulingConnectAppService.Services
 
             workforceDB.WorkforceSkills = mapper.Map<List<WorkforceSkill>>(workforceRequest.Skills);
             // Update 
-            var entity  =  db.Workforces.Update(workforceDB);
+            var entity = db.Workforces.Update(workforceDB);
             await db.SaveChangesAsync();
 
             // mapping reponse
             var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(entity.Entity);
             return workforceDTOResponse;
-           
+
         }
 
         private async System.Threading.Tasks.Task _ClearSkillsWorkforce(int workforceId)

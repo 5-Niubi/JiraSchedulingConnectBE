@@ -14,7 +14,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         private IWorkforcesService workforcesService;
         private readonly ModelLibrary.ILoggerManager _Logger;
         public WorkforcesController(IWorkforcesService workforcesService, ModelLibrary.ILoggerManager logger)
-            
+
         {
 
             this._Logger = logger;

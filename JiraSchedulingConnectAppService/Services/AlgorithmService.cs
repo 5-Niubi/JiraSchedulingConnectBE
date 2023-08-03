@@ -1,19 +1,14 @@
 ﻿using AlgorithmServiceServer;
-using UtilsLibrary;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using ModelLibrary.DBModels;
-using ModelLibrary.DTOs.Thread;
-using System.Dynamic;
-using UtilsLibrary.Exceptions;
-using ModelLibrary.DTOs;
-using org.sqlite.core;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Invalidation;
-using ModelLibrary.DTOs.PertSchedule;
+using ModelLibrary.DTOs.Thread;
 using RcpspAlgorithmLibrary;
+using System.Dynamic;
+using UtilsLibrary;
+using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -71,7 +66,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<int> GetScheduleMonthlyUsage()
         {
-         
+
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
@@ -87,13 +82,13 @@ namespace JiraSchedulingConnectAppService.Services
 
 
             return MonthlyUsage;
-        
-            
+
+
         }
 
 
 
-        public   ThreadStartDTO ExecuteAlgorithm(int parameterId)
+        public ThreadStartDTO ExecuteAlgorithm(int parameterId)
         {
 
             string threadId = ThreadService.CreateThreadId();
@@ -153,7 +148,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<EstimatedResultDTO> EstimateWorkforce(int projectId)
         {
-            
+
 
             try
             {
@@ -187,17 +182,17 @@ namespace JiraSchedulingConnectAppService.Services
                 return responseContent;
 
             }
-            catch(MicroServiceAPIException ex)
+            catch (MicroServiceAPIException ex)
             {
                 throw new Exception(ex.mircoserviceResponse);
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
 
-            
+
 
 
 

@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using ResourceAssignAdmin.Common;
-using System.Security.Principal;
 using UtilsLibrary;
 
 namespace ResourceAssignAdmin.Filter

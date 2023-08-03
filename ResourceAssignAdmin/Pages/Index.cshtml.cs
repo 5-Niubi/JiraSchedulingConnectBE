@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using Newtonsoft.Json;
-using NuGet.Common;
 using UtilsLibrary;
 
 namespace ResourceAssignAdmin.Pages
@@ -37,7 +36,11 @@ namespace ResourceAssignAdmin.Pages
                                   where user.CreateDatetime.Value.Year == DateTime.Now.Year
                                   group user by user.CreateDatetime.Value.Month into userJoinMonth
                                   orderby userJoinMonth.Key ascending
-                                  select new { Month = userJoinMonth.Key, Users = userJoinMonth.Select(u => u.Id).Count() }
+                                  select new
+                                  {
+                                      Month = userJoinMonth.Key,
+                                      Users = userJoinMonth.Select(u => u.Id).Count()
+                                  }
                                   ).ToDictionary(e => e.Month, e => e.Users);
             var listUserIn12Months = new List<int>();
             for (var i = 1; i <= 12; i++)
@@ -55,7 +58,11 @@ namespace ResourceAssignAdmin.Pages
                                         && subs.CancelAt == null
                                      group subs by subs.CreateDatetime.Value.Month into userJoinMonth
                                      orderby userJoinMonth.Key ascending
-                                     select new { Month = userJoinMonth.Key, Users = userJoinMonth.Select(u => u.Id).Count() }
+                                     select new
+                                     {
+                                         Month = userJoinMonth.Key,
+                                         Users = userJoinMonth.Select(u => u.Id).Count()
+                                     }
                                   ).ToDictionary(e => e.Month, e => e.Users);
 
             var listUserPreIn12Months = new List<int>();
@@ -75,10 +82,15 @@ namespace ResourceAssignAdmin.Pages
             joinDate.ForEach(e => orderyearsList.Add(e.CreateDatetime.Value.Year));
 
             var newJoinUser = (from token in _context.AtlassianTokens
-                              join sub in _context.Subscriptions on token.Id equals sub.AtlassianTokenId
-                              join plan in _context.PlanSubscriptions on sub.PlanId equals plan.Id
-                              where sub.CancelAt == null
-                              select new {token.UserToken, token.CreateDatetime, plan.Name}).Take(10).ToList();
+                               join sub in _context.Subscriptions on token.Id equals sub.AtlassianTokenId
+                               join plan in _context.PlanSubscriptions on sub.PlanId equals plan.Id
+                               where sub.CancelAt == null
+                               select new
+                               {
+                                   token.UserToken,
+                                   token.CreateDatetime,
+                                   plan.Name
+                               }).Take(10).ToList();
 
             ViewData["TopNew10User"] = newJoinUser;
             ViewData["YearSelection"] = orderyearsList;

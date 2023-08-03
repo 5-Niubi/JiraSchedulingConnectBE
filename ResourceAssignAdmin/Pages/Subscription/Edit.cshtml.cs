@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ModelLibrary.DBModels;
-using UtilsLibrary;
 
 namespace ResourceAssignAdmin.Pages.Subscription
 {
@@ -87,7 +80,7 @@ namespace ResourceAssignAdmin.Pages.Subscription
                 updateSubscription.CurrentPeriodStart = Subscription.CurrentPeriodStart;
                 updateSubscription.CurrentPeriodEnd = Subscription.CurrentPeriodEnd;
                 _context.Subscriptions.Update(updateSubscription);
-           
+
                 await _context.SaveChangesAsync();
                 await _context.Database.CommitTransactionAsync();
             }

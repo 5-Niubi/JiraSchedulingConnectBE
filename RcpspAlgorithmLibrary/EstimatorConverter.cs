@@ -8,11 +8,23 @@ namespace AlgorithmLibrary
     public class EstimatorConverter
     {
 
-        public int NumOfTasks { get; private set; }
-        public int NumOfSkills { get; private set; }
+        public int NumOfTasks
+        {
+            get; private set;
+        }
+        public int NumOfSkills
+        {
+            get; private set;
+        }
 
-        public List<ModelLibrary.DBModels.Task> TaskList { get; private set; }
-        public List<Skill> SkillList { get; private set; }
+        public List<ModelLibrary.DBModels.Task> TaskList
+        {
+            get; private set;
+        }
+        public List<Skill> SkillList
+        {
+            get; private set;
+        }
 
         public EstimatorConverter(InputToEstimatorDTO InputToEstimator)
         {

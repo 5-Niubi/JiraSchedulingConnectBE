@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using AutoMapper;
+﻿using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -100,7 +99,7 @@ namespace JiraSchedulingConnectAppService.Services
 
                 }
 
-               
+
 
             }
 
@@ -163,11 +162,11 @@ namespace JiraSchedulingConnectAppService.Services
                         {
                             _TaskQueue.Remove(task);
                         }
-                        
+
 
                     }
 
-                  
+
 
 
                 }
@@ -194,19 +193,19 @@ namespace JiraSchedulingConnectAppService.Services
                     var SkillDTORes = new List<SkillDTOResponse>();
 
                     var Skills = await db.Skills
-                       
-                        .Where(t => t.TasksSkillsRequireds.Select( s => s.SkillId).Contains(t.Id)).ToListAsync();
+
+                        .Where(t => t.TasksSkillsRequireds.Select(s => s.SkillId).Contains(t.Id)).ToListAsync();
 
                     foreach (var skill in task.TasksSkillsRequireds)
                     {
                         SkillDTORes.Add(new SkillDTOResponse()
                         {
                             Id = skill.SkillId,
-                            Name = Skills.Where(s => s.Id == skill.SkillId).Select( s=> s.Name).FirstOrDefault(),
+                            Name = Skills.Where(s => s.Id == skill.SkillId).Select(s => s.Name).FirstOrDefault(),
                             Level = skill.Level
                         });
                     }
-            
+
                     RecomendWorkforceTaskParamsList.Add(
                      new RecomendWorkforceTaskParams()
                      {
@@ -220,9 +219,9 @@ namespace JiraSchedulingConnectAppService.Services
                          {
                              Name = "anonymous",
                              Skills = SkillDTORes
-                             
+
                          }
-                     }); 
+                     });
                 }
             }
 
@@ -252,7 +251,7 @@ namespace JiraSchedulingConnectAppService.Services
                 //QUERY WORKFORCE IN PARAMETER TABLE WITH PROJECT ID
                 var parameter_resources = (project_id == null) ? null : await db.Workforces.Include(s => s.ParameterResources).ThenInclude(s => s.Parameter)
                     .Where(p => p.ParameterResources.Any(x => x.Parameter.ProjectId.ToString().Equals(project_id))).ToListAsync();
-                var queryDTOResponse = parameter_resources.Select(s=> new WorkforceViewDTOResponse
+                var queryDTOResponse = parameter_resources.Select(s => new WorkforceViewDTOResponse
                 {
                     Id = s.Id,
                     Name = s.Name

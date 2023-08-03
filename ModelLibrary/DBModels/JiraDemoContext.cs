@@ -641,6 +641,10 @@ namespace ModelLibrary.DBModels
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
+                entity.Property(e => e.Description)
+                    .HasMaxLength(500)
+                    .HasColumnName("description");
+
                 entity.Property(e => e.IsDelete)
                     .HasColumnName("is_delete")
                     .HasDefaultValueSql("((0))");

@@ -1,24 +1,22 @@
-﻿using System;
-using System.Net;
-using JiraSchedulingConnectAppService.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using ModelLibrary.DTOs.Algorithm;
-using ModelLibrary.DTOs.Invalidation;
-using ModelLibrary.DTOs.Parameters;
 using UtilsLibrary.Exceptions;
 using static UtilsLibrary.Const;
 
 namespace JiraSchedulingConnectAppService.Services.Authorization
 {
-	public class ProjectLimitRequirement : IAuthorizationRequirement
+    public class ProjectLimitRequirement : IAuthorizationRequirement
     {
-        public int maxLimit { get; set; }
+        public int maxLimit
+        {
+            get; set;
+        }
         public ProjectLimitRequirement(int maxLimit)
-		{
+        {
             this.maxLimit = maxLimit;
 
         }
-	}
+    }
 
 
     public class ProjectLimitHandler : AuthorizationHandler<ProjectLimitRequirement, UserUsage>
@@ -29,10 +27,10 @@ namespace JiraSchedulingConnectAppService.Services.Authorization
 
 
 
-        public ProjectLimitHandler( IHttpContextAccessor httpContextAccessor)
+        public ProjectLimitHandler(IHttpContextAccessor httpContextAccessor)
         {
             httpContext = httpContextAccessor.HttpContext;
-         
+
         }
 
         protected override System.Threading.Tasks.Task HandleRequirementAsync(
@@ -56,16 +54,16 @@ namespace JiraSchedulingConnectAppService.Services.Authorization
             else
             {
                 throw new UnAuthorizedException($"You have create {resource.ProjectActiveUsage}. With Free Plan Only can create maximum {requirement.maxLimit} new project");
-             
+
             }
 
-            
-            
+
+
             return System.Threading.Tasks.Task.CompletedTask;
 
         }
 
-       
+
     }
 
 }

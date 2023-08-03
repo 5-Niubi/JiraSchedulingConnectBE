@@ -1,10 +1,8 @@
-﻿using JiraSchedulingConnectAppService.Services;
-using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Algorithm;
-using ModelLibrary.DTOs.Milestones;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -72,23 +70,23 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-		[HttpPost]
-		public async Task<IActionResult> CreateSolution([FromBody] ScheduleRequestDTO scheduleRequestDTO)
-		{
-			try
-			{
-				var response = await scheduleService.SaveScheduleSolution(scheduleRequestDTO);
-				return Ok(response);
-			}
+        [HttpPost]
+        public async Task<IActionResult> CreateSolution([FromBody] ScheduleRequestDTO scheduleRequestDTO)
+        {
+            try
+            {
+                var response = await scheduleService.SaveScheduleSolution(scheduleRequestDTO);
+                return Ok(response);
+            }
 
-			catch (Exception ex)
-			{
-				this._Logger.LogError(ex.Message);
+            catch (Exception ex)
+            {
+                this._Logger.LogError(ex.Message);
 
-				var response = new ResponseMessageDTO(ex.Message);
-				return BadRequest(response);
-			}
-		}
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
 
-	}
+    }
 }

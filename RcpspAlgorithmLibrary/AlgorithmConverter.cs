@@ -4,7 +4,6 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
 using System.Text.Json;
-using UtilsLibrary;
 
 namespace AlgorithmLibrary
 {
@@ -12,21 +11,65 @@ namespace AlgorithmLibrary
     {
         private readonly IMapper mapper;
 
-        public DateTime StartDate { get; private set; }
-        public int Deadline { get; private set; }
-        public int Budget { get; private set; }
+        public DateTime StartDate
+        {
+            get; private set;
+        }
+        public int Deadline
+        {
+            get; private set;
+        }
+        public int Budget
+        {
+            get; private set;
+        }
 
-        public int NumOfTasks { get; private set; }
-        public int NumOfWorkers { get; private set; }
-        public int NumOfSkills { get; private set; }
-        public int NumOfEquipments { get; private set; }
-        public int NumOfFunctions { get; private set; }
+        public int NumOfTasks
+        {
+            get; private set;
+        }
+        public int NumOfWorkers
+        {
+            get; private set;
+        }
+        public int NumOfSkills
+        {
+            get; private set;
+        }
+        public int NumOfEquipments
+        {
+            get; private set;
+        }
+        public int NumOfFunctions
+        {
+            get; private set;
+        }
 
-        public List<ModelLibrary.DBModels.Task> TaskList { get; private set; }
-        public List<Workforce> WorkerList { get; private set; }
-        public List<Equipment> EquipmentList { get; private set; }
-        public List<Skill> SkillList { get; private set; }
-        public List<Function> FunctionList { get; private set; }
+        public double BaseWorkingHours
+        {
+            get; private set;
+        }
+
+        public List<ModelLibrary.DBModels.Task> TaskList
+        {
+            get; private set;
+        }
+        public List<Workforce> WorkerList
+        {
+            get; private set;
+        }
+        public List<Equipment> EquipmentList
+        {
+            get; private set;
+        }
+        public List<Skill> SkillList
+        {
+            get; private set;
+        }
+        public List<Function> FunctionList
+        {
+            get; private set;
+        }
         private int? objtTime, objtCost, objtQuality;
 
         public AlgorithmConverter(InputToORDTO inputToOR, IMapper mapper)
@@ -52,6 +95,7 @@ namespace AlgorithmLibrary
             objtCost = inputToOR.ObjectiveCost;
             objtQuality = inputToOR.ObjectiveQuality;
 
+            BaseWorkingHours = inputToOR.BaseWorkingHours;
         }
 
         public OutputToORDTO ToOR()
@@ -120,7 +164,7 @@ namespace AlgorithmLibrary
                 int k = 0;
                 for (int j = 0; j < Deadline; j++)
                 {
-                    workerEffort[i, j] = Math.Round(workingEffort?[k++] ?? 0 / 8, 3);
+                    workerEffort[i, j] = Math.Round(workingEffort?[k++] ?? 0 / BaseWorkingHours, 3);
                     // reset k
                     if (k >= (workingEffort?.Length ?? 0))
                     {
