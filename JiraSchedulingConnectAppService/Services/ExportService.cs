@@ -15,6 +15,7 @@ using System.Dynamic;
 using UtilsLibrary.Exceptions;
 using Duration = net.sf.mpxj.Duration;
 using Task = System.Threading.Tasks.Task;
+using System.Text.RegularExpressions;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -293,7 +294,7 @@ namespace JiraSchedulingConnectAppService.Services
                      - Tối ưu việc quản lý các scheme
              */
             thread.Progress = "Creating Project";
-            var projectId = await JiraCreateProject(projectKeyCreate, projectNameCreate);
+            var projectId = await JiraCreateProject(accountId, projectKeyCreate, projectNameCreate);
 
             thread.Progress = "Verifying Project";
             (var projectKey, var projectName) = await JiraVerifyProject(projectId);
@@ -532,9 +533,25 @@ namespace JiraSchedulingConnectAppService.Services
             body.projectIds = new string[] { projectId.ToString() };
             body.issueTypeIds = new string[] { issueTypeId.ToString() };
 
-            response = await jiraAPI.Post($"rest/api/3/field/{workerFieldId}/context", body);
-            var id = (await response.Content.ReadFromJsonAsync<JiraAPICreateFieldContextResDTO.Root>()).Id;
-            return id;
+            try
+            {
+                response = await jiraAPI.Post($"rest/api/3/field/{workerFieldId}/context", body);
+                var id = (await response.Content.ReadFromJsonAsync<JiraAPICreateFieldContextResDTO.Root>()).Id;
+                return id;
+            }catch(JiraAPIException ex)
+            {
+                var responseErr = new JiraAPIErrorResDTO.Root();
+                string contextId = "";
+                if(ex.jiraResponse != null)
+                {
+                    responseErr = JsonConvert.DeserializeObject<JiraAPIErrorResDTO.Root>(ex.jiraResponse);
+                    Regex pattern = new Regex(@"These projects are already associated with a context: (?<contextId>[\w]+).");
+                    Match match = pattern.Match(responseErr.errorMessages[0]);
+                    contextId = match.Groups["contextId"].Value;
+                }
+                return contextId;
+            }
+           
         }
 
         private async Task<string> JiraCreateIssueType(string projectKey)
@@ -559,30 +576,32 @@ namespace JiraSchedulingConnectAppService.Services
             return id;
         }
 
-        private async Task<int> JiraCreateProject(string projectKey, string projectName)
+        private async Task<int> JiraCreateProject(string accountId, string projectKey, string projectName)
         {
             HttpResponseMessage respone;
             // Kiểm tra tồn tại, nếu tồn tại thì lấy luôn
-            try
-            {
-                respone = await jiraAPI.Get($"rest/api/3/project/{projectKey}");
-                var result = await respone.Content.ReadFromJsonAsync<JiraAPIGetProjectResDTO.Root>();
-                return Convert.ToInt32(result.id);
-            }
-            catch (JiraAPIException)
-            {                
-            }
+            //try
+            //{
+            //    respone = await jiraAPI.Get($"rest/api/3/project/{projectKey}");
+            //    var result = await respone.Content.ReadFromJsonAsync<JiraAPIGetProjectResDTO.Root>();
+            //    return Convert.ToInt32(result.id);
+            //}
+            //catch (JiraAPIException)
+            //{
+            //    // Ignore exception if it return not found
+            //}
 
             // If not exist, than create a new one
             dynamic body = new ExpandoObject();
+            body.leadAccountId = accountId;
             body.name = projectName;
             body.key = projectKey;
             body.projectTemplateKey = "com.pyxis.greenhopper.jira:gh-simplified-basic";
             body.projectTypeKey = "software";
 
             respone = await jiraAPI.Post("rest/api/3/project", body);
-            var id = (await respone.Content.ReadFromJsonAsync<JiraAPICreatProjectResponseDTO>()).Id;
-            return id;
+            var id = (await respone.Content.ReadFromJsonAsync<JiraAPICreatProjectResponseDTO>())?.Id;
+            return id?? 0;
         }
 
         private async Task<(string, string)> JiraVerifyProject(int projectId)
