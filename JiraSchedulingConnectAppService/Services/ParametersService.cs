@@ -30,7 +30,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async Task<bool> _ValidateTasksSkillRequireds(int ProjectId, List<ParameterResourceRequest> parameterResourcesRequest)
         {
-            var Errors = new List<TaskSkillRequiredErrorDTO>();
+            var Errors = new List<TaskSkillsRequiredErrorDTO>();
 
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
@@ -44,12 +44,12 @@ namespace JiraSchedulingConnectAppService.Services
             var WorkforceChoosed = AllWorkforcesSkills.Where(wf => parameterResourcesRequest.Select(
                     p => p.ResourceId).Contains(wf.Id) && wf.CloudId == cloudId && wf.IsDelete == false).ToArray();
 
-            var WorkforceNotChoosed = AllWorkforcesSkills.Where(wf => !parameterResourcesRequest.Select(
-                   p => p.ResourceId).Contains(wf.Id) && wf.CloudId == cloudId && wf.IsDelete == false).ToList();
+            //var WorkforceNotChoosed = AllWorkforcesSkills.Where(wf => !parameterResourcesRequest.Select(
+            //       p => p.ResourceId).Contains(wf.Id) && wf.CloudId == cloudId && wf.IsDelete == false).ToList();
 
 
             var Tasks = await db.Tasks
-                .Include(t => t.TasksSkillsRequireds)
+                .Include(t => t.TasksSkillsRequireds).ThenInclude(t => t.Skill)
                 .Where(t => t.ProjectId == ProjectId).ToListAsync();
 
             var NotAdaptedTasks = new List<ModelLibrary.DBModels.Task>();
@@ -91,9 +91,10 @@ namespace JiraSchedulingConnectAppService.Services
 
                     NotAdaptedTasks.Add(task);
 
-                    Errors.Add(new TaskSkillRequiredErrorDTO
+                    Errors.Add(new TaskSkillsRequiredErrorDTO
                     {
                         TaskId = task.Id,
+                        SkillRequireds = mapper.Map<List<SkillRequiredDTO>>(task.TasksSkillsRequireds),
                         Messages = NotResourceAdaptivedMessage
                     });
 
@@ -103,22 +104,18 @@ namespace JiraSchedulingConnectAppService.Services
 
             }
 
-            var recommendResults = new List<RecomendWorkforceTaskParams>();
+            //var recommendResults = new List<RecomendWorkforceTaskParams>();
 
-            if (NotAdaptedTasks.Count > 0)
-            {
-                recommendResults = await _RecomendWorkforceAdaptedTaskRequireSkill(NotAdaptedTasks, WorkforceNotChoosed);
-            }
+            //if (NotAdaptedTasks.Count > 0)
+            //{
+            //    recommendResults = await _RecomendWorkforceAdaptedTaskRequireSkill(NotAdaptedTasks, WorkforceNotChoosed);
+            //}
 
-             
+
             if (Errors.Count != 0)
             {
-                 
-                throw new UnAuthorizedException(new ParamsErrorWithRecommendDTO()
-                {
-                    RecomendWorkforces = recommendResults,
-                    TaskSkillRequiredError = Errors
-                });
+
+                throw new UnAuthorizedException(Errors);
             }
             return true;
         }
