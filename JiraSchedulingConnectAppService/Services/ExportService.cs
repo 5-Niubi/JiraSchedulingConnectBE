@@ -18,6 +18,7 @@ using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 using Duration = net.sf.mpxj.Duration;
 using Task = System.Threading.Tasks.Task;
+using TimeUnit = net.sf.mpxj.TimeUnit;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -46,7 +47,7 @@ namespace JiraSchedulingConnectAppService.Services
             this.mapper = mapper;
         }
 
-        public async Task<ThreadStartDTO> ToJira(int scheduleId, string projectKey, string projectName)
+        public async Task<ThreadStartDTO> ToJira(int scheduleId, string projectKey, string? projectName)
         {
             var schedule = await db.Schedules.Where(s => s.Id == scheduleId)
                .Include(s => s.Parameter).ThenInclude(p => p.Project)
@@ -62,7 +63,6 @@ namespace JiraSchedulingConnectAppService.Services
                 async () => await ProcessToJiraThread(
                     threadId, schedule, accountId, projectKey, projectName
                     ));
-
             return new ThreadStartDTO(threadId);
         }
 
@@ -87,7 +87,7 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
         private async Task ProcessToJiraThread(string threadId, Schedule schedule,
-            string? accountId, string projectKey, string projectName)
+            string? accountId, string projectKey, string? projectName)
         {
             try
             {
@@ -280,7 +280,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async Task<JiraAPIPrepareResultDTO> JiraPrepareForSync(
             ModelLibrary.DBModels.Project project, string accountId, ThreadModel thread,
-            string projectNameCreate, string projectKeyCreate)
+            string? projectNameCreate, string projectKeyCreate)
         {
             /* TODO: - Tối ưu việc config field
                      - Tối ưu việc quản lý các scheme
@@ -579,14 +579,16 @@ namespace JiraSchedulingConnectAppService.Services
             return id;
         }
 
-        private async Task<int> JiraCreateProject(string accountId, string projectKey, string projectName)
+        private async Task<int> JiraCreateProject(string accountId, string projectKey, string? projectName)
         {
             HttpResponseMessage respone;
             // Kiểm tra tồn tại, nếu tồn tại thì lấy luôn
             try
             {
                 respone = await jiraAPI.Get($"rest/api/3/project/{projectKey}");
-                var result = await respone.Content.ReadFromJsonAsync<JiraAPIGetProjectResDTO.Root>();
+                var result = await respone.Content.ReadFromJsonAsync<JiraAPIGetProjectResDTO.Root>()
+                    ?? throw new JiraAPIException();
+
                 return Convert.ToInt32(result.id);
             }
             catch (JiraAPIException)
