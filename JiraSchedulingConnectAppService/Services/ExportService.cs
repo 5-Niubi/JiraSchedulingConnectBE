@@ -80,18 +80,8 @@ namespace JiraSchedulingConnectAppService.Services
                .FirstOrDefaultAsync()) ??
                throw new NotFoundException(Const.MESSAGE.NOTFOUND_SCHEDULE);
 
-            var parameterWorkers = await db.ParameterResources.Where(pr => pr.ParameterId == schedule.ParameterId
-                && pr.Type == Const.RESOURCE_TYPE.WORKFORCE).Include(pr => pr.Resource)
-                .ToListAsync();
-            var worforceDiction = new Dictionary<int, Workforce>();
-            parameterWorkers.ForEach(pr =>
-            {
-                if (!worforceDiction.ContainsKey(pr.ResourceId))
-                    worforceDiction.Add(pr.ResourceId, pr.Resource);
-            });
-            var workforceResultDict = mapper.Map<Dictionary<int, WorkforceScheduleResultDTO>>(worforceDiction);
-
             var tasks = JsonConvert.DeserializeObject<List<TaskScheduleResultDTO>>(schedule.Tasks);
+            (var workforceResultDict, var workforceEmailDict) = ExtractWorkforceFromResultSchedule(tasks);
 
             return XMLCreateFile(tasks, schedule.Parameter.Project, workforceResultDict);
         }
