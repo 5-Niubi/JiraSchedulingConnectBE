@@ -33,7 +33,7 @@ namespace JiraSchedulingConnectAppService.Services
         public async Task<PagingResponseDTO<SchedulesListResDTO>> GetSchedulesByProject(int projectId, int? page)
         {
             var query = db.Schedules.Include(s => s.Parameter)
-                .Where(s => s.Parameter.ProjectId == projectId);
+                .Where(s => s.Parameter.ProjectId == projectId  && s.IsDelete == false);
 
             int totalPage = 0, totalRecord = 0;
             if (page != null)
@@ -63,7 +63,8 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<PagingResponseDTO<SchedulesListResDTO>> GetSchedules(int parameterId, int? page)
         {
-            var query = db.Schedules.Where(s => s.ParameterId == parameterId);
+            var query =  db.Schedules.Where(s => s.ParameterId == parameterId && s.IsDelete == false);
+                
 
             int totalPage = 0, totalRecord = 0;
             if (page != null)
@@ -93,7 +94,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<ScheduleResultSolutionDTO> GetSchedule(int scheduleId)
         {
-            var schedule = await db.Schedules.Where(s => s.Id == scheduleId)
+            var schedule = await db.Schedules.Where(s => s.Id == scheduleId && s.IsDelete == false)
                  .FirstOrDefaultAsync() ??
             throw new NotFoundException($"Can not find schedule: {scheduleId}");
             var scheduleDTO = mapper.Map<ScheduleResultSolutionDTO>(schedule);
@@ -119,6 +120,24 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
+
+
+        public async Task<bool> Delete(int scheduleId)
+        {
+ 
+
+            var schedule = await db.Schedules.Where(s => s.Id == scheduleId)
+                 .FirstOrDefaultAsync() ??
+            throw new NotFoundException($"Can not find schedule: {scheduleId}");
+
+            schedule.IsDelete = Const.DELETE_STATE.DELETE;
+            schedule.DeleteDatetime = DateTime.Now;
+            db.Schedules.Update(schedule);
+            await db.SaveChangesAsync();
+            return true;
+        }
+
+      
 
 
 
