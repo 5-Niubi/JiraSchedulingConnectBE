@@ -30,7 +30,7 @@
 
         public Chromosome InitializeChromosome(Data data)
         {
-            Random rand = new Random();
+            Random rand = new();
             for (int t = 0; t < data.NumOfTasks; ++t)
             {
                 int taskWorkers = data.SuitableWorkers.ElementAt(t).Count;
@@ -54,7 +54,7 @@
 
         public void RecalculateFitness(Data data)
         {
-            List<int> noPredecessors = new List<int>();
+            List<int> noPredecessors = new();
             int[] lastMan = new int[data.NumOfWorkers];
             int[] timeTask = new int[data.NumOfTasks];
             int[] totalWorkerEffort = new int[data.NumOfWorkers];

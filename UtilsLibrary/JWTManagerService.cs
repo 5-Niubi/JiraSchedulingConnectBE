@@ -14,12 +14,12 @@ namespace UtilsLibrary
 
         public JWTManagerService(HttpContext httpContext)
         {
-            this.context = httpContext;
+            context = httpContext;
         }
 
         public JWTManagerService(IConfiguration iconfiguration)
         {
-            this.configuration = iconfiguration;
+            configuration = iconfiguration;
         }
         public string? Authenticate(string accountId, string cloudId)
         {

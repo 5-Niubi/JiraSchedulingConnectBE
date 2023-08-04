@@ -2,6 +2,7 @@
 using java.lang;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
 using ModelLibrary.DTOs.Export;
@@ -16,6 +17,7 @@ using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 using Duration = net.sf.mpxj.Duration;
 using Task = System.Threading.Tasks.Task;
+using TimeUnit = net.sf.mpxj.TimeUnit;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -44,31 +46,12 @@ namespace JiraSchedulingConnectAppService.Services
             this.mapper = mapper;
         }
 
-        public async Task<ThreadStartDTO> ToJira(int scheduleId, string projectKey, string projectName)
+        public async Task<ThreadStartDTO> ToJira(int scheduleId, string projectKey, string? projectName)
         {
             var schedule = await db.Schedules.Where(s => s.Id == scheduleId)
                .Include(s => s.Parameter).ThenInclude(p => p.Project)
                .FirstOrDefaultAsync() ??
                 throw new NotFoundException(Const.MESSAGE.NOTFOUND_SCHEDULE);
-
-            var parameterWorkers = await db.ParameterResources.Where(pr => pr.ParameterId == schedule.ParameterId
-                && pr.Type == Const.RESOURCE_TYPE.WORKFORCE).Include(pr => pr.Resource)
-                .ToListAsync();
-
-            var worforceDiction = new Dictionary<int, Workforce>();
-            parameterWorkers.ForEach(pr =>
-            {
-                if (!worforceDiction.ContainsKey(pr.ResourceId))
-                    worforceDiction.Add(pr.ResourceId, pr.Resource);
-            });
-            var workforceResultDict = mapper.Map<Dictionary<int, WorkforceScheduleResultDTO>>(worforceDiction);
-
-            var workforceEmailDiction = new Dictionary<string, WorkforceScheduleResultDTO>();
-            foreach (var wf in workforceResultDict.Values)
-            {
-                if (!workforceEmailDiction.ContainsKey(wf.email))
-                    workforceEmailDiction.Add(wf.email, wf);
-            }
 
             var cloudId = new JWTManagerService(http).GetCurrentCloudId();
             var accountId = db.AtlassianTokens.Where(tk => tk.CloudId == cloudId)
@@ -77,9 +60,8 @@ namespace JiraSchedulingConnectAppService.Services
             string threadId = ThreadService.CreateThreadId();
             threadId = threadService.StartThread(threadId,
                 async () => await ProcessToJiraThread(
-                    threadId, schedule, accountId, workforceResultDict, workforceEmailDiction, projectKey, projectName
+                    threadId, schedule, accountId, projectKey, projectName
                     ));
-
             return new ThreadStartDTO(threadId);
         }
 
@@ -97,25 +79,14 @@ namespace JiraSchedulingConnectAppService.Services
                .FirstOrDefaultAsync()) ??
                throw new NotFoundException(Const.MESSAGE.NOTFOUND_SCHEDULE);
 
-            var parameterWorkers = await db.ParameterResources.Where(pr => pr.ParameterId == schedule.ParameterId
-                && pr.Type == Const.RESOURCE_TYPE.WORKFORCE).Include(pr => pr.Resource)
-                .ToListAsync();
-            var worforceDiction = new Dictionary<int, Workforce>();
-            parameterWorkers.ForEach(pr =>
-            {
-                if (!worforceDiction.ContainsKey(pr.ResourceId))
-                    worforceDiction.Add(pr.ResourceId, pr.Resource);
-            });
-            var workforceResultDict = mapper.Map<Dictionary<int, WorkforceScheduleResultDTO>>(worforceDiction);
-
             var tasks = JsonConvert.DeserializeObject<List<TaskScheduleResultDTO>>(schedule.Tasks);
+            (var workforceResultDict, var workforceEmailDict) = ExtractWorkforceFromResultSchedule(tasks);
 
             return XMLCreateFile(tasks, schedule.Parameter.Project, workforceResultDict);
         }
 
-        private async Task ProcessToJiraThread(string threadId, Schedule schedule, string? accountId,
-            Dictionary<int, WorkforceScheduleResultDTO> workforceResultDict,
-            Dictionary<string, WorkforceScheduleResultDTO> workforceEmailDict, string projectKey, string projectName)
+        private async Task ProcessToJiraThread(string threadId, Schedule schedule,
+            string? accountId, string projectKey, string? projectName)
         {
             try
             {
@@ -125,6 +96,8 @@ namespace JiraSchedulingConnectAppService.Services
                     var tasks = JsonConvert.DeserializeObject<List<TaskScheduleResultDTO>>(schedule.Tasks);
                     thread.Progress = "Prepare Jira screen fields";
                     var prepareResult = await JiraPrepareForSync(schedule.Parameter.Project, accountId, thread, projectName, projectKey);
+
+                    (var workforceResultDict, var workforceEmailDict) = ExtractWorkforceFromResultSchedule(tasks);
 
                     thread.Progress = "Create worker selection";
                     var workerCreatedDict = await JiraCreateWorkForce(prepareResult.WorkerFieldContext,
@@ -138,8 +111,6 @@ namespace JiraSchedulingConnectAppService.Services
 
                     thread.Progress = "Linking tasks";
                     await JiraCreateIssueLink(tasks, bulkTasks);
-
-
 
                     // Update the thread status and result when finished
                     thread.Status = Const.THREAD_STATUS.SUCCESS;
@@ -174,6 +145,32 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
+        private (Dictionary<int, WorkforceScheduleResultDTO>,
+            Dictionary<string, WorkforceScheduleResultDTO>)
+            ExtractWorkforceFromResultSchedule(List<TaskScheduleResultDTO> tasks)
+        {
+            // Todo mapping workforce from result, not from parameter
+
+
+            var worforceDiction = new Dictionary<int, WorkforceScheduleResultDTO>();
+
+            tasks.ForEach(t =>
+            {
+                if (!worforceDiction.ContainsKey(t.workforce.id))
+                    worforceDiction.Add(t.workforce.id, t.workforce);
+            });
+
+            var workforceEmailDiction = new Dictionary<string, WorkforceScheduleResultDTO>();
+            foreach (var wf in worforceDiction.Values)
+            {
+                if (!workforceEmailDiction.ContainsKey(wf.email))
+                    workforceEmailDiction.Add(wf.email, wf);
+            }
+
+            // Return wkeremail and wkerdict
+            return (worforceDiction, workforceEmailDiction);
+        }
+
         private async Task JiraCreateIssueLink(List<TaskScheduleResultDTO> tasks, Dictionary<int?, string> issueIdDict)
         {
             HttpResponseMessage respone;
@@ -198,7 +195,8 @@ namespace JiraSchedulingConnectAppService.Services
             }
         }
 
-        private async Task<Dictionary<string, WorkforceScheduleResultDTO>> JiraGetExistUserIdByEmail(Dictionary<string, WorkforceScheduleResultDTO> workerEmailDict)
+        private async Task<Dictionary<string, WorkforceScheduleResultDTO>> JiraGetExistUserIdByEmail
+            (Dictionary<string, WorkforceScheduleResultDTO> workerEmailDict)
         {
             HttpResponseMessage respone;
             respone = await jiraAPI.Get($"rest/api/3/users/search");
@@ -207,7 +205,8 @@ namespace JiraSchedulingConnectAppService.Services
             foreach (var userinfo in userinfos)
             {
                 string? emailAddr = userinfo.emailAddress;
-                if (emailAddr != null && workerEmailDict.ContainsKey(emailAddr))
+                if (emailAddr != null && workerEmailDict.ContainsKey(emailAddr)
+                     && !workerEmailDict[emailAddr].accountId.IsNullOrEmpty())
                 {
                     workerEmailDict[emailAddr].accountId = userinfo.accountId;
                 }
@@ -280,7 +279,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async Task<JiraAPIPrepareResultDTO> JiraPrepareForSync(
             ModelLibrary.DBModels.Project project, string accountId, ThreadModel thread,
-            string projectNameCreate, string projectKeyCreate)
+            string? projectNameCreate, string projectKeyCreate)
         {
             /* TODO: - Tối ưu việc config field
                      - Tối ưu việc quản lý các scheme
@@ -445,7 +444,7 @@ namespace JiraSchedulingConnectAppService.Services
                 {
                     await jiraAPI.Post($"rest/api/3/screens/{screenId}/tabs/{tabId}/fields", body);
                 }
-                catch (JiraAPIException ex) { }
+                catch (JiraAPIException) { }
             }
 
         }
@@ -548,7 +547,7 @@ namespace JiraSchedulingConnectAppService.Services
                 if (ex.jiraResponse != null)
                 {
                     responseErr = JsonConvert.DeserializeObject<JiraAPIErrorResDTO.Root>(ex.jiraResponse);
-                    Regex pattern = new Regex(@"These projects are already associated with a context: (?<contextId>[\w]+).");
+                    Regex pattern = new(@"These projects are already associated with a context: (?<contextId>[\w]+).");
                     Match match = pattern.Match(responseErr.errorMessages[0]);
                     contextId = match.Groups["contextId"].Value;
                 }
@@ -579,14 +578,16 @@ namespace JiraSchedulingConnectAppService.Services
             return id;
         }
 
-        private async Task<int> JiraCreateProject(string accountId, string projectKey, string projectName)
+        private async Task<int> JiraCreateProject(string accountId, string projectKey, string? projectName)
         {
             HttpResponseMessage respone;
             // Kiểm tra tồn tại, nếu tồn tại thì lấy luôn
             try
             {
                 respone = await jiraAPI.Get($"rest/api/3/project/{projectKey}");
-                var result = await respone.Content.ReadFromJsonAsync<JiraAPIGetProjectResDTO.Root>();
+                var result = await respone.Content.ReadFromJsonAsync<JiraAPIGetProjectResDTO.Root>()
+                    ?? throw new JiraAPIException();
+
                 return Convert.ToInt32(result.id);
             }
             catch (JiraAPIException)
@@ -689,7 +690,7 @@ namespace JiraSchedulingConnectAppService.Services
         private (string, MemoryStream) XMLCreateFile(List<TaskScheduleResultDTO> tasks, ModelLibrary.DBModels.Project projectDb,
             Dictionary<int, WorkforceScheduleResultDTO> workforceResultDict)
         {
-            ProjectFile project = new ProjectFile();
+            ProjectFile project = new();
             var projectFileName = $"{projectDb.Name}.xml";
             var resourceDict = new Dictionary<int?, net.sf.mpxj.Resource>();
             var taskDict = new Dictionary<int?, net.sf.mpxj.Task>();
@@ -767,8 +768,8 @@ namespace JiraSchedulingConnectAppService.Services
 
             ProjectWriter writer = ProjectWriterUtility.getProjectWriter(projectFileName);
 
-            MemoryStream memStream = new MemoryStream();
-            DotNetOutputStream stream = new DotNetOutputStream(memStream);
+            MemoryStream memStream = new();
+            DotNetOutputStream stream = new(memStream);
             writer.write(project, stream);
             memStream.Position = 0;
             return (projectFileName, memStream);

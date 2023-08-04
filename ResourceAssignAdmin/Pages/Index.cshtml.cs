@@ -78,7 +78,7 @@ namespace ResourceAssignAdmin.Pages
             // Get all year
             var joinDate = _context.AtlassianTokens.GroupBy(u => u.CreateDatetime.Value.Year)
                 .Select(group => group.First()).ToList();
-            List<int> orderyearsList = new List<int>();
+            List<int> orderyearsList = new();
             joinDate.ForEach(e => orderyearsList.Add(e.CreateDatetime.Value.Year));
 
             var newJoinUser = (from token in _context.AtlassianTokens

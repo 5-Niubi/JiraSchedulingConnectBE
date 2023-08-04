@@ -9,7 +9,7 @@
         }
         private Population CrossoverrPopulation(Population population, Data data)
         {
-            Population crossoverPopulation = new Population(population.Chromosomes.Length);
+            Population crossoverPopulation = new(population.Chromosomes.Length);
             for (int e = 0; e < GAHelper.NUM_OF_ELITE_CHOMOSOMES; ++e)
             {
                 crossoverPopulation.Chromosomes[e] = population.Chromosomes[e];
@@ -24,7 +24,7 @@
         }
         private Population MutatePopulation(Population population, Data data)
         {
-            Population mutatePopulation = new Population(population.Chromosomes.Length);
+            Population mutatePopulation = new(population.Chromosomes.Length);
             for (int e = 0; e < GAHelper.NUM_OF_ELITE_CHOMOSOMES; ++e)
             {
                 mutatePopulation.Chromosomes[e] = population.Chromosomes[e];
@@ -41,8 +41,8 @@
 
         private Chromosome CrossoverChromosome(Chromosome chromosome1, Chromosome chromosome2, Data data)
         {
-            Random rand = new Random();
-            Chromosome crossChromosome = new Chromosome(data);
+            Random rand = new();
+            Chromosome crossChromosome = new(data);
             for (int e = 0; e < chromosome1.Genes.Length; ++e)
             {
                 if (rand.NextDouble() < 0.5)
@@ -55,8 +55,8 @@
 
         private Chromosome MutateChromosome(Chromosome chromosome, Data data)
         {
-            Random rand = new Random();
-            Chromosome mutateChromosome = new Chromosome(data);
+            Random rand = new();
+            Chromosome mutateChromosome = new(data);
             for (int wt = 0; wt < chromosome.Genes.Length; ++wt)
             {
                 if (rand.NextDouble() < GAHelper.MUTATION_RATE)
@@ -73,8 +73,8 @@
 
         private Population SelectTournamentPopulation(Population population, Data data)
         {
-            Random rand = new Random();
-            Population tournamentPopulation = new Population(GAHelper.TOURNAMET_SELECTION_SIZE);
+            Random rand = new();
+            Population tournamentPopulation = new(GAHelper.TOURNAMET_SELECTION_SIZE);
             for (int x = 0; x < GAHelper.TOURNAMET_SELECTION_SIZE; ++x)
             {
                 int c = (int)(rand.NextDouble() * population.Chromosomes.Length);

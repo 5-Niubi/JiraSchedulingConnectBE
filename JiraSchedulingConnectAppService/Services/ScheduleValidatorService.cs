@@ -1,9 +1,9 @@
-﻿using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using AlgorithmLibrary;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 using ModelLibrary.DBModels;
-using ModelLibrary.DTOs.PertSchedule;
-using RcpspAlgorithmLibrary;
+using ModelLibrary.DTOs.Parameters;
 
-namespace AlgorithmServiceServer.Services.Interfaces
+namespace JiraSchedulingConnectAppService.Services
 {
     public class ScheduleValidatorService : IValidatorService
     {

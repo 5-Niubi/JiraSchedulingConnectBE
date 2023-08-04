@@ -21,12 +21,12 @@ namespace JiraSchedulingConnectAppService.Services
         public JiraBridgeAPIService(IHttpContextAccessor httpAccess,
             IAuthenticationService authenticationService)
         {
-            this.client = new HttpClient();
+            client = new HttpClient();
             client.Timeout = Timeout.InfiniteTimeSpan;
 
             this.authenticationService = authenticationService;
-            this.db = new JiraDemoContext();
-            this.http = httpAccess.HttpContext;
+            db = new JiraDemoContext();
+            http = httpAccess.HttpContext;
 
             var jwt = new JWTManagerService(http);
             cloudId = jwt.GetCurrentCloudId();
@@ -37,7 +37,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         private void SetBaseURL()
         {
-            this.cloudId = cloudId.ToLower();
+            cloudId = cloudId.ToLower();
             string baseUrl = $"https://api.atlassian.com/ex/jira/{cloudId}/";
             client.BaseAddress = new Uri(baseUrl, UriKind.Absolute);
         }

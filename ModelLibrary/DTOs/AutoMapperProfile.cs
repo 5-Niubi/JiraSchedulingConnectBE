@@ -10,6 +10,7 @@ using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Schedules;
 using ModelLibrary.DTOs.Skills;
 using ModelLibrary.DTOs.Subscriptions;
+using ModelLibrary.DTOs.Workforce;
 using Newtonsoft.Json;
 
 namespace ModelLibrary.DTOs
@@ -22,13 +23,13 @@ namespace ModelLibrary.DTOs
                 .ForMember(p => p.TaskCount, p => p.MapFrom(t => t.Tasks.Count));
             CreateMap<ProjectsListCreateProject, Project>();
             CreateMap<Project, ProjectDetailDTO>();
-            CreateMap<WorkforceDTORequest, Workforce>();
+            CreateMap<WorkforceDTORequest, DBModels.Workforce>();
 
             CreateMap<SkillRequestDTO, WorkforceSkill>()
             .ForMember(dest => dest.Level, opt => opt.MapFrom(src => src.Level == null ? 1 : src.Level));
 
 
-            CreateMap<WorkforceRequestDTO, Workforce>()
+            CreateMap<WorkforceRequestDTO, DBModels.Workforce>()
                 .ForMember(x => x.WorkforceSkills, t => t.MapFrom(t => t.Skills.Select(s => new WorkforceSkill
                 {
                     SkillId = s.SkillId,
@@ -43,7 +44,7 @@ namespace ModelLibrary.DTOs
 
 
 
-            CreateMap<Workforce, WorkforceDTOResponse>()
+            CreateMap<DBModels.Workforce, WorkforceDTOResponse>()
                 .ForMember(x => x.Skills, t => t.MapFrom(t => t.WorkforceSkills.Select(s => new SkillDTOResponse
                 {
                     Id = s.SkillId,
@@ -55,10 +56,10 @@ namespace ModelLibrary.DTOs
                 string.IsNullOrEmpty(src.WorkingEffort) ? null : JsonConvert.DeserializeObject<List<float>>(src.WorkingEffort)));
 
 
-            CreateMap<Workforce, WorkforceViewDTOResponse>();
+            CreateMap<DBModels.Workforce, WorkforceViewDTOResponse>();
 
 
-            CreateMap<WorkforceDTOResponse, Workforce>();
+            CreateMap<WorkforceDTOResponse, DBModels.Workforce>();
             CreateMap<EquipmentDTOResponse, Equipment>();
             CreateMap<Equipment, EquipmentDTOResponse>();
             CreateMap<Skill, SkillDTOResponse>();
@@ -121,7 +122,7 @@ namespace ModelLibrary.DTOs
                 .ForMember(tr => tr.ParameterResources, t => t.MapFrom(t => t.ParameterResources));
 
             CreateMap<Schedule, ScheduleResultSolutionDTO>();
-            CreateMap<Workforce, WorkforceScheduleResultDTO>();
+            CreateMap<DBModels.Workforce, WorkforceScheduleResultDTO>();
             CreateMap<Project, ProjectDeleteResDTO>();
             CreateMap<ScheduleRequestDTO, Schedule>();
             CreateMap<Milestone, MileStoneScheduleResultDTO>();

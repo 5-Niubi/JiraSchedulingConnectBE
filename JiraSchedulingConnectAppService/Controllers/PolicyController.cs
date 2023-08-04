@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ModelLibrary;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -13,7 +13,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
         public Policy(ILoggerManager logger)
         {
-            this._Logger = logger;
+            _Logger = logger;
         }
 
         [HttpGet]

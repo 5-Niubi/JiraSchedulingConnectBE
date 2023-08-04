@@ -13,18 +13,18 @@ namespace JiraSchedulingConnectAppService.Services
 
         public JWTManagerService(HttpContext? httpContext)
         {
-            this.context = httpContext;
+            context = httpContext;
         }
 
         public JWTManagerService(IConfiguration iconfiguration)
         {
-            this.configuration = iconfiguration;
+            configuration = iconfiguration;
         }
 
         public JWTManagerService(HttpContext? httpContext, IConfiguration iconfiguration)
         {
-            this.context = httpContext;
-            this.configuration = iconfiguration;
+            context = httpContext;
+            configuration = iconfiguration;
         }
 
         public string? Authenticate(string accountId, string cloudId)
@@ -102,7 +102,7 @@ namespace JiraSchedulingConnectAppService.Services
                     validationParameters, out SecurityToken validatedToken);
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Token validation failed
                 return false;

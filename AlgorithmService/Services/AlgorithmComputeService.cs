@@ -1,6 +1,5 @@
 ﻿using AlgorithmLibrary;
 using AlgorithmLibrary.GA;
-using AlgorithmServiceServer.DTOs.AlgorithmController;
 using AlgorithmServiceServer.Services.Interfaces;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -97,7 +96,7 @@ namespace AlgorithmServiceServer.Services
 
                 scheduleResultDTOs = mapper.Map<List<ScheduleResultSolutionDTO>>(schedules);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await db.Database.RollbackTransactionAsync();
                 throw;

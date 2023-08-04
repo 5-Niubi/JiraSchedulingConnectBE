@@ -11,12 +11,12 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class ValidatorController : ControllerBase
     {
         private IValidatorService ValidatorService;
-        private readonly ModelLibrary.ILoggerManager _Logger;
-        public ValidatorController(IValidatorService validatorService, ModelLibrary.ILoggerManager logger)
+        private readonly ILoggerManager _Logger;
+        public ValidatorController(IValidatorService validatorService, ILoggerManager logger)
 
         {
-            this._Logger = logger;
-            this.ValidatorService = validatorService;
+            _Logger = logger;
+            ValidatorService = validatorService;
         }
 
         [HttpGet]
@@ -30,7 +30,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

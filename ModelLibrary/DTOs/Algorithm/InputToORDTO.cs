@@ -1,6 +1,6 @@
 ﻿using ModelLibrary.DBModels;
 
-namespace AlgorithmServiceServer.DTOs.AlgorithmController
+namespace ModelLibrary.DTOs.Algorithm
 {
     public class InputToORDTO
     {
@@ -21,11 +21,11 @@ namespace AlgorithmServiceServer.DTOs.AlgorithmController
             get; set;
         }
 
-        public List<ModelLibrary.DBModels.Task> TaskList
+        public List<DBModels.Task> TaskList
         {
             get; set;
         }
-        public List<Workforce> WorkerList
+        public List<ModelLibrary.DBModels.Workforce> WorkerList
         {
             get; set;
         }

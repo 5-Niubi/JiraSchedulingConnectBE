@@ -1,4 +1,4 @@
-﻿namespace ModelLibrary.DTOs.Parameters
+﻿namespace ModelLibrary.DTOs.Invalidation
 {
     public class InvalidParameterDTO
     {

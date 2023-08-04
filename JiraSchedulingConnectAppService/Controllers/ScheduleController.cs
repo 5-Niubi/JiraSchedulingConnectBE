@@ -1,6 +1,5 @@
 ﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using ModelLibrary;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Algorithm;
 
@@ -15,7 +14,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         public ScheduleController(IScheduleService scheduleService, ILoggerManager logger)
         {
 
-            this._Logger = logger;
+            _Logger = logger;
             this.scheduleService = scheduleService;
         }
 
@@ -29,7 +28,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                this._Logger.LogDebug(ex.Message);
+                _Logger.LogDebug(ex.Message);
 
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
@@ -46,7 +45,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                this._Logger.LogDebug(ex.Message);
+                _Logger.LogDebug(ex.Message);
 
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
@@ -63,7 +62,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                this._Logger.LogDebug(ex.Message);
+                _Logger.LogDebug(ex.Message);
 
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
@@ -81,7 +80,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
+                _Logger.LogError(ex.Message);
 
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
@@ -100,7 +99,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
+                _Logger.LogError(ex.Message);
 
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);

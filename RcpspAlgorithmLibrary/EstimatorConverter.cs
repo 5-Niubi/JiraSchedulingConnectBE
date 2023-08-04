@@ -1,6 +1,4 @@
-﻿using AlgorithmServiceServer;
-using AlgorithmServiceServer.DTOs.AlgorithmController;
-using ModelLibrary.DBModels;
+﻿using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
 
 namespace AlgorithmLibrary
@@ -31,8 +29,8 @@ namespace AlgorithmLibrary
             NumOfTasks = InputToEstimator.TaskList.Count;
             NumOfSkills = InputToEstimator.SkillList.Count;
 
-            this.TaskList = InputToEstimator.TaskList;
-            this.SkillList = InputToEstimator.SkillList;
+            TaskList = InputToEstimator.TaskList;
+            SkillList = InputToEstimator.SkillList;
 
         }
 
@@ -98,13 +96,10 @@ namespace AlgorithmLibrary
 
         public WorkforceWithMilestoneDTO FromEs(int Id, List<int[]> WorkforceWithSkill)
         {
-
-
-
             //SkillOutputFromEstimatorDTO SkillOutput;
-            EstimatedResultDTO EstimatedResult = new EstimatedResultDTO();
+            EstimatedResultDTO EstimatedResult = new();
 
-            Dictionary<string, int> uniqueWorkersCount = new Dictionary<string, int>();
+            Dictionary<string, int> uniqueWorkersCount = new();
             // Convert WorkforceWithSkill to EstimatedResults
             for (int i = 0; i < WorkforceWithSkill.Count; i++)
             {
@@ -124,7 +119,7 @@ namespace AlgorithmLibrary
 
 
             WorkforceOutputFromEsDTO WorkforceOutput;
-            List<WorkforceOutputFromEsDTO> WorkforceOutputList = new List<WorkforceOutputFromEsDTO>();
+            List<WorkforceOutputFromEsDTO> WorkforceOutputList = new();
             int j = 0;
             foreach (KeyValuePair<string, int> kvp in uniqueWorkersCount)
             {
@@ -136,7 +131,7 @@ namespace AlgorithmLibrary
                               .ToList();
 
                 // mapping skill index with skill database
-                List<SkillOutputFromEstimatorDTO> SkillOutputList = new List<SkillOutputFromEstimatorDTO>();
+                List<SkillOutputFromEstimatorDTO> SkillOutputList = new();
                 for (int i = 0; i < SkillLevelList.Count; i++)
                 {
 

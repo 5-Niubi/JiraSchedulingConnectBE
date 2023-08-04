@@ -19,10 +19,10 @@ namespace JiraSchedulingConnectAppService.Services
         public AuthenticationService(JiraDemoContext db, IConfiguration config,
             IHttpContextAccessor httpAcc)
         {
-            this.client = new HttpClient();
+            client = new HttpClient();
             this.db = db;
             this.config = config;
-            this.http = httpAcc.HttpContext;
+            http = httpAcc.HttpContext;
         }
 
         async public Task<Object> InitAuthen(string code, string state, string? error, string? error_description)
@@ -103,7 +103,7 @@ namespace JiraSchedulingConnectAppService.Services
                 return reponseTokenFirstPhase;
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 db.Database.RollbackTransaction();
                 throw;

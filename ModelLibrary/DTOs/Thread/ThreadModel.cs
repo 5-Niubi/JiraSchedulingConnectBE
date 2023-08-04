@@ -23,8 +23,8 @@ namespace ModelLibrary.DTOs.Thread
 
         public ThreadModel(string? threadId)
         {
-            this.Status = Const.THREAD_STATUS.RUNNING;
-            this.ThreadId = threadId;
+            Status = Const.THREAD_STATUS.RUNNING;
+            ThreadId = threadId;
         }
     }
 }

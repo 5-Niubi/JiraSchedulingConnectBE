@@ -1,7 +1,6 @@
 ﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ModelLibrary;
 using ModelLibrary.DTOs;
 using UtilsLibrary.Exceptions;
 
@@ -18,7 +17,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
         public AlgorithmController(IAlgorithmService algorithmService, ILoggerManager logger)
         {
-            this._Logger = logger;
+            _Logger = logger;
             this.algorithmService = algorithmService;
         }
 

@@ -1,4 +1,4 @@
-﻿namespace ModelLibrary
+﻿namespace JiraSchedulingConnectAppService.Services.Interfaces
 {
     public interface ILoggerManager
     {

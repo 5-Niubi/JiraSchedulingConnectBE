@@ -84,7 +84,7 @@ namespace ResourceAssignAdmin.Pages.Subscription
                 await _context.SaveChangesAsync();
                 await _context.Database.CommitTransactionAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await _context.Database.RollbackTransactionAsync();
                 throw;

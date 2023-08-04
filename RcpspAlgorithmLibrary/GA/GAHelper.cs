@@ -12,10 +12,10 @@ namespace AlgorithmLibrary.GA
 
         public static List<List<int>> SuitableWorker(int[,] workerExper, int[,] taskExper, int numOfTasks, int numOfWorkers, int numOfSkills)
         {
-            List<List<int>> suitableWorkers = new List<List<int>>();
+            List<List<int>> suitableWorkers = new();
             for (int t = 0; t < numOfTasks; ++t)
             {
-                List<int> taskWorkers = new List<int>();
+                List<int> taskWorkers = new();
                 for (int w = 0; w < numOfWorkers; ++w)
                 {
                     bool ok = true;

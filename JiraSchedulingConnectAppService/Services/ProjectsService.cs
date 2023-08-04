@@ -19,9 +19,9 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly IAuthorizationService _authorizationService;
         public ProjectsService(JiraDemoContext dbContext, IMapper mapper, IAuthorizationService _authorizationService, IHttpContextAccessor httpContextAccessor)
         {
-            this.db = dbContext;
+            db = dbContext;
             this.mapper = mapper;
-            this.httpContext = httpContextAccessor.HttpContext;
+            httpContext = httpContextAccessor.HttpContext;
             this._authorizationService = _authorizationService;
 
         }

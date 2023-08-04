@@ -1,13 +1,10 @@
-using AlgorithmServiceServer.Services.Interfaces;
 using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Authorization;
 using JiraSchedulingConnectAppService.Services.Interfaces;
-using JiraSchedulingConnectAppService.Services.Policy;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using ModelLibrary;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using NLog;

@@ -6,6 +6,7 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Invalidation;
 using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.Skills;
+using ModelLibrary.DTOs.Workforce;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 

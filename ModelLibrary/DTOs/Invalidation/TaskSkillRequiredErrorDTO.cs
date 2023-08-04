@@ -1,7 +1,7 @@
 ﻿using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.PertSchedule;
 
-namespace ModelLibrary.DTOs.Invalidator
+namespace ModelLibrary.DTOs.Invalidation
 {
 
 
@@ -15,7 +15,7 @@ namespace ModelLibrary.DTOs.Invalidator
         {
             get; set;
         }
-        public String Messages
+        public string Messages
         {
             get; set;
         }
@@ -32,7 +32,7 @@ namespace ModelLibrary.DTOs.Invalidator
         {
             get; set;
         }
-        public String Messages
+        public string Messages
         {
             get; set;
         }
@@ -47,7 +47,7 @@ namespace ModelLibrary.DTOs.Invalidator
         {
             get; set;
         }
-        public String Messages
+        public string Messages
         {
             get; set;
         }

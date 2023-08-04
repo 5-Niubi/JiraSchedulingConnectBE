@@ -1,8 +1,8 @@
 ﻿using AlgorithmLibrary;
-using AlgorithmServiceServer.DTOs.AlgorithmController;
 using AlgorithmServiceServer.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
+using ModelLibrary.DTOs.Algorithm;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
@@ -91,7 +91,7 @@ namespace AlgorithmServiceServer.Services
             var TaskMilestone = outputToEstimator.TaskMilestone;
 
             // forward BFS method
-            ScheduleEstimator estimator = new ScheduleEstimator(TaskDuration, TaskMilestone, TaskExper, TaskAdjacency);
+            ScheduleEstimator estimator = new(TaskDuration, TaskMilestone, TaskExper, TaskAdjacency);
             estimator.ForwardMethod();
 
             // fit estimate
@@ -100,7 +100,7 @@ namespace AlgorithmServiceServer.Services
 
             // Post processing
             var estimatedResultDTO = new EstimatedResultDTO();
-            List<WorkforceWithMilestoneDTO> WorkforceWithMilestoneList = new List<WorkforceWithMilestoneDTO>();
+            List<WorkforceWithMilestoneDTO> WorkforceWithMilestoneList = new();
             foreach (int milestoneId in Results.Keys)
             {
                 List<int[]> result = Results[milestoneId];
@@ -158,13 +158,13 @@ namespace AlgorithmServiceServer.Services
             var TaskMilestone = outputToEstimator.TaskMilestone;
 
             // forward BFS method
-            ScheduleEstimator estimator = new ScheduleEstimator(TaskDuration, TaskMilestone, TaskExper, TaskAdjacency);
+            ScheduleEstimator estimator = new(TaskDuration, TaskMilestone, TaskExper, TaskAdjacency);
             estimator.ForwardMethod();
 
             // fit estimate
             Dictionary<int, List<int[]>> Results = estimator.Fit();
 
-            List<int[]> overallResults = new List<int[]>();
+            List<int[]> overallResults = new();
             foreach (int milestoneId in Results.Keys)
             {
                 List<int[]> result = Results[milestoneId];

@@ -1,13 +1,13 @@
 using ModelLibrary.DTOs.PertSchedule;
 
-namespace RcpspAlgorithmLibrary
+namespace AlgorithmLibrary
 
 {
     public class DirectedGraph
     {
         public int NumberOfNode;
         public int startNode;
-        private List<List<int>> graph = new List<List<int>>();
+        private List<List<int>> graph = new();
 
         public DirectedGraph(int startNode)
         {
@@ -22,7 +22,7 @@ namespace RcpspAlgorithmLibrary
 
         public void AddEdge(int u, int v)
         {
-            this.Graph[u].Add(v);
+            Graph[u].Add(v);
         }
 
         public void LoadData(List<TaskPrecedencesTaskRequestDTO> TaskList)
@@ -40,9 +40,9 @@ namespace RcpspAlgorithmLibrary
                 {
                     if (j != i)
                     {
-                        adjacencyMatrix[i][j] = (TaskList[i]
+                        adjacencyMatrix[i][j] = TaskList[i]
                         .TaskPrecedences.Where(e => e == TaskList[j].TaskId)
-                        .Count() > 0) ? 1 : 0;
+                        .Count() > 0 ? 1 : 0;
                     }
                     else
                     {
@@ -67,7 +67,7 @@ namespace RcpspAlgorithmLibrary
                 {
                     if (adjacencyMatrix[j][i] == 1)
                     {
-                        this.AddEdge(i, j);
+                        AddEdge(i, j);
                     }
                 };
 
@@ -150,12 +150,12 @@ namespace RcpspAlgorithmLibrary
 
         public bool IsDAG()
         {
-            List<bool> visited = new List<bool>(Enumerable.Repeat(false, this.NumberOfNode));
-            List<bool> path = new List<bool>(Enumerable.Repeat(false, this.NumberOfNode));
+            List<bool> visited = new(Enumerable.Repeat(false, NumberOfNode));
+            List<bool> path = new(Enumerable.Repeat(false, NumberOfNode));
 
 
 
-            if (IsCycle(visited, path, this.startNode))
+            if (IsCycle(visited, path, startNode))
             {
                 return false;
             }
@@ -180,9 +180,9 @@ namespace RcpspAlgorithmLibrary
                 {
                     if (j != i)
                     {
-                        adjacencyMatrix[i][j] = (TaskList[i]
+                        adjacencyMatrix[i][j] = TaskList[i]
                         .TaskPrecedenceTasks.Where(e => e.PrecedenceId == TaskList[j].Id)
-                        .Count() > 0) ? 1 : 0;
+                        .Count() > 0 ? 1 : 0;
                     }
                     else
                     {
@@ -207,7 +207,7 @@ namespace RcpspAlgorithmLibrary
                 {
                     if (adjacencyMatrix[j][i] == 1)
                     {
-                        this.AddEdge(i, j);
+                        AddEdge(i, j);
                     }
                 };
 
