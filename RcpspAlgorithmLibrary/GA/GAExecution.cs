@@ -63,7 +63,7 @@ namespace AlgorithmLibrary.GA
         }
         // ------
 
-        public List<List<int>> manAbleDo = new List<List<int>>();
+        public List<List<int>> manAbleDo = new();
         public int[,] Exper = new int[505, 505];
         public bool[] objectiveChoice = new bool[3];
 
@@ -139,12 +139,12 @@ namespace AlgorithmLibrary.GA
             manAbleDo = GAHelper.SuitableWorker(K, R, numOfTask, numOfPeople, numOfSkill);
             Exper = GAHelper.TaskExperByWorker(K, R, numOfTask, numOfPeople, numOfSkill);
 
-            Data d = new Data(numOfTask, numOfSkill, numOfPeople, durationTime,
+            Data d = new(numOfTask, numOfSkill, numOfPeople, durationTime,
                 adjacency, salaryEachTime, Z, U, Budget, Deadline, manAbleDo, Exper);
             d.Setup();
             d.ChangeWeights(objectiveChoice[0], objectiveChoice[1], objectiveChoice[2]);
             Population population = new Population(GAHelper.NUM_OF_POPULATION).InitializePopulation(d);
-            GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
+            GeneticAlgorithm geneticAlgorithm = new();
             int numOfGen = 0;
             while (numOfGen < GAHelper.NUM_OF_GENARATION)
             {

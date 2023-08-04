@@ -1,6 +1,6 @@
 ﻿using ModelLibrary.DTOs.Skills;
 
-namespace ModelLibrary.DTOs.Parameters
+namespace ModelLibrary.DTOs.Workforce
 {
     public class WorkforceRequestDTO
     {

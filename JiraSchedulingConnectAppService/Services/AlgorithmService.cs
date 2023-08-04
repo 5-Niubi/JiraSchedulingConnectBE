@@ -1,11 +1,11 @@
-﻿using AlgorithmServiceServer;
+﻿using AlgorithmLibrary;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
+using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Invalidation;
 using ModelLibrary.DTOs.Thread;
-using RcpspAlgorithmLibrary;
 using System.Dynamic;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
@@ -34,7 +34,7 @@ namespace JiraSchedulingConnectAppService.Services
             this.apiMicro = apiMicro;
             this.threadService = threadService;
             this.db = db;
-            this.httpContext = httpContextAccessor.HttpContext;
+            httpContext = httpContextAccessor.HttpContext;
             this._authorizationService = _authorizationService;
         }
 
@@ -73,7 +73,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             var ProjectIds = await db.Projects.Where(pr => pr.CloudId == cloudId).Select(p => p.Id).ToArrayAsync();
 
-            DateTime currentMonthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateTime currentMonthStart = new(DateTime.Now.Year, DateTime.Now.Month, 1);
             DateTime currentMonthEnd = currentMonthStart.AddMonths(1).AddTicks(-1);
 
             var MonthlyUsage = await db.Parameters
@@ -127,7 +127,7 @@ namespace JiraSchedulingConnectAppService.Services
 
                     thread.Result = error;
                 }
-                catch (NotFoundException ex)
+                catch (NotFoundException)
                 {
                     throw;
                 }

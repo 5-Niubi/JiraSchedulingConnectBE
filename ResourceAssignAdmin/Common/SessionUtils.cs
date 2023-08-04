@@ -6,7 +6,7 @@ namespace ResourceAssignAdmin.Common
     {
         public static void AddCookies(string key, string value, int minute, HttpContext context)
         {
-            CookieOptions options = new CookieOptions()
+            CookieOptions options = new()
             {
                 MaxAge = TimeSpan.FromMinutes(minute),
             };

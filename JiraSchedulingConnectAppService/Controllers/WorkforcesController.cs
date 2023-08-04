@@ -1,7 +1,7 @@
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
-using ModelLibrary.DTOs.Parameters;
+using ModelLibrary.DTOs.Workforce;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers
@@ -12,12 +12,12 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class WorkforcesController : ControllerBase
     {
         private IWorkforcesService workforcesService;
-        private readonly ModelLibrary.ILoggerManager _Logger;
-        public WorkforcesController(IWorkforcesService workforcesService, ModelLibrary.ILoggerManager logger)
+        private readonly ILoggerManager _Logger;
+        public WorkforcesController(IWorkforcesService workforcesService, ILoggerManager logger)
 
         {
 
-            this._Logger = logger;
+            _Logger = logger;
             this.workforcesService = workforcesService;
         }
 
@@ -64,7 +64,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             catch (NotSuitableInputException ex)
             {
 
-                this._Logger.LogWarning(ex.Message);
+                _Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
 
@@ -74,7 +74,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -91,14 +91,14 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (NotSuitableInputException ex)
             {
-                this._Logger.LogWarning(ex.Message);
+                _Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
             }
 
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -115,14 +115,14 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (NotSuitableInputException ex)
             {
-                this._Logger.LogWarning(ex.Message);
+                _Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
             }
 
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -139,13 +139,13 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (NotSuitableInputException ex)
             {
-                this._Logger.LogWarning(ex.Message);
+                _Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
             }
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

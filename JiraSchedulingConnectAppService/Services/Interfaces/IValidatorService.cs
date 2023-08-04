@@ -1,4 +1,4 @@
-﻿using ModelLibrary.DTOs.PertSchedule;
+﻿using ModelLibrary.DTOs.Parameters;
 
 namespace JiraSchedulingConnectAppService.Services.Interfaces
 {

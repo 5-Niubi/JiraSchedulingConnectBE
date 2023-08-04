@@ -1,6 +1,4 @@
-﻿using ModelLibrary.DTOs.Parameters;
-
-namespace ModelLibrary.DTOs.PertSchedule
+﻿namespace ModelLibrary.DTOs.Parameters
 {
     public class ParameterRequestDTO
     {

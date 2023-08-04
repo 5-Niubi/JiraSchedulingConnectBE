@@ -7,7 +7,6 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
 using ModelLibrary.DTOs.Export;
 using ModelLibrary.DTOs.Thread;
-using Nest;
 using net.sf.mpxj;
 using net.sf.mpxj.MpxjUtilities;
 using net.sf.mpxj.writer;
@@ -445,7 +444,7 @@ namespace JiraSchedulingConnectAppService.Services
                 {
                     await jiraAPI.Post($"rest/api/3/screens/{screenId}/tabs/{tabId}/fields", body);
                 }
-                catch (JiraAPIException ex) { }
+                catch (JiraAPIException) { }
             }
 
         }
@@ -548,7 +547,7 @@ namespace JiraSchedulingConnectAppService.Services
                 if (ex.jiraResponse != null)
                 {
                     responseErr = JsonConvert.DeserializeObject<JiraAPIErrorResDTO.Root>(ex.jiraResponse);
-                    Regex pattern = new Regex(@"These projects are already associated with a context: (?<contextId>[\w]+).");
+                    Regex pattern = new(@"These projects are already associated with a context: (?<contextId>[\w]+).");
                     Match match = pattern.Match(responseErr.errorMessages[0]);
                     contextId = match.Groups["contextId"].Value;
                 }
@@ -691,7 +690,7 @@ namespace JiraSchedulingConnectAppService.Services
         private (string, MemoryStream) XMLCreateFile(List<TaskScheduleResultDTO> tasks, ModelLibrary.DBModels.Project projectDb,
             Dictionary<int, WorkforceScheduleResultDTO> workforceResultDict)
         {
-            ProjectFile project = new ProjectFile();
+            ProjectFile project = new();
             var projectFileName = $"{projectDb.Name}.xml";
             var resourceDict = new Dictionary<int?, net.sf.mpxj.Resource>();
             var taskDict = new Dictionary<int?, net.sf.mpxj.Task>();
@@ -769,8 +768,8 @@ namespace JiraSchedulingConnectAppService.Services
 
             ProjectWriter writer = ProjectWriterUtility.getProjectWriter(projectFileName);
 
-            MemoryStream memStream = new MemoryStream();
-            DotNetOutputStream stream = new DotNetOutputStream(memStream);
+            MemoryStream memStream = new();
+            DotNetOutputStream stream = new(memStream);
             writer.write(project, stream);
             memStream.Position = 0;
             return (projectFileName, memStream);

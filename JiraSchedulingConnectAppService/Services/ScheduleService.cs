@@ -19,9 +19,9 @@ namespace JiraSchedulingConnectAppService.Services
 
         public ScheduleService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
-            this.db = dbContext;
+            db = dbContext;
             this.mapper = mapper;
-            this.httpContext = httpContextAccessor.HttpContext;
+            httpContext = httpContextAccessor.HttpContext;
         }
 
         public ScheduleService(JiraDemoContext db, IMapper mapper)
@@ -33,7 +33,7 @@ namespace JiraSchedulingConnectAppService.Services
         public async Task<PagingResponseDTO<SchedulesListResDTO>> GetSchedulesByProject(int projectId, int? page)
         {
             var query = db.Schedules.Include(s => s.Parameter)
-                .Where(s => s.Parameter.ProjectId == projectId  && s.IsDelete == false);
+                .Where(s => s.Parameter.ProjectId == projectId && s.IsDelete == false);
 
             int totalPage = 0, totalRecord = 0;
             if (page != null)
@@ -63,8 +63,8 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<PagingResponseDTO<SchedulesListResDTO>> GetSchedules(int parameterId, int? page)
         {
-            var query =  db.Schedules.Where(s => s.ParameterId == parameterId && s.IsDelete == false);
-                
+            var query = db.Schedules.Where(s => s.ParameterId == parameterId && s.IsDelete == false);
+
 
             int totalPage = 0, totalRecord = 0;
             if (page != null)
@@ -124,7 +124,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<bool> Delete(int scheduleId)
         {
- 
+
 
             var schedule = await db.Schedules.Where(s => s.Id == scheduleId)
                  .FirstOrDefaultAsync() ??
@@ -137,7 +137,7 @@ namespace JiraSchedulingConnectAppService.Services
             return true;
         }
 
-      
+
 
 
 

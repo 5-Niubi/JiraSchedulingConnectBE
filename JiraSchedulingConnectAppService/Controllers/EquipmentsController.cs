@@ -10,11 +10,11 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class EquipmentsController : ControllerBase
     {
         private IEquipmentService EquipmentService;
-        private readonly ModelLibrary.ILoggerManager _Logger;
-        public EquipmentsController(IEquipmentService equipmentService, ModelLibrary.ILoggerManager logger)
+        private readonly ILoggerManager _Logger;
+        public EquipmentsController(IEquipmentService equipmentService, ILoggerManager logger)
         {
-            this._Logger = logger;
-            this.EquipmentService = equipmentService;
+            _Logger = logger;
+            EquipmentService = equipmentService;
         }
 
         [HttpGet]

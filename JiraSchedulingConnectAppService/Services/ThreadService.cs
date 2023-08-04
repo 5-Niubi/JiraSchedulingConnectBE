@@ -8,7 +8,7 @@ namespace JiraSchedulingConnectAppService.Services
     public class ThreadService : IThreadService
     {
         // Thread with random string key
-        private static Dictionary<string, ThreadModel> threadDict = new Dictionary<string, ThreadModel>();
+        private static Dictionary<string, ThreadModel> threadDict = new();
 
         public ThreadService()
         {
@@ -39,7 +39,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         public string StartThread(string threadId, ThreadStart threadStart)
         {
-            Thread thread = new Thread(threadStart);
+            Thread thread = new(threadStart);
             thread.Start();
             return threadId;
         }

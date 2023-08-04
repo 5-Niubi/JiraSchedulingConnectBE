@@ -1,12 +1,11 @@
-﻿using AutoMapper;
+﻿using AlgorithmLibrary;
+using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Invalidation;
-using ModelLibrary.DTOs.Invalidator;
 using ModelLibrary.DTOs.PertSchedule;
-using RcpspAlgorithmLibrary;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
@@ -38,9 +37,9 @@ namespace JiraSchedulingConnectAppService.Services
 
         public TasksService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
-            this.db = dbContext;
+            db = dbContext;
             this.mapper = mapper;
-            this.httpContext = httpContextAccessor.HttpContext;
+            httpContext = httpContextAccessor.HttpContext;
         }
 
         private async Task<ModelLibrary.DBModels.Task> GetExitedTask(ModelLibrary.DBModels.Task task)
@@ -323,7 +322,7 @@ namespace JiraSchedulingConnectAppService.Services
                 await _ClearTaskSkillRequiredByTaskId(taskRequest.Id);
 
                 // mapping task precedences request -> task precedences database
-                List<TasksSkillsRequired> tasksSkillsRequiredsToAdd = new List<TasksSkillsRequired>();
+                List<TasksSkillsRequired> tasksSkillsRequiredsToAdd = new();
 
                 foreach (var skill in taskRequest.SkillRequireds)
                 {
@@ -368,7 +367,7 @@ namespace JiraSchedulingConnectAppService.Services
         {
 
             // mapping task precedences request -> task precedences database
-            List<TaskPrecedence> precedenceTasksToAdd = new List<TaskPrecedence>();
+            List<TaskPrecedence> precedenceTasksToAdd = new();
             foreach (var taskPrecedences in taskprecedencesTasksRequest)
             {
                 foreach (var precedenceId in taskPrecedences.TaskPrecedences)
@@ -398,7 +397,7 @@ namespace JiraSchedulingConnectAppService.Services
         private async Task<List<TasksSkillsRequired>> _SaveTasksSkillsRequireds(List<TaskSkillsRequiredRequestDTO> taskSkillsRequiredsRequest)
         {
             // mapping task precedences request -> task precedences database
-            List<TasksSkillsRequired> tasksSkillsRequiredsToAdd = new List<TasksSkillsRequired>();
+            List<TasksSkillsRequired> tasksSkillsRequiredsToAdd = new();
             foreach (var taskSkillsRequired in taskSkillsRequiredsRequest)
             {
                 foreach (var skill in taskSkillsRequired.SkillsRequireds)

@@ -82,10 +82,10 @@
 
             public class FromOR
             {
-                public List<int> workerPerTask = new List<int>();
-                public List<int> equipmentPerTask = new List<int>();
-                public List<int> taskStartTime = new List<int>();
-                public List<int> taskEndTime = new List<int>();
+                public List<int> workerPerTask = new();
+                public List<int> equipmentPerTask = new();
+                public List<int> taskStartTime = new();
+                public List<int> taskEndTime = new();
             }
         }
     }

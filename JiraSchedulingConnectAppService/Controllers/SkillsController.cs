@@ -14,11 +14,11 @@ namespace JiraSchedulingConnectAppService.Controllers
     {
 
         private readonly ISkillsService skillsService;
-        private readonly ModelLibrary.ILoggerManager _Logger;
-        public SkillsController(ISkillsService skillsService, ModelLibrary.ILoggerManager logger)
+        private readonly ILoggerManager _Logger;
+        public SkillsController(ISkillsService skillsService, ILoggerManager logger)
         {
 
-            this._Logger = logger;
+            _Logger = logger;
             this.skillsService = skillsService;
         }
 
@@ -32,7 +32,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -50,7 +50,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             catch (Exception ex)
             {
 
-                this._Logger.LogError(ex.Message);
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -72,7 +72,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -88,7 +88,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

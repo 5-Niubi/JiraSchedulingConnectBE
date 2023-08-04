@@ -6,7 +6,7 @@ namespace ModelLibrary.DTOs
     {
         public PagingResponseDTO()
         {
-            this.PageSize = 15;
+            PageSize = 15;
         }
 
         public int MaxResults

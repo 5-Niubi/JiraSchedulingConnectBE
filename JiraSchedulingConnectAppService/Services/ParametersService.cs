@@ -3,7 +3,7 @@ using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
-using ModelLibrary.DTOs.Invalidator;
+using ModelLibrary.DTOs.Invalidation;
 using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Skills;
@@ -21,9 +21,9 @@ namespace JiraSchedulingConnectAppService.Services
         private IAlgorithmService algorithmService;
         public ParametersService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor, IAlgorithmService algorithmService)
         {
-            this.db = dbContext;
+            db = dbContext;
             this.mapper = mapper;
-            this.httpContext = httpContextAccessor.HttpContext;
+            httpContext = httpContextAccessor.HttpContext;
             this.algorithmService = algorithmService;
         }
 
@@ -123,7 +123,7 @@ namespace JiraSchedulingConnectAppService.Services
         private async Task<List<RecomendWorkforceTaskParams>> _RecomendWorkforceAdaptedTaskRequireSkill(List<ModelLibrary.DBModels.Task> Tasks, List<Workforce> workforces)
         {
 
-            List<RecomendWorkforceTaskParams> RecomendWorkforceTaskParamsList = new List<RecomendWorkforceTaskParams>();
+            List<RecomendWorkforceTaskParams> RecomendWorkforceTaskParamsList = new();
 
             var _TaskQueue = Tasks.ToList();
 

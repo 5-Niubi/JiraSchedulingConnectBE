@@ -4,7 +4,7 @@ using ModelLibrary.DTOs.Algorithm;
 using UtilsLibrary.Exceptions;
 using static UtilsLibrary.Const;
 
-namespace JiraSchedulingConnectAppService.Services.Policy
+namespace JiraSchedulingConnectAppService.Services.Authorization
 {
 
 
@@ -44,7 +44,7 @@ namespace JiraSchedulingConnectAppService.Services.Policy
 
         }
 
-        protected override System.Threading.Tasks.Task HandleRequirementAsync(AuthorizationHandlerContext context, ScheduleLimitRequirement requirement, UserUsage resource)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ScheduleLimitRequirement requirement, UserUsage resource)
         {
 
             if (resource.Plan != SUBSCRIPTION.PLAN_FREE)
@@ -65,7 +65,7 @@ namespace JiraSchedulingConnectAppService.Services.Policy
             }
 
 
-            return System.Threading.Tasks.Task.CompletedTask;
+            return Task.CompletedTask;
 
 
 

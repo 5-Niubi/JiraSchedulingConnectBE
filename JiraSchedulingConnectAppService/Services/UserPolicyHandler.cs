@@ -23,8 +23,8 @@ namespace JiraSchedulingConnectAppService.Services
 
         public UserPolicyHandler(JiraDemoContext dbContext, IHttpContextAccessor httpContextAccessor)
         {
-            this.db = dbContext;
-            this.httpContext = httpContextAccessor.HttpContext;
+            db = dbContext;
+            httpContext = httpContextAccessor.HttpContext;
         }
 
         public async Task<IEnumerable<string>> GetUserPermissions()

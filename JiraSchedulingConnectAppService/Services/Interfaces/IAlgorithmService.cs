@@ -1,4 +1,4 @@
-﻿using AlgorithmServiceServer;
+﻿using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Thread;
 
 namespace JiraSchedulingConnectAppService.Services.Interfaces

@@ -1,4 +1,6 @@
-﻿namespace AlgorithmServiceServer.Services.Interfaces
+﻿using ModelLibrary.DTOs.Algorithm;
+
+namespace AlgorithmServiceServer.Services.Interfaces
 {
     public interface IEstimateWorkforceService
     {

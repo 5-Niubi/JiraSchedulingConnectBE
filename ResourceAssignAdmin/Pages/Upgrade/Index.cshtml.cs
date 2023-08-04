@@ -11,7 +11,7 @@ namespace ResourceAssignAdmin.Pages.Upgrade
 
         public IndexModel(JiraDemoContext context)
         {
-            this._context = context;
+            _context = context;
         }
 
         [BindProperty]

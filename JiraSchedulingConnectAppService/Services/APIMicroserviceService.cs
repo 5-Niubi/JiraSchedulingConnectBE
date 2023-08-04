@@ -24,7 +24,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             var bearer = http.Request.Headers["Authorization"];
             bearer = bearer.IsNullOrEmpty() ? "Bearer " : bearer;
-            Regex pattern = new Regex(@"Bearer (?<token>[\w.]+)");
+            Regex pattern = new(@"Bearer (?<token>[\w.]+)");
             Match match = pattern.Match(bearer);
             string token = match.Groups["token"].Value;
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);

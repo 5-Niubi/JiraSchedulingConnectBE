@@ -1,7 +1,6 @@
 ﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ModelLibrary;
 using ModelLibrary.DTOs;
 using UtilsLibrary.Exceptions;
 
@@ -18,8 +17,8 @@ namespace JiraSchedulingConnectAppService.Controllers
         public SubscriptionController(ISubscriptionService subscService,
             ILoggerManager logger)
         {
-            this._Logger = logger;
-            this.subsService = subscService;
+            _Logger = logger;
+            subsService = subscService;
 
         }
 
@@ -33,13 +32,13 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (NotFoundException ex)
             {
-                this._Logger.LogWarning(ex.Message);
+                _Logger.LogWarning(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return NotFound(response);
             }
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

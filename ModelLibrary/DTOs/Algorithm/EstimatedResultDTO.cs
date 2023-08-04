@@ -1,6 +1,4 @@
-﻿using ModelLibrary.DTOs.Algorithm;
-
-namespace AlgorithmServiceServer
+﻿namespace ModelLibrary.DTOs.Algorithm
 {
     public class WorkforceOutputFromEsDTO
     {

@@ -1,5 +1,4 @@
-﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
-using AutoMapper;
+﻿using AutoMapper;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
@@ -82,13 +81,13 @@ namespace AlgorithmLibrary
             NumOfEquipments = inputToOR.EquipmentList.Count;
             NumOfFunctions = inputToOR.FunctionList.Count;
 
-            this.TaskList = inputToOR.TaskList;
-            this.WorkerList = inputToOR.WorkerList;
-            this.EquipmentList = inputToOR.EquipmentList;
-            this.SkillList = inputToOR.SkillList;
-            this.FunctionList = inputToOR.FunctionList;
-            this.Deadline = inputToOR.Deadline;
-            this.Budget = inputToOR.Budget;
+            TaskList = inputToOR.TaskList;
+            WorkerList = inputToOR.WorkerList;
+            EquipmentList = inputToOR.EquipmentList;
+            SkillList = inputToOR.SkillList;
+            FunctionList = inputToOR.FunctionList;
+            Deadline = inputToOR.Deadline;
+            Budget = inputToOR.Budget;
             StartDate = inputToOR.StartDate;
 
             objtTime = inputToOR.ObjectiveTime;

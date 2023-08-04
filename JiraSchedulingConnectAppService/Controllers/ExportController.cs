@@ -11,10 +11,10 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class ExportController : ControllerBase
     {
         private readonly IExportService exportService;
-        private readonly ModelLibrary.ILoggerManager _Logger;
-        public ExportController(IExportService exportService, ModelLibrary.ILoggerManager logger)
+        private readonly ILoggerManager _Logger;
+        public ExportController(IExportService exportService, ILoggerManager logger)
         {
-            this._Logger = logger;
+            _Logger = logger;
             this.exportService = exportService;
         }
         [Authorize]

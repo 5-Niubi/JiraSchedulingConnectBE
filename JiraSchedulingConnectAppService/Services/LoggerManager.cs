@@ -1,4 +1,4 @@
-﻿using ModelLibrary;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using NLog;
 using NLog.Web;
 
