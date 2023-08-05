@@ -64,7 +64,7 @@ jobs:
           cat "JiraSchedulingConnectAppService/appsettings.Production.json"
       - name: Passing ConnectionString to Appsettings.Production.json
         run: |
-          echo "$(jq '.ConnectionStrings.DB = "Server=${{ secrets.SQL_DATABASE_HOST }}, ${{ secrets.SQL_DATABASE_PORT }};Database=${{ secrets.SQL_DATABASE_NAME }};User Id=${{ secrets.SQL_DATABASE_USERNAME }};Password=${{ secrets.SQL_DATABASE_PASSWORD }}; TrustServerCertificate=True"' JiraSchedulingConnectAppService/appsettings.Development.json)" > JiraSchedulingConnectAppService/appsettings.Development.json
+          echo "$(jq '.ConnectionStrings.DB = "Server=${{ secrets.SQL_DATABASE_HOST }}, ${{ secrets.SQL_DATABASE_PORT }};Database=${{ secrets.SQL_DATABASE_NAME }};User Id=${{ secrets.SQL_DATABASE_USERNAME }};Password=${{ secrets.SQL_DATABASE_PASSWORD }}; TrustServerCertificate=True"' JiraSchedulingConnectAppService/appsettings.Production.json)" > JiraSchedulingConnectAppService/appsettings.Production.json
 
       - name: Extract metadata for the Docker image
         id: meta
