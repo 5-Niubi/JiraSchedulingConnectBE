@@ -92,7 +92,19 @@ namespace ResourceAssignAdmin.Pages
                                    plan.Name
                                }).Take(10).ToList();
 
+            var newPreUser = (from token in _context.AtlassianTokens
+                              join sub in _context.Subscriptions on token.Id equals sub.AtlassianTokenId
+                              join plan in _context.PlanSubscriptions on sub.PlanId equals plan.Id
+                              where sub.CancelAt == null && sub.PlanId == Const.SUBSCRIPTION.PLAN_PLUS
+                              select new
+                              {
+                                  token.UserToken,
+                                  token.CreateDatetime,
+                                  plan.Name
+                              }).Take(10).ToList();
+
             ViewData["TopNew10User"] = newJoinUser;
+            ViewData["TopNew10PreUser"] = newPreUser;
             ViewData["YearSelection"] = orderyearsList;
             int[] totalUserResult = { totalFreeUsers, totalPlusUser };
             ViewData["TotalUsers"] = JsonConvert.SerializeObject(totalUserResult);
