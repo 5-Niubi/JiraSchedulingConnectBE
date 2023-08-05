@@ -398,4 +398,6 @@ FodyWeavers.xsd
 *.sln.iml
 
 /private.txt
- elasticsearch-data/*
+elasticsearch-data/*
+
+appsettings.Development.json
