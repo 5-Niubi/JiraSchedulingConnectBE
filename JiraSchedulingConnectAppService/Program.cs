@@ -42,6 +42,7 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
+    var test = builder.Configuration.GetConnectionString("DB");
     // Custom Config
     builder.Services.AddCors();
     builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);

@@ -7,7 +7,8 @@ services:
       dockerfile: AlgorithmService/Dockerfile
     networks:
       - internal-network
-    
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
   jiraschedulingconnectappservice:
     image: ${DOCKER_REGISTRY-}jiraschedulingconnectappservice
     build:
@@ -17,10 +18,10 @@ services:
       - "5126:80"
       - "8443:80"
       - "80:80"
-
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     networks:
       - internal-network
-    
 networks:
   internal-network:
     driver: bridge
