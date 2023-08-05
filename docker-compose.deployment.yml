@@ -5,6 +5,8 @@ services:
     image: pham2604/5niubi_algo_service:${BACKEND_IMAGE_TAG}
     networks:
       - internal-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
 
   jiraschedulingconnectappservice:
     image: pham2604/5niubi_backend:${ALGO_IMAGE_TAG}
@@ -13,6 +15,9 @@ services:
       - "5126:80"
       - "8443:80"
       - "80:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
     networks:
       - internal-network
 
