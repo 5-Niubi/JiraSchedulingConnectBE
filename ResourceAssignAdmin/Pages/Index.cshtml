@@ -43,9 +43,9 @@
         <div class="col-md-4"><canvas id="userDonut"></canvas></div>
     </div>
     <hr />
-    <h2>Top new user</h2>
-    <div class="row">
-        <div class="col-md-6">
+    <div class="row justify-content-between mt-4">
+        <div class="col-md-5">
+            <h2>New users</h2>
             <div class="table-responsive">
                 <table class="table table-striped table-sm">
                     <thead>
@@ -54,7 +54,6 @@
                             <th scope="col">User Token</th>
                             <th scope="col">Current Plan</th>
                             <th scope="col">Joined Date</th>
-                            <th scope="col">Datetime</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,14 +66,14 @@
                                 <td>@user.UserToken</td>
                                 <td>@user.Name</td>
                                 <td>@user.CreateDatetime</td>
-                                <td></td>
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
+            <h2>New Plus subscriptions</h2>
             <div class="table-responsive">
                 <table class="table table-striped table-sm">
                     <thead>
@@ -83,20 +82,18 @@
                             <th scope="col">User Token</th>
                             <th scope="col">Current Plan</th>
                             <th scope="col">Joined Date</th>
-                            <th scope="col">Datetime</th>
                         </tr>
                     </thead>
                     <tbody>
 
-                        @for (int i = 0; i < ViewBag.TopNew10User.Count; i++)
+                        @for (int i = 0; i < ViewBag.TopNew10PreUser.Count; i++)
                         {
-                            var user = ViewBag.TopNew10User[i];
+                            var user = ViewBag.TopNew10PreUser[i];
                             <tr>
                                 <td>@(i + 1)</td>
                                 <td>@user.UserToken</td>
                                 <td>@user.Name</td>
                                 <td>@user.CreateDatetime</td>
-                                <td></td>
                             </tr>
                         }
                     </tbody>
