@@ -22,7 +22,6 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     networks:
       - internal-network
-    
 networks:
   internal-network:
     driver: bridge

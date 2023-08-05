@@ -400,4 +400,4 @@ FodyWeavers.xsd
 /private.txt
 elasticsearch-data/*
 
-appsettings.Development.json
+*/appsettings.Development.json
