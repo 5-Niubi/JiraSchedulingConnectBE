@@ -32,7 +32,7 @@ jobs:
 
       - name: Passing ConnectionString to Appsettings.Production.json
         run: |
-          echo "$(jq '.ConnectionStrings.DB = "Server=${{ secrets.SQL_DATABASE_HOST }};Database=${{ secrets.SQL_DATABASE_NAME }};User Id=${{ secrets.SQL_DATABASE_USERNAME }};Password=${{ secrets.SQL_DATABASE_PASSWORD }}; TrustServerCertificate=True"' AlgorithmService/appsettings.Production.json)" > AlgorithmService/appsettings.Production.json
+          echo "$(jq '.ConnectionStrings.DB = "Server=${{ secrets.SQL_DATABASE_HOST }},${{ SQL_DATABASE_PORT }};Database=${{ secrets.SQL_DATABASE_NAME }};User Id=${{ secrets.SQL_DATABASE_USERNAME }};Password=${{ secrets.SQL_DATABASE_PASSWORD }}; TrustServerCertificate=True"' AlgorithmService/appsettings.Production.json)" > AlgorithmService/appsettings.Production.json
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -61,7 +61,7 @@ jobs:
       
       - name: Passing ConnectionString to Appsettings.Production.json
         run: |
-          echo "$(jq '.ConnectionStrings.DB = "Server=${{ secrets.SQL_DATABASE_HOST }};Database=${{ secrets.SQL_DATABASE_NAME }};User Id=${{ secrets.SQL_DATABASE_USERNAME }};Password=${{ secrets.SQL_DATABASE_PASSWORD }}; TrustServerCertificate=True"' JiraSchedulingConnectAppService/appsettings.Production.json)" > JiraSchedulingConnectAppService/appsettings.Production.json
+          echo "$(jq '.ConnectionStrings.DB = "Server=${{ secrets.SQL_DATABASE_HOST }}, ${{ SQL_DATABASE_PORT }};Database=${{ secrets.SQL_DATABASE_NAME }};User Id=${{ secrets.SQL_DATABASE_USERNAME }};Password=${{ secrets.SQL_DATABASE_PASSWORD }}; TrustServerCertificate=True"' JiraSchedulingConnectAppService/appsettings.Production.json)" > JiraSchedulingConnectAppService/appsettings.Production.json
 
       - name: Extract metadata for the Docker image
         id: meta
