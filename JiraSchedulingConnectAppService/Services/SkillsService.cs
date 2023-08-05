@@ -77,6 +77,7 @@ namespace JiraSchedulingConnectAppService.Services
                 }
 
                 exitedskill.Name = skillDTO.Name;
+                exitedskill.Description = skillDTO.Description;
 
                 // Update
                 db.Update(exitedskill);

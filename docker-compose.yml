@@ -1,5 +1,4 @@
 version: '3.4'
-
 services:
   algorithmservice:
     image: ${DOCKER_REGISTRY-}algorithmservice
@@ -8,7 +7,7 @@ services:
       dockerfile: AlgorithmService/Dockerfile
     networks:
       - internal-network
-
+    
   jiraschedulingconnectappservice:
     image: ${DOCKER_REGISTRY-}jiraschedulingconnectappservice
     build:
@@ -21,7 +20,7 @@ services:
 
     networks:
       - internal-network
-
+    
 networks:
   internal-network:
     driver: bridge
