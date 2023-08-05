@@ -15,8 +15,8 @@ services:
       - "5126:80"
       - "8443:80"
       - "80:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+    # environment:
+      # - ASPNETCORE_ENVIRONMENT=Production
 
     networks:
       - internal-network
