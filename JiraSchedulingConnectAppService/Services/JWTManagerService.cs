@@ -38,7 +38,7 @@ namespace JiraSchedulingConnectAppService.Services
                 new Claim(Const.Claims.ACCOUNT_ID, accountId),
                 new Claim(Const.Claims.CLOUD_ID, cloudId)
             };
-            var tokenKey = Encoding.UTF8.GetBytes(configuration["JWT:Key"]);
+            var tokenKey = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
             var securityKey = new SymmetricSecurityKey(tokenKey);
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -63,7 +63,7 @@ namespace JiraSchedulingConnectAppService.Services
                 new Claim(Const.Claims.CLOUD_ID, cloudId)
 
             };
-            var tokenKey = Encoding.UTF8.GetBytes(configuration["JWT:Key"]);
+            var tokenKey = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
             var securityKey = new SymmetricSecurityKey(tokenKey);
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -80,7 +80,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         public bool ValidateJwt(string token)
         {
-            string secretKey = configuration["JWT:Key"];
+            string secretKey = configuration["Jwt:Key"];
 
             // Define the validation parameters
             var tokenHandler = new JwtSecurityTokenHandler();
