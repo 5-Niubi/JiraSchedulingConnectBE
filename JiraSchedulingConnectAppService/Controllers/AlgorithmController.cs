@@ -55,9 +55,8 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (NotSuitableInputException ex)
             {
-                _Logger.LogError(ex.Errors);
-                var response = new ResponseMessageDTO(ex.Errors);
-                return BadRequest(response);
+                _Logger.LogError(ex.Message);
+                return BadRequest(ex.Errors);
             }
             catch (Exception ex)
             {
