@@ -181,6 +181,12 @@ namespace JiraSchedulingConnectAppService.Services
                     throw new Exception(NotFoundMessage);
                 }
 
+                // delete skill in skill required
+                var requiredSkillsToRemove = await db.TasksSkillsRequireds.Where(s => s.SkillId == Id).ToArrayAsync();
+
+                db.RemoveRange(requiredSkillsToRemove);
+                await db.SaveChangesAsync();
+
 
                 // Update status isdelete
                 skill.IsDelete = true;
