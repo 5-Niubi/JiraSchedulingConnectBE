@@ -89,7 +89,7 @@ namespace AlgorithmServiceServer.Services
 
                     algorithmOutputConverted.Add(algOutConverted);
 
-                    var schedule = await InsertScheduleIntoDB(parameterId, algOutConverted);
+                    var schedule = await InsertScheduleIntoDB(parameterEntity, algOutConverted);
                     schedules.Add(schedule);
                 }
 
@@ -111,12 +111,13 @@ namespace AlgorithmServiceServer.Services
         }
 
         private async Task<Schedule> InsertScheduleIntoDB(
-                int parameterId, OutputFromORDTO algOutConverted
+                Parameter parameter, OutputFromORDTO algOutConverted
             )
         {
             // Insert result into Schedules table
             var schedule = new Schedule();
-            schedule.ParameterId = parameterId;
+            schedule.ParameterId = parameter.Id;
+            schedule.Since = parameter.StartDate;
             schedule.Duration = algOutConverted.timeFinish;
             schedule.Cost = algOutConverted.totalSalary;
             schedule.Quality = algOutConverted.totalExper;
