@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using java.lang;
+using java.time;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -745,9 +746,10 @@ namespace JiraSchedulingConnectAppService.Services
                 {
                     task = project.AddTask();
                 }
-
-                task.Start = t.startDate.Value.ToJavaLocalDateTime();
-                task.Finish = t.endDate.Value.ToJavaLocalDateTime();
+                var start = t.startDate.Value;
+                task.Start = LocalDateTime.of(start.Year, start.Month, start.Day, start.Hour, start.Minute);
+                var end = t.endDate.Value;
+                task.Finish = LocalDateTime.of(end.Year, end.Month, end.Day, end.Hour, end.Minute);
                 task.Duration = Duration.getInstance((double)t.duration, TimeUnit.DAYS);
                 task.Name = t.name;
 
