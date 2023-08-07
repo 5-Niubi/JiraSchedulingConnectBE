@@ -13,17 +13,17 @@
     <div class="col-md-4">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="PlanSubscription.Id" class="control-label"></label>
                 <input asp-for="PlanSubscription.Id" class="form-control" />
                 <span asp-validation-for="PlanSubscription.Id" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group  mb-3">
                 <label asp-for="PlanSubscription.Name" class="control-label"></label>
                 <input asp-for="PlanSubscription.Name" class="form-control" />
                 <span asp-validation-for="PlanSubscription.Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group  mb-3">
                 <label asp-for="PlanSubscription.Price" class="control-label"></label>
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -34,22 +34,22 @@
                 </div>
                 <span asp-validation-for="PlanSubscription.Price" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="PlanSubscription.Duration" class="control-label"></label>
+            <div class="form-group  mb-3">
+                <label asp-for="PlanSubscription.Duration" class="control-label">Duration (Let it empty for Unlimited)</label>
                 <div class="input-group">
                     <input asp-for="PlanSubscription.Duration" class="form-control" />
                     <div class="input-group-prepend">
-                        <span class="input-group-text">$</span>
+                        <span class="input-group-text">Months</span>
                     </div>
                 </div>
                 <span asp-validation-for="PlanSubscription.Duration" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group  mb-3">
                 <label asp-for="PlanSubscription.CreateDatetime" class="control-label"></label>
                 <input value="@Model.PlanSubscription.CreateDatetime" class="form-control" readonly disabled />
                 <span asp-validation-for="PlanSubscription.CreateDatetime" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group  mb-3">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
