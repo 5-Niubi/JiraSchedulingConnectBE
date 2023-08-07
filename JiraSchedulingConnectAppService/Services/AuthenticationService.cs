@@ -86,7 +86,6 @@ namespace JiraSchedulingConnectAppService.Services
                     // Update existed
                     tokenFromDB.AccessToken = reponseTokenFirstPhase.access_token;
                     tokenFromDB.RefressToken = reponseTokenFirstPhase.refresh_token;
-                    //tokenFromDB.Site = accessiableResourceResponseDTO[0].url;
                 }
                 db.SaveChanges();
                 await db.Database.CommitTransactionAsync();
