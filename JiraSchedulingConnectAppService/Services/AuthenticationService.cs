@@ -48,7 +48,7 @@ namespace JiraSchedulingConnectAppService.Services
                 var accessiableResourceResponseDTO = await GetUserAccessiableResource(reponseTokenFirstPhase.access_token);
 
                 var tokenFromDB = await db.AtlassianTokens
-                    .FirstOrDefaultAsync(e => e.CloudId == stateContextObject.cloudId && e.AccountInstalledId == stateContextObject.accountId);
+                    .FirstOrDefaultAsync(e => e.CloudId == stateContextObject.cloudId);
                 if (tokenFromDB == null)
                 {
                     // Create new
@@ -58,7 +58,7 @@ namespace JiraSchedulingConnectAppService.Services
                         CloudId = stateContextObject?.cloudId,
                         AccessToken = reponseTokenFirstPhase.access_token,
                         RefressToken = reponseTokenFirstPhase.refresh_token,
-                        //Site = accessiableResourceResponseDTO[0].url,
+                        Site = stateContextObject?.siteUrl,
                         UserToken = Utils.RandomString(15)
                     };
 
@@ -82,10 +82,10 @@ namespace JiraSchedulingConnectAppService.Services
                 }
                 else
                 {
+                    tokenFromDB.AccountInstalledId = stateContextObject?.accountId;
                     // Update existed
                     tokenFromDB.AccessToken = reponseTokenFirstPhase.access_token;
                     tokenFromDB.RefressToken = reponseTokenFirstPhase.refresh_token;
-                    //tokenFromDB.Site = accessiableResourceResponseDTO[0].url;
                 }
                 db.SaveChanges();
                 await db.Database.CommitTransactionAsync();

@@ -42,7 +42,17 @@ namespace ResourceAssignAdmin.Pages.Plan
                 return Page();
             }
 
-            _context.Attach(PlanSubscription).State = EntityState.Modified;
+            var plansubscription = await _context.PlanSubscriptions
+                .FirstOrDefaultAsync(m => m.Id == PlanSubscription.Id);
+
+            plansubscription.Id = PlanSubscription.Id;
+            plansubscription.Name = PlanSubscription.Name;
+            plansubscription.Price = PlanSubscription.Price;
+            plansubscription.Duration = PlanSubscription.Duration;
+
+            _context.PlanSubscriptions.Update(plansubscription);
+
+            await _context.SaveChangesAsync();
 
             try
             {

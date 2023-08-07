@@ -14,5 +14,9 @@
         {
             get; set;
         }
+        public string? siteUrl
+        {
+            get; set;
+        }
     }
 }

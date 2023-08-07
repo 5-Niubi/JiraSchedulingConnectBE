@@ -110,19 +110,19 @@
                 double actualEffort = data.TaskDuration[np];
                 double similarityAssign = 0;
                 //
-                for (int i = 0; i < data.NumOfTasks; ++i)
-                {
-                    if (workerTask[i] == wt)
-                    {
-                        similarityAssign = MathF.Max((float)similarityAssign, (float)data.TaskSimilarity[i, np]);
-                    }
-                }
-                if (similarityAssign > 0.75)
-                    actualEffort *= 0.7;
-                else if (similarityAssign > 0.5)
-                    actualEffort *= 0.8;
-                else if (similarityAssign > 0.25)
-                    actualEffort *= 0.9;
+                //for (int i = 0; i < data.NumOfTasks; ++i)
+                //{
+                //    if (workerTask[i] == wt)
+                //    {
+                //        similarityAssign = MathF.Max((float)similarityAssign, (float)data.TaskSimilarity[i, np]);
+                //    }
+                //}
+                //if (similarityAssign > 0.75)
+                //    actualEffort *= 0.7;
+                //else if (similarityAssign > 0.5)
+                //    actualEffort *= 0.8;
+                //else if (similarityAssign > 0.25)
+                //    actualEffort *= 0.9;
                 while (end < data.Deadline)
                 {
 
