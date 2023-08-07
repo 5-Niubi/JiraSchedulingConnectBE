@@ -168,7 +168,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
             // get list task by project
-            var TaskList = await db.Tasks.Include(s => s.TaskPrecedenceTasks).Where(t => t.ProjectId == projectId && t.IsDelete == false).ToArrayAsync();
+            var TaskList = await db.Tasks.Include(s => s.TaskPrecedenceTasks).Include(s => s.TasksSkillsRequireds).Where(t => t.ProjectId == projectId && t.IsDelete == false).ToArrayAsync();
 
             // validate all task must have skills
             await _ValidateExitedSkillInTask(TaskList);
