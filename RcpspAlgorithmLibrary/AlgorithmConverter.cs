@@ -232,10 +232,10 @@ namespace AlgorithmLibrary
                 var task = new TaskScheduleResultDTO();
                 task.id = TaskList[i].Id;
                 task.name = TaskList[i].Name;
-                task.duration = taskEnd[i] - taskStart[i] + 1;
+                task.duration = taskEnd[i] - taskStart[i];
                 task.workforce = mapper.Map<WorkforceScheduleResultDTO>(WorkerList[taskWithWorker[i]]);
                 task.startDate = StartDate.AddDays(taskStart[i]);
-                task.endDate = StartDate.AddDays(taskEnd[i]);
+                task.endDate = StartDate.AddDays(taskEnd[i] - 1);
                 task.mileStone = mapper.Map<MileStoneScheduleResultDTO>(TaskList[i].Milestone);
                 foreach (var taskPre in TaskList[i].TaskPrecedenceTasks)
                 {

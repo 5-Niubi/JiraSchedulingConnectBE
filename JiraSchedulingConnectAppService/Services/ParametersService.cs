@@ -8,6 +8,7 @@ using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Skills;
 using ModelLibrary.DTOs.Tasks;
+using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
@@ -228,11 +229,16 @@ namespace JiraSchedulingConnectAppService.Services
             return RecomendWorkforceTaskParamsList;
         }
 
+        private async Task<ParameterRequestDTO> _validatePramater(ParameterRequestDTO parameterRequest)
+        {
+            await _ValidateTasksSkillRequireds(parameterRequest.ProjectId, parameterRequest.ParameterResources);
+            return parameterRequest;
+        }
+
         public async Task<ParameterDTO> SaveParams(ParameterRequestDTO parameterRequest)
         {
             // Is validate Resource parameter minimize adaptive Resource Task
-            await _ValidateTasksSkillRequireds(parameterRequest.ProjectId, parameterRequest.ParameterResources);
-
+            parameterRequest = await _validatePramater(parameterRequest);
             var parameterRequestDTO = mapper.Map<Parameter>(parameterRequest);
             var paramsEntity = await db.Parameters.AddAsync(parameterRequestDTO);
 

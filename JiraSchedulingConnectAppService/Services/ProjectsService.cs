@@ -102,17 +102,17 @@ namespace JiraSchedulingConnectAppService.Services
 
             }, "LimitedCreateProject");
 
-
+            projectRequest = ValidateProjectInput(projectRequest);
 
             var project = mapper.Map<ModelLibrary.DBModels.Project>(projectRequest);
             project.CloudId = cloudId;
 
-            projectRequest = ValidateProjectInput(projectRequest);
 
             // Check Name project's exited
             // if not exited -> insert
             // else throw error
-            var existingProject = await db.Projects.FirstOrDefaultAsync(p => p.Name == project.Name && p.CloudId == cloudId);
+            var existingProject = await db.Projects
+                .FirstOrDefaultAsync(p => p.Name == project.Name && p.CloudId == cloudId);
 
             if (existingProject != null)
             {
@@ -189,7 +189,7 @@ namespace JiraSchedulingConnectAppService.Services
             {
                 throw new Exception(Const.MESSAGE.PROJECT_BUDGET_ERR);
             }
-
+            projectRequest.Deadline = Utils.MoveDayToEnd(projectRequest.Deadline);
             return projectRequest;
         }
 

@@ -82,7 +82,7 @@ namespace AlgorithmServiceServer.Services
                 {
                     var algOutConverted = converter.FromOR(algOutRaw.Genes,
                         new int[0], algOutRaw.TaskBegin, algOutRaw.TaskFinish);
-
+                     
                     algOutConverted.timeFinish = algOutRaw.TimeFinish;
                     algOutConverted.totalExper = algOutRaw.TotalExper;
                     algOutConverted.totalSalary = algOutRaw.TotalSalary;
@@ -125,6 +125,14 @@ namespace AlgorithmServiceServer.Services
 
             var scheduleSolution = await db.Schedules.AddAsync(schedule);
             return scheduleSolution.Entity;
+        }
+
+        private int CalculateTotalSalary(Project project, OutputFromORDTO algOutConverted)
+        {
+            var baseWorkingHour = project.BaseWorkingHour;
+
+
+            return 0;
         }
     }
 }
