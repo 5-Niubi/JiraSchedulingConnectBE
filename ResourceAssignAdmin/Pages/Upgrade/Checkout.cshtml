@@ -1,12 +1,34 @@
 ﻿@page
 @model ResourceAssignAdmin.Pages.Upgrade.CheckoutModel
 @{
+    var holderToken = "HFKEIJEIOHJHHFE";
+    var holderEmail = "you@example.com";
+    var email = "area1110@outlook.com";
 }
 <div class="container">
     <main>
         <div class="py-5 text-center">
-            <h2>Upgrade Plan request form</h2>
-            <p class="lead">Below is an example form built entirely with Bootstrap’s form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p>
+            <h2>Upgrade Plan Checkout</h2>
+        </div>
+        <div class="row">
+            <p class="lead">How to make payment</p>
+
+            <ul>
+                <li>
+                    Automatic upgrade: (Only works with international payment cards)
+                    <p>
+                        Select "Global Payment" below. Provide customer code and card information.
+                        Make sure you have enough money in your card to pay
+                    </p>
+                </li>
+                <li>
+                    For users without international payment cards: (Only Vietnam country)
+                    <p>
+                        Select QRCode banking and follow the instructions
+                    </p>
+                </li>
+            </ul>
+
         </div>
 
         <div class="row">
@@ -46,7 +68,7 @@
                                     <div class="mb-3">
                                         <label for="userToken" class="form-label">User Token</label>
                                         <input asp-for="@Model.UserToken" type="text" class="form-control" id="userToken"
-                                            placeholder="HFKEIJEIOHJHHFE" required="">
+                                               placeholder="@holderToken" required="">
                                         <div class="text-danger">
                                             @ViewBag.tokenMsg
                                         </div>
@@ -63,68 +85,101 @@
                             </button>
                         </h2>
                         <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                            <div class="accordion-body row">
-                                <div class="col-md-5 order-md-last">
-                                    <h4 class="d-flex justify-content-between align-items-center mb-3">
-                                        <span class="text-primary">Transfer Information</span>
-                                    </h4>
-                                    <div class="card">
-                                        <img src="https://www.imgonline.com.ua/examples/qr-code-url.png" class="card-img-top" alt="...">
-                                        <div class="card-body">
-                                            <h5 class="card-title">Card title</h5>
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                        </div>
+                            <div class="accordion-body ">
+                                <div class="row">
+                                    <div class="alert alert-light" role="alert">
+                                        <p>
+                                            Vui lòng quét mã QR bên dưới để thực hiện thanh toán. Hoặc chuyển khoản theo thông tin:
+                                            <br />
+                                            <b>Ngân hàng TMCP Bản Việt - 9037041035051- Nguyen Khanh Huy</b>
+                                        </p>
+                                        <p>
+                                            Ghi rõ nội dung chuyển khoản gồm <b>[UserToken] - [Gói nâng cấp] - [Thông tin liên hệ]</b>
+                                            <br />
+                                            <i>*Thông tin liên hệ có thể là số điện thoại, email,...</i>
+                                            <span>(VD: Plus - @holderToken - @holderEmail)</span>
+                                        </p>
+                                        <p>
+                                            Sau khi chuyển khoản thành công thì có thể mất vài ngày để xử lý.
+                                            Sau đó ứng dụng WoTaas của bạn sẽ được nâng cấp
+                                        </p>
+                                        <p>
+                                            Nếu có thắc mắc hoặc phản hồi, xin vui lòng liên hệ tới <i>@email</i>
+                                            Hoặc điền vào Form để gửi mail
+                                        </p>
                                     </div>
                                 </div>
-                                <div class="col-md-7">
-                                    <h4 class="mb-3">Billing Information</h4>
-
-                                    <form class="needs-validation" novalidate="">
-                                        <div class="row g-3">
-                                            <div class="col-sm-6">
-                                                <label for="firstName" class="form-label">First name</label>
-                                                <input type="text" class="form-control" id="firstName" placeholder="" value="" required="">
-                                                <div class="invalid-feedback">
-                                                    Valid first name is required.
-                                                </div>
-                                            </div>
-
-                                            <div class="col-sm-6">
-                                                <label for="lastName" class="form-label">Last name</label>
-                                                <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
-                                                <div class="invalid-feedback">
-                                                    Valid last name is required.
-                                                </div>
-                                            </div>
-
-                                            <div class="col-12">
-                                                <label for="email" class="form-label">Email<span class="text-muted">(Optional)</span></label>
-                                                <input type="email" class="form-control" id="email" placeholder="you@example.com">
-                                            </div>
-
-                                            <div class="col-12">
-                                                <label for="userToken" class="form-label">User Token</label>
-                                                <input asp-for="@Model.UserToken" type="text" class="form-control" id="userToken"
-                                                    placeholder="HFKEIJEIOHJHHFE" required="">
-                                            </div>
-
-                                            <div class="col-12">
-                                                <label for="transferCode" class="form-label">Transfer Code<span class="text-muted">(Optional)</span></label>
-                                                <input type="text" class="form-control" id="transferCode" placeholder="614893">
+                                <div class="row">
+                                    <div class="col-md-5 order-md-last">
+                                        <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                            <span class="text-primary">Transfer Information</span>
+                                        </h4>
+                                        <div class="card">
+                                            <img src="https://www.imgonline.com.ua/examples/qr-code-url.png" class="card-img-top" alt="...">
+                                            <div class="card-body">
+                                                <h5 class="card-title">QRCode</h5>
+                                                <p class="card-text">Vui lòng quét mã QR phía trên để thực hiện thanh toán.</p>
+                                                <p class="card-text">
+                                                    Nếu mã QR bị lỗi xin vui lòng chuyển khoản theo thông tin: <br />
+                                                    <b>Ngân hàng TMCP Bản Việt - 9037041035051- Nguyen Khanh Huy</b>
+                                                </p>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <h4 class="mb-3">Contact Form</h4>
 
-                                        <hr class="my-4">
+                                        <form class="needs-validation" novalidate="">
+                                            <div class="row g-3">
+                                                @*<div class="col-sm-6">
+                                                    <label for="firstName" class="form-label">First name</label>
+                                                    <input type="text" class="form-control" id="firstName" placeholder="" value="" required="">
+                                                    <div class="invalid-feedback">
+                                                        Valid first name is required.
+                                                    </div>
+                                                </div>
 
-                                        <p class="lead"></p>
+                                                <div class="col-sm-6">
+                                                    <label for="lastName" class="form-label">Last name</label>
+                                                    <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
+                                                    <div class="invalid-feedback">
+                                                        Valid last name is required.
+                                                    </div>
+                                                </div>*@
 
-                                        <hr class="my-4">
+                                                <div class="col-12">
+                                                    <label for="email" class="form-label">Email<span class="text-muted">(Optional)</span></label>
+                                                    <input type="email" class="form-control" id="email" placeholder="@holderEmail">
+                                                </div>
 
-                                        <button class="w-100 btn btn-primary btn-lg" id="btnUpgradeCheckout"
-                                                onclick="mailTo()" type="button">
-                                            Continue to checkout
-                                        </button>
-                                    </form>
+                                                <div class="col-12">
+                                                    <label for="userToken" class="form-label">User Token</label>
+                                                    <input asp-for="@Model.UserToken" type="text" class="form-control" id="userToken"
+                                                           placeholder="@holderToken" required="">
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <label for="transferCode" class="form-label">Transfer Code<span class="text-muted">(Optional)</span></label>
+                                                    <input type="text" class="form-control" id="transferCode" placeholder="614893">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="description" class="form-label">Description</label>
+                                                    <textarea class="form-control" id="description" rows="3"></textarea>
+                                                </div>
+                                            </div>
+
+                                            <hr class="my-4">
+
+                                            <p class="lead"></p>
+
+                                            <hr class="my-4">
+
+                                            <button class="w-100 btn btn-primary btn-lg" id="btnUpgradeCheckout"
+                                                    onclick="mailTo()" type="button">
+                                                Contact
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>

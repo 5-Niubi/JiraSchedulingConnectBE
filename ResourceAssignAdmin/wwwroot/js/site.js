@@ -81,11 +81,13 @@ function mailTo() {
 
     let userCode = $("#userToken").val();
     let transferCode = $("#transferCode").val();
+    let description = $("#description").val();
 
     let subject = `[WoTaas][UpgradePlan] ${userCode}`;
     let body = `
         UserCode: ${userCode}
         TransferCode: ${transferCode}
+        Description: ${description}
     `;
 
     subject = encodeURIComponent(subject);
