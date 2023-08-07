@@ -163,7 +163,8 @@ namespace AlgorithmLibrary
                 int k = 0;
                 for (int j = 0; j < Deadline; j++)
                 {
-                    workerEffort[i, j] = Math.Round(workingEffort?[k++] ?? 0 / BaseWorkingHours, 3);
+                    double effort = Math.Round(workingEffort[k++] / BaseWorkingHours, 3);
+                    workerEffort[i, j] = effort;
                     // reset k
                     if (k >= (workingEffort?.Length ?? 0))
                     {
@@ -240,11 +241,6 @@ namespace AlgorithmLibrary
                 }
                 outPut.tasks.Add(task);
             }
-            //for (int i = 0; i < taskWithEquipment.Length; i++)
-            //{
-            //    outPut.tasks[i % EquipmentList.Count]
-            //        .equipmentId.Add(EquipmentList[taskWithEquipment[i]].Id);
-            //}
             return outPut;
         }
     }
