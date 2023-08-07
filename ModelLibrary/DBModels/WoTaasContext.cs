@@ -1,14 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ModelLibrary.DBModels
 {
-    public partial class JiraDemoContext : DbContext
+    public partial class WoTaasContext : DbContext
     {
-        public JiraDemoContext()
+        public WoTaasContext()
         {
         }
 
-        public JiraDemoContext(DbContextOptions<JiraDemoContext> options)
+        public WoTaasContext(DbContextOptions<WoTaasContext> options)
             : base(options)
         {
         }
@@ -48,32 +51,11 @@ namespace ModelLibrary.DBModels
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<AdminAccount>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Equipment>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<EquipmentsFunction>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Milestone>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Parameter>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<ParameterResource>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<PlanPermission>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<PlanSubscription>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Schedule>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Skill>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Subscription>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Task>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskFunction>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
-
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
+
+                entity.HasIndex(e => e.TokenId, "IX_account_roles_token_id");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -241,6 +223,8 @@ namespace ModelLibrary.DBModels
 
                 entity.ToTable("equipments_function");
 
+                entity.HasIndex(e => e.FunctionId, "IX_equipments_function_function_id");
+
                 entity.Property(e => e.EquipmentId).HasColumnName("equipment_id");
 
                 entity.Property(e => e.FunctionId).HasColumnName("function_id");
@@ -309,6 +293,8 @@ namespace ModelLibrary.DBModels
             {
                 entity.ToTable("milestones");
 
+                entity.HasIndex(e => e.ProjectId, "IX_milestones_project_id");
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreateDatetime)
@@ -339,6 +325,8 @@ namespace ModelLibrary.DBModels
             modelBuilder.Entity<Parameter>(entity =>
             {
                 entity.ToTable("parameter");
+
+                entity.HasIndex(e => e.ProjectId, "IX_parameter_project_id");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -383,6 +371,10 @@ namespace ModelLibrary.DBModels
             {
                 entity.ToTable("parameter_resource");
 
+                entity.HasIndex(e => e.ParameterId, "IX_parameter_resource_parameter_id");
+
+                entity.HasIndex(e => e.ResourceId, "IX_parameter_resource_resource_id");
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreateDatetime)
@@ -425,6 +417,8 @@ namespace ModelLibrary.DBModels
             {
                 entity.ToTable("plan_permissions");
 
+                entity.HasIndex(e => e.PlanSubscriptionId, "IX_plan_permissions_plan_subscription_id");
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreateDatetime)
@@ -456,7 +450,9 @@ namespace ModelLibrary.DBModels
             {
                 entity.ToTable("plan_subscription");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
 
                 entity.Property(e => e.CreateDatetime)
                     .HasColumnType("datetime")
@@ -574,6 +570,8 @@ namespace ModelLibrary.DBModels
             {
                 entity.ToTable("schedules");
 
+                entity.HasIndex(e => e.ParameterId, "IX_schedules_parameter_id");
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.AccountId)
@@ -655,6 +653,10 @@ namespace ModelLibrary.DBModels
             {
                 entity.ToTable("subscription");
 
+                entity.HasIndex(e => e.AtlassianTokenId, "IX_subscription_atlassian_token_id");
+
+                entity.HasIndex(e => e.PlanId, "IX_subscription_plan_id");
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.AtlassianTokenId).HasColumnName("atlassian_token_id");
@@ -706,6 +708,10 @@ namespace ModelLibrary.DBModels
             {
                 entity.ToTable("tasks");
 
+                entity.HasIndex(e => e.MilestoneId, "IX_tasks_milestone_id");
+
+                entity.HasIndex(e => e.ProjectId, "IX_tasks_project_id");
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CloudId)
@@ -753,6 +759,8 @@ namespace ModelLibrary.DBModels
 
                 entity.ToTable("task_function");
 
+                entity.HasIndex(e => e.FunctionId, "IX_task_function_function_id");
+
                 entity.Property(e => e.TaskId).HasColumnName("task_id");
 
                 entity.Property(e => e.FunctionId).HasColumnName("function_id");
@@ -791,6 +799,8 @@ namespace ModelLibrary.DBModels
 
                 entity.ToTable("task_precedences");
 
+                entity.HasIndex(e => e.PrecedenceId, "IX_task_precedences_precedence_id");
+
                 entity.Property(e => e.TaskId).HasColumnName("task_id");
 
                 entity.Property(e => e.PrecedenceId).HasColumnName("precedence_id");
@@ -827,6 +837,8 @@ namespace ModelLibrary.DBModels
 
                 entity.ToTable("tasks_skills_required");
 
+                entity.HasIndex(e => e.SkillId, "IX_tasks_skills_required_skill_id");
+
                 entity.Property(e => e.TaskId).HasColumnName("task_id");
 
                 entity.Property(e => e.SkillId).HasColumnName("skill_id");
@@ -862,9 +874,6 @@ namespace ModelLibrary.DBModels
             modelBuilder.Entity<Workforce>(entity =>
             {
                 entity.ToTable("workforce");
-
-                entity.HasIndex(e => e.Email, "UC_Email")
-                    .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -930,6 +939,8 @@ namespace ModelLibrary.DBModels
                 entity.HasKey(e => new { e.WorkforceId, e.SkillId });
 
                 entity.ToTable("workforce_skills");
+
+                entity.HasIndex(e => e.SkillId, "IX_workforce_skills_skill_id");
 
                 entity.Property(e => e.WorkforceId).HasColumnName("workforce_id");
 
