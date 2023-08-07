@@ -232,7 +232,7 @@ namespace AlgorithmLibrary
                 var task = new TaskScheduleResultDTO();
                 task.id = TaskList[i].Id;
                 task.name = TaskList[i].Name;
-                task.duration = (int?)TaskList[i].Duration;
+                task.duration = taskEnd[i] - taskStart[i] + 1;
                 task.workforce = mapper.Map<WorkforceScheduleResultDTO>(WorkerList[taskWithWorker[i]]);
                 task.startDate = StartDate.AddDays(taskStart[i]);
                 task.endDate = StartDate.AddDays(taskEnd[i]);
