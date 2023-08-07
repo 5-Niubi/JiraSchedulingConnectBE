@@ -3,6 +3,7 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
 using System.Text.Json;
+using UtilsLibrary;
 
 namespace AlgorithmLibrary
 {
@@ -120,7 +121,7 @@ namespace AlgorithmLibrary
                 taskDuration[i] = (int)TaskList[i].Duration;
                 for (int j = 0; j < TaskList.Count; j++)
                 {
-                    taskAdjacency[j, i] = 
+                    taskAdjacency[j, i] =
                         (TaskList[i]
                         .TaskPrecedenceTasks.Where(e => e.PrecedenceId == TaskList[j].Id)
                         //TODO: re-confirm what vector embedding in taskAdjacency
@@ -235,7 +236,7 @@ namespace AlgorithmLibrary
                 task.duration = taskEnd[i] - taskStart[i];
                 task.workforce = mapper.Map<WorkforceScheduleResultDTO>(WorkerList[taskWithWorker[i]]);
                 task.startDate = StartDate.AddDays(taskStart[i]);
-                task.endDate = StartDate.AddDays(taskEnd[i] - 1);
+                task.endDate = Utils.MoveDayToEnd(StartDate.AddDays(taskEnd[i] - 1));
                 task.mileStone = mapper.Map<MileStoneScheduleResultDTO>(TaskList[i].Milestone);
                 foreach (var taskPre in TaskList[i].TaskPrecedenceTasks)
                 {

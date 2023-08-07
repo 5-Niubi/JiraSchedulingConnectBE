@@ -49,7 +49,6 @@ namespace AlgorithmServiceServer.Services
             inputTo.StartDate = (DateTime)parameterEntity.StartDate;
             var deadline = (int)Utils.GetDaysBeetween2Dates
                 (parameterEntity.StartDate, parameterEntity.Deadline);
-
             inputTo.Deadline = (deadline == 0)? 1 : deadline;
 
             inputTo.Budget = (int)parameterEntity.Budget;
