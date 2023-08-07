@@ -47,8 +47,10 @@ namespace AlgorithmServiceServer.Services
             var skillFromDB = await db.Skills.Where(s => s.CloudId == cloudId && s.IsDelete == false).ToListAsync();
 
             inputTo.StartDate = (DateTime)parameterEntity.StartDate;
-            inputTo.Deadline = (int)Utils.GetDaysBeetween2Dates
+            var deadline = (int)Utils.GetDaysBeetween2Dates
                 (parameterEntity.StartDate, parameterEntity.Deadline);
+
+            inputTo.Deadline = (deadline == 0)? 1 : deadline;
 
             inputTo.Budget = (int)parameterEntity.Budget;
             inputTo.WorkerList = workerFromDB;
