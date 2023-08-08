@@ -700,9 +700,10 @@ namespace JiraSchedulingConnectAppService.Services
             ProjectFile project = new();
             var projectFileName = $"{projectDb.Name}.xml";
 
-            var calendar = project.AddCalendar();
-            calendar.SetWorkingDay(java.time.DayOfWeek.SATURDAY, true);
-            calendar.SetWorkingDay(java.time.DayOfWeek.SUNDAY, true);
+            var calendar = project.AddDefaultBaseCalendar();
+            calendar.SetCalendarDayType(java.time.DayOfWeek.SATURDAY, DayType.WORKING);
+            calendar.SetCalendarDayType(java.time.DayOfWeek.SUNDAY, DayType.WORKING);
+
 
             foreach (var key in workforceResultDict.Keys)
             {
@@ -711,7 +712,7 @@ namespace JiraSchedulingConnectAppService.Services
                     var rs = project.AddResource();
                     rs.Name = workforceResultDict[key].displayName;
                     rs.Cost = new Float((float)workforceResultDict[key].unitSalary);
-                    rs.OverAllocated = false;
+                    rs.OverAllocated = true;
                     resourceDict.Add(workforceResultDict[key].id, rs);
                 }
             }
