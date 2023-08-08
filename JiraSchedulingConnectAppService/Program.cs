@@ -10,6 +10,7 @@ using ModelLibrary.DTOs;
 using NLog;
 using NLog.Web;
 using System.Text;
+using static UtilsLibrary.Const;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
 try
@@ -85,10 +86,11 @@ try
     builder.Services.AddAuthorization(
         options =>
         {
+            
             options.AddPolicy(
-                "LimitedScheduleTimeByMonth", policy => policy.Requirements.Add(new ScheduleLimitRequirement(3)));
+                "LimitedScheduleTimeByDay", policy => policy.Requirements.Add(new ScheduleLimitRequirement(LIMITED_PLAN.LIMIT_DAILY_EXECUTE_ALGORITHM)));
             options.AddPolicy(
-                "LimitedCreateProject", policy => policy.Requirements.Add(new ProjectLimitRequirement(1)));
+                "LimitedCreateProject", policy => policy.Requirements.Add(new ProjectLimitRequirement(LIMITED_PLAN.LIMIT_CREATE_NEW_PROJECT)));
         });
 
 

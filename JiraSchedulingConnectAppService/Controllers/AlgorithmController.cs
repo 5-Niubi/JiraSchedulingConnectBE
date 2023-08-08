@@ -82,6 +82,22 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> GetExecuteAlgorithmDailyLimited()
+        {
+            try
+            {
+                return Ok(await algorithmService.GetExecuteAlgorithmLimited());
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError(ex.Message);
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+
 
 
 

@@ -56,6 +56,12 @@
             public const int PLAN_PLUS = 2;
         }
 
+        public static class LIMITED_PLAN
+        {
+            public const int LIMIT_DAILY_EXECUTE_ALGORITHM = 3;
+            public const int LIMIT_CREATE_NEW_PROJECT = 1;
+        }
+
         public static class ADMIN_SERVER
         {
             public const string USER = "user";
