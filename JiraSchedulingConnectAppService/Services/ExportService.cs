@@ -700,7 +700,7 @@ namespace JiraSchedulingConnectAppService.Services
             ProjectFile project = new();
             var projectFileName = $"{projectDb.Name}.xml";
 
-            var calendar = new ProjectCalendar(project);
+            var calendar = project.AddCalendar();
             calendar.SetWorkingDay(java.time.DayOfWeek.SATURDAY, true);
             calendar.SetWorkingDay(java.time.DayOfWeek.SUNDAY, true);
 
@@ -711,7 +711,7 @@ namespace JiraSchedulingConnectAppService.Services
                     var rs = project.AddResource();
                     rs.Name = workforceResultDict[key].displayName;
                     rs.Cost = new Float((float)workforceResultDict[key].unitSalary);
-
+                    rs.OverAllocated = false;
                     resourceDict.Add(workforceResultDict[key].id, rs);
                 }
             }
@@ -725,7 +725,6 @@ namespace JiraSchedulingConnectAppService.Services
                     milestone = project.AddTask();
                     milestone.Name = t.mileStone.name;
                     milestoneDict.Add(t.mileStone.id, milestone);
-                    milestone.TaskMode = TaskMode.MANUALLY_SCHEDULED;
                 }
                 else if (t.mileStone != null && milestoneDict.ContainsKey(t.mileStone.id))
                 {
@@ -741,7 +740,6 @@ namespace JiraSchedulingConnectAppService.Services
                 {
                     task = project.AddTask();
                 }
-                task.TaskMode = TaskMode.MANUALLY_SCHEDULED;
                 task.Name = t.name;
                 task.Duration = Duration.getInstance((double) t.duration, TimeUnit.DAYS);
 
