@@ -139,7 +139,7 @@ namespace AlgorithmServiceServer.Services
             // Filter all worker from tasks
             foreach (var task in tasks)
             {
-                if (!workerSalaryDict.ContainsKey(task.workforce))
+                if (workerSalaryDict.Keys.Where(t => task.workforce.id == t.id).Count() == 0)
                 {
                     workerSalaryDict.Add(task.workforce, 0);
                 }
