@@ -691,12 +691,18 @@ namespace JiraSchedulingConnectAppService.Services
         private (string, MemoryStream) XMLCreateFile(List<TaskScheduleResultDTO> tasks, ModelLibrary.DBModels.Project projectDb,
             Dictionary<int, WorkforceScheduleResultDTO> workforceResultDict)
         {
-            ProjectFile project = new();
-            var projectFileName = $"{projectDb.Name}.xml";
+
             var resourceDict = new Dictionary<int?, net.sf.mpxj.Resource>();
             var taskDict = new Dictionary<int?, net.sf.mpxj.Task>();
             var milestoneDict = new Dictionary<int, net.sf.mpxj.Task>();
 
+
+            ProjectFile project = new();
+            var projectFileName = $"{projectDb.Name}.xml";
+
+            var calendar = new ProjectCalendar(project);
+            calendar.SetWorkingDay(java.time.DayOfWeek.SATURDAY, true);
+            calendar.SetWorkingDay(java.time.DayOfWeek.SUNDAY, true);
 
             foreach (var key in workforceResultDict.Keys)
             {
@@ -710,34 +716,23 @@ namespace JiraSchedulingConnectAppService.Services
                 }
             }
 
-
-            //tasks.ForEach(t =>
-            //{
-            //    if (!resourceDict.ContainsKey(t.workforce.id))
-            //    {
-            //        var rs = project.AddResource();
-            //        rs.Name = t.workforce.displayName;
-            //        rs.Cost = new Float((float)t.workforce.unitSalary);
-
-            //        resourceDict.Add(t.workforce.id, rs);
-            //    }
-            //});
             foreach (var t in tasks)
             {
-                net.sf.mpxj.Task milestone = null;
+                net.sf.mpxj.Task? milestone = null;
 
                 if (t.mileStone != null && !milestoneDict.ContainsKey(t.mileStone.id))
                 {
                     milestone = project.AddTask();
                     milestone.Name = t.mileStone.name;
                     milestoneDict.Add(t.mileStone.id, milestone);
+                    milestone.TaskMode = TaskMode.MANUALLY_SCHEDULED;
                 }
                 else if (t.mileStone != null && milestoneDict.ContainsKey(t.mileStone.id))
                 {
                     milestone = milestoneDict[t.mileStone.id];
                 }
 
-                net.sf.mpxj.Task task;
+                net.sf.mpxj.Task? task = null;
                 if (milestone != null)
                 {
                     task = milestone.addTask();
@@ -746,12 +741,14 @@ namespace JiraSchedulingConnectAppService.Services
                 {
                     task = project.AddTask();
                 }
+                task.TaskMode = TaskMode.MANUALLY_SCHEDULED;
+                task.Name = t.name;
+                task.Duration = Duration.getInstance((double) t.duration, TimeUnit.DAYS);
+
                 var start = t.startDate.Value;
                 task.Start = LocalDateTime.of(start.Year, start.Month, start.Day, start.Hour, start.Minute);
                 //var end = t.endDate.Value;
                 //task.Finish = LocalDateTime.of(end.Year, end.Month, end.Day, end.Hour, end.Minute);
-                task.Duration = Duration.getInstance((double)t.duration, TimeUnit.DAYS);
-                task.Name = t.name;
 
                 var assignment = task.AddResourceAssignment(resourceDict[t.workforce.id]);
 
