@@ -748,8 +748,8 @@ namespace JiraSchedulingConnectAppService.Services
                 }
                 var start = t.startDate.Value;
                 task.Start = LocalDateTime.of(start.Year, start.Month, start.Day, start.Hour, start.Minute);
-                var end = t.endDate.Value;
-                task.Finish = LocalDateTime.of(end.Year, end.Month, end.Day, end.Hour, end.Minute);
+                //var end = t.endDate.Value;
+                //task.Finish = LocalDateTime.of(end.Year, end.Month, end.Day, end.Hour, end.Minute);
                 task.Duration = Duration.getInstance((double)t.duration, TimeUnit.DAYS);
                 task.Name = t.name;
 

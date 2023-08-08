@@ -5,7 +5,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
-using Newtonsoft.Json;
+using System.Text.Json;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
@@ -49,7 +49,7 @@ namespace AlgorithmServiceServer.Services
             inputTo.StartDate = (DateTime)parameterEntity.StartDate;
             var deadline = (int)Utils.GetDaysBeetween2Dates
                 (parameterEntity.StartDate, parameterEntity.Deadline);
-            inputTo.Deadline = (deadline == 0)? 1 : deadline;
+            inputTo.Deadline = (deadline == 0) ? 1 : deadline;
 
             inputTo.Budget = (int)parameterEntity.Budget;
             inputTo.WorkerList = workerFromDB;
@@ -81,10 +81,12 @@ namespace AlgorithmServiceServer.Services
                 {
                     var algOutConverted = converter.FromOR(algOutRaw.Genes,
                         new int[0], algOutRaw.TaskBegin, algOutRaw.TaskFinish);
-                     
+
                     algOutConverted.timeFinish = algOutRaw.TimeFinish;
                     algOutConverted.totalExper = algOutRaw.TotalExper;
-                    algOutConverted.totalSalary = algOutRaw.TotalSalary;
+
+                    var totalSalary = CalculateTotalSalary(projectFromDB, algOutConverted);
+                    algOutConverted.totalSalary = totalSalary;
 
                     algorithmOutputConverted.Add(algOutConverted);
 
@@ -120,7 +122,7 @@ namespace AlgorithmServiceServer.Services
             schedule.Duration = algOutConverted.timeFinish;
             schedule.Cost = algOutConverted.totalSalary;
             schedule.Quality = algOutConverted.totalExper;
-            schedule.Tasks = JsonConvert.SerializeObject(algOutConverted.tasks);
+            schedule.Tasks = JsonSerializer.Serialize(algOutConverted.tasks);
 
             var scheduleSolution = await db.Schedules.AddAsync(schedule);
             return scheduleSolution.Entity;
@@ -130,8 +132,27 @@ namespace AlgorithmServiceServer.Services
         {
             var baseWorkingHour = project.BaseWorkingHour;
 
+            var workerSalaryDict = new Dictionary<int, int>();
+            var tasks = algOutConverted.tasks;
 
-            return 0;
+            // Filter all worker from tasks
+            foreach (var task in tasks)
+            {
+                if (!workerSalaryDict.ContainsKey(task.workforce.id))
+                {
+                    workerSalaryDict.Add(task.workforce.id, 0);
+                }
+            }
+
+            foreach (var wKey in workerSalaryDict.Keys)
+            {
+                var totalDurationOfWker = tasks.Where( t=> t.workforce.id == wKey).Sum(t => t.duration);
+                var totalCostOfWker = totalDurationOfWker * (int) baseWorkingHour;
+                workerSalaryDict[wKey] = totalCostOfWker?? 0;
+            }
+
+            var  totalCost = workerSalaryDict.Values.Sum();
+            return totalCost;
         }
     }
 }
