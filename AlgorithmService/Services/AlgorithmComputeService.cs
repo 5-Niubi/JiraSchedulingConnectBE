@@ -5,6 +5,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
+using ModelLibrary.DTOs.Algorithm.ScheduleResult;
 using System.Text.Json;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
@@ -132,22 +133,22 @@ namespace AlgorithmServiceServer.Services
         {
             var baseWorkingHour = project.BaseWorkingHour;
 
-            var workerSalaryDict = new Dictionary<int, int>();
+            var workerSalaryDict = new Dictionary<WorkforceScheduleResultDTO, int>();
             var tasks = algOutConverted.tasks;
 
             // Filter all worker from tasks
             foreach (var task in tasks)
             {
-                if (!workerSalaryDict.ContainsKey(task.workforce.id))
+                if (!workerSalaryDict.ContainsKey(task.workforce))
                 {
-                    workerSalaryDict.Add(task.workforce.id, 0);
+                    workerSalaryDict.Add(task.workforce, 0);
                 }
             }
 
             foreach (var wKey in workerSalaryDict.Keys)
             {
-                var totalDurationOfWker = tasks.Where( t=> t.workforce.id == wKey).Sum(t => t.duration);
-                var totalCostOfWker = totalDurationOfWker * (int) baseWorkingHour;
+                var totalDurationOfWker = tasks.Where( t=> t.workforce.id == wKey.id).Sum(t => t.duration);
+                var totalCostOfWker = totalDurationOfWker * (int) baseWorkingHour * (int) wKey.unitSalary;
                 workerSalaryDict[wKey] = totalCostOfWker?? 0;
             }
 
