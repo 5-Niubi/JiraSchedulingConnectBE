@@ -83,8 +83,8 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                await skillsService.DeleteSkill(id);
-                return Ok();
+                var response = await skillsService.DeleteSkill(id);
+                return Ok(response);
             }
             catch (Exception ex)
             {

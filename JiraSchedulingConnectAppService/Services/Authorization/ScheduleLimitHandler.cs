@@ -10,13 +10,13 @@ namespace JiraSchedulingConnectAppService.Services.Authorization
 
     public class ScheduleLimitRequirement : IAuthorizationRequirement
     {
-        public int maxMonthlyLimit
+        public int maxDailyLimit
         {
             get; set;
         }
-        public ScheduleLimitRequirement(int maxMonthlyLimit)
+        public ScheduleLimitRequirement(int maxDailyLimit)
         {
-            this.maxMonthlyLimit = maxMonthlyLimit;
+            this.maxDailyLimit = maxDailyLimit;
 
         }
     }
@@ -53,14 +53,14 @@ namespace JiraSchedulingConnectAppService.Services.Authorization
             }
 
 
-            else if (resource.ScheduleUsage < requirement.maxMonthlyLimit)
+            else if (resource.ScheduleUsage < requirement.maxDailyLimit)
             {
                 context.Succeed(requirement);
             }
 
             else
             {
-                throw new UnAuthorizedException($"You have schedule {resource.ScheduleUsage}. With Free Plan Only can schedule {requirement.maxMonthlyLimit} each month");
+                throw new UnAuthorizedException($"You have schedule {resource.ScheduleUsage}. With Free Plan Only can schedule {requirement.maxDailyLimit} each day");
 
             }
 

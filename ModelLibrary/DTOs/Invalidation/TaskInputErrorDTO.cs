@@ -65,6 +65,22 @@
 
     }
 
+
+    public class TaskInputErrorV2DTO
+    {
+
+        public int TaskId
+        {
+            get; set;
+        }
+              public String? Messages
+        {
+            get; set;
+        }
+
+    }
+
+
     public class TaskSaveInputErrorDTO
     {
         public String? Messages
