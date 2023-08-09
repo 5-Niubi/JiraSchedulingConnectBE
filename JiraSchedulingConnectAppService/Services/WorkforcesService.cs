@@ -223,7 +223,7 @@ namespace JiraSchedulingConnectAppService.Services
             // validate skills
             await _ValidateWorkforceSkills(workforceRequest);
 
-
+         
             // Insert new skill to database
             var newSkills = await _insertSkills(workforceRequest.NewSkills);
 
@@ -239,17 +239,15 @@ namespace JiraSchedulingConnectAppService.Services
                 });
             }
 
-
+            // Insert new workforce
             var newWorkforce = mapper.Map<Workforce>(workforceRequest);
             newWorkforce.Active = 1;
             newWorkforce.CloudId = cloudId;
-
 
             var insertedNewWorkforce = db.Workforces.Add(newWorkforce);
             await db.SaveChangesAsync();
 
             var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(insertedNewWorkforce.Entity);
-
             return workforceDTOResponse;
         }
 
@@ -258,7 +256,11 @@ namespace JiraSchedulingConnectAppService.Services
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
             // email not exited
-            var existingWorkforceWithEmail = await db.Workforces.FirstOrDefaultAsync(w => w.Email == workforceRequest.Email);
+
+            var existingWorkforceWithEmail = await db.Workforces.FirstOrDefaultAsync(
+                w => w.Email == workforceRequest.Email
+                && w.CloudId == cloudId
+                && w.IsDelete == false);
 
             if (existingWorkforceWithEmail != null)
             {
