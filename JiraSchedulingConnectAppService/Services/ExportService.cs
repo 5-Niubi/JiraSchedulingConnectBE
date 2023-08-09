@@ -10,6 +10,7 @@ using ModelLibrary.DTOs.Export;
 using ModelLibrary.DTOs.Thread;
 using net.sf.mpxj;
 using net.sf.mpxj.MpxjUtilities;
+using net.sf.mpxj.mspdi;
 using net.sf.mpxj.writer;
 using Newtonsoft.Json;
 using System.Dynamic;
@@ -701,9 +702,25 @@ namespace JiraSchedulingConnectAppService.Services
             var projectFileName = $"{projectDb.Name}.xml";
 
             var calendar = project.AddDefaultBaseCalendar();
-            calendar.SetCalendarDayType(java.time.DayOfWeek.SATURDAY, DayType.WORKING);
-            calendar.SetCalendarDayType(java.time.DayOfWeek.SUNDAY, DayType.WORKING);
 
+            calendar.setWorkingDay(java.time.DayOfWeek.SATURDAY, true);
+            calendar.setWorkingDay(java.time.DayOfWeek.SUNDAY, true);
+            java.time.DayOfWeek[] weeks = {java.time.DayOfWeek.MONDAY, java.time.DayOfWeek.TUESDAY,
+                java.time.DayOfWeek.WEDNESDAY, java.time.DayOfWeek.WEDNESDAY, java.time.DayOfWeek.THURSDAY
+                , java.time.DayOfWeek.FRIDAY, java.time.DayOfWeek.SATURDAY, java.time.DayOfWeek.SUNDAY};
+            foreach (var day in weeks)
+            {
+                var hours = calendar.GetCalendarHours(day);
+                hours.clear();
+
+                var startTime = LocalTime.of(8, 0);
+                var finishTime = LocalTime.of(12, 0);               
+                hours.add(new LocalTimeRange(startTime, finishTime));
+             
+                startTime = LocalTime.of(13, 0);
+                finishTime = LocalTime.of(17, 0);
+                hours.add(new LocalTimeRange(startTime, finishTime));
+            }
 
             foreach (var key in workforceResultDict.Keys)
             {
@@ -741,13 +758,18 @@ namespace JiraSchedulingConnectAppService.Services
                 {
                     task = project.AddTask();
                 }
+                task.TaskMode = TaskMode.MANUALLY_SCHEDULED;
                 task.Name = t.name;
-                task.Duration = Duration.getInstance((double) t.duration, TimeUnit.DAYS);
+
 
                 var start = t.startDate.Value;
-                task.Start = LocalDateTime.of(start.Year, start.Month, start.Day, start.Hour, start.Minute);
-                //var end = t.endDate.Value;
-                //task.Finish = LocalDateTime.of(end.Year, end.Month, end.Day, end.Hour, end.Minute);
+                task.Start = LocalDateTime.of(start.Year, start.Month, start.Day, 8, 0);
+
+                task.Duration = Duration.getInstance((double)t.duration * (double)projectDb.BaseWorkingHour,
+                    TimeUnit.HOURS);
+
+                var end = t.endDate.Value;
+                task.Finish = LocalDateTime.of(end.Year, end.Month, end.Day, 17, 0);
 
                 var assignment = task.AddResourceAssignment(resourceDict[t.workforce.id]);
 
