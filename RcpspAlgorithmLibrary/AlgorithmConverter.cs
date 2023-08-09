@@ -120,8 +120,10 @@ namespace AlgorithmLibrary
                 taskDuration[i] = (int)TaskList[i].Duration;
                 for (int j = 0; j < TaskList.Count; j++)
                 {
-                    taskAdjacency[i, j] = (TaskList[i]
-                        .TaskPrecedenceTasks.Where(e => e.PrecedenceId == TaskList[j].Id) //TODO: re-confirm what vector embedding in taskAdjacency
+                    taskAdjacency[j, i] = 
+                        (TaskList[i]
+                        .TaskPrecedenceTasks.Where(e => e.PrecedenceId == TaskList[j].Id)
+                        //TODO: re-confirm what vector embedding in taskAdjacency
                         .Count() > 0) ? 1 : 0;
                 }
 
@@ -163,7 +165,8 @@ namespace AlgorithmLibrary
                 int k = 0;
                 for (int j = 0; j < Deadline; j++)
                 {
-                    workerEffort[i, j] = Math.Round(workingEffort?[k++] ?? 0 / BaseWorkingHours, 3);
+                    double effort = Math.Round(workingEffort[k++] / BaseWorkingHours, 3);
+                    workerEffort[i, j] = effort;
                     // reset k
                     if (k >= (workingEffort?.Length ?? 0))
                     {
@@ -240,11 +243,6 @@ namespace AlgorithmLibrary
                 }
                 outPut.tasks.Add(task);
             }
-            //for (int i = 0; i < taskWithEquipment.Length; i++)
-            //{
-            //    outPut.tasks[i % EquipmentList.Count]
-            //        .equipmentId.Add(EquipmentList[taskWithEquipment[i]].Id);
-            //}
             return outPut;
         }
     }

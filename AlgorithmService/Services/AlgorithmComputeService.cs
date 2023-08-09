@@ -47,8 +47,10 @@ namespace AlgorithmServiceServer.Services
             var skillFromDB = await db.Skills.Where(s => s.CloudId == cloudId && s.IsDelete == false).ToListAsync();
 
             inputTo.StartDate = (DateTime)parameterEntity.StartDate;
-            inputTo.Deadline = (int)Utils.GetDaysBeetween2Dates
+            var deadline = (int)Utils.GetDaysBeetween2Dates
                 (parameterEntity.StartDate, parameterEntity.Deadline);
+
+            inputTo.Deadline = (deadline == 0)? 1 : deadline;
 
             inputTo.Budget = (int)parameterEntity.Budget;
             inputTo.WorkerList = workerFromDB;
@@ -87,7 +89,7 @@ namespace AlgorithmServiceServer.Services
 
                     algorithmOutputConverted.Add(algOutConverted);
 
-                    var schedule = await InsertScheduleIntoDB(parameterId, algOutConverted);
+                    var schedule = await InsertScheduleIntoDB(parameterEntity, algOutConverted);
                     schedules.Add(schedule);
                 }
 
@@ -109,12 +111,13 @@ namespace AlgorithmServiceServer.Services
         }
 
         private async Task<Schedule> InsertScheduleIntoDB(
-                int parameterId, OutputFromORDTO algOutConverted
+                Parameter parameter, OutputFromORDTO algOutConverted
             )
         {
             // Insert result into Schedules table
             var schedule = new Schedule();
-            schedule.ParameterId = parameterId;
+            schedule.ParameterId = parameter.Id;
+            schedule.Since = parameter.StartDate;
             schedule.Duration = algOutConverted.timeFinish;
             schedule.Cost = algOutConverted.totalSalary;
             schedule.Quality = algOutConverted.totalExper;

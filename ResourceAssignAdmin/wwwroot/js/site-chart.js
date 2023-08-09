@@ -19,6 +19,14 @@ function drawUserDonutChart(totalUsersArray) {
     let configChart = {
         type: 'doughnut',
         data: data,
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Custom Chart Title'
+                }
+            }
+        }
     }
 
     let chart = new Chart(document.getElementById("userDonut"), configChart);

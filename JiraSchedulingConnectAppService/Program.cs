@@ -34,7 +34,7 @@ try
             ValidateLifetime = false, // Token is immortal
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
 
@@ -42,6 +42,7 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
+    var test = builder.Configuration.GetConnectionString("DB");
     // Custom Config
     builder.Services.AddCors();
     builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
