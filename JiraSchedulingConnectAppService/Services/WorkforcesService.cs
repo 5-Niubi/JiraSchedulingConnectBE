@@ -143,19 +143,19 @@ namespace JiraSchedulingConnectAppService.Services
                     );
             }
 
-            for (int i = 0; i < WorkingEfforts.Count; i++)
-            {
-                if (WorkingEfforts[i] < 0 || WorkingEfforts[i] > 8)
-                {
-                    EffortErrors.Add(new WorkingEffortErrorDTO
-                    {
-                        DayIndex = i,
-                        Effort = WorkingEfforts[i],
-                        Message = EffortNotValidMessage
-                    });
-                }
+            //for (int i = 0; i < WorkingEfforts.Count; i++)
+            //{
+            //    if (WorkingEfforts[i] < 0 || WorkingEfforts[i] > BaseWorkingHour)
+            //    {
+            //        EffortErrors.Add(new WorkingEffortErrorDTO
+            //        {
+            //            DayIndex = i,
+            //            Effort = WorkingEfforts[i],
+            //            Message = EffortNotValidMessage
+            //        });
+            //    }
 
-            }
+            //}
 
             if (EffortErrors.Count != 0)
             {
