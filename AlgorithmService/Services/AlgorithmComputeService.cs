@@ -14,10 +14,10 @@ namespace AlgorithmServiceServer.Services
 {
     public class AlgorithmComputeService : IAlgorithmComputeService
     {
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly HttpContext? http;
         private readonly IMapper mapper;
-        public AlgorithmComputeService(JiraDemoContext db, IHttpContextAccessor httpAccessor, IMapper mapper)
+        public AlgorithmComputeService(WoTaasContext db, IHttpContextAccessor httpAccessor, IMapper mapper)
         {
             this.db = db;
             http = httpAccessor.HttpContext;

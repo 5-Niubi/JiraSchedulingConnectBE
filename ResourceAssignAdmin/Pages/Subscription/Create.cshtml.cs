@@ -8,10 +8,10 @@ namespace ResourceAssignAdmin.Pages.Subscription
 {
     public class CreateModel : PageModel
     {
-        private readonly ModelLibrary.DBModels.JiraDemoContext _context;
+        private readonly ModelLibrary.DBModels.WoTaasContext _context;
         private readonly ISubscriptionService subscriptionService;
 
-        public CreateModel(ModelLibrary.DBModels.JiraDemoContext context,
+        public CreateModel(ModelLibrary.DBModels.WoTaasContext context,
             ISubscriptionService subscriptionService)
         {
             _context = context;

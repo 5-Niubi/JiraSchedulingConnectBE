@@ -12,11 +12,11 @@ namespace ResourceAssignAdmin.Pages.Upgrade
     public class CheckoutModel : PageModel
     {
         private readonly IBraintreeService _braintreeService;
-        private readonly JiraDemoContext _context;
+        private readonly WoTaasContext _context;
         private readonly ISubscriptionService subscriptionService;
 
         public CheckoutModel(IBraintreeService braintreeService,
-            JiraDemoContext context, ISubscriptionService subscriptionService)
+            WoTaasContext context, ISubscriptionService subscriptionService)
         {
             _braintreeService = braintreeService;
             _context = context;

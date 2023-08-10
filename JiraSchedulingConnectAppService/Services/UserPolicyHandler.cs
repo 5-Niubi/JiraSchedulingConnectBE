@@ -18,10 +18,10 @@ namespace JiraSchedulingConnectAppService.Services
 
     public class UserPolicyHandler : IUserPolicyHandler
     {
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly HttpContext? httpContext;
 
-        public UserPolicyHandler(JiraDemoContext dbContext, IHttpContextAccessor httpContextAccessor)
+        public UserPolicyHandler(WoTaasContext dbContext, IHttpContextAccessor httpContextAccessor)
         {
             db = dbContext;
             httpContext = httpContextAccessor.HttpContext;

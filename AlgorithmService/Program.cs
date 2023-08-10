@@ -28,7 +28,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddDbContext<JiraDemoContext>(opt => opt.UseSqlServer(
+builder.Services.AddDbContext<WoTaasContext>(opt => opt.UseSqlServer(
     builder.Configuration.GetConnectionString("DB")
     )
 );

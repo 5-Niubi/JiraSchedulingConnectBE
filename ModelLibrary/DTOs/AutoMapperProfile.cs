@@ -12,6 +12,7 @@ using ModelLibrary.DTOs.Skills;
 using ModelLibrary.DTOs.Subscriptions;
 using ModelLibrary.DTOs.Workforce;
 using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace ModelLibrary.DTOs
 {
@@ -21,8 +22,14 @@ namespace ModelLibrary.DTOs
         {
             CreateMap<Project, ProjectListHomePageDTO>()
                 .ForMember(p => p.TaskCount, p => p.MapFrom(t => t.Tasks.Count));
-            CreateMap<ProjectsListCreateProject, Project>();
-            CreateMap<Project, ProjectDetailDTO>();
+            CreateMap<ProjectsListCreateProject, Project>()
+                .ForMember(p => p.WorkingTimes, p => p.MapFrom(t => JsonConvert.SerializeObject(t.WorkingTimes)));
+            ;
+            CreateMap<Project, ProjectDetailDTO>()
+                .ForMember(p => p.WorkingTimes, p => p.MapFrom(pdb =>
+                pdb.WorkingTimes != null ?
+                JsonConvert.DeserializeObject<List<WorkingTimeDTO>>(pdb.WorkingTimes) : null));
+
             CreateMap<WorkforceDTORequest, DBModels.Workforce>();
 
             CreateMap<SkillRequestDTO, WorkforceSkill>()

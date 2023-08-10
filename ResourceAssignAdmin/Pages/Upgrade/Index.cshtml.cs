@@ -7,9 +7,9 @@ namespace ResourceAssignAdmin.Pages.Upgrade
 {
     public class IndexModel : PageModel
     {
-        private readonly JiraDemoContext _context;
+        private readonly WoTaasContext _context;
 
-        public IndexModel(JiraDemoContext context)
+        public IndexModel(WoTaasContext context)
         {
             _context = context;
         }

@@ -11,7 +11,7 @@ using ModelLibrary.DBModels;
 
 namespace ModelLibrary.Migrations
 {
-    [DbContext(typeof(JiraDemoContext))]
+    [DbContext(typeof(WoTaasContext))]
     [Migration("20230804153740_MyFirstMigration")]
     partial class MyFirstMigration
     {

@@ -10,7 +10,7 @@ using ModelLibrary.DBModels;
 
 namespace ModelLibrary.Migrations
 {
-    [DbContext(typeof(JiraDemoContext))]
+    [DbContext(typeof(WoTaasContext))]
     partial class JiraDemoContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

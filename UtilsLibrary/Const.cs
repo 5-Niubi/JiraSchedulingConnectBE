@@ -41,6 +41,7 @@
             public const string PROJECT_NAME_UPPER_1ST_CHAR = "Project Name must start by an uppercase letter";
             public const string PROJECT_WORKING_HOUR_ERR = "Invalid working hour";
             public const string PROJECT_BUDGET_ERR = "Invalid money value";
+            public const string WORKING_TIME_INVALID = "Invalid working time";
         }
 
         public static class THREAD_STATUS

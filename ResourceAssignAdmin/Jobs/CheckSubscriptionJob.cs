@@ -8,7 +8,7 @@ namespace ResourceAssignAdmin.Jobs
     {
         public System.Threading.Tasks.Task Execute(IJobExecutionContext context)
         {
-            var db = new JiraDemoContext();
+            var db = new WoTaasContext();
             var outDateActiveSubscription = db.Subscriptions.Where(s => s.CancelAt == null
              && s.CurrentPeriodEnd.Value <= DateTime.Now
              && s.PlanId != Const.SUBSCRIPTION.PLAN_FREE).ToList();

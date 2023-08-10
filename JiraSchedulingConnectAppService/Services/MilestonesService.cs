@@ -14,11 +14,11 @@ namespace JiraSchedulingConnectAppService.Services
         public const string NotFoundMessage = "Milestone Not Found!!!";
         public const string NotValidateDeleteMilestone = "Exited Tasks in Milestone, Can't Delete this Milestone";
 
-        private readonly ModelLibrary.DBModels.JiraDemoContext db;
+        private readonly ModelLibrary.DBModels.WoTaasContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
 
-        public MilestonesService(ModelLibrary.DBModels.JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public MilestonesService(ModelLibrary.DBModels.WoTaasContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
 
             db = dbContext;

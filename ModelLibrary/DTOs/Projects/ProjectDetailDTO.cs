@@ -55,5 +55,10 @@
         {
             get; set;
         }
+
+        public List<WorkingTimeDTO>? WorkingTimes
+        {
+            get; set;
+        }
     }
 }

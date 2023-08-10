@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
 using ModelLibrary.DTOs.Export;
+using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Thread;
 using net.sf.mpxj;
 using net.sf.mpxj.MpxjUtilities;
@@ -25,7 +26,7 @@ namespace JiraSchedulingConnectAppService.Services
 {
     public class ExportService : IExportService
     {
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly IJiraBridgeAPIService jiraAPI;
         private readonly HttpContext http;
         private readonly string appName;
@@ -33,7 +34,7 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly IMapper mapper;
         private IConfiguration config;
 
-        public ExportService(JiraDemoContext db, IJiraBridgeAPIService jiraAPI,
+        public ExportService(WoTaasContext db, IJiraBridgeAPIService jiraAPI,
             IHttpContextAccessor httpAccessor, IConfiguration config,
             IThreadService threadService, IMapper mapper
             )
@@ -692,6 +693,7 @@ namespace JiraSchedulingConnectAppService.Services
         private (string, MemoryStream) XMLCreateFile(List<TaskScheduleResultDTO> tasks, ModelLibrary.DBModels.Project projectDb,
             Dictionary<int, WorkforceScheduleResultDTO> workforceResultDict)
         {
+            var wokingTimesString = JsonConvert.DeserializeObject<List<WorkingTimeDTO>>(projectDb.WorkingTimes);
 
             var resourceDict = new Dictionary<int?, net.sf.mpxj.Resource>();
             var taskDict = new Dictionary<int?, net.sf.mpxj.Task>();
@@ -712,14 +714,25 @@ namespace JiraSchedulingConnectAppService.Services
             {
                 var hours = calendar.GetCalendarHours(day);
                 hours.clear();
+                if (wokingTimesString.IsNullOrEmpty())
+                {
+                    var startTime = LocalTime.of(8, 0);
+                    var finishTime = LocalTime.of(12, 0);
+                    hours.add(new LocalTimeRange(startTime, finishTime));
 
-                var startTime = LocalTime.of(8, 0);
-                var finishTime = LocalTime.of(12, 0);               
-                hours.add(new LocalTimeRange(startTime, finishTime));
-             
-                startTime = LocalTime.of(13, 0);
-                finishTime = LocalTime.of(17, 0);
-                hours.add(new LocalTimeRange(startTime, finishTime));
+                    startTime = LocalTime.of(13, 0);
+                    finishTime = LocalTime.of(17, 0);
+                    hours.add(new LocalTimeRange(startTime, finishTime));
+                    continue;
+                }
+                foreach (var timeRange in wokingTimesString)
+                {
+                    var start = TimeOnly.Parse(timeRange.Start);
+                    var startTime = LocalTime.of(start.Hour, start.Minute);
+                    var finish = TimeOnly.Parse(timeRange.Finish);
+                    var finishTime = LocalTime.of(finish.Hour, finish.Minute);
+                    hours.add(new LocalTimeRange(startTime, finishTime));
+                }
             }
 
             foreach (var key in workforceResultDict.Keys)

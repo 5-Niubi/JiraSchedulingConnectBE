@@ -51,6 +51,30 @@ namespace ModelLibrary.DBModels
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<AdminAccount>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Equipment>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<EquipmentsFunction>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Milestone>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Parameter>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<ParameterResource>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<PlanPermission>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<PlanSubscription>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Schedule>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Skill>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Subscription>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Task>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TaskFunction>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
+
+
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
@@ -535,6 +559,11 @@ namespace ModelLibrary.DBModels
                 entity.Property(e => e.StartDate)
                     .HasColumnType("datetime")
                     .HasColumnName("start_date");
+
+                entity.Property(e => e.WorkingTimes)
+                    .HasMaxLength(500)
+                    .IsUnicode(false)
+                    .HasColumnName("working_times");
             });
 
             modelBuilder.Entity<Role>(entity =>

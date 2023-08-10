@@ -47,7 +47,7 @@ try
     // Custom Config
     builder.Services.AddCors();
     builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
-    builder.Services.AddDbContext<JiraDemoContext>(opt => opt.UseSqlServer(
+    builder.Services.AddDbContext<WoTaasContext>(opt => opt.UseSqlServer(
         builder.Configuration.GetConnectionString("DB")
         )
     );
