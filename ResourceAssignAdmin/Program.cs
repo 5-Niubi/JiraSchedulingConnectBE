@@ -7,7 +7,7 @@ using ResourceAssignAdmin.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<JiraDemoContext>(opt => opt.UseSqlServer(
+builder.Services.AddDbContext<WoTaasContext>(opt => opt.UseSqlServer(
     builder.Configuration.GetConnectionString("DB")
     )
 );

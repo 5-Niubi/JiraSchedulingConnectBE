@@ -7,9 +7,9 @@ namespace ResourceAssignAdmin.Pages.Authentication
 {
     public class LoginModel : PageModel
     {
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
 
-        public LoginModel(JiraDemoContext db)
+        public LoginModel(WoTaasContext db)
         {
             this.db = db;
         }

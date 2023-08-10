@@ -22,14 +22,14 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly IAuthorizationService _authorizationService;
         private readonly IMapper mapper;
 
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly HttpContext? httpContext;
 
         public const string PrecedenceIsCycleMessage = "Tasks be cycle!";
         public const string SkillEmptyInTaskMessage = "Skils is Empty in this Task!";
 
         public AlgorithmService(
-            JiraDemoContext db,
+            WoTaasContext db,
             IAuthorizationService _authorizationService,
             IHttpContextAccessor httpContextAccessor,
             IAPIMicroserviceService apiMicro,

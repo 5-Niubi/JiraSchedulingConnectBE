@@ -9,7 +9,7 @@ namespace JiraSchedulingConnectAppService.Services
     {
 
 
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly HttpContext httpContext;
         private readonly IWorkforcesService workforceService;
 
@@ -17,7 +17,7 @@ namespace JiraSchedulingConnectAppService.Services
         private DirectedGraph DirectedGraph;
 
         public ScheduleValidatorService(
-            JiraDemoContext db,
+            WoTaasContext db,
             IHttpContextAccessor httpAccessor,
             IWorkforcesService workforceService
             )

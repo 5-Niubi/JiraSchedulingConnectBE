@@ -13,18 +13,18 @@ namespace JiraSchedulingConnectAppService.Services
     public class ScheduleService : IScheduleService
     {
 
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
 
-        public ScheduleService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public ScheduleService(WoTaasContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             db = dbContext;
             this.mapper = mapper;
             httpContext = httpContextAccessor.HttpContext;
         }
 
-        public ScheduleService(JiraDemoContext db, IMapper mapper)
+        public ScheduleService(WoTaasContext db, IMapper mapper)
         {
             this.db = db;
             this.mapper = mapper;

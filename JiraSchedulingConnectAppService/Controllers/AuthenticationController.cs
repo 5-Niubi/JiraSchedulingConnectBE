@@ -12,7 +12,7 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class AuthenticationController : Controller
     {
         private readonly IAuthenticationService authenticationService;
-        public AuthenticationController(JiraDemoContext db, IConfiguration config
+        public AuthenticationController(WoTaasContext db, IConfiguration config
             , IAuthenticationService authenticationService)
         {
             this.authenticationService = authenticationService;

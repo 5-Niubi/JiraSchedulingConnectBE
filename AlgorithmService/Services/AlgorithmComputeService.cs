@@ -5,7 +5,8 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
-using Newtonsoft.Json;
+using ModelLibrary.DTOs.Algorithm.ScheduleResult;
+using System.Text.Json;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
@@ -13,10 +14,10 @@ namespace AlgorithmServiceServer.Services
 {
     public class AlgorithmComputeService : IAlgorithmComputeService
     {
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly HttpContext? http;
         private readonly IMapper mapper;
-        public AlgorithmComputeService(JiraDemoContext db, IHttpContextAccessor httpAccessor, IMapper mapper)
+        public AlgorithmComputeService(WoTaasContext db, IHttpContextAccessor httpAccessor, IMapper mapper)
         {
             this.db = db;
             http = httpAccessor.HttpContext;
@@ -49,8 +50,7 @@ namespace AlgorithmServiceServer.Services
             inputTo.StartDate = (DateTime)parameterEntity.StartDate;
             var deadline = (int)Utils.GetDaysBeetween2Dates
                 (parameterEntity.StartDate, parameterEntity.Deadline);
-
-            inputTo.Deadline = (deadline == 0)? 1 : deadline;
+            inputTo.Deadline = (deadline == 0) ? 1 : deadline;
 
             inputTo.Budget = (int)parameterEntity.Budget;
             inputTo.WorkerList = workerFromDB;
@@ -85,7 +85,9 @@ namespace AlgorithmServiceServer.Services
 
                     algOutConverted.timeFinish = algOutRaw.TimeFinish;
                     algOutConverted.totalExper = algOutRaw.TotalExper;
-                    algOutConverted.totalSalary = algOutRaw.TotalSalary;
+
+                    var totalSalary = CalculateTotalSalary(projectFromDB, algOutConverted);
+                    algOutConverted.totalSalary = totalSalary;
 
                     algorithmOutputConverted.Add(algOutConverted);
 
@@ -121,10 +123,37 @@ namespace AlgorithmServiceServer.Services
             schedule.Duration = algOutConverted.timeFinish;
             schedule.Cost = algOutConverted.totalSalary;
             schedule.Quality = algOutConverted.totalExper;
-            schedule.Tasks = JsonConvert.SerializeObject(algOutConverted.tasks);
+            schedule.Tasks = JsonSerializer.Serialize(algOutConverted.tasks);
 
             var scheduleSolution = await db.Schedules.AddAsync(schedule);
             return scheduleSolution.Entity;
+        }
+
+        private int CalculateTotalSalary(Project project, OutputFromORDTO algOutConverted)
+        {
+            var baseWorkingHour = project.BaseWorkingHour;
+
+            var workerSalaryDict = new Dictionary<WorkforceScheduleResultDTO, int>();
+            var tasks = algOutConverted.tasks;
+
+            // Filter all worker from tasks
+            foreach (var task in tasks)
+            {
+                if (workerSalaryDict.Keys.Where(t => task.workforce.id == t.id).Count() == 0)
+                {
+                    workerSalaryDict.Add(task.workforce, 0);
+                }
+            }
+
+            foreach (var wKey in workerSalaryDict.Keys)
+            {
+                var totalDurationOfWker = tasks.Where( t=> t.workforce.id == wKey.id).Sum(t => t.duration);
+                var totalCostOfWker = totalDurationOfWker * (int) baseWorkingHour * (int) wKey.unitSalary;
+                workerSalaryDict[wKey] = totalCostOfWker?? 0;
+            }
+
+            var  totalCost = workerSalaryDict.Values.Sum();
+            return totalCost;
         }
     }
 }

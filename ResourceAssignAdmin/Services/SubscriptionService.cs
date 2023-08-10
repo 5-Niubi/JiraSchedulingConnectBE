@@ -8,9 +8,9 @@ namespace ResourceAssignAdmin.Services
     public class SubscriptionService : ISubscriptionService
     {
 
-        private readonly JiraDemoContext _context;
+        private readonly WoTaasContext _context;
 
-        public SubscriptionService(JiraDemoContext context)
+        public SubscriptionService(WoTaasContext context)
         {
             _context = context;
         }

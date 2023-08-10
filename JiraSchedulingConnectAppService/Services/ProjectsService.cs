@@ -13,11 +13,11 @@ namespace JiraSchedulingConnectAppService.Services
 {
     public class ProjectsService : IProjectServices
     {
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
         private readonly IAuthorizationService _authorizationService;
-        public ProjectsService(JiraDemoContext dbContext, IMapper mapper, IAuthorizationService _authorizationService, IHttpContextAccessor httpContextAccessor)
+        public ProjectsService(WoTaasContext dbContext, IMapper mapper, IAuthorizationService _authorizationService, IHttpContextAccessor httpContextAccessor)
         {
             db = dbContext;
             this.mapper = mapper;
@@ -82,8 +82,6 @@ namespace JiraSchedulingConnectAppService.Services
             return projectDTO;
         }
 
-
-
         public async Task<ProjectDetailDTO> CreateProject(ProjectsListCreateProject projectRequest)
         {
             var jwt = new JWTManagerService(httpContext);
@@ -102,17 +100,20 @@ namespace JiraSchedulingConnectAppService.Services
 
             }, "LimitedCreateProject");
 
-
+            projectRequest = ValidateProjectInput(projectRequest);
 
             var project = mapper.Map<ModelLibrary.DBModels.Project>(projectRequest);
+
+
+
             project.CloudId = cloudId;
 
-            projectRequest = ValidateProjectInput(projectRequest);
 
             // Check Name project's exited
             // if not exited -> insert
             // else throw error
-            var existingProject = await db.Projects.FirstOrDefaultAsync(p => p.Name == project.Name && p.CloudId == cloudId);
+            var existingProject = await db.Projects
+                .FirstOrDefaultAsync(p => p.Name == project.Name && p.CloudId == cloudId);
 
             if (existingProject != null)
             {
@@ -162,6 +163,7 @@ namespace JiraSchedulingConnectAppService.Services
             projectInDB.ObjectiveCost = projectUpdate.ObjectiveCost;
             projectInDB.ObjectiveQuality = projectUpdate.ObjectiveQuality;
             projectInDB.ObjectiveTime = projectUpdate.ObjectiveTime;
+            projectInDB.WorkingTimes = projectUpdate.WorkingTimes;
 
             var projectUpdatedEntity = db.Projects.Update(projectInDB);
             await db.SaveChangesAsync();
@@ -180,15 +182,34 @@ namespace JiraSchedulingConnectAppService.Services
             }
             if (!Utils.IsUpperFirstLetter(projectRequest.Name))
                 throw new Exception(Const.MESSAGE.PROJECT_NAME_UPPER_1ST_CHAR);
-            if (projectRequest.BaseWorkingHour > 24
-                || projectRequest.BaseWorkingHour <= 0)
-            {
-                throw new Exception(Const.MESSAGE.PROJECT_WORKING_HOUR_ERR);
-            }
+            //if (projectRequest.BaseWorkingHour > 24
+            //    || projectRequest.BaseWorkingHour <= 0)
+            //{
+            //    throw new Exception(Const.MESSAGE.PROJECT_WORKING_HOUR_ERR);
+            //}
             if (projectRequest.Budget < 0)
             {
                 throw new Exception(Const.MESSAGE.PROJECT_BUDGET_ERR);
             }
+            projectRequest.Deadline = Utils.MoveDayToEnd(projectRequest.Deadline);
+
+            var baseWorkingHour = 0d;
+            for (int i = 0; i < projectRequest.WorkingTimes.Count(); i++)
+            {
+                var wTime = projectRequest.WorkingTimes[i];
+                var start = TimeOnly.Parse(wTime.Start);
+                var finish = TimeOnly.Parse(wTime.Finish);
+                if (i > 0 && start < TimeOnly.Parse(projectRequest.WorkingTimes[i - 1].Finish))
+                {
+                    throw new Exception(Const.MESSAGE.WORKING_TIME_INVALID);
+
+                }
+                if (start >= finish)
+                    throw new Exception(Const.MESSAGE.WORKING_TIME_INVALID);
+
+                baseWorkingHour += (finish - start).TotalMinutes / 60;
+            }
+            projectRequest.BaseWorkingHour = baseWorkingHour;
 
             return projectRequest;
         }

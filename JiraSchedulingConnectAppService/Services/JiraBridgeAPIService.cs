@@ -13,7 +13,7 @@ namespace JiraSchedulingConnectAppService.Services
     {
         private readonly HttpClient client;
         private readonly IAuthenticationService authenticationService;
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly HttpContext http;
 
         private string cloudId = "";
@@ -25,7 +25,7 @@ namespace JiraSchedulingConnectAppService.Services
             client.Timeout = Timeout.InfiniteTimeSpan;
 
             this.authenticationService = authenticationService;
-            db = new JiraDemoContext();
+            db = new WoTaasContext();
             http = httpAccess.HttpContext;
 
             var jwt = new JWTManagerService(http);

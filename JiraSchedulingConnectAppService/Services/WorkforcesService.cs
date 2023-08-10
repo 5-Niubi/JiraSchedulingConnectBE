@@ -25,12 +25,12 @@ namespace JiraSchedulingConnectAppService.Services
         public const string SkillLevelNotValidateMessage = "Skill Level Workforce is not validate!!!";
         public const string NotUniqueSkillNameMessage = "Skill Name Must Unique!!!";
 
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
 
 
-        public WorkforcesService(ModelLibrary.DBModels.JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public WorkforcesService(ModelLibrary.DBModels.WoTaasContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
 
             db = dbContext;

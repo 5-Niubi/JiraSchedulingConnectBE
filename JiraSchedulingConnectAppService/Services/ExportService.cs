@@ -1,14 +1,17 @@
 ﻿using AutoMapper;
 using java.lang;
+using java.time;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
 using ModelLibrary.DTOs.Export;
+using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Thread;
 using net.sf.mpxj;
 using net.sf.mpxj.MpxjUtilities;
+using net.sf.mpxj.mspdi;
 using net.sf.mpxj.writer;
 using Newtonsoft.Json;
 using System.Dynamic;
@@ -23,7 +26,7 @@ namespace JiraSchedulingConnectAppService.Services
 {
     public class ExportService : IExportService
     {
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly IJiraBridgeAPIService jiraAPI;
         private readonly HttpContext http;
         private readonly string appName;
@@ -31,7 +34,7 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly IMapper mapper;
         private IConfiguration config;
 
-        public ExportService(JiraDemoContext db, IJiraBridgeAPIService jiraAPI,
+        public ExportService(WoTaasContext db, IJiraBridgeAPIService jiraAPI,
             IHttpContextAccessor httpAccessor, IConfiguration config,
             IThreadService threadService, IMapper mapper
             )
@@ -690,12 +693,47 @@ namespace JiraSchedulingConnectAppService.Services
         private (string, MemoryStream) XMLCreateFile(List<TaskScheduleResultDTO> tasks, ModelLibrary.DBModels.Project projectDb,
             Dictionary<int, WorkforceScheduleResultDTO> workforceResultDict)
         {
-            ProjectFile project = new();
-            var projectFileName = $"{projectDb.Name}.xml";
+            var wokingTimesString = JsonConvert.DeserializeObject<List<WorkingTimeDTO>>(projectDb.WorkingTimes);
+
             var resourceDict = new Dictionary<int?, net.sf.mpxj.Resource>();
             var taskDict = new Dictionary<int?, net.sf.mpxj.Task>();
             var milestoneDict = new Dictionary<int, net.sf.mpxj.Task>();
 
+
+            ProjectFile project = new();
+            var projectFileName = $"{projectDb.Name}.xml";
+
+            var calendar = project.AddDefaultBaseCalendar();
+
+            calendar.setWorkingDay(java.time.DayOfWeek.SATURDAY, true);
+            calendar.setWorkingDay(java.time.DayOfWeek.SUNDAY, true);
+            java.time.DayOfWeek[] weeks = {java.time.DayOfWeek.MONDAY, java.time.DayOfWeek.TUESDAY,
+                java.time.DayOfWeek.WEDNESDAY, java.time.DayOfWeek.WEDNESDAY, java.time.DayOfWeek.THURSDAY
+                , java.time.DayOfWeek.FRIDAY, java.time.DayOfWeek.SATURDAY, java.time.DayOfWeek.SUNDAY};
+            foreach (var day in weeks)
+            {
+                var hours = calendar.GetCalendarHours(day);
+                hours.clear();
+                if (wokingTimesString.IsNullOrEmpty())
+                {
+                    var startTime = LocalTime.of(8, 0);
+                    var finishTime = LocalTime.of(12, 0);
+                    hours.add(new LocalTimeRange(startTime, finishTime));
+
+                    startTime = LocalTime.of(13, 0);
+                    finishTime = LocalTime.of(17, 0);
+                    hours.add(new LocalTimeRange(startTime, finishTime));
+                    continue;
+                }
+                foreach (var timeRange in wokingTimesString)
+                {
+                    var start = TimeOnly.Parse(timeRange.Start);
+                    var startTime = LocalTime.of(start.Hour, start.Minute);
+                    var finish = TimeOnly.Parse(timeRange.Finish);
+                    var finishTime = LocalTime.of(finish.Hour, finish.Minute);
+                    hours.add(new LocalTimeRange(startTime, finishTime));
+                }
+            }
 
             foreach (var key in workforceResultDict.Keys)
             {
@@ -704,26 +742,14 @@ namespace JiraSchedulingConnectAppService.Services
                     var rs = project.AddResource();
                     rs.Name = workforceResultDict[key].displayName;
                     rs.Cost = new Float((float)workforceResultDict[key].unitSalary);
-
+                    rs.OverAllocated = true;
                     resourceDict.Add(workforceResultDict[key].id, rs);
                 }
             }
 
-
-            //tasks.ForEach(t =>
-            //{
-            //    if (!resourceDict.ContainsKey(t.workforce.id))
-            //    {
-            //        var rs = project.AddResource();
-            //        rs.Name = t.workforce.displayName;
-            //        rs.Cost = new Float((float)t.workforce.unitSalary);
-
-            //        resourceDict.Add(t.workforce.id, rs);
-            //    }
-            //});
             foreach (var t in tasks)
             {
-                net.sf.mpxj.Task milestone = null;
+                net.sf.mpxj.Task? milestone = null;
 
                 if (t.mileStone != null && !milestoneDict.ContainsKey(t.mileStone.id))
                 {
@@ -736,7 +762,7 @@ namespace JiraSchedulingConnectAppService.Services
                     milestone = milestoneDict[t.mileStone.id];
                 }
 
-                net.sf.mpxj.Task task;
+                net.sf.mpxj.Task? task = null;
                 if (milestone != null)
                 {
                     task = milestone.addTask();
@@ -745,11 +771,18 @@ namespace JiraSchedulingConnectAppService.Services
                 {
                     task = project.AddTask();
                 }
-
-                task.Start = t.startDate.Value.ToJavaLocalDateTime();
-                task.Finish = t.endDate.Value.ToJavaLocalDateTime();
-                task.Duration = Duration.getInstance((double)t.duration, TimeUnit.DAYS);
+                task.TaskMode = TaskMode.MANUALLY_SCHEDULED;
                 task.Name = t.name;
+
+
+                var start = t.startDate.Value;
+                task.Start = LocalDateTime.of(start.Year, start.Month, start.Day, 8, 0);
+
+                task.Duration = Duration.getInstance((double)t.duration * (double)projectDb.BaseWorkingHour,
+                    TimeUnit.HOURS);
+
+                var end = t.endDate.Value;
+                task.Finish = LocalDateTime.of(end.Year, end.Month, end.Day, 17, 0);
 
                 var assignment = task.AddResourceAssignment(resourceDict[t.workforce.id]);
 

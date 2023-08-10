@@ -7,9 +7,9 @@ namespace ResourceAssignAdmin.Pages.Plan
 {
     public class DeleteModel : PageModel
     {
-        private readonly ModelLibrary.DBModels.JiraDemoContext _context;
+        private readonly ModelLibrary.DBModels.WoTaasContext _context;
 
-        public DeleteModel(ModelLibrary.DBModels.JiraDemoContext context)
+        public DeleteModel(ModelLibrary.DBModels.WoTaasContext context)
         {
             _context = context;
         }

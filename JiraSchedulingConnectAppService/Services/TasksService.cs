@@ -31,11 +31,11 @@ namespace JiraSchedulingConnectAppService.Services
         public const string PredenceNotFoundMessage = "Predence Task  not Found!";
         public const string MilestoneNotValidMessage = "Milestone Task's not valid!";
 
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
 
-        public TasksService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public TasksService(WoTaasContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             db = dbContext;
             this.mapper = mapper;

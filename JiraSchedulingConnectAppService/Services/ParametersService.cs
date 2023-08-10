@@ -8,18 +8,19 @@ using ModelLibrary.DTOs.Parameters;
 using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Skills;
 using ModelLibrary.DTOs.Tasks;
+using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
 {
     public class ParametersService : IParametersService
     {
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
         private const string NotResourceAdaptivedMessage = "Not Resource (Workfore) adapt required skills task's";
         private IAlgorithmService algorithmService;
-        public ParametersService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor, IAlgorithmService algorithmService)
+        public ParametersService(WoTaasContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor, IAlgorithmService algorithmService)
         {
             db = dbContext;
             this.mapper = mapper;
@@ -228,11 +229,16 @@ namespace JiraSchedulingConnectAppService.Services
             return RecomendWorkforceTaskParamsList;
         }
 
+        private async Task<ParameterRequestDTO> _validatePramater(ParameterRequestDTO parameterRequest)
+        {
+            await _ValidateTasksSkillRequireds(parameterRequest.ProjectId, parameterRequest.ParameterResources);
+            return parameterRequest;
+        }
+
         public async Task<ParameterDTO> SaveParams(ParameterRequestDTO parameterRequest)
         {
             // Is validate Resource parameter minimize adaptive Resource Task
-            await _ValidateTasksSkillRequireds(parameterRequest.ProjectId, parameterRequest.ParameterResources);
-
+            parameterRequest = await _validatePramater(parameterRequest);
             var parameterRequestDTO = mapper.Map<Parameter>(parameterRequest);
             var paramsEntity = await db.Parameters.AddAsync(parameterRequestDTO);
 
