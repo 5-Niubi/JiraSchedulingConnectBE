@@ -1,10 +1,10 @@
-﻿using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using UtilsLibrary.Exceptions;
-
 namespace JiraSchedulingConnectAppService.Controllers
 {
     //[ApiController]
