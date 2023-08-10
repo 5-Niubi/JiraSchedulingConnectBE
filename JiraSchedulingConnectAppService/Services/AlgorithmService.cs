@@ -52,6 +52,7 @@ namespace JiraSchedulingConnectAppService.Services
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
+            
             var planId = await db.Subscriptions.Include(s => s.AtlassianToken)
                 .Include(s => s.Plan)
                 .Where(s => s.AtlassianToken.CloudId == cloudId && s.CancelAt == null)
@@ -176,13 +177,14 @@ namespace JiraSchedulingConnectAppService.Services
                 }
                 catch (MicroServiceAPIException ex)
                 {
+                    
                     thread.Status = Const.THREAD_STATUS.ERROR;
-
                     dynamic error = new ExpandoObject();
                     error.message = ex.Message;
                     error.response = ex.mircoserviceResponse;
 
                     thread.Result = error;
+                    throw new Exception(ex.Message);
                 }
                 catch (NotFoundException)
                 {
@@ -195,8 +197,8 @@ namespace JiraSchedulingConnectAppService.Services
                     dynamic error = new ExpandoObject();
                     error.message = ex.Message;
                     error.stackTrace = ex.StackTrace;
-
                     thread.Result = error;
+                    throw new Exception(ex.Message);
                 }
             }
             catch {/* Do nothing*/ }
