@@ -166,7 +166,13 @@ namespace AlgorithmLibrary
                 int k = 0;
                 for (int j = 0; j < Deadline; j++)
                 {
-                    double effort = Math.Round(workingEffort[k++] / BaseWorkingHours, 3);
+                    double effort = 1;
+                    if (WorkerList[i].WorkingType == Const.WORKING_TYPE.PARTTIME)
+                    {
+                        effort = Math.Round(workingEffort[k++] / BaseWorkingHours, 3);
+                        if (effort > 1)
+                            effort = 1;
+                    }
                     workerEffort[i, j] = effort;
                     // reset k
                     if (k >= (workingEffort?.Length ?? 0))

@@ -30,6 +30,12 @@
             public static string EQUIPMENT = "equipment";
         }
 
+        public static class WORKING_TYPE
+        {
+            public static int FULLTIME = 0;
+            public static int PARTTIME = 1;
+        }
+
         public static class MESSAGE
         {
             public const string SUCCESS = "Success!!!";
