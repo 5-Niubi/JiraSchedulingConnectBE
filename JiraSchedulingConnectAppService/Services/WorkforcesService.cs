@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Elastic.CommonSchema;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -267,6 +268,17 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new DuplicateException($"Email '{workforceRequest.Email}' is already in use.");
             }
 
+            var existingWorkforceWithAccountId = await db.Workforces.FirstOrDefaultAsync(
+                w => w.AccountId == workforceRequest.AccountId
+                && w.CloudId == cloudId
+                && w.IsDelete == false);
+
+            if (existingWorkforceWithEmail != null)
+            {
+                throw new DuplicateException($"AccountId '{workforceRequest.AccountId}' is already in use.");
+            }
+
+
             // working type in [0 or 1]
             var ValidatedWorkingTypes = new List<int> { 0, 1 };
 
@@ -287,11 +299,24 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async System.Threading.Tasks.Task _ValidateUpdatedWorkforceProperties(WorkforceRequestDTO workforceRequest)
         {
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
             // email not exited
             var existingWorkforceWithEmail = await db.Workforces.FirstOrDefaultAsync(w => w.Email == workforceRequest.Email && w.Id != workforceRequest.Id);
             if (existingWorkforceWithEmail != null)
             {
                 throw new DuplicateException($"Email '{workforceRequest.Email}' is already in use.");
+            }
+
+            var existingWorkforceWithAccountId = await db.Workforces.FirstOrDefaultAsync(
+                w => w.AccountId == workforceRequest.AccountId
+                && w.CloudId == cloudId
+                && w.IsDelete == false);
+
+            if (existingWorkforceWithEmail != null)
+            {
+                throw new DuplicateException($"AccountId '{workforceRequest.AccountId}' is already in use.");
             }
 
             // working type in [0 or 1]
