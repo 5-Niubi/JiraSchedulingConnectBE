@@ -714,6 +714,7 @@ namespace JiraSchedulingConnectAppService.Services
             {
                 var hours = calendar.GetCalendarHours(day);
                 hours.clear();
+                
                 if (wokingTimesString.IsNullOrEmpty())
                 {
                     var startTime = LocalTime.of(8, 0);
