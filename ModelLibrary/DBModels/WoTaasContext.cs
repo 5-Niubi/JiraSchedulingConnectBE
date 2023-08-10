@@ -74,7 +74,6 @@ namespace ModelLibrary.DBModels
             modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
             modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
 
-
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
@@ -619,6 +618,10 @@ namespace ModelLibrary.DBModels
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
+                entity.Property(e => e.Desciption)
+                    .HasMaxLength(1000)
+                    .HasColumnName("desciption");
+
                 entity.Property(e => e.Duration).HasColumnName("duration");
 
                 entity.Property(e => e.IsDelete)
@@ -638,6 +641,14 @@ namespace ModelLibrary.DBModels
                 entity.Property(e => e.Tasks)
                     .HasColumnType("text")
                     .HasColumnName("tasks");
+
+                entity.Property(e => e.Title)
+                    .HasMaxLength(200)
+                    .HasColumnName("title");
+
+                entity.Property(e => e.Type)
+                    .HasColumnName("type")
+                    .HasDefaultValueSql("((0))");
 
                 entity.HasOne(d => d.Parameter)
                     .WithMany(p => p.Schedules)
