@@ -17,8 +17,12 @@ namespace ResourceAssignAdmin.Pages.Upgrade
         [BindProperty]
         public List<PlanSubscription> PlanSubscriptions { get; set; } = default!;
 
-        public async Task<IActionResult> OnGet(string? token)
+        public async Task<IActionResult> OnGet(string? token = "")
         {
+            if (await _context.AtlassianTokens.FirstOrDefaultAsync(at => at.UserToken == token) == null)
+            {
+                return NotFound();
+            }
             var planSubscription = await _context.PlanSubscriptions.ToListAsync();
             PlanSubscriptions = planSubscription;
             ViewData["UserToken"] = token;

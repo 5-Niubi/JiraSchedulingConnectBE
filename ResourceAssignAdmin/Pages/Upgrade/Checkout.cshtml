@@ -36,10 +36,10 @@
             <div class="col-md-3  order-md-last">
                 <div class="card mb-4 rounded-3 shadow-sm border-primary">
                     <div class="card-header py-3 text-white bg-primary border-primary">
-                        <h4 class="my-0 fw-normal">Premium</h4>
+                        <h4 class="my-0 fw-normal">@Model.Plan.Name</h4>
                     </div>
                     <div class="card-body">
-                        <h1 class="card-title pricing-card-title">$12000<small class="text-muted fw-light">/year</small></h1>
+                        <h1 class="card-title pricing-card-title">$@Model.Plan.Price<small class="text-muted fw-light">/year</small></h1>
                         <ul class="list-unstyled mt-3 mb-4">
                             <li>30 users included</li>
                             <li>15 GB of storage</li>
@@ -62,13 +62,13 @@
                         <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <div class="text-danger">@ViewData["msg"]</div>
-                                <form id="payment-form" method="post" asp-controller="Home" asp-action="Create">
+                                <form id="payment-form" method="put" asp-controller="Home" asp-action="Create">
                                     <div id="bt-dropin"></div>
                                     @Html.HiddenFor(Model => Model.PaymentMethod, new { @id = "nonce" })
                                     <div class="mb-3">
                                         <label for="userToken" class="form-label">User Token</label>
-                                        <input asp-for="@Model.UserToken" type="text" class="form-control" id="userToken"
-                                               placeholder="@holderToken" required="">
+                                        <input value="@Model.UserToken" type="text" class="form-control" id="userToken"
+                                               placeholder="@holderToken" required disabled>
                                         <div class="text-danger">
                                             @ViewBag.tokenMsg
                                         </div>
@@ -89,15 +89,16 @@
                                 <div class="row">
                                     <div class="alert alert-light" role="alert">
                                         <p>
-                                            Vui lòng quét mã QR bên dưới để thực hiện thanh toán. Hoặc chuyển khoản theo thông tin:
+                                            Vui lòng thực hiện điền thông tin và tạo mã QR sau đó quét mã QR để thực hiện thanh toán.
+                                            Hoặc chuyển khoản theo thông tin:
                                             <br />
                                             <b>Ngân hàng TMCP Bản Việt - 9037041035051- Nguyen Khanh Huy</b>
                                         </p>
                                         <p>
-                                            Ghi rõ nội dung chuyển khoản gồm <b>[UserToken] - [Gói nâng cấp] - [Thông tin liên hệ]</b>
+                                            Ghi rõ nội dung chuyển khoản gồm <b>[Gói nâng cấp] [UserToken] [Thông tin liên hệ]</b>
                                             <br />
                                             <i>*Thông tin liên hệ có thể là số điện thoại, email,...</i>
-                                            <span>(VD: Plus - @holderToken - @holderEmail)</span>
+                                            <span>(VD: Plus @holderToken @holderEmail)</span>
                                         </p>
                                         <p>
                                             Sau khi chuyển khoản thành công thì có thể mất vài ngày để xử lý.
@@ -115,68 +116,67 @@
                                             <span class="text-primary">Transfer Information</span>
                                         </h4>
                                         <div class="card">
-                                            <img src="https://www.imgonline.com.ua/examples/qr-code-url.png" class="card-img-top" alt="...">
+                                            <img id="qrPay" src="https://placehold.co/600x400?text=QR+Code" class="card-img-top" alt="...">
                                             <div class="card-body">
                                                 <h5 class="card-title">QRCode</h5>
                                                 <p class="card-text">Vui lòng quét mã QR phía trên để thực hiện thanh toán.</p>
                                                 <p class="card-text">
                                                     Nếu mã QR bị lỗi xin vui lòng chuyển khoản theo thông tin: <br />
                                                     <b>Ngân hàng TMCP Bản Việt - 9037041035051- Nguyen Khanh Huy</b>
+                                                    <br />
+                                                    Số tiền: <b id="vietnamPrice"></b>
+                                                    <br />
+                                                    Nội dung: <span id="addInfo">@Model.Plan.Name @Model.UserToken <span id="addInfoContact">[Thông tin liên hệ]</span></span>
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-7">
-                                        <h4 class="mb-3">Contact Form</h4>
+                                        <h4 class="mb-3">Tạo mã QR</h4>
 
-                                        <form class="needs-validation" novalidate="">
+                                        <form class="needs-validation" id="formCreateQR">
                                             <div class="row g-3">
-                                                @*<div class="col-sm-6">
-                                                    <label for="firstName" class="form-label">First name</label>
-                                                    <input type="text" class="form-control" id="firstName" placeholder="" value="" required="">
-                                                    <div class="invalid-feedback">
-                                                        Valid first name is required.
-                                                    </div>
+                                                <div class="col-12">
+                                                    <label for="email" class="form-label">Thông tin liên hệ (Độ dài tối đa 15 kí tự)<span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" id="email" placeholder="(Số điện thoại)" required
+                                                           maxlength="15">
                                                 </div>
 
-                                                <div class="col-sm-6">
-                                                    <label for="lastName" class="form-label">Last name</label>
-                                                    <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
-                                                    <div class="invalid-feedback">
-                                                        Valid last name is required.
-                                                    </div>
-                                                </div>*@
+                                                <div class="col-12">
+                                                    <label for="userToken" class="form-label">Số tiền</label>
+                                                    <input value="@Model.UserToken" type="number" class="form-control" id="vndPrice"
+                                                           disabled readonly>
+                                                </div>
 
                                                 <div class="col-12">
-                                                    <label for="email" class="form-label">Email<span class="text-muted">(Optional)</span></label>
-                                                    <input type="email" class="form-control" id="email" placeholder="@holderEmail">
+                                                    <label for="userToken" class="form-label">Gói cước</label>
+                                                    <input value="@Model.Plan.Name" type="text" class="form-control" id="planInputDisable"
+                                                           disabled readonly>
                                                 </div>
 
                                                 <div class="col-12">
                                                     <label for="userToken" class="form-label">User Token</label>
-                                                    <input asp-for="@Model.UserToken" type="text" class="form-control" id="userToken"
-                                                           placeholder="@holderToken" required="">
+                                                    <input value="@Model.UserToken" type="text" class="form-control" id="userToken"
+                                                           placeholder="@holderToken" disabled readonly>
                                                 </div>
 
-                                                <div class="col-12">
+                                                <!-- <div class="col-12">
                                                     <label for="transferCode" class="form-label">Transfer Code<span class="text-muted">(Optional)</span></label>
                                                     <input type="text" class="form-control" id="transferCode" placeholder="614893">
-                                                </div>
-                                                <div class="mb-3">
+                                                </div> -->
+                                                <!-- <div class="mb-3">
                                                     <label for="description" class="form-label">Description</label>
                                                     <textarea class="form-control" id="description" rows="3"></textarea>
-                                                </div>
+                                                </div> -->
                                             </div>
-
-                                            <hr class="my-4">
 
                                             <p class="lead"></p>
 
                                             <hr class="my-4">
 
-                                            <button class="w-100 btn btn-primary btn-lg" id="btnUpgradeCheckout"
-                                                    onclick="mailTo()" type="button">
-                                                Contact
+                                            <button class="w-100 btn btn-primary btn-lg" id="btnQRGenerate"
+                                                    type="submit">
+                                                Tạo mã QR
                                             </button>
                                         </form>
                                     </div>
@@ -213,4 +213,18 @@
             });
         });
     });
+</script>
+<script>
+    let price = convertToVND(@Model.Plan.Price);
+    $("#vndPrice").val(price);
+    $("#vietnamPrice").html(price);
+</script>
+<script>
+    $("#formCreateQR").submit((e) => {
+        e.preventDefault();
+        let contact = $("#email").val();
+        $("#qrPay").attr("src", vietQrQuicklinkBuilder(@Model.Plan.Price, "@Model.UserToken", "@Model.Plan.Name", contact));
+        $("#addInfoContact").html(contact);
+    });
+        //$("#qrPay").attr("src", vietQrQuicklinkBuilder(@Model.Plan.Price, "@Model.UserToken", "@Model.Plan.Name"));
 </script>
