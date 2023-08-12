@@ -140,6 +140,22 @@ namespace JiraSchedulingConnectAppService.Services
         }
 
 
+        public async Task<ScheduleResponseDTO> UpdateScheduleSolution(ScheduleUpdatedRequestDTO ScheduleUpdatedRequest)
+        {
+            var schedule = await db.Schedules.Where(s => s.Id == ScheduleUpdatedRequest.Id)
+                 .FirstOrDefaultAsync() ??
+            throw new NotFoundException($"Can not find schedule: {ScheduleUpdatedRequest.Id}");
+
+            schedule.Title = ScheduleUpdatedRequest.Title != null ? ScheduleUpdatedRequest.Title : schedule.Title;
+            schedule.Desciption = ScheduleUpdatedRequest.Desciption != null ? ScheduleUpdatedRequest.Desciption : schedule.Desciption;
+            var ScheduleSolutionEntity  = db.Schedules.Update(schedule);
+            await db.SaveChangesAsync();
+
+            var ScheduleUpdatedResponse = mapper.Map<ScheduleResponseDTO>(ScheduleSolutionEntity.Entity);
+
+            return ScheduleUpdatedResponse;
+        }
+
 
 
 
