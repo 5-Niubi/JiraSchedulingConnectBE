@@ -46,8 +46,13 @@
             public const string PROJECT_NAME_EMPTY = "Project Name empty!";
             public const string PROJECT_NAME_UPPER_1ST_CHAR = "Project Name must start by an uppercase letter";
             public const string PROJECT_WORKING_HOUR_ERR = "Invalid working hour";
-            public const string PROJECT_BUDGET_ERR = "Invalid money value";
+            public const string PROJECT_BUDGET_ERR = "Budget is not validated";
             public const string WORKING_TIME_INVALID = "Invalid working time";
+            public const string UNIT_EMPTY = "Unit is empty";
+            public const string START_DATE_INVALIDATE = "StartDate is not validate";
+            public const string END_DATE_INVALIDATE = "EndDate is not validate";
+            public const string PROJECT_NAME_IS_NULL = "Project Name is not Null Value";
+
         }
 
         public static class THREAD_STATUS
