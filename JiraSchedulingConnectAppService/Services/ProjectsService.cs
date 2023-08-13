@@ -282,7 +282,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             var projectInDB = await db.Projects.FirstOrDefaultAsync(p => p.Id == projectId
                 && p.CloudId == cloudId) ??
-                throw new NotFoundException($"Can not find project :{projectId}");
+                throw new NotFoundException($"Project Id is not exited :{projectId}");
 
             projectInDB.IsDelete = Const.DELETE_STATE.DELETE;
             projectInDB.DeleteDatetime = DateTime.Now;

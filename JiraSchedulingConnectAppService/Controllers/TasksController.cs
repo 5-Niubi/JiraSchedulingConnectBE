@@ -178,13 +178,14 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
 
+        // save task for pertchart
         [HttpPost]
         public async Task<IActionResult> SaveTasks(TasksSaveRequest taskRequest)
         {
 
             try
             {
-                var resopnse = await TasksService.SaveTasks(taskRequest);
+                var resopnse = await TasksService.SaveTasksPertChart(taskRequest);
                 return Ok(resopnse);
             }
 
