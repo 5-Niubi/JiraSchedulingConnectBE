@@ -5,7 +5,7 @@ function drawUserDonutChart(totalUsersArray) {
             'Plus'
         ],
         datasets: [{
-            label: 'My First Dataset',
+            label: 'User',
             data: totalUsersArray,
             backgroundColor: [
                 'rgb(54, 162, 235)',
@@ -23,7 +23,7 @@ function drawUserDonutChart(totalUsersArray) {
             plugins: {
                 title: {
                     display: true,
-                    text: 'Custom Chart Title'
+                    text: 'User rate'
                 }
             }
         }
@@ -57,7 +57,7 @@ function drawUserLineChart(year, arrData, arrDataPre) {
             tension: 0.1
         },
         {
-            label: 'Premium User',
+            label: 'Plus User',
             data: arrDataPre,
             fill: false,
             borderColor: 'rgb(255, 205, 86)',

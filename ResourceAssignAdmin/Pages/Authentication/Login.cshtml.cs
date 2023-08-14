@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ModelLibrary.DBModels;
 using Newtonsoft.Json;
+using UtilsLibrary;
 
 namespace ResourceAssignAdmin.Pages.Authentication
 {
@@ -42,7 +43,7 @@ namespace ResourceAssignAdmin.Pages.Authentication
                 Email = accountLogin.Email,
                 CreateDatetime = accountLogin.CreateDatetime,
             };
-            HttpContext.Session.SetString("user", JsonConvert.SerializeObject(accountSession));
+            HttpContext.Session.SetString(Const.ADMIN_SERVER.USER, JsonConvert.SerializeObject(accountSession));
 
             return RedirectToPage("/Index");
         }

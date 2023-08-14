@@ -13,7 +13,7 @@ builder.Services.AddDbContext<WoTaasContext>(opt => opt.UseSqlServer(
 );
 builder.Services.AddRazorPages().AddRazorPagesOptions(o =>
 {
-    o.Conventions.AddFolderApplicationModelConvention("/login", model => model.Filters.Add(new SessionFilter()));
+    o.Conventions.AddFolderApplicationModelConvention("/", model => model.Filters.Add(new SessionFilter()));
 });
 
 builder.Services.AddSession(options =>
