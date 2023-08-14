@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ResourceAssignAdmin</title>
+    <title>@ViewData["Title"] - WoTaas Admin</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ResourceAssignAdmin.styles.css" asp-append-version="true" />
@@ -34,9 +34,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Plan/Index">Plan</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Authentication/Logout">Logout</a>
-                        </li>
+                        @if (Context.Session.GetString(UtilsLibrary.Const.ADMIN_SERVER.USER) != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Authentication/Logout">Logout</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
@@ -50,7 +53,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - WoTaas Admin - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            &copy; 2023 - WoTaas Admin@* - <a asp-area="" asp-page="/Privacy">Privacy</a>*@
         </div>
     </footer>
 

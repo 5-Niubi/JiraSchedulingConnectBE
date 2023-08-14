@@ -80,10 +80,9 @@ function mailTo() {
 	let emailTo = "area1110@outlook.com";
 
 	let userCode = $("#userToken").val();
-	let transferCode = $("#transferCode").val();
 	let description = $("#description").val();
 
-	let subject = `[WoTaas][UpgradePlan] ${userCode}`;
+	let subject = `[WoTaas][Support] ${userCode}`;
 	let body = `
         UserCode: ${userCode}
         TransferCode: ${transferCode}
