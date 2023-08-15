@@ -106,8 +106,7 @@ namespace ModelLibrary.Migrations
                 name: "plan_subscription",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id = table.Column<int>(type: "int", nullable: false),
                     name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     price = table.Column<double>(type: "float", nullable: true),
                     duration = table.Column<int>(type: "int", nullable: true),
@@ -137,6 +136,7 @@ namespace ModelLibrary.Migrations
                     objective_cost = table.Column<double>(type: "float", nullable: true),
                     objective_quality = table.Column<double>(type: "float", nullable: true),
                     base_working_hour = table.Column<double>(type: "float", nullable: true),
+                    working_times = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
                     cloud_id = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     is_delete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
                     create_datetime = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())"),
@@ -455,6 +455,9 @@ namespace ModelLibrary.Migrations
                     selected = table.Column<int>(type: "int", nullable: true),
                     since = table.Column<DateTime>(type: "datetime", nullable: true),
                     account_id = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    desciption = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    type = table.Column<int>(type: "int", nullable: true, defaultValueSql: "((0))"),
                     is_delete = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
                     create_datetime = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())"),
                     delete_datetime = table.Column<DateTime>(type: "datetime", nullable: true)
@@ -620,13 +623,6 @@ namespace ModelLibrary.Migrations
                 name: "IX_tasks_skills_required_skill_id",
                 table: "tasks_skills_required",
                 column: "skill_id");
-
-            migrationBuilder.CreateIndex(
-                name: "UC_Email",
-                table: "workforce",
-                column: "email",
-                unique: true,
-                filter: "[email] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_workforce_skills_skill_id",

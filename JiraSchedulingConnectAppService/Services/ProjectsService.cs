@@ -34,8 +34,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             //QUERY LIST PROJECT WITH CLOUD_ID
             var query = db.Projects.Where(e => e.CloudId == cloudId
-                && (projectName.Equals(string.Empty) || e.Name.Contains(projectName)
-                && e.IsDelete == false)
+                && (projectName.Equals(string.Empty) || e.Name.Contains(projectName))
                 ).Include(p => p.Tasks)
                 .OrderByDescending(e => e.Id);
             var projectsResult = await query.ToListAsync();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using UtilsLibrary;
 
 namespace ModelLibrary.DBModels
 {
@@ -45,34 +46,34 @@ namespace ModelLibrary.DBModels
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=35.225.59.219, 80;Database=WoTaas;User Id=sa;Password=Test@123; TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Server=(local);Database=WoTaas;User Id=sa;Password=sa; TrustServerCertificate=True");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<AdminAccount>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Equipment>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<EquipmentsFunction>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Milestone>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Parameter>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<ParameterResource>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<PlanPermission>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<PlanSubscription>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Schedule>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Skill>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Subscription>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Task>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskFunction>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == false);
-            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == false);
+            modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<AdminAccount>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Equipment>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<EquipmentsFunction>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Milestone>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Parameter>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<ParameterResource>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<PlanPermission>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<PlanSubscription>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Schedule>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Skill>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Subscription>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Task>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<TaskFunction>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
 
             modelBuilder.Entity<AccountRole>(entity =>
             {

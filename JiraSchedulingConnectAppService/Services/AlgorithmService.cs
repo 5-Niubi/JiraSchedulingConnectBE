@@ -42,7 +42,6 @@ namespace JiraSchedulingConnectAppService.Services
             httpContext = httpContextAccessor.HttpContext;
             this._authorizationService = _authorizationService;
             this.mapper = mapper;
-
         }
 
 
@@ -85,11 +84,7 @@ namespace JiraSchedulingConnectAppService.Services
             return MonthlyUsage;
 
         }
-
-
-        
-
-
+   
         public async Task<LimitedAlgorithmDTO> GetExecuteAlgorithmLimited()
         {
 

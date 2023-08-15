@@ -12,9 +12,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         private readonly ILoggerManager _Logger;
         public LogController(ILoggerManager logger)
         {
-
             _Logger = logger;
-
         }
 
         [HttpGet]
