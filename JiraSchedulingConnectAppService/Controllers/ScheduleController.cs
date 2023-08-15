@@ -107,5 +107,25 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateScheduleSolution([FromBody] ScheduleUpdatedRequestDTO scheduleRequestDTO)
+        {
+            try
+            {
+                var response = await scheduleService.UpdateScheduleSolution(scheduleRequestDTO);
+                return Ok(response);
+            }
+
+            catch (Exception ex)
+            {
+                _Logger.LogError(ex.Message);
+
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+
+        
     }
 }

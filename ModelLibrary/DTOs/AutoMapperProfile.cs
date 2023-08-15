@@ -129,6 +129,7 @@ namespace ModelLibrary.DTOs
                 .ForMember(tr => tr.ParameterResources, t => t.MapFrom(t => t.ParameterResources));
 
             CreateMap<Schedule, ScheduleResultSolutionDTO>();
+            CreateMap<Schedule, ScheduleResponseDTO>();
             CreateMap<DBModels.Workforce, WorkforceScheduleResultDTO>();
             CreateMap<Project, ProjectDeleteResDTO>();
             CreateMap<ScheduleRequestDTO, Schedule>();

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Elastic.CommonSchema;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.CodeAnalysis;
@@ -93,6 +94,7 @@ namespace JiraSchedulingConnectAppService.Services
                 .Select(S => S.PlanId).FirstOrDefaultAsync();
             int ActivateProjectUsage = await GetActiveProjectUsage();
 
+            // Validate Permission
             await _authorizationService.AuthorizeAsync(httpContext.User, new ModelLibrary.DTOs.Algorithm.UserUsage()
             {
                 Plan = (int)planId,
@@ -101,6 +103,10 @@ namespace JiraSchedulingConnectAppService.Services
             }, "LimitedCreateProject");
 
             projectRequest = ValidateProjectInput(projectRequest);
+
+            // validate project name exited
+            await _IsValidateExitedName(projectRequest.Name);
+
 
             var project = mapper.Map<ModelLibrary.DBModels.Project>(projectRequest);
 
@@ -171,22 +177,76 @@ namespace JiraSchedulingConnectAppService.Services
             return projectUpdatedDTO;
         }
 
+        private async Task<bool> _IsValidateExitedName(string projectName)
+        {
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
+            var existingProject = await db.Projects
+               .FirstOrDefaultAsync(
+                p => p.Name == projectName && p.CloudId == cloudId && p.IsDelete == false);
+
+            if(existingProject != null)
+            {
+                throw new DuplicateException(Const.MESSAGE.PROJECT_NAME_EXIST);
+            }
+            
+
+            return true;
+        }
+
+
         private ProjectsListCreateProject ValidateProjectInput(ProjectsListCreateProject projectRequest)
         {
+
+            if(projectRequest.Name == null)
+            {
+                throw new Exception(Const.MESSAGE.PROJECT_NAME_IS_NULL);
+            }
+            // validate project name
             projectRequest.Name = projectRequest.Name.Trim();
-            projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
 
             if (projectRequest.Name == string.Empty)
             {
                 throw new Exception(Const.MESSAGE.PROJECT_NAME_EMPTY);
             }
+
+
             if (!Utils.IsUpperFirstLetter(projectRequest.Name))
                 throw new Exception(Const.MESSAGE.PROJECT_NAME_UPPER_1ST_CHAR);
-            //if (projectRequest.BaseWorkingHour > 24
-            //    || projectRequest.BaseWorkingHour <= 0)
-            //{
-            //    throw new Exception(Const.MESSAGE.PROJECT_WORKING_HOUR_ERR);
-            //}
+
+
+            // validate Unit
+
+            if (projectRequest.BudgetUnit == null)
+            {
+                throw new Exception(Const.MESSAGE.UNIT_EMPTY);
+            }
+
+            projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
+
+
+            if ( projectRequest.BudgetUnit.Trim() == "")
+            {
+                throw new Exception(Const.MESSAGE.UNIT_EMPTY);
+            }
+
+            
+
+
+            // validate start date
+
+            if (projectRequest.StartDate == null)
+            {
+                throw new Exception(Const.MESSAGE.START_DATE_INVALIDATE);
+            }
+
+            if (projectRequest.StartDate == null)
+            {
+                throw new Exception(Const.MESSAGE.END_DATE_INVALIDATE);
+            }
+
+
             if (projectRequest.Budget < 0)
             {
                 throw new Exception(Const.MESSAGE.PROJECT_BUDGET_ERR);
@@ -222,7 +282,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             var projectInDB = await db.Projects.FirstOrDefaultAsync(p => p.Id == projectId
                 && p.CloudId == cloudId) ??
-                throw new NotFoundException($"Can not find project :{projectId}");
+                throw new NotFoundException($"Project Id is not exited :{projectId}");
 
             projectInDB.IsDelete = Const.DELETE_STATE.DELETE;
             projectInDB.DeleteDatetime = DateTime.Now;
