@@ -27,7 +27,8 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                int maxRetries = 3;
+                int maxRetries = 10;
+                int RetryDelayTime = 20;
 
            
                 for (int retryCount = 0; retryCount < maxRetries; retryCount++)
@@ -44,9 +45,10 @@ namespace JiraSchedulingConnectAppService.Controllers
                         if (retryCount < maxRetries - 1)
                         {
                             // Perform a retry after a delay (optional)
-                            TimeSpan retryDelay = TimeSpan.FromSeconds(10); // You can adjust the delay as needed
+                            TimeSpan retryDelay = TimeSpan.FromSeconds(RetryDelayTime); // You can adjust the delay as needed
                             await Task.Delay(retryDelay);
                         }
+
                         else
                         {
                             // Handle the timeout error after retries

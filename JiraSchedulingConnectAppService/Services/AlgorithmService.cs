@@ -185,6 +185,7 @@ namespace JiraSchedulingConnectAppService.Services
 
                         break; // Break out of the retry loop on success
                     }
+
                     catch (MicroServiceAPIException ex)
                     {
                         thread.Status = Const.THREAD_STATUS.ERROR;
@@ -194,31 +195,22 @@ namespace JiraSchedulingConnectAppService.Services
                         thread.Result = error;
                         throw new Exception(ex.Message);
                     }
+
                     catch (NotFoundException ex)
                     {
                         throw;
                     }
-                    catch(System.IndexOutOfRangeException ex)
-                    {
-                        throw;
-                    }
-                    catch (System.InvalidOperationException xx)
-                    {
-                        throw;
-                    }
-                    catch (Microsoft.Data.SqlClient.SqlException ex)
-                    {
-                        var bug = ex;
-                    }
-
+         
+               
                     catch (System.Net.Http.HttpRequestException ex)
                     {
                         if (retryCount < maxRetries - 1)
                         {
                             // Perform a retry after a delay (optional)
-                            TimeSpan retryDelay = TimeSpan.FromSeconds(10); // You can adjust the delay as needed
+                            TimeSpan retryDelay = TimeSpan.FromSeconds(RetryDelayTime); // You can adjust the delay as needed
                             await System.Threading.Tasks.Task.Delay(retryDelay);
                         }
+
                         else
                         {
                             thread.Status = Const.THREAD_STATUS.ERROR;
@@ -230,6 +222,8 @@ namespace JiraSchedulingConnectAppService.Services
                         }
                     }
 
+
+
                     catch (Exception ex)
                     {
                         thread.Status = Const.THREAD_STATUS.ERROR;
@@ -239,9 +233,13 @@ namespace JiraSchedulingConnectAppService.Services
                         thread.Result = error;
                         throw new Exception(ex.Message);
                     }
+
+
                 }
             }
             catch {/* Do nothing */ }
+
+
         }
 
 
