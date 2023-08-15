@@ -43,12 +43,11 @@
                     <div class="card-body">
                         <h1 class="card-title pricing-card-title">$@Model.Plan.Price<small class="text-muted fw-light">/year</small></h1>
                         <ul class="list-unstyled mt-3 mb-4">
-                            <li>30 users included</li>
-                            <li>15 GB of storage</li>
-                            <li>Phone and email support</li>
-                            <li>Help center access</li>
+                            <li>Unlimited scheduling</li>
+                            <li>Up to 10 solutions</li>
+                            <li>Unlimited project</li>
                         </ul>
-                        <a class="w-100 btn btn-lg btn-primary" href="/Upgrade/Checkout">Contact us</a>
+                        <a class="w-100 btn btn-lg btn-primary">Processing</a>
                     </div>
                 </div>
             </div>
@@ -228,5 +227,5 @@
         $("#qrPay").attr("src", vietQrQuicklinkBuilder(@Model.Plan.Price, "@Model.UserToken", "@Model.Plan.Name", contact));
         $("#addInfoContact").html(contact);
     });
-        //$("#qrPay").attr("src", vietQrQuicklinkBuilder(@Model.Plan.Price, "@Model.UserToken", "@Model.Plan.Name"));
+            //$("#qrPay").attr("src", vietQrQuicklinkBuilder(@Model.Plan.Price, "@Model.UserToken", "@Model.Plan.Name"));
 </script>
