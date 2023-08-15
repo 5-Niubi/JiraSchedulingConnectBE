@@ -15,8 +15,6 @@ namespace JiraSchedulingConnectAppService.Services
 {
     public class WorkforcesService : IWorkforcesService
     {
-
-
         public const string WorkforceTypeNotValidMessage = "Workforce Type Is Not Validated!!!";
         public const string WorkforceNotFoundMessage = "Workforce Is Not Found!!!";
 
@@ -56,7 +54,6 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<List<WorkforceViewDTOResponse>> GetWorkforceScheduleByProject()
         {
-
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
@@ -70,7 +67,6 @@ namespace JiraSchedulingConnectAppService.Services
             .ToListAsync();
 
             return results;
-
         }
 
 

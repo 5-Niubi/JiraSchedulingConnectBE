@@ -128,7 +128,6 @@ namespace JiraSchedulingConnectAppService.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateTask(TaskUpdatedRequest taskRequest)
         {
-
             try
             {
                 var resopnse = await TasksService.UpdateTask(taskRequest);
@@ -149,14 +148,9 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-
-
-
-
         [HttpDelete]
         public async Task<IActionResult> DeleteTask(int Id)
         {
-
             try
             {
                 var resopnse = await TasksService.DeleteTask(Id);
@@ -177,12 +171,9 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
         }
 
-
-        // save task for pertchart
         [HttpPost]
         public async Task<IActionResult> SaveTasks(TasksSaveRequest taskRequest)
         {
-
             try
             {
                 var resopnse = await TasksService.SaveTasksPertChart(taskRequest);
@@ -202,8 +193,6 @@ namespace JiraSchedulingConnectAppService.Controllers
                 return BadRequest(response);
             }
         }
-
-
 
 
         // TODO SAVE TASK REQUESTS FULL INFO
@@ -231,20 +220,11 @@ namespace JiraSchedulingConnectAppService.Controllers
         //    }
         //}
 
-
-
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             return NoContent();
         }
-
-
-
-
-
-
-
     }
 }
 

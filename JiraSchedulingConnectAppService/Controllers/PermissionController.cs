@@ -11,8 +11,6 @@ namespace JiraSchedulingConnectAppService.Controllers
     [Authorize]
     public class PermissionController : ControllerBase
     {
-
-
         private IPermissionService permissionService;
         private readonly ILoggerManager _Logger;
 

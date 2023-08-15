@@ -11,7 +11,7 @@ using ModelLibrary.DBModels;
 namespace ModelLibrary.Migrations
 {
     [DbContext(typeof(WoTaasContext))]
-    partial class JiraDemoContextModelSnapshot : ModelSnapshot
+    partial class WoTaasContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -59,7 +59,7 @@ namespace ModelLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TokenId");
+                    b.HasIndex(new[] { "TokenId" }, "IX_account_roles_token_id");
 
                     b.ToTable("account_roles", (string)null);
                 });
@@ -273,7 +273,7 @@ namespace ModelLibrary.Migrations
                     b.HasKey("EquipmentId", "FunctionId")
                         .HasName("PK_equipments_function_1");
 
-                    b.HasIndex("FunctionId");
+                    b.HasIndex(new[] { "FunctionId" }, "IX_equipments_function_function_id");
 
                     b.ToTable("equipments_function", (string)null);
                 });
@@ -378,7 +378,7 @@ namespace ModelLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex(new[] { "ProjectId" }, "IX_milestones_project_id");
 
                     b.ToTable("milestones", (string)null);
                 });
@@ -438,7 +438,7 @@ namespace ModelLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex(new[] { "ProjectId" }, "IX_parameter_project_id");
 
                     b.ToTable("parameter", (string)null);
                 });
@@ -487,9 +487,9 @@ namespace ModelLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParameterId");
+                    b.HasIndex(new[] { "ParameterId" }, "IX_parameter_resource_parameter_id");
 
-                    b.HasIndex("ResourceId");
+                    b.HasIndex(new[] { "ResourceId" }, "IX_parameter_resource_resource_id");
 
                     b.ToTable("parameter_resource", (string)null);
                 });
@@ -530,7 +530,7 @@ namespace ModelLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PlanSubscriptionId");
+                    b.HasIndex(new[] { "PlanSubscriptionId" }, "IX_plan_permissions_plan_subscription_id");
 
                     b.ToTable("plan_permissions", (string)null);
                 });
@@ -538,11 +538,8 @@ namespace ModelLibrary.Migrations
             modelBuilder.Entity("ModelLibrary.DBModels.PlanSubscription", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("CreateDatetime")
                         .ValueGeneratedOnAdd()
@@ -659,6 +656,12 @@ namespace ModelLibrary.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("start_date");
 
+                    b.Property<string>("WorkingTimes")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("working_times");
+
                     b.HasKey("Id");
 
                     b.ToTable("projects", (string)null);
@@ -734,6 +737,11 @@ namespace ModelLibrary.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("delete_datetime");
 
+                    b.Property<string>("Desciption")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)")
+                        .HasColumnName("desciption");
+
                     b.Property<int?>("Duration")
                         .HasColumnType("int")
                         .HasColumnName("duration");
@@ -764,9 +772,20 @@ namespace ModelLibrary.Migrations
                         .HasColumnType("text")
                         .HasColumnName("tasks");
 
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("title");
+
+                    b.Property<int?>("Type")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("type")
+                        .HasDefaultValueSql("((0))");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ParameterId");
+                    b.HasIndex(new[] { "ParameterId" }, "IX_schedules_parameter_id");
 
                     b.ToTable("schedules", (string)null);
                 });
@@ -870,9 +889,9 @@ namespace ModelLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AtlassianTokenId");
+                    b.HasIndex(new[] { "AtlassianTokenId" }, "IX_subscription_atlassian_token_id");
 
-                    b.HasIndex("PlanId");
+                    b.HasIndex(new[] { "PlanId" }, "IX_subscription_plan_id");
 
                     b.ToTable("subscription", (string)null);
                 });
@@ -927,9 +946,9 @@ namespace ModelLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MilestoneId");
+                    b.HasIndex(new[] { "MilestoneId" }, "IX_tasks_milestone_id");
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex(new[] { "ProjectId" }, "IX_tasks_project_id");
 
                     b.ToTable("tasks", (string)null);
                 });
@@ -966,7 +985,7 @@ namespace ModelLibrary.Migrations
 
                     b.HasKey("TaskId", "FunctionId");
 
-                    b.HasIndex("FunctionId");
+                    b.HasIndex(new[] { "FunctionId" }, "IX_task_function_function_id");
 
                     b.ToTable("task_function", (string)null);
                 });
@@ -999,7 +1018,7 @@ namespace ModelLibrary.Migrations
 
                     b.HasKey("TaskId", "PrecedenceId");
 
-                    b.HasIndex("PrecedenceId");
+                    b.HasIndex(new[] { "PrecedenceId" }, "IX_task_precedences_precedence_id");
 
                     b.ToTable("task_precedences", (string)null);
                 });
@@ -1036,7 +1055,7 @@ namespace ModelLibrary.Migrations
 
                     b.HasKey("TaskId", "SkillId");
 
-                    b.HasIndex("SkillId");
+                    b.HasIndex(new[] { "SkillId" }, "IX_tasks_skills_required_skill_id");
 
                     b.ToTable("tasks_skills_required", (string)null);
                 });
@@ -1125,10 +1144,6 @@ namespace ModelLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Email" }, "UC_Email")
-                        .IsUnique()
-                        .HasFilter("[email] IS NOT NULL");
-
                     b.ToTable("workforce", (string)null);
                 });
 
@@ -1164,7 +1179,7 @@ namespace ModelLibrary.Migrations
 
                     b.HasKey("WorkforceId", "SkillId");
 
-                    b.HasIndex("SkillId");
+                    b.HasIndex(new[] { "SkillId" }, "IX_workforce_skills_skill_id");
 
                     b.ToTable("workforce_skills", (string)null);
                 });

@@ -67,8 +67,6 @@ namespace JiraSchedulingConnectAppService.Controllers
                 _Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
-
-
             }
 
 

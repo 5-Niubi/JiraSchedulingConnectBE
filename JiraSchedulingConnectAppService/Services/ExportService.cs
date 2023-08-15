@@ -11,7 +11,6 @@ using ModelLibrary.DTOs.Projects;
 using ModelLibrary.DTOs.Thread;
 using net.sf.mpxj;
 using net.sf.mpxj.MpxjUtilities;
-using net.sf.mpxj.mspdi;
 using net.sf.mpxj.writer;
 using Newtonsoft.Json;
 using System.Dynamic;

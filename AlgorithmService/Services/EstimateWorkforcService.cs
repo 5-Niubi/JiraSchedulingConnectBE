@@ -10,8 +10,6 @@ namespace AlgorithmServiceServer.Services
 {
     public class EstimateWorkforcService : IEstimateWorkforceService
     {
-
-
         private const string EmptyTaskInProjectMessage = "Empty Task in this project";
 
         private readonly WoTaasContext db;

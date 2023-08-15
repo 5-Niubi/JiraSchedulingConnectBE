@@ -18,7 +18,6 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             _Logger = logger;
             this.projectsService = projectsService;
-
         }
 
         [HttpGet]

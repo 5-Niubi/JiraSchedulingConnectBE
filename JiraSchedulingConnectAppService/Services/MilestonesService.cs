@@ -26,8 +26,6 @@ namespace JiraSchedulingConnectAppService.Services
             httpContext = httpContextAccessor.HttpContext;
         }
 
-
-
         public async Task<MilestoneDTO> GetMilestoneId(int Id)
         {
             try
