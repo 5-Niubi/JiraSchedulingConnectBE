@@ -46,7 +46,7 @@ namespace ModelLibrary.DBModels
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=(local);Database=WoTaas;User Id=sa;Password=sa; TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Server=35.240.163.125;Database=WoTaas;User Id=sqlserver;Password=DL\\.9Pu&jRR*b$G>; TrustServerCertificate=True");
             }
         }
 
