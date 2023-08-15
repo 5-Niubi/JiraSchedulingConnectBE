@@ -143,12 +143,16 @@ namespace JiraSchedulingConnectAppService.Services
         public ThreadStartDTO ExecuteAlgorithm(int parameterId)
         {
 
+
             string threadId = ThreadService.CreateThreadId();
             threadId = threadService.StartThread(threadId,
                 async () => await ProcessTestConverterThread(threadId, parameterId));
 
             return new ThreadStartDTO(threadId);
         }
+
+
+
 
         private async System.Threading.Tasks.Task ProcessTestConverterThread(string threadId, int parameterId)
         {
@@ -169,35 +173,79 @@ namespace JiraSchedulingConnectAppService.Services
                 }
                 catch (MicroServiceAPIException ex)
                 {
-                    
-                    thread.Status = Const.THREAD_STATUS.ERROR;
-                    dynamic error = new ExpandoObject();
-                    error.message = ex.Message;
-                    error.response = ex.mircoserviceResponse;
+                    try
+                    {
+                        // Your thread processing logic goes here
+                        var response = await apiMicro.Get($"/api/Algorithm/ExecuteAlgorithm?parameterId={parameterId}");
+                        dynamic responseContent = await response.Content.ReadAsStringAsync();
 
-                    thread.Result = error;
-                    throw new Exception(ex.Message);
-                }
-                catch (NotFoundException)
-                {
-                    throw;
-                }
-                catch (Exception ex)
-                {
-                    thread.Status = Const.THREAD_STATUS.ERROR;
+                        // Update the thread status and result when finished
+                        thread.Status = Const.THREAD_STATUS.SUCCESS;
+                        thread.Result = responseContent;
 
-                    dynamic error = new ExpandoObject();
-                    error.message = ex.Message;
-                    error.stackTrace = ex.StackTrace;
-                    thread.Result = error;
-                    throw new Exception(ex.Message);
+                        break; // Break out of the retry loop on success
+                    }
+                    catch (MicroServiceAPIException ex)
+                    {
+                        thread.Status = Const.THREAD_STATUS.ERROR;
+                        dynamic error = new ExpandoObject();
+                        error.message = ex.Message;
+                        error.response = ex.mircoserviceResponse;
+                        thread.Result = error;
+                        throw new Exception(ex.Message);
+                    }
+                    catch (NotFoundException ex)
+                    {
+                        throw;
+                    }
+                    catch(System.IndexOutOfRangeException ex)
+                    {
+                        throw;
+                    }
+                    catch (System.InvalidOperationException xx)
+                    {
+                        throw;
+                    }
+                    catch (Microsoft.Data.SqlClient.SqlException ex)
+                    {
+                        var bug = ex;
+                    }
+
+                    catch (System.Net.Http.HttpRequestException ex)
+                    {
+                        if (retryCount < maxRetries - 1)
+                        {
+                            // Perform a retry after a delay (optional)
+                            TimeSpan retryDelay = TimeSpan.FromSeconds(10); // You can adjust the delay as needed
+                            await System.Threading.Tasks.Task.Delay(retryDelay);
+                        }
+                        else
+                        {
+                            thread.Status = Const.THREAD_STATUS.ERROR;
+                            dynamic error = new ExpandoObject();
+                            error.message = ex.Message;
+                            error.stackTrace = ex.StackTrace;
+                            thread.Result = error;
+                            throw new Exception(ex.Message);
+                        }
+                    }
+
+                    catch (Exception ex)
+                    {
+                        thread.Status = Const.THREAD_STATUS.ERROR;
+                        dynamic error = new ExpandoObject();
+                        error.message = ex.Message;
+                        error.stackTrace = ex.StackTrace;
+                        thread.Result = error;
+                        throw new Exception(ex.Message);
+                    }
                 }
             }
-            catch {/* Do nothing*/ }
+            catch {/* Do nothing */ }
         }
 
 
-        public async Task<EstimatedResultDTO> EstimateWorkforce(int projectId)
+            public async Task<EstimatedResultDTO> EstimateWorkforce(int projectId)
         {
 
 
