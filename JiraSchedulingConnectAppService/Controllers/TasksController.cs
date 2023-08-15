@@ -176,7 +176,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                var resopnse = await TasksService.SaveTasks(taskRequest);
+                var resopnse = await TasksService.SaveTasksPertChart(taskRequest);
                 return Ok(resopnse);
             }
 

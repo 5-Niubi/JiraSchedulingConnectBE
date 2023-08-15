@@ -12,6 +12,7 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
         public Task<bool> Delete(int solutionId);
 
         public Task<ScheduleResultSolutionDTO> SaveScheduleSolution(ScheduleRequestDTO scheduleRequestDTO);
+        public Task<ScheduleResponseDTO> UpdateScheduleSolution(ScheduleUpdatedRequestDTO scheduleRequest);
 
 
     }

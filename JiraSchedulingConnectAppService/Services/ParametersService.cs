@@ -18,7 +18,7 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly WoTaasContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
-        private const string NotResourceAdaptivedMessage = "Not Resource (Workfore) adapt required skills task's";
+        private const string NotResourceAdaptivedMessage = "Not Resource (Workforce) adapt required skills task's";
         private IAlgorithmService algorithmService;
         public ParametersService(WoTaasContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor, IAlgorithmService algorithmService)
         {

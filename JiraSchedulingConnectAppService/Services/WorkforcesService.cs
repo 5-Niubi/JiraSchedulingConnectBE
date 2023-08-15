@@ -269,7 +269,7 @@ namespace JiraSchedulingConnectAppService.Services
                 && w.CloudId == cloudId
                 && w.IsDelete == false);
 
-            if (existingWorkforceWithEmail != null)
+            if (existingWorkforceWithAccountId != null)
             {
                 throw new DuplicateException($"AccountId '{workforceRequest.AccountId}' is already in use.");
             }
