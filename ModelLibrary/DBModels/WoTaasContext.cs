@@ -46,12 +46,13 @@ namespace ModelLibrary.DBModels
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=35.240.163.125;Database=WoTaas;User Id=sqlserver;Password=DL\\.9Pu&jRR*b$G>; TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Server=35.240.163.125;Database=WoTaas;User Id=sqlserver;Password=5nIUbi@260384K; TrustServerCertificate=True");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
             modelBuilder.Entity<AdminAccount>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
             modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
@@ -74,7 +75,6 @@ namespace ModelLibrary.DBModels
             modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
             modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
             modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
-
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
@@ -378,6 +378,10 @@ namespace ModelLibrary.DBModels
                 entity.Property(e => e.ObjectiveQuality).HasColumnName("objective_quality");
 
                 entity.Property(e => e.ObjectiveTime).HasColumnName("objective_time");
+
+                entity.Property(e => e.Optimizer)
+                    .HasColumnName("optimizer")
+                    .HasComment("");
 
                 entity.Property(e => e.ProjectId).HasColumnName("project_id");
 
