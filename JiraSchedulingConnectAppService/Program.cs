@@ -1,8 +1,10 @@
+using JiraSchedulingConnectAppService.MiddleWare;
 using JiraSchedulingConnectAppService.Services;
 using JiraSchedulingConnectAppService.Services.Authorization;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ModelLibrary.DBModels;
@@ -54,9 +56,9 @@ try
 
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddControllersWithViews();
+
     // Register services
     builder.Services.AddTransient<ILoggerManager, LoggerManager>();
-
     builder.Services.AddTransient<IAPIMicroserviceService, APIMicroserviceService>();
     builder.Services.AddTransient<IProjectServices, ProjectsService>();
     builder.Services.AddTransient<ISkillsService, SkillsService>();
@@ -86,14 +88,11 @@ try
     builder.Services.AddAuthorization(
         options =>
         {
-
             options.AddPolicy(
                 "LimitedScheduleTimeByDay", policy => policy.Requirements.Add(new ScheduleLimitRequirement(LIMITED_PLAN.LIMIT_DAILY_EXECUTE_ALGORITHM)));
             options.AddPolicy(
                 "LimitedCreateProject", policy => policy.Requirements.Add(new ProjectLimitRequirement(LIMITED_PLAN.LIMIT_CREATE_NEW_PROJECT)));
         });
-
-
 
     var app = builder.Build();
 
@@ -108,9 +107,16 @@ try
     app.UseAuthorization();
     app.MapControllers();
 
-    //app.MapRazorPages();
     // Custom Config:
     app.UseCors(opt => opt.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
+
+    // To get ip address
+    app.UseForwardedHeaders(new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    });
+    app.UseGetRequestIPMiddleWare();
+    // end code to add
     await app.RunAsync();
 }
 catch (Exception ex)

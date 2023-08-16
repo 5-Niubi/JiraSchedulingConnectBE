@@ -37,7 +37,21 @@ namespace JiraSchedulingConnectAppService.Services
 
         async Task<HttpResponseMessage> IAPIMicroserviceService.Get(string url)
         {
-            var respone = await client.GetAsync(url);
+            int count = Const.RETRY_API_TIME;
+            bool retry = false;
+            HttpResponseMessage respone;
+            do
+            {
+                respone = await client.GetAsync(url);
+                if (!respone.IsSuccessStatusCode)
+                {
+                    retry = true;
+                    if (count-- == 0)
+                    {
+                        break;
+                    }
+                }
+            } while (retry);
             if (!respone.IsSuccessStatusCode)
             {
                 throw new MicroServiceAPIException(await respone.Content.ReadAsStringAsync(),

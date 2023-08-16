@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Projects;
+using System.Net;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
@@ -185,11 +186,11 @@ namespace JiraSchedulingConnectAppService.Services
                .FirstOrDefaultAsync(
                 p => p.Name == projectName && p.CloudId == cloudId && p.IsDelete == false);
 
-            if(existingProject != null)
+            if (existingProject != null)
             {
                 throw new DuplicateException(Const.MESSAGE.PROJECT_NAME_EXIST);
             }
-            
+
 
             return true;
         }
@@ -198,7 +199,7 @@ namespace JiraSchedulingConnectAppService.Services
         private ProjectsListCreateProject ValidateProjectInput(ProjectsListCreateProject projectRequest)
         {
 
-            if(projectRequest.Name == null)
+            if (projectRequest.Name == null)
             {
                 throw new Exception(Const.MESSAGE.PROJECT_NAME_IS_NULL);
             }
@@ -225,12 +226,12 @@ namespace JiraSchedulingConnectAppService.Services
             projectRequest.BudgetUnit = projectRequest.BudgetUnit.Trim();
 
 
-            if ( projectRequest.BudgetUnit.Trim() == "")
+            if (projectRequest.BudgetUnit.Trim() == "")
             {
                 throw new Exception(Const.MESSAGE.UNIT_EMPTY);
             }
 
-            
+
 
 
             // validate start date
