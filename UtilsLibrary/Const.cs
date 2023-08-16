@@ -81,5 +81,11 @@
             public const int PLAN_FREE = 1;
             public const int PLAN_PREMIUM = 2;
         }
+
+        public static class OPTIMIZER
+        {
+            public const int GA = 0;
+            public const int SOLVER = 1;
+        }
     }
 }

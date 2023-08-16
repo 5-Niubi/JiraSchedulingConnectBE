@@ -164,6 +164,7 @@ namespace AlgorithmLibrary.GA
             {
                 maxResult = chromosomeWithDistictFitness.Count;
             }
+
             for (int i = 0; i < maxResult; i++)
             {
                 var output = new AlgorithmRawOutput();
@@ -174,7 +175,6 @@ namespace AlgorithmLibrary.GA
                 output.Genes = individual.Genes;
                 output.TotalExper = individual.TotalExper;
                 output.TotalSalary = individual.TotalSalary;
-
 
                 outputList.Add(output);
             }
