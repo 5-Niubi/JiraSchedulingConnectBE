@@ -86,7 +86,6 @@ try
     builder.Services.AddAuthorization(
         options =>
         {
-
             options.AddPolicy(
                 "LimitedScheduleTimeByDay", policy => policy.Requirements.Add(new ScheduleLimitRequirement(LIMITED_PLAN.LIMIT_DAILY_EXECUTE_ALGORITHM)));
             options.AddPolicy(

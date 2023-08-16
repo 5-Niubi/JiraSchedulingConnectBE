@@ -27,30 +27,25 @@ namespace ResourceAssignAdmin.Pages.Upgrade
         private const string PaymentErrorMsg = "Unable to make payment, an error has occurred";
 
         [BindProperty]
-        public string PaymentMethod { get; set; } = "";
+        public string PaymentMethod { get; set; } = default!;
 
         [BindProperty]
-        public string UserToken { get; set; } = "";
+        public string UserToken { get; set; } = default!;
         [BindProperty]
         public PlanSubscription Plan { get; set; } = default!;
 
-        public IActionResult PrepareView(string? token = "", int? plan = 0)
+        public IActionResult PrepareView(string token = "", int? plan = 0)
         {
             PlanSubscription? planFromDB = null;
-            //if (plan != null)
-            //{
-            planFromDB = _context.PlanSubscriptions.FirstOrDefault(p => p.Id == plan.Value);
+            planFromDB = _context.PlanSubscriptions.FirstOrDefault(p => p.Id == plan);
             if (planFromDB == null)
                 return NotFound();
-            //}
-            //if (token != null)
-            //{
+
             if (_context.AtlassianTokens.FirstOrDefault(t => t.UserToken == token)
                 == null)
                 return NotFound();
             UserToken = token;
-            //}
-
+       
             var gateway = _braintreeService.GetGateway();
             var clientToken = gateway.ClientToken.Generate();  //Genarate a token
             ViewData["ClientToken"] = clientToken;
@@ -63,8 +58,9 @@ namespace ResourceAssignAdmin.Pages.Upgrade
             return PrepareView(token, plan);
         }
 
-        public async Task<IActionResult> OnPut()
+        public async Task<IActionResult> OnPostAsync()
         {
+            Plan.Id = Convert.ToInt32(Request.Form["PlanId"]);
             var user = await _context.AtlassianTokens
                 .FirstOrDefaultAsync(a => a.UserToken == UserToken);
             if (user == null)
@@ -80,7 +76,7 @@ namespace ResourceAssignAdmin.Pages.Upgrade
                 return PrepareView(UserToken, Plan.Id);
             }
 
-            var plan = await _context.PlanSubscriptions
+            var planCurrent = await _context.PlanSubscriptions
                 .FirstAsync(ps => ps.Id == Plan.Id);
 
             IBraintreeGateway gateway;
@@ -89,7 +85,7 @@ namespace ResourceAssignAdmin.Pages.Upgrade
 
             var request = new TransactionRequest
             {
-                Amount = Convert.ToDecimal(plan.Price.ToString()),
+                Amount = Convert.ToDecimal(planCurrent.Price.ToString()),
                 PaymentMethodNonce = PaymentMethod,
                 Options = new TransactionOptionsRequest
                 {

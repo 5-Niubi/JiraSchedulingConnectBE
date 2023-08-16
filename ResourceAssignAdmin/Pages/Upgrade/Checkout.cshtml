@@ -63,18 +63,20 @@
                         <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <div class="text-danger">@ViewData["msg"]</div>
-                                <form id="payment-form" method="put" asp-controller="Home" asp-action="Create">
+                                <form id="payment-form" method="POST">
                                     <div id="bt-dropin"></div>
                                     @Html.HiddenFor(Model => Model.PaymentMethod, new { @id = "nonce" })
+                                    @Html.HiddenFor(Model => Model.UserToken)
+                                    <input value="@Model.Plan.Id" type="hidden" name="PlanId"/>
                                     <div class="mb-3">
                                         <label for="userToken" class="form-label">User Token</label>
-                                        <input value="@Model.UserToken" type="text" class="form-control" id="userToken"
-                                               placeholder="@holderToken" required disabled>
+                                        <input asp-for="@Model.UserToken" type="text" class="form-control" id="userToken"
+                                               required disabled>
                                         <div class="text-danger">
                                             @ViewBag.tokenMsg
                                         </div>
                                     </div>
-                                    <button class="btn btn-primary btn-lg" type="submit"><span>Confirm payment</span></button>
+                                    <button class="btn btn-primary btn-lg" id="buttonPay" type="button"><span>Confirm payment</span></button>
                                 </form>
                             </div>
                         </div>
@@ -196,12 +198,13 @@
 <script>
     var client_token = "@ViewData["ClientToken"]";
     var form = document.querySelector('#payment-form');
+    var buttonPay = document.querySelector('#buttonPay');
 
     braintree.dropin.create({
         authorization: client_token,
         container: '#bt-dropin'
     }, function (createErr, instance) {
-        form.addEventListener('submit', function (event) {
+        buttonPay.addEventListener('click', function (event) {
             event.preventDefault();
 
             instance.requestPaymentMethod(function (err, payload) {
@@ -227,5 +230,5 @@
         $("#qrPay").attr("src", vietQrQuicklinkBuilder(@Model.Plan.Price, "@Model.UserToken", "@Model.Plan.Name", contact));
         $("#addInfoContact").html(contact);
     });
-            //$("#qrPay").attr("src", vietQrQuicklinkBuilder(@Model.Plan.Price, "@Model.UserToken", "@Model.Plan.Name"));
+                    //$("#qrPay").attr("src", vietQrQuicklinkBuilder(@Model.Plan.Price, "@Model.UserToken", "@Model.Plan.Name"));
 </script>
