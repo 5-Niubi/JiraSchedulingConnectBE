@@ -86,6 +86,7 @@ namespace UtilsLibrary
 
                 return (queryResult, totalPage, pageNumber, totalRecord);
             }
+
         }
 
         public static int PageIndexNormalize(int page)

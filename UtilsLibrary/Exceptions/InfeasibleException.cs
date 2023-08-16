@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UtilsLibrary.Exceptions
 {
-    public class InfeasibleException : Exception
+    public class InfeasibleException : AlgorithmErrorException
     {
         public InfeasibleException()
         {

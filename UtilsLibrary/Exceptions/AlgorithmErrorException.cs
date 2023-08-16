@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace UtilsLibrary.Exceptions
 {
-    public class ModelInvalidException : AlgorithmErrorException
+    public class AlgorithmErrorException : Exception
     {
-        public ModelInvalidException()
+        public AlgorithmErrorException()
         {
 
         }
 
-        public ModelInvalidException(string message)
+        public AlgorithmErrorException(string message)
         : base(message)
         {
 

@@ -46,7 +46,7 @@ namespace JiraSchedulingConnectAppService.Services
                 page = 0;
             }
 
-            var schedule = await query.ToListAsync();
+            var schedule = await query.OrderByDescending(s => s.CreateDatetime).Take(Const.THRESHOLE_RECORD).ToListAsync();
             var scheduleDTO = mapper.Map<List<SchedulesListResDTO>>(schedule);
 
             var pagingRespone = new PagingResponseDTO<SchedulesListResDTO>()
@@ -77,7 +77,7 @@ namespace JiraSchedulingConnectAppService.Services
                 page = 0;
             }
 
-            var schedule = await query.ToListAsync();
+            var schedule = await query.OrderByDescending(s => s.CreateDatetime).Take(Const.THRESHOLE_RECORD).ToListAsync();
             var scheduleDTO = mapper.Map<List<SchedulesListResDTO>>(schedule);
 
             var pagingRespone = new PagingResponseDTO<SchedulesListResDTO>()
