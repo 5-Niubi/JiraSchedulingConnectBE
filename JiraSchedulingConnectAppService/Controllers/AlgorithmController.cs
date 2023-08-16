@@ -27,39 +27,7 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                int maxRetries = 10;
-                int RetryDelayTime = 20;
-
-           
-                for (int retryCount = 0; retryCount < maxRetries; retryCount++)
-                {
-                    try
-                    {
-                        await algorithmService.IsValidExecuteAuthorize();
-                        break;
-                    }
-
-
-                    catch (Microsoft.Data.SqlClient.SqlException ex)
-                    {
-                        if (retryCount < maxRetries - 1)
-                        {
-                            // Perform a retry after a delay (optional)
-                            TimeSpan retryDelay = TimeSpan.FromSeconds(RetryDelayTime); // You can adjust the delay as needed
-                            await Task.Delay(retryDelay);
-                        }
-
-                        else
-                        {
-                            // Handle the timeout error after retries
-                            var response = new ResponseMessageDTO("SQL timeout error");
-                            // Set other response properties as needed
-                            return StatusCode(500, response);
-                        }
-                    }
-                }
-
-               
+                await algorithmService.IsValidExecuteAuthorize();
                 return Ok(algorithmService.ExecuteAlgorithm(parameterId));
             }
             catch (MicroServiceAPIException ex)
@@ -68,13 +36,6 @@ namespace JiraSchedulingConnectAppService.Controllers
                 response.Data = ex.mircoserviceResponse;
                 return BadRequest(response);
             }
-
-            
-            catch (System.IndexOutOfRangeException ex)
-            {
-                throw;
-            }
-
             catch (Exception ex)
             {
                 _Logger.LogError(ex.Message);

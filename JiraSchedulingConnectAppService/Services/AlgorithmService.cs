@@ -83,7 +83,7 @@ namespace JiraSchedulingConnectAppService.Services
             return MonthlyUsage;
 
         }
-   
+
         public async Task<LimitedAlgorithmDTO> GetExecuteAlgorithmLimited()
         {
 
@@ -106,7 +106,7 @@ namespace JiraSchedulingConnectAppService.Services
             var output = new LimitedAlgorithmDTO()
             {
                 planId = (int)planId,
-                UsageExecuteAlgorithm = (int)   dailyUsage,
+                UsageExecuteAlgorithm = (int)dailyUsage,
                 LimitedExecuteAlgorithm = LimitedExecuteAlgorithm,
                 IsAvailable = dailyUsage < LimitedExecuteAlgorithm ? 1 : 0
 
@@ -143,7 +143,6 @@ namespace JiraSchedulingConnectAppService.Services
         public ThreadStartDTO ExecuteAlgorithm(int parameterId)
         {
 
-
             string threadId = ThreadService.CreateThreadId();
             threadId = threadService.StartThread(threadId,
                 async () => await ProcessTestConverterThread(threadId, parameterId));
@@ -151,17 +150,9 @@ namespace JiraSchedulingConnectAppService.Services
             return new ThreadStartDTO(threadId);
         }
 
-
-
-
         private async System.Threading.Tasks.Task ProcessTestConverterThread(string threadId, int parameterId)
         {
-            int maxRetries = 10; // Maximum number of retry attempts
-            int RetryDelayTime = 20;
-
-            var thread = threadService.GetThreadModel(threadId);
-
-            for (int retryCount = 0; retryCount < maxRetries; retryCount++)
+            try
             {
                 var thread = threadService.GetThreadModel(threadId);
                 try
@@ -178,75 +169,35 @@ namespace JiraSchedulingConnectAppService.Services
                 }
                 catch (MicroServiceAPIException ex)
                 {
-                    // Your thread processing logic goes here
-                    var response = await apiMicro.Get($"/api/Algorithm/ExecuteAlgorithm?parameterId={parameterId}");
-                    dynamic responseContent = await response.Content.ReadAsStringAsync();
 
-                    // Update the thread status and result when finished
-                    thread.Status = Const.THREAD_STATUS.SUCCESS;
-                    thread.Result = responseContent;
-
-                    break; // Break out of the retry loop on success
-                }
-
-                catch (MicroServiceAPIException ex)
-                {
                     thread.Status = Const.THREAD_STATUS.ERROR;
                     dynamic error = new ExpandoObject();
                     error.message = ex.Message;
                     error.response = ex.mircoserviceResponse;
+
                     thread.Result = error;
                     throw new Exception(ex.Message);
                 }
-
-                catch (NotFoundException ex)
+                catch (NotFoundException)
                 {
                     throw;
                 }
-         
-               
-                catch (System.Net.Http.HttpRequestException ex)
-                {
-                    if (retryCount < maxRetries - 1)
-                    {
-                        // Perform a retry after a delay (optional)
-                        TimeSpan retryDelay = TimeSpan.FromSeconds(RetryDelayTime); // You can adjust the delay as needed
-                        await System.Threading.Tasks.Task.Delay(retryDelay);
-                    }
-
-                    else
-                    {
-                        thread.Status = Const.THREAD_STATUS.ERROR;
-                        dynamic error = new ExpandoObject();
-                        error.message = ex.Message;
-                        error.stackTrace = ex.StackTrace;
-                        thread.Result = error;
-                        throw new Exception(ex.Message);
-                    }
-                }
-
-
-
                 catch (Exception ex)
                 {
                     thread.Status = Const.THREAD_STATUS.ERROR;
+
                     dynamic error = new ExpandoObject();
                     error.message = ex.Message;
                     error.stackTrace = ex.StackTrace;
                     thread.Result = error;
                     throw new Exception(ex.Message);
                 }
-
-
             }
-            
-           
-
-
+            catch {/* Do nothing*/ }
         }
 
 
-            public async Task<EstimatedResultDTO> EstimateWorkforce(int projectId)
+        public async Task<EstimatedResultDTO> EstimateWorkforce(int projectId)
         {
 
 
@@ -310,8 +261,9 @@ namespace JiraSchedulingConnectAppService.Services
         {
 
             var Errors = new List<TaskInputErrorV2DTO>();
-            foreach (var task in TaskList) {
-                if(task.TasksSkillsRequireds.Count == 0)
+            foreach (var task in TaskList)
+            {
+                if (task.TasksSkillsRequireds.Count == 0)
                 {
                     Errors.Add(new TaskInputErrorV2DTO()
                     {
