@@ -156,7 +156,12 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async System.Threading.Tasks.Task ProcessTestConverterThread(string threadId, int parameterId)
         {
-            try
+            int maxRetries = 10; // Maximum number of retry attempts
+            int RetryDelayTime = 20;
+
+            var thread = threadService.GetThreadModel(threadId);
+
+            for (int retryCount = 0; retryCount < maxRetries; retryCount++)
             {
                 var thread = threadService.GetThreadModel(threadId);
                 try
@@ -173,58 +178,43 @@ namespace JiraSchedulingConnectAppService.Services
                 }
                 catch (MicroServiceAPIException ex)
                 {
-                    try
-                    {
-                        // Your thread processing logic goes here
-                        var response = await apiMicro.Get($"/api/Algorithm/ExecuteAlgorithm?parameterId={parameterId}");
-                        dynamic responseContent = await response.Content.ReadAsStringAsync();
+                    // Your thread processing logic goes here
+                    var response = await apiMicro.Get($"/api/Algorithm/ExecuteAlgorithm?parameterId={parameterId}");
+                    dynamic responseContent = await response.Content.ReadAsStringAsync();
 
-                        // Update the thread status and result when finished
-                        thread.Status = Const.THREAD_STATUS.SUCCESS;
-                        thread.Result = responseContent;
+                    // Update the thread status and result when finished
+                    thread.Status = Const.THREAD_STATUS.SUCCESS;
+                    thread.Result = responseContent;
 
-                        break; // Break out of the retry loop on success
-                    }
+                    break; // Break out of the retry loop on success
+                }
 
-                    catch (MicroServiceAPIException ex)
-                    {
-                        thread.Status = Const.THREAD_STATUS.ERROR;
-                        dynamic error = new ExpandoObject();
-                        error.message = ex.Message;
-                        error.response = ex.mircoserviceResponse;
-                        thread.Result = error;
-                        throw new Exception(ex.Message);
-                    }
+                catch (MicroServiceAPIException ex)
+                {
+                    thread.Status = Const.THREAD_STATUS.ERROR;
+                    dynamic error = new ExpandoObject();
+                    error.message = ex.Message;
+                    error.response = ex.mircoserviceResponse;
+                    thread.Result = error;
+                    throw new Exception(ex.Message);
+                }
 
-                    catch (NotFoundException ex)
-                    {
-                        throw;
-                    }
+                catch (NotFoundException ex)
+                {
+                    throw;
+                }
          
                
-                    catch (System.Net.Http.HttpRequestException ex)
+                catch (System.Net.Http.HttpRequestException ex)
+                {
+                    if (retryCount < maxRetries - 1)
                     {
-                        if (retryCount < maxRetries - 1)
-                        {
-                            // Perform a retry after a delay (optional)
-                            TimeSpan retryDelay = TimeSpan.FromSeconds(RetryDelayTime); // You can adjust the delay as needed
-                            await System.Threading.Tasks.Task.Delay(retryDelay);
-                        }
-
-                        else
-                        {
-                            thread.Status = Const.THREAD_STATUS.ERROR;
-                            dynamic error = new ExpandoObject();
-                            error.message = ex.Message;
-                            error.stackTrace = ex.StackTrace;
-                            thread.Result = error;
-                            throw new Exception(ex.Message);
-                        }
+                        // Perform a retry after a delay (optional)
+                        TimeSpan retryDelay = TimeSpan.FromSeconds(RetryDelayTime); // You can adjust the delay as needed
+                        await System.Threading.Tasks.Task.Delay(retryDelay);
                     }
 
-
-
-                    catch (Exception ex)
+                    else
                     {
                         thread.Status = Const.THREAD_STATUS.ERROR;
                         dynamic error = new ExpandoObject();
@@ -233,11 +223,24 @@ namespace JiraSchedulingConnectAppService.Services
                         thread.Result = error;
                         throw new Exception(ex.Message);
                     }
-
-
                 }
+
+
+
+                catch (Exception ex)
+                {
+                    thread.Status = Const.THREAD_STATUS.ERROR;
+                    dynamic error = new ExpandoObject();
+                    error.message = ex.Message;
+                    error.stackTrace = ex.StackTrace;
+                    thread.Result = error;
+                    throw new Exception(ex.Message);
+                }
+
+
             }
-            catch {/* Do nothing */ }
+            
+           
 
 
         }
