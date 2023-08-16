@@ -83,7 +83,7 @@ namespace JiraSchedulingConnectAppService.Services
             return MonthlyUsage;
 
         }
-   
+
         public async Task<LimitedAlgorithmDTO> GetExecuteAlgorithmLimited()
         {
 
@@ -106,7 +106,7 @@ namespace JiraSchedulingConnectAppService.Services
             var output = new LimitedAlgorithmDTO()
             {
                 planId = (int)planId,
-                UsageExecuteAlgorithm = (int)   dailyUsage,
+                UsageExecuteAlgorithm = (int)dailyUsage,
                 LimitedExecuteAlgorithm = LimitedExecuteAlgorithm,
                 IsAvailable = dailyUsage < LimitedExecuteAlgorithm ? 1 : 0
 
@@ -169,7 +169,7 @@ namespace JiraSchedulingConnectAppService.Services
                 }
                 catch (MicroServiceAPIException ex)
                 {
-                    
+
                     thread.Status = Const.THREAD_STATUS.ERROR;
                     dynamic error = new ExpandoObject();
                     error.message = ex.Message;
@@ -261,8 +261,9 @@ namespace JiraSchedulingConnectAppService.Services
         {
 
             var Errors = new List<TaskInputErrorV2DTO>();
-            foreach (var task in TaskList) {
-                if(task.TasksSkillsRequireds.Count == 0)
+            foreach (var task in TaskList)
+            {
+                if (task.TasksSkillsRequireds.Count == 0)
                 {
                     Errors.Add(new TaskInputErrorV2DTO()
                     {
