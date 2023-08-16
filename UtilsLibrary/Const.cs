@@ -7,6 +7,7 @@
         public static string SPACE = " ";
         public static double DEFAULT_BASE_WORKING_HOUR = 8;
         public static int RETRY_API_TIME = 10;
+        public static int THRESHOLE_RECORD = 100;
 
         public static class Claims
         {
@@ -80,6 +81,12 @@
             public const string USER = "user";
             public const int PLAN_FREE = 1;
             public const int PLAN_PREMIUM = 2;
+        }
+
+        public static class OPTIMIZER
+        {
+            public const int GA = 0;
+            public const int SOLVER = 1;
         }
     }
 }

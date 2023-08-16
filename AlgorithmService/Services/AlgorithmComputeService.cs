@@ -1,5 +1,6 @@
 ﻿using AlgorithmLibrary;
 using AlgorithmLibrary.GA;
+using AlgorithmLibrary.Solver;
 using AlgorithmServiceServer.Services.Interfaces;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -65,14 +66,29 @@ namespace AlgorithmServiceServer.Services
             inputTo.ObjectiveCost = parameterEntity.ObjectiveCost;
             inputTo.ObjectiveQuality = parameterEntity.ObjectiveQuality;
             inputTo.BaseWorkingHours = projectFromDB?.BaseWorkingHour ?? Const.DEFAULT_BASE_WORKING_HOUR;
+
+            // Execute converter
             var converter = new AlgorithmConverter(inputTo, mapper);
-
             var outputToAlgorithm = converter.ToOR();
-            var ga = new GAExecution();
-            ga.SetParam(outputToAlgorithm);
-            var algorithmOutputRaws = ga.Run();
-            var algorithmOutputConverted = new List<OutputFromORDTO>();
 
+            List<AlgorithmRawOutput> algorithmOutputRaws = new();
+
+            switch (parameterEntity.Optimizer)
+            {
+                case Const.OPTIMIZER.GA:
+                    // Running with GA
+                    var ga = new GAExecution();
+                    ga.SetParam(outputToAlgorithm);
+                    algorithmOutputRaws = ga.Run();
+
+                    break;
+                case Const.OPTIMIZER.SOLVER:
+                    // Running with Solver
+                    algorithmOutputRaws = CPSAT.Schedule(outputToAlgorithm);
+                    break;
+            }
+
+            var algorithmOutputConverted = new List<OutputFromORDTO>();
             var scheduleResultDTOs = new List<ScheduleResultSolutionDTO>();
             await db.Database.BeginTransactionAsync();
             try
@@ -147,12 +163,12 @@ namespace AlgorithmServiceServer.Services
 
             foreach (var wKey in workerSalaryDict.Keys)
             {
-                var totalDurationOfWker = tasks.Where( t=> t.workforce.id == wKey.id).Sum(t => t.duration);
-                var totalCostOfWker = totalDurationOfWker * (int) baseWorkingHour * (int) wKey.unitSalary;
-                workerSalaryDict[wKey] = totalCostOfWker?? 0;
+                var totalDurationOfWker = tasks.Where(t => t.workforce.id == wKey.id).Sum(t => t.duration);
+                var totalCostOfWker = totalDurationOfWker * (int)baseWorkingHour * (int)wKey.unitSalary;
+                workerSalaryDict[wKey] = totalCostOfWker ?? 0;
             }
 
-            var  totalCost = workerSalaryDict.Values.Sum();
+            var totalCost = workerSalaryDict.Values.Sum();
             return totalCost;
         }
     }
