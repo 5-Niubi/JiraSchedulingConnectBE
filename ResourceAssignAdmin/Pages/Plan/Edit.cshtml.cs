@@ -7,9 +7,9 @@ namespace ResourceAssignAdmin.Pages.Plan
 {
     public class EditModel : PageModel
     {
-        private readonly ModelLibrary.DBModels.JiraDemoContext _context;
+        private readonly ModelLibrary.DBModels.WoTaasContext _context;
 
-        public EditModel(ModelLibrary.DBModels.JiraDemoContext context)
+        public EditModel(ModelLibrary.DBModels.WoTaasContext context)
         {
             _context = context;
         }

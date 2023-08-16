@@ -30,6 +30,12 @@
             public static string EQUIPMENT = "equipment";
         }
 
+        public static class WORKING_TYPE
+        {
+            public static int FULLTIME = 0;
+            public static int PARTTIME = 1;
+        }
+
         public static class MESSAGE
         {
             public const string SUCCESS = "Success!!!";
@@ -40,7 +46,13 @@
             public const string PROJECT_NAME_EMPTY = "Project Name empty!";
             public const string PROJECT_NAME_UPPER_1ST_CHAR = "Project Name must start by an uppercase letter";
             public const string PROJECT_WORKING_HOUR_ERR = "Invalid working hour";
-            public const string PROJECT_BUDGET_ERR = "Invalid money value";
+            public const string PROJECT_BUDGET_ERR = "Budget is not validated";
+            public const string WORKING_TIME_INVALID = "Invalid working time";
+            public const string UNIT_EMPTY = "Unit is empty";
+            public const string START_DATE_INVALIDATE = "StartDate is not validate";
+            public const string END_DATE_INVALIDATE = "EndDate is not validate";
+            public const string PROJECT_NAME_IS_NULL = "Project Name is not Null Value";
+
         }
 
         public static class THREAD_STATUS
@@ -54,6 +66,12 @@
         {
             public const int PLAN_FREE = 1;
             public const int PLAN_PLUS = 2;
+        }
+
+        public static class LIMITED_PLAN
+        {
+            public const int LIMIT_DAILY_EXECUTE_ALGORITHM = 3;
+            public const int LIMIT_CREATE_NEW_PROJECT = 1;
         }
 
         public static class ADMIN_SERVER

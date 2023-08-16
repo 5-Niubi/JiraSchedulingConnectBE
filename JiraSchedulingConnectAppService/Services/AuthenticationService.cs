@@ -12,11 +12,11 @@ namespace JiraSchedulingConnectAppService.Services
     public class AuthenticationService : IAuthenticationService
     {
         private readonly HttpClient client;
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly IConfiguration config;
         private readonly HttpContext? http;
 
-        public AuthenticationService(JiraDemoContext db, IConfiguration config,
+        public AuthenticationService(WoTaasContext db, IConfiguration config,
             IHttpContextAccessor httpAcc)
         {
             client = new HttpClient();

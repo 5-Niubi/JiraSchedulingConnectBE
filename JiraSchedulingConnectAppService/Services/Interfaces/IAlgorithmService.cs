@@ -10,5 +10,9 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
         public Task<EstimatedResultDTO> GetEstimateOverallWorkforce(int projectId);
 
         public Task IsValidExecuteAuthorize();
+
+        public Task<LimitedAlgorithmDTO> GetExecuteAlgorithmLimited();
+        
+
     }
 }

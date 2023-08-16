@@ -2,7 +2,6 @@
 
 namespace ModelLibrary.DTOs.Algorithm
 {
-    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class ScheduleResultSolutionDTO
     {
         public int? id

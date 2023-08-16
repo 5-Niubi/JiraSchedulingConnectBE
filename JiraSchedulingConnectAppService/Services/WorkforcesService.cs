@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Elastic.CommonSchema;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +15,6 @@ namespace JiraSchedulingConnectAppService.Services
 {
     public class WorkforcesService : IWorkforcesService
     {
-
-
         public const string WorkforceTypeNotValidMessage = "Workforce Type Is Not Validated!!!";
         public const string WorkforceNotFoundMessage = "Workforce Is Not Found!!!";
 
@@ -25,12 +24,12 @@ namespace JiraSchedulingConnectAppService.Services
         public const string SkillLevelNotValidateMessage = "Skill Level Workforce is not validate!!!";
         public const string NotUniqueSkillNameMessage = "Skill Name Must Unique!!!";
 
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
 
 
-        public WorkforcesService(ModelLibrary.DBModels.JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public WorkforcesService(ModelLibrary.DBModels.WoTaasContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
 
             db = dbContext;
@@ -55,7 +54,6 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<List<WorkforceViewDTOResponse>> GetWorkforceScheduleByProject()
         {
-
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
@@ -69,7 +67,6 @@ namespace JiraSchedulingConnectAppService.Services
             .ToListAsync();
 
             return results;
-
         }
 
 
@@ -143,19 +140,19 @@ namespace JiraSchedulingConnectAppService.Services
                     );
             }
 
-            for (int i = 0; i < WorkingEfforts.Count; i++)
-            {
-                if (WorkingEfforts[i] < 0 || WorkingEfforts[i] > 8)
-                {
-                    EffortErrors.Add(new WorkingEffortErrorDTO
-                    {
-                        DayIndex = i,
-                        Effort = WorkingEfforts[i],
-                        Message = EffortNotValidMessage
-                    });
-                }
+            //for (int i = 0; i < WorkingEfforts.Count; i++)
+            //{
+            //    if (WorkingEfforts[i] < 0 || WorkingEfforts[i] > BaseWorkingHour)
+            //    {
+            //        EffortErrors.Add(new WorkingEffortErrorDTO
+            //        {
+            //            DayIndex = i,
+            //            Effort = WorkingEfforts[i],
+            //            Message = EffortNotValidMessage
+            //        });
+            //    }
 
-            }
+            //}
 
             if (EffortErrors.Count != 0)
             {
@@ -223,7 +220,7 @@ namespace JiraSchedulingConnectAppService.Services
             // validate skills
             await _ValidateWorkforceSkills(workforceRequest);
 
-
+         
             // Insert new skill to database
             var newSkills = await _insertSkills(workforceRequest.NewSkills);
 
@@ -239,17 +236,15 @@ namespace JiraSchedulingConnectAppService.Services
                 });
             }
 
-
+            // Insert new workforce
             var newWorkforce = mapper.Map<Workforce>(workforceRequest);
             newWorkforce.Active = 1;
             newWorkforce.CloudId = cloudId;
-
 
             var insertedNewWorkforce = db.Workforces.Add(newWorkforce);
             await db.SaveChangesAsync();
 
             var workforceDTOResponse = mapper.Map<WorkforceDTOResponse>(insertedNewWorkforce.Entity);
-
             return workforceDTOResponse;
         }
 
@@ -258,12 +253,27 @@ namespace JiraSchedulingConnectAppService.Services
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
             // email not exited
-            var existingWorkforceWithEmail = await db.Workforces.FirstOrDefaultAsync(w => w.Email == workforceRequest.Email);
+
+            var existingWorkforceWithEmail = await db.Workforces.FirstOrDefaultAsync(
+                w => w.Email == workforceRequest.Email
+                && w.CloudId == cloudId
+                && w.IsDelete == false);
 
             if (existingWorkforceWithEmail != null)
             {
                 throw new DuplicateException($"Email '{workforceRequest.Email}' is already in use.");
             }
+
+            var existingWorkforceWithAccountId = await db.Workforces.FirstOrDefaultAsync(
+                w => w.AccountId == workforceRequest.AccountId
+                && w.CloudId == cloudId
+                && w.IsDelete == false);
+
+            if (existingWorkforceWithAccountId != null)
+            {
+                throw new DuplicateException($"AccountId '{workforceRequest.AccountId}' is already in use.");
+            }
+
 
             // working type in [0 or 1]
             var ValidatedWorkingTypes = new List<int> { 0, 1 };
@@ -285,11 +295,24 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async System.Threading.Tasks.Task _ValidateUpdatedWorkforceProperties(WorkforceRequestDTO workforceRequest)
         {
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
             // email not exited
             var existingWorkforceWithEmail = await db.Workforces.FirstOrDefaultAsync(w => w.Email == workforceRequest.Email && w.Id != workforceRequest.Id);
             if (existingWorkforceWithEmail != null)
             {
                 throw new DuplicateException($"Email '{workforceRequest.Email}' is already in use.");
+            }
+
+            var existingWorkforceWithAccountId = await db.Workforces.FirstOrDefaultAsync(
+                w => w.AccountId == workforceRequest.AccountId
+                && w.CloudId == cloudId
+                && w.IsDelete == false);
+
+            if (existingWorkforceWithEmail != null)
+            {
+                throw new DuplicateException($"AccountId '{workforceRequest.AccountId}' is already in use.");
             }
 
             // working type in [0 or 1]

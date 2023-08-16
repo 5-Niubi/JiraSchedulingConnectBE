@@ -6,9 +6,9 @@ namespace ResourceAssignAdmin.Pages.Plan
 {
     public class CreateModel : PageModel
     {
-        private readonly ModelLibrary.DBModels.JiraDemoContext _context;
+        private readonly ModelLibrary.DBModels.WoTaasContext _context;
 
-        public CreateModel(ModelLibrary.DBModels.JiraDemoContext context)
+        public CreateModel(ModelLibrary.DBModels.WoTaasContext context)
         {
             _context = context;
         }

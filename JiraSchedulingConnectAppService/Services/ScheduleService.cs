@@ -13,18 +13,18 @@ namespace JiraSchedulingConnectAppService.Services
     public class ScheduleService : IScheduleService
     {
 
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
 
-        public ScheduleService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public ScheduleService(WoTaasContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             db = dbContext;
             this.mapper = mapper;
             httpContext = httpContextAccessor.HttpContext;
         }
 
-        public ScheduleService(JiraDemoContext db, IMapper mapper)
+        public ScheduleService(WoTaasContext db, IMapper mapper)
         {
             this.db = db;
             this.mapper = mapper;
@@ -101,6 +101,8 @@ namespace JiraSchedulingConnectAppService.Services
             return scheduleDTO;
         }
 
+
+
         public async Task<ScheduleResultSolutionDTO> SaveScheduleSolution(ScheduleRequestDTO scheduleRequestDTO)
         {
             try
@@ -137,6 +139,22 @@ namespace JiraSchedulingConnectAppService.Services
             return true;
         }
 
+
+        public async Task<ScheduleResponseDTO> UpdateScheduleSolution(ScheduleUpdatedRequestDTO ScheduleUpdatedRequest)
+        {
+            var schedule = await db.Schedules.Where(s => s.Id == ScheduleUpdatedRequest.Id)
+                 .FirstOrDefaultAsync() ??
+            throw new NotFoundException($"Can not find schedule: {ScheduleUpdatedRequest.Id}");
+
+            schedule.Title = ScheduleUpdatedRequest.Title != null ? ScheduleUpdatedRequest.Title : schedule.Title;
+            schedule.Desciption = ScheduleUpdatedRequest.Desciption != null ? ScheduleUpdatedRequest.Desciption : schedule.Desciption;
+            var ScheduleSolutionEntity  = db.Schedules.Update(schedule);
+            await db.SaveChangesAsync();
+
+            var ScheduleUpdatedResponse = mapper.Map<ScheduleResponseDTO>(ScheduleSolutionEntity.Entity);
+
+            return ScheduleUpdatedResponse;
+        }
 
 
 

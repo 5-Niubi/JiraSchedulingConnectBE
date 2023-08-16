@@ -22,6 +22,7 @@ namespace ModelLibrary.DBModels
         public DateTime? CreateDatetime { get; set; }
         public bool? IsDelete { get; set; }
         public DateTime? DeleteDatetime { get; set; }
+        public int? Optimizer { get; set; }
 
         public virtual Project? Project { get; set; }
         public virtual ICollection<ParameterResource> ParameterResources { get; set; }

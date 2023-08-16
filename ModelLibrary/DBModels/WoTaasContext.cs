@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using UtilsLibrary;
 
 namespace ModelLibrary.DBModels
 {
@@ -45,12 +46,35 @@ namespace ModelLibrary.DBModels
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=35.225.59.219, 80;Database=WoTaas;User Id=sa;Password=Test@123; TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Server=35.240.163.125;Database=WoTaas;User Id=sqlserver;Password=5nIUbi@260384K; TrustServerCertificate=True");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<AdminAccount>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Equipment>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<EquipmentsFunction>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Function>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Milestone>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Parameter>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<ParameterResource>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<PlanPermission>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<PlanSubscription>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Project>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Role>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Schedule>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Skill>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Subscription>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Task>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<TaskFunction>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<TaskPrecedence>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+            modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");
@@ -355,6 +379,10 @@ namespace ModelLibrary.DBModels
 
                 entity.Property(e => e.ObjectiveTime).HasColumnName("objective_time");
 
+                entity.Property(e => e.Optimizer)
+                    .HasColumnName("optimizer")
+                    .HasComment("");
+
                 entity.Property(e => e.ProjectId).HasColumnName("project_id");
 
                 entity.Property(e => e.StartDate)
@@ -535,6 +563,11 @@ namespace ModelLibrary.DBModels
                 entity.Property(e => e.StartDate)
                     .HasColumnType("datetime")
                     .HasColumnName("start_date");
+
+                entity.Property(e => e.WorkingTimes)
+                    .HasMaxLength(500)
+                    .IsUnicode(false)
+                    .HasColumnName("working_times");
             });
 
             modelBuilder.Entity<Role>(entity =>
@@ -590,6 +623,10 @@ namespace ModelLibrary.DBModels
                     .HasColumnType("datetime")
                     .HasColumnName("delete_datetime");
 
+                entity.Property(e => e.Desciption)
+                    .HasMaxLength(1000)
+                    .HasColumnName("desciption");
+
                 entity.Property(e => e.Duration).HasColumnName("duration");
 
                 entity.Property(e => e.IsDelete)
@@ -609,6 +646,14 @@ namespace ModelLibrary.DBModels
                 entity.Property(e => e.Tasks)
                     .HasColumnType("text")
                     .HasColumnName("tasks");
+
+                entity.Property(e => e.Title)
+                    .HasMaxLength(200)
+                    .HasColumnName("title");
+
+                entity.Property(e => e.Type)
+                    .HasColumnName("type")
+                    .HasDefaultValueSql("((0))");
 
                 entity.HasOne(d => d.Parameter)
                     .WithMany(p => p.Schedules)

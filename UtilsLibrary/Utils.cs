@@ -105,5 +105,11 @@ namespace UtilsLibrary
             }
             return end?.Subtract((DateTime)start).TotalDays;
         }
+
+        public static DateTime? MoveDayToEnd(DateTime? dateTime)
+        {
+            if(dateTime == null) return dateTime;
+            return ((DateTime) dateTime).AddHours(23).AddMinutes(59).AddSeconds(59);
+        }
     }
 }

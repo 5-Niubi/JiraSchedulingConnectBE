@@ -8,11 +8,11 @@ namespace JiraSchedulingConnectAppService.Services
 {
     public class EquipmentsService : IEquipmentService
     {
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
 
-        public EquipmentsService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public EquipmentsService(WoTaasContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             db = dbContext;
             this.mapper = mapper;

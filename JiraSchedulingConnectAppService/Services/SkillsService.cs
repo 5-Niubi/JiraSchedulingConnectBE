@@ -15,11 +15,11 @@ namespace JiraSchedulingConnectAppService.Services
         public const string NotFoundMessage = "Skill Not Found!!!";
         public const string NotUniqueSkillNameMessage = "Skill Name Must Unique!!!";
 
-        private readonly ModelLibrary.DBModels.JiraDemoContext db;
+        private readonly ModelLibrary.DBModels.WoTaasContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
 
-        public SkillsService(ModelLibrary.DBModels.JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public SkillsService(ModelLibrary.DBModels.WoTaasContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
 
             db = dbContext;
@@ -180,6 +180,12 @@ namespace JiraSchedulingConnectAppService.Services
                 {
                     throw new Exception(NotFoundMessage);
                 }
+
+                // delete skill in skill required
+                var requiredSkillsToRemove = await db.TasksSkillsRequireds.Where(s => s.SkillId == Id).ToArrayAsync();
+
+                db.RemoveRange(requiredSkillsToRemove);
+                await db.SaveChangesAsync();
 
 
                 // Update status isdelete

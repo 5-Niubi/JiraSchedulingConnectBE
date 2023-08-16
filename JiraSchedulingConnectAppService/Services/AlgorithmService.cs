@@ -1,14 +1,17 @@
 ﻿using AlgorithmLibrary;
+using AutoMapper;
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Invalidation;
+using ModelLibrary.DTOs.PertSchedule;
 using ModelLibrary.DTOs.Thread;
 using System.Dynamic;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
+using static UtilsLibrary.Const;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -17,18 +20,20 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly IAPIMicroserviceService apiMicro;
         private readonly IThreadService threadService;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IMapper mapper;
 
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly HttpContext? httpContext;
 
         public const string PrecedenceIsCycleMessage = "Tasks be cycle!";
-
+        public const string SkillEmptyInTaskMessage = "Skils is Empty in this Task!";
 
         public AlgorithmService(
-            JiraDemoContext db,
+            WoTaasContext db,
             IAuthorizationService _authorizationService,
             IHttpContextAccessor httpContextAccessor,
             IAPIMicroserviceService apiMicro,
+            IMapper mapper,
             IThreadService threadService)
         {
             this.apiMicro = apiMicro;
@@ -36,13 +41,51 @@ namespace JiraSchedulingConnectAppService.Services
             this.db = db;
             httpContext = httpContextAccessor.HttpContext;
             this._authorizationService = _authorizationService;
+            this.mapper = mapper;
         }
 
 
-
-
-
         public async System.Threading.Tasks.Task IsValidExecuteAuthorize()
+        {
+
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
+            
+            var planId = await db.Subscriptions.Include(s => s.AtlassianToken)
+                .Include(s => s.Plan)
+                .Where(s => s.AtlassianToken.CloudId == cloudId && s.CancelAt == null)
+                .Select(S => S.PlanId).FirstOrDefaultAsync();
+
+            int scheduleDailyUsage = await _GetScheduleCurrentDayUsage();
+
+            await _authorizationService.AuthorizeAsync(httpContext.User, new ModelLibrary.DTOs.Algorithm.UserUsage()
+            {
+                Plan = (int)planId,
+                ScheduleUsage = scheduleDailyUsage
+
+            }, "LimitedScheduleTimeByDay");
+        }
+
+
+        public async Task<int> GetScheduleMonthlyUsage()
+        {
+
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+            var ProjectIds = await db.Projects.Where(pr => pr.CloudId == cloudId).Select(p => p.Id).ToArrayAsync();
+
+            DateTime currentMonthStart = new(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateTime currentMonthEnd = currentMonthStart.AddMonths(1).AddTicks(-1);
+
+            var MonthlyUsage = await db.Parameters
+                .Where(pr => ProjectIds.Contains(pr.Id) && pr.CreateDatetime >= currentMonthStart && pr.CreateDatetime <= currentMonthEnd).Distinct()
+                .CountAsync();
+            return MonthlyUsage;
+
+        }
+   
+        public async Task<LimitedAlgorithmDTO> GetExecuteAlgorithmLimited()
         {
 
             var jwt = new JWTManagerService(httpContext);
@@ -53,37 +96,47 @@ namespace JiraSchedulingConnectAppService.Services
                 .Where(s => s.AtlassianToken.CloudId == cloudId && s.CancelAt == null)
                 .Select(S => S.PlanId).FirstOrDefaultAsync();
 
-            int scheduleMonthlyUsage = await GetScheduleMonthlyUsage();
+            var dailyUsage = await _GetScheduleCurrentDayUsage();
 
-            await _authorizationService.AuthorizeAsync(httpContext.User, new ModelLibrary.DTOs.Algorithm.UserUsage()
+            var LimitedExecuteAlgorithm = 10000;
+
+            if (planId == SUBSCRIPTION.PLAN_FREE)
             {
-                Plan = (int)planId,
-                ScheduleUsage = scheduleMonthlyUsage
+                LimitedExecuteAlgorithm = LIMITED_PLAN.LIMIT_DAILY_EXECUTE_ALGORITHM;
+            }
+            var output = new LimitedAlgorithmDTO()
+            {
+                planId = (int)planId,
+                UsageExecuteAlgorithm = (int)   dailyUsage,
+                LimitedExecuteAlgorithm = LimitedExecuteAlgorithm,
+                IsAvailable = dailyUsage < LimitedExecuteAlgorithm ? 1 : 0
 
-            }, "LimitedScheduleTimeByMonth");
+
+            };
+            return output;
+
+
+
         }
 
 
-        public async Task<int> GetScheduleMonthlyUsage()
+        private async Task<int> _GetScheduleCurrentDayUsage()
         {
-
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
+            var projectIds = await db.Projects.Where(pr => pr.CloudId == cloudId).Select(p => p.Id).ToArrayAsync();
 
-            var ProjectIds = await db.Projects.Where(pr => pr.CloudId == cloudId).Select(p => p.Id).ToArrayAsync();
+            DateTime currentDate = DateTime.Now.Date; // Get the current date (without time)
 
-            DateTime currentMonthStart = new(DateTime.Now.Year, DateTime.Now.Month, 1);
-            DateTime currentMonthEnd = currentMonthStart.AddMonths(1).AddTicks(-1);
+            DateTime dayStart = currentDate; // Midnight of the current day
+            DateTime dayEnd = currentDate.AddDays(1).AddTicks(-1); // End of the current day
 
-            var MonthlyUsage = await db.Parameters
-                .Where(pr => ProjectIds.Contains(pr.Id) && pr.CreateDatetime >= currentMonthStart && pr.CreateDatetime <= currentMonthEnd).Distinct()
+            var dailyUsage = await db.Parameters
+                .Where(pr => projectIds.Contains((int)pr.ProjectId) && pr.CreateDatetime >= dayStart && pr.CreateDatetime <= dayEnd)
                 .CountAsync();
 
-
-            return MonthlyUsage;
-
-
+            return dailyUsage;
         }
 
 
@@ -119,13 +172,14 @@ namespace JiraSchedulingConnectAppService.Services
                 }
                 catch (MicroServiceAPIException ex)
                 {
+                    
                     thread.Status = Const.THREAD_STATUS.ERROR;
-
                     dynamic error = new ExpandoObject();
                     error.message = ex.Message;
                     error.response = ex.mircoserviceResponse;
 
                     thread.Result = error;
+                    throw new Exception(ex.Message);
                 }
                 catch (NotFoundException)
                 {
@@ -138,8 +192,8 @@ namespace JiraSchedulingConnectAppService.Services
                     dynamic error = new ExpandoObject();
                     error.message = ex.Message;
                     error.stackTrace = ex.StackTrace;
-
                     thread.Result = error;
+                    throw new Exception(ex.Message);
                 }
             }
             catch {/* Do nothing*/ }
@@ -150,53 +204,87 @@ namespace JiraSchedulingConnectAppService.Services
         {
 
 
-            try
+            //try
+            //{
+
+            // validate project id exited
+            var jwt = new JWTManagerService(httpContext);
+            var cloudId = jwt.GetCurrentCloudId();
+
+            var projectInDB = await db.Projects.FirstOrDefaultAsync(p => p.Id == projectId && p.CloudId == cloudId) ??
+            throw new NotFoundException($"Can not find project :{projectId}");
+
+
+            // get list task by project
+            var TaskList = await db.Tasks.Include(s => s.TaskPrecedenceTasks).Include(s => s.TasksSkillsRequireds).Where(t => t.ProjectId == projectId && t.IsDelete == false).ToArrayAsync();
+
+            // validate all task must have skills
+            await _ValidateExitedSkillInTask(TaskList);
+
+            // validate graph tasks is cycle
+            await _ValidateDAG(TaskList);
+
+            var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforce?projectId={projectId}");
+            dynamic responseContent;
+
+            if (response.IsSuccessStatusCode)
             {
-
-                // validate project id exited
-                var jwt = new JWTManagerService(httpContext);
-                var cloudId = jwt.GetCurrentCloudId();
-
-                var projectInDB = await db.Projects.FirstOrDefaultAsync(p => p.Id == projectId && p.CloudId == cloudId) ??
-                throw new NotFoundException($"Can not find project :{projectId}");
-
-
-                // get list task by project
-                var TaskList = await db.Tasks.Include(s => s.TaskPrecedenceTasks).Where(t => t.ProjectId == projectId && t.IsDelete == false).ToArrayAsync();
-                // validate graph tasks is cycle
-
-                await _ValidateDAG(TaskList);
-
-                var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforce?projectId={projectId}");
-                dynamic responseContent;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    responseContent = await response.Content.ReadFromJsonAsync<EstimatedResultDTO>();
-                }
-
-                else
-                {
-                    throw new Exception(response.StatusCode.ToString());
-                }
-                return responseContent;
-
-            }
-            catch (MicroServiceAPIException ex)
-            {
-                throw new Exception(ex.mircoserviceResponse);
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
+                responseContent = await response.Content.ReadFromJsonAsync<EstimatedResultDTO>();
             }
 
+            else
+            {
+                throw new Exception(response.StatusCode.ToString());
+            }
+            return responseContent;
+
+            //}
 
 
+            //catch (MicroServiceAPIException ex)
+            //{
+            //    throw new Exception(ex.mircoserviceResponse);
+
+            //}
+            //catch (NotSuitableInputException ex)
+            //{
+            //    throw new NotSuitableInputException(ex.Errors);
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new Exception(ex.Message);
+            //}
 
 
         }
+
+
+        private async Task<bool> _ValidateExitedSkillInTask(ModelLibrary.DBModels.Task[] TaskList)
+        {
+
+            var Errors = new List<TaskInputErrorV2DTO>();
+            foreach (var task in TaskList) {
+                if(task.TasksSkillsRequireds.Count == 0)
+                {
+                    Errors.Add(new TaskInputErrorV2DTO()
+                    {
+                        TaskId = task.Id,
+                        Messages = SkillEmptyInTaskMessage
+                    });
+                }
+
+            }
+
+            if (Errors.Count != 0)
+            {
+                throw new NotSuitableInputException(Errors);
+
+            }
+            return true;
+
+        }
+
 
         private async Task<bool> _ValidateDAG(ModelLibrary.DBModels.Task[]? Tasks)
         {

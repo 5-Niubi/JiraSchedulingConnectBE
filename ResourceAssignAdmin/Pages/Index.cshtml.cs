@@ -10,9 +10,9 @@ namespace ResourceAssignAdmin.Pages
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
-        private readonly JiraDemoContext _context;
+        private readonly WoTaasContext _context;
 
-        public IndexModel(ILogger<IndexModel> logger, JiraDemoContext context)
+        public IndexModel(ILogger<IndexModel> logger, WoTaasContext context)
         {
             _logger = logger;
             _context = context;

@@ -1,10 +1,10 @@
-﻿using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs;
 using UtilsLibrary.Exceptions;
-
 namespace JiraSchedulingConnectAppService.Controllers
 {
     //[ApiController]
@@ -12,7 +12,7 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class AuthenticationController : Controller
     {
         private readonly IAuthenticationService authenticationService;
-        public AuthenticationController(JiraDemoContext db, IConfiguration config
+        public AuthenticationController(WoTaasContext db, IConfiguration config
             , IAuthenticationService authenticationService)
         {
             this.authenticationService = authenticationService;

@@ -61,7 +61,6 @@ namespace JiraSchedulingConnectAppService.Services
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                 new Claim(Const.Claims.CLOUD_ID, cloudId)
-
             };
             var tokenKey = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
             var securityKey = new SymmetricSecurityKey(tokenKey);
@@ -71,7 +70,7 @@ namespace JiraSchedulingConnectAppService.Services
                 issuer: configuration["Jwt:Issuer"],
                 audience: configuration["Jwt:Audience"],
                 claims,
-                expires: DateTime.Now.AddMinutes(10),
+                expires: DateTime.Now.AddMinutes(5),
                 signingCredentials: credentials
                 );
             var encodeToken = new JwtSecurityTokenHandler().WriteToken(token);
@@ -125,8 +124,5 @@ namespace JiraSchedulingConnectAppService.Services
             string cloudIdRaw = GetClaim(Const.Claims.CLOUD_ID);
             return cloudIdRaw;
         }
-
-
-
     }
 }

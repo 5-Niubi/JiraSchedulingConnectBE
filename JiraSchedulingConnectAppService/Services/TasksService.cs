@@ -27,15 +27,15 @@ namespace JiraSchedulingConnectAppService.Services
         public const string RequiredSkillMissingTaskMessage = "Task Not Set Required SKill!";
 
         public const string ProjectNotFoundMessage = "Project Not Found!";
-        public const string NotUniqueTaskNameMessage = "Task Name Must Unique!";
+        public const string NotUniqueTaskNameMessage = "Task Name Is Exited!";
         public const string PredenceNotFoundMessage = "Predence Task  not Found!";
         public const string MilestoneNotValidMessage = "Milestone Task's not valid!";
 
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
 
-        public TasksService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public TasksService(WoTaasContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             db = dbContext;
             this.mapper = mapper;
@@ -133,27 +133,34 @@ namespace JiraSchedulingConnectAppService.Services
 
             var Messages = "";
 
+            // validate duration
+
             if (task.Duration == null)
             {
                 Messages += "Duration is Empty \n";
 
             }
 
-            if (task.MilestoneId == null)
+            if (task.Duration == 0 || task.Duration < 0)
             {
-                Messages += "MilestoneId is Empty\n";
+                Messages += "Duration is not validate. Duration must > 0 \n";
+            }
+
+                if (task.MilestoneId == null)
+            {
+                Messages += "GroupId is Null\n";
 
             }
 
             if (task.Name == null || task.Name.Trim() == "")
             {
-                Messages += "Name is Empty \n";
+                Messages += "Name is Null \n";
 
             }
 
             if (task.ProjectId == null)
             {
-                Messages += "ProjectId is Empty \n";
+                Messages += "ProjectId is Null \n";
 
             }
 
@@ -166,7 +173,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             if (Messages != "")
             {
-
+                
                 throw new NotSuitableInputException(new TaskInputErrorDTO()
                 {
                     Messages = Messages
@@ -434,7 +441,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
 
-        public async Task<bool> SaveTasks(TasksSaveRequest TasksSaveRequest)
+        public async Task<bool> SaveTasksPertChart(TasksSaveRequest TasksSaveRequest)
         {
 
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ResourceAssignAdmin.Services;
+using System.Numerics;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
@@ -12,11 +13,11 @@ namespace ResourceAssignAdmin.Pages.Upgrade
     public class CheckoutModel : PageModel
     {
         private readonly IBraintreeService _braintreeService;
-        private readonly JiraDemoContext _context;
+        private readonly WoTaasContext _context;
         private readonly ISubscriptionService subscriptionService;
 
         public CheckoutModel(IBraintreeService braintreeService,
-            JiraDemoContext context, ISubscriptionService subscriptionService)
+            WoTaasContext context, ISubscriptionService subscriptionService)
         {
             _braintreeService = braintreeService;
             _context = context;
@@ -30,26 +31,39 @@ namespace ResourceAssignAdmin.Pages.Upgrade
 
         [BindProperty]
         public string UserToken { get; set; } = "";
+        [BindProperty]
+        public PlanSubscription Plan { get; set; } = default!;
 
-        public IActionResult PrepareView(string? token)
+        public IActionResult PrepareView(string? token = "", int? plan = 0)
         {
-            if (token != null)
-            {
-                UserToken = token;
-            }
+            PlanSubscription? planFromDB = null;
+            //if (plan != null)
+            //{
+            planFromDB = _context.PlanSubscriptions.FirstOrDefault(p => p.Id == plan.Value);
+            if (planFromDB == null)
+                return NotFound();
+            //}
+            //if (token != null)
+            //{
+            if (_context.AtlassianTokens.FirstOrDefault(t => t.UserToken == token)
+                == null)
+                return NotFound();
+            UserToken = token;
+            //}
+
             var gateway = _braintreeService.GetGateway();
             var clientToken = gateway.ClientToken.Generate();  //Genarate a token
             ViewData["ClientToken"] = clientToken;
-
+            Plan = planFromDB;
             return Page();
         }
 
-        public IActionResult OnGet(string token)
+        public IActionResult OnGet(string? token, int? plan)
         {
-            return PrepareView(token);
+            return PrepareView(token, plan);
         }
 
-        public async Task<IActionResult> OnPost()
+        public async Task<IActionResult> OnPut()
         {
             var user = await _context.AtlassianTokens
                 .FirstOrDefaultAsync(a => a.UserToken == UserToken);
@@ -57,17 +71,17 @@ namespace ResourceAssignAdmin.Pages.Upgrade
             {
                 ViewData["msg"] = PaymentErrorMsg;
                 ViewData["tokenMsg"] = "Invalid Token";
-                return PrepareView(null);
+                return PrepareView(UserToken, Plan.Id);
             }
 
             if (subscriptionService.IsPlusPlan(UserToken))
             {
                 ViewData["msg"] = $"{PaymentErrorMsg}: You are already on plus plan";
-                return PrepareView(null);
+                return PrepareView(UserToken, Plan.Id);
             }
 
             var plan = await _context.PlanSubscriptions
-                .FirstAsync(ps => ps.Id == Const.SUBSCRIPTION.PLAN_PLUS);
+                .FirstAsync(ps => ps.Id == Plan.Id);
 
             IBraintreeGateway gateway;
 
@@ -100,19 +114,19 @@ namespace ResourceAssignAdmin.Pages.Upgrade
                 catch (UtilsLibrary.Exceptions.NotFoundException ex)
                 {
                     ViewData["tokenMsg"] = ex.Message;
-                    return PrepareView(null);
+                    return PrepareView(UserToken, Plan.Id);
                 }
                 catch (NotSuitableInputException ex)
                 {
                     ViewData["msg"] = ex.Message;
-                    return PrepareView(null);
+                    return PrepareView(UserToken, Plan.Id);
                 }
                 return RedirectToPage("PaymentSuccess");
             }
             else
             {
                 ViewData["msg"] = $"{PaymentErrorMsg}: {result.Message}";
-                return PrepareView(null);
+                return PrepareView(UserToken, Plan.Id);
             }
         }
     }

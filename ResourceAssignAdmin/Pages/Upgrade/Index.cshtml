@@ -1,6 +1,7 @@
 ﻿@page
 @model ResourceAssignAdmin.Pages.Upgrade.IndexModel
 @{
+    ViewData["Title"] = "Upgrade";
 }
 <div class="container py-3">
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -23,12 +24,19 @@
                     <div class="card-body">
                         <h1 class="card-title pricing-card-title">$0<small class="text-muted fw-light">/year</small></h1>
                         <ul class="list-unstyled mt-3 mb-4">
-                            <li>10 users included</li>
-                            <li>2 GB of storage</li>
-                            <li>Email support</li>
-                            <li>Help center access</li>
+                            <li>3 schedulings / day</li>
+                            <li>1 solution</li>
+                            <li>1 project</li>
                         </ul>
-                        <button type="button" class="w-100 btn btn-lg btn-outline-primary">Default</button>
+                        @if (ViewBag.CurrentSubscription.Id != 1)
+                        {
+                            <button type="button" class="w-100 btn btn-lg btn-outline-primary">Default</button>
+
+                        }
+                        else
+                        {
+                            <button type="button" class="w-100 btn btn-lg btn-outline-primary">You are in</button>
+                        }
                     </div>
                 </div>
             </div>
@@ -40,71 +48,21 @@
                     <div class="card-body">
                         <h1 class="card-title pricing-card-title">$@Model.PlanSubscriptions.Find(p => p.Id == 2).Price<small class="text-muted fw-light">/year</small></h1>
                         <ul class="list-unstyled mt-3 mb-4">
-                            <li>30 users included</li>
-                            <li>15 GB of storage</li>
-                            <li>Phone and email support</li>
-                            <li>Help center access</li>
+                            <li>Unlimited scheduling</li>
+                            <li>Up to 10 solutions</li>
+                            <li>Unlimited project</li>
                         </ul>
-                        <a asp-page="Checkout" asp-route-token="@ViewBag.UserToken" asp- class="w-100 btn btn-lg btn-primary">Upgrade now</a>
+                        @if (ViewBag.CurrentSubscription.Id != 2)
+                        {
+                            <a asp-page="Checkout" asp-route-token="@ViewBag.UserToken" asp-route-plan="2" class="w-100 btn btn-lg btn-primary">Upgrade now</a>
+                        }
+                        else
+                        {
+                            <button class="w-100 btn btn-lg btn-primary">You are in</button>
+                        }
                     </div>
                 </div>
             </div>
-        </div>
-
-        <h2 class="display-6 text-center mb-4">Compare plans</h2>
-
-        <div class="table-responsive">
-            <table class="table text-center">
-                <thead>
-                    <tr>
-                        <th style="width: 34%;"></th>
-                        <th style="width: 22%;">Free</th>
-                        <th style="width: 22%;">Pro</th>
-                        <th style="width: 22%;">Enterprise</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row" class="text-start">Public</th>
-                        <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>
-                        <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>
-                        <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>
-                    </tr>
-                    <tr>
-                        <th scope="row" class="text-start">Private</th>
-                        <td></td>
-                        <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>
-                        <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>
-                    </tr>
-                </tbody>
-
-                <tbody>
-                    <tr>
-                        <th scope="row" class="text-start">Permissions</th>
-                        <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>
-                        <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>
-                        <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>
-                    </tr>
-                    <tr>
-                        <th scope="row" class="text-start">Sharing</th>
-                        <td></td>
-                        <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>
-                        <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>
-                    </tr>
-                    <tr>
-                        <th scope="row" class="text-start">Unlimited members</th>
-                        <td></td>
-                        <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>
-                        <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>
-                    </tr>
-                    <tr>
-                        <th scope="row" class="text-start">Extra security</th>
-                        <td></td>
-                        <td></td>
-                        <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </main>
 </div>

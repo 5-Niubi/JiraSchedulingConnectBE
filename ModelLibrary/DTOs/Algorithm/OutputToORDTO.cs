@@ -72,6 +72,17 @@
         {
             get; set;
         }
+
+        // For OR tools
+        public float[,] WorkerWorkingHours
+        {
+            get; set;
+        }
+        public float BaseWorkingHour
+        {
+            get; set;
+        }
+
         public bool[] ObjectiveSelect { get; set; } = new bool[3];
 
         //public List<ModelLibrary.DBModels.Task> TaskList { get; set; }

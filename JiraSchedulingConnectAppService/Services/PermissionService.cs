@@ -8,7 +8,7 @@ namespace JiraSchedulingConnectAppService.Services
 {
     public class PermissionService : IPermissionService
     {
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly IMapper mapper;
         private readonly HttpContext? httpContext;
 
@@ -16,7 +16,7 @@ namespace JiraSchedulingConnectAppService.Services
         private const string NotFoundPermissionMessage = "Not found Permission!";
         private const string AttachNotValidMessage = "Attach Not validate!";
 
-        public PermissionService(JiraDemoContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public PermissionService(WoTaasContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             db = dbContext;
             this.mapper = mapper;

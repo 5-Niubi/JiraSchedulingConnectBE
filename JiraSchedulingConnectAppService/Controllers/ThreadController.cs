@@ -18,7 +18,6 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             _Logger = logger;
             this.threadService = threadService;
-
         }
 
         [HttpGet]
@@ -26,7 +25,6 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-
                 return Ok(threadService.GetThreadResult(threadId));
             }
 

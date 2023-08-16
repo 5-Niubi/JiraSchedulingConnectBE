@@ -10,6 +10,7 @@ using ModelLibrary.DTOs;
 using NLog;
 using NLog.Web;
 using System.Text;
+using static UtilsLibrary.Const;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
 try
@@ -31,7 +32,7 @@ try
         {
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidateLifetime = false, // Token is immortal
+            ValidateLifetime = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
@@ -42,11 +43,11 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
-    var test = builder.Configuration.GetConnectionString("DB");
+    var test = builder.Configuration.GetConnectionString(" ");
     // Custom Config
     builder.Services.AddCors();
     builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
-    builder.Services.AddDbContext<JiraDemoContext>(opt => opt.UseSqlServer(
+    builder.Services.AddDbContext<WoTaasContext>(opt => opt.UseSqlServer(
         builder.Configuration.GetConnectionString("DB")
         )
     );
@@ -85,10 +86,11 @@ try
     builder.Services.AddAuthorization(
         options =>
         {
+
             options.AddPolicy(
-                "LimitedScheduleTimeByMonth", policy => policy.Requirements.Add(new ScheduleLimitRequirement(3)));
+                "LimitedScheduleTimeByDay", policy => policy.Requirements.Add(new ScheduleLimitRequirement(LIMITED_PLAN.LIMIT_DAILY_EXECUTE_ALGORITHM)));
             options.AddPolicy(
-                "LimitedCreateProject", policy => policy.Requirements.Add(new ProjectLimitRequirement(1)));
+                "LimitedCreateProject", policy => policy.Requirements.Add(new ProjectLimitRequirement(LIMITED_PLAN.LIMIT_CREATE_NEW_PROJECT)));
         });
 
 

@@ -10,14 +10,12 @@ namespace AlgorithmServiceServer.Services
 {
     public class EstimateWorkforcService : IEstimateWorkforceService
     {
-
-
         private const string EmptyTaskInProjectMessage = "Empty Task in this project";
 
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly HttpContext http;
 
-        public EstimateWorkforcService(JiraDemoContext db, IHttpContextAccessor httpAccessor)
+        public EstimateWorkforcService(WoTaasContext db, IHttpContextAccessor httpAccessor)
         {
             this.db = db;
             http = httpAccessor.HttpContext;

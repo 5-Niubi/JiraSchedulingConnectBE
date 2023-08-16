@@ -55,9 +55,8 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (NotSuitableInputException ex)
             {
-                _Logger.LogError(ex.Errors);
-                var response = new ResponseMessageDTO(ex.Errors);
-                return BadRequest(response);
+                _Logger.LogError(ex.Message);
+                return BadRequest(ex.Errors);
             }
             catch (Exception ex)
             {
@@ -83,8 +82,20 @@ namespace JiraSchedulingConnectAppService.Controllers
         }
 
 
-
-
+        [HttpGet]
+        public async Task<IActionResult> GetExecuteAlgorithmDailyLimited()
+        {
+            try
+            {
+                return Ok(await algorithmService.GetExecuteAlgorithmLimited());
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError(ex.Message);
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
 
     }
 }

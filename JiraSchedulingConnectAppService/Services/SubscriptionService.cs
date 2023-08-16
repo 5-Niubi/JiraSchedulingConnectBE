@@ -9,11 +9,11 @@ namespace JiraSchedulingConnectAppService.Services
 {
     public class SubscriptionService : ISubscriptionService
     {
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly HttpContext http;
         private readonly IMapper mapper;
 
-        public SubscriptionService(JiraDemoContext db,
+        public SubscriptionService(WoTaasContext db,
             IHttpContextAccessor httpAccess, IMapper mapper)
         {
             this.db = db;

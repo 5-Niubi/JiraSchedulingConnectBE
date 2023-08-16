@@ -6,9 +6,9 @@ namespace ResourceAssignAdmin.Pages.Plan
 {
     public class IndexModel : PageModel
     {
-        private readonly ModelLibrary.DBModels.JiraDemoContext _context;
+        private readonly ModelLibrary.DBModels.WoTaasContext _context;
 
-        public IndexModel(ModelLibrary.DBModels.JiraDemoContext context)
+        public IndexModel(ModelLibrary.DBModels.WoTaasContext context)
         {
             _context = context;
         }
