@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UtilsLibrary.Exceptions;
 
 namespace AlgorithmLibrary.Solver
 {
@@ -98,7 +99,7 @@ namespace AlgorithmLibrary.Solver
                 {
                     for (int k = 0; k < data.NumOfSkills; k++)
                     {
-                        model.Add(data.WorkerExper[j, k] - A[(i, j)] * data.TaskExper[j, k] >= 0);
+                        model.Add(data.WorkerExper[j, k] - A[(i, j)] * data.TaskExper[i, k] >= 0);
                     }
                 }
             }
@@ -211,39 +212,50 @@ namespace AlgorithmLibrary.Solver
             {
                 model.Minimize(pft);
             }
-            else if (data.ObjectiveSelect[1] == true)
+            else if (data.ObjectiveSelect[2] == true)
             {
                 model.Maximize(LinearExpr.Sum(pteList));
             }
-            else if (data.ObjectiveSelect[2] == true)
+            else if (data.ObjectiveSelect[1] == true)
             {
                 model.Minimize(LinearExpr.Sum(ptsList));
             }
 
+            // Running Solver
             var status = solver.Solve(model);
-            if (status != CpSolverStatus.ModelInvalid && status != CpSolverStatus.Unknown && status != CpSolverStatus.Infeasible)
+
+            if (status == CpSolverStatus.ModelInvalid)
             {
-                var se = new SingleSolutionExtractor(solver, data.NumOfTasks, data.NumOfWorkers, A, ts, tf, pte, pts, pft);
-
-                // Dau ra tu day
-                var outputList = new List<AlgorithmRawOutput>();
-
-                for (int i = 0; i < 1; i++)
-                {
-                    var output = new AlgorithmRawOutput();
-                    var individual = se.Solution;
-                    output.TimeFinish = individual.TimeFinish;
-                    output.TaskFinish = individual.TaskFinish;
-                    output.TaskBegin = individual.TaskBegin;
-                    output.Genes = individual.Assign;
-                    output.TotalExper = individual.TotalExper;
-                    output.TotalSalary = individual.TotalSalary;
-
-                    outputList.Add(output);
-                }
-                return outputList;
+                throw new ModelInvalidException("Input Invalid");
             }
-            return new List<AlgorithmRawOutput>();
+            else if (status == CpSolverStatus.Unknown)
+            {
+                throw new Exception("Algorithm Unknow Error");
+            }
+            else if (status == CpSolverStatus.Infeasible)
+            {
+                throw new InfeasibleException("Input Infeasible");
+            }
+
+            var se = new SingleSolutionExtractor(solver, data.NumOfTasks, data.NumOfWorkers, A, ts, tf, pte, pts, pft);
+
+            // Dau ra tu day
+            var outputList = new List<AlgorithmRawOutput>();
+
+            for (int i = 0; i < 1; i++)
+            {
+                var output = new AlgorithmRawOutput();
+                var individual = se.Solution;
+                output.TimeFinish = individual.TimeFinish;
+                output.TaskFinish = individual.TaskFinish;
+                output.TaskBegin = individual.TaskBegin;
+                output.Genes = individual.Assign;
+                output.TotalExper = individual.TotalExper;
+                output.TotalSalary = individual.TotalSalary;
+
+                outputList.Add(output);
+            }
+            return outputList;
         }
     }
 }
