@@ -51,7 +51,6 @@ namespace JiraSchedulingConnectAppService.Services
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
-            
             var planId = await db.Subscriptions.Include(s => s.AtlassianToken)
                 .Include(s => s.Plan)
                 .Where(s => s.AtlassianToken.CloudId == cloudId && s.CancelAt == null)
@@ -155,11 +154,9 @@ namespace JiraSchedulingConnectAppService.Services
         {
             try
             {
-
                 var thread = threadService.GetThreadModel(threadId);
                 try
                 {
-
                     // Your thread processing logic goes here
                     var response = await apiMicro
                       .Get($"/api/Algorithm/ExecuteAlgorithm?parameterId={parameterId}");

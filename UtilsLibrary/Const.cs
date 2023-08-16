@@ -6,6 +6,7 @@
         public static int THREAD_ID_LENGTH = 10;
         public static string SPACE = " ";
         public static double DEFAULT_BASE_WORKING_HOUR = 8;
+        public static int RETRY_API_TIME = 10;
 
         public static class Claims
         {
