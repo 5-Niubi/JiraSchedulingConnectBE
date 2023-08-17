@@ -8,10 +8,10 @@ namespace AlgorithmLibrary.Solver
 {
     public static class CPPARAMS
     {
-        public static int THREADS = 1;
+        public static int THREADS = (int)Math.Floor(Environment.ProcessorCount / 1.5);
         public static string PRESOLVE = "true";
         public static string FORCE_SYMMETRY = "true";
         public static string LOG_TO_CONSOLE = "true";
-        public static string ALL_SOLS = "true";
+        public static string ALL_SOLS = "false";
     }
 }

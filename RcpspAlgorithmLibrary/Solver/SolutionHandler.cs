@@ -4,24 +4,30 @@ namespace AlgorithmLibrary.Solver
 {
     public class SingleSolutionExtractor
     {
-        private ResultModel _solution;
+        public ResultModel _solution;
         public ResultModel Solution
         {
-            get { return _solution; }
-            private set { _solution = value; }
+            get
+            {
+                return _solution;
+            }
+            private set
+            {
+                _solution = value;
+            }
         }
 
         private CpSolver solver;
         private int numOfTasks;
         private int numOfWorkers;
         private Dictionary<(int, int), BoolVar> A;
-        private IntVar[] taskFinish;
-        private IntVar[] taskBegin;
+        private Dictionary<int, IntVar> taskFinish;
+        private Dictionary<int, IntVar> taskBegin;
         private IntVar finishTime;
         private IntVar projectSalary;
         private IntVar projectExper;
-        
-        public SingleSolutionExtractor(CpSolver solver, int numOfTasks, int numOfWorkers, Dictionary<(int, int), BoolVar> A, IntVar[] taskBegin, IntVar[] taskFinish, IntVar projectExper, IntVar projectSalary, IntVar finishTime)
+
+        public SingleSolutionExtractor(CpSolver solver, int numOfTasks, int numOfWorkers, Dictionary<(int, int), BoolVar> A, Dictionary<int, IntVar> taskBegin, Dictionary<int, IntVar> taskFinish, IntVar projectExper, IntVar projectSalary, IntVar finishTime)
         {
             this.numOfTasks = numOfTasks;
             this.numOfWorkers = numOfWorkers;
