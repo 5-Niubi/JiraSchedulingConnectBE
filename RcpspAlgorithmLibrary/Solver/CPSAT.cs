@@ -186,10 +186,7 @@ namespace AlgorithmLibrary.Solver
             }
 
             /// Estimated scheduling endtime
-            for (int i = 0; i < data.NumOfTasks; i++)
-            {
-                model.Add(pft >= tf[i]);
-            }
+            model.AddMaxEquality(pft, tf.Values);
 
             /// Total scheduling experiences
             var expers = GAHelper.TaskExperByWorker(data.WorkerExper, data.TaskExper, data.NumOfTasks, data.NumOfWorkers, data.NumOfSkills);
@@ -218,7 +215,6 @@ namespace AlgorithmLibrary.Solver
             model.Add(pts == LinearExpr.Sum(ptsList));
 
             /// C006 --> Total hiring price <= Initial budget
-            model.Add(pts <= data.Budget * 10);
 
             if (data.ObjectiveSelect[0] == true)
             {
@@ -250,7 +246,7 @@ namespace AlgorithmLibrary.Solver
             }
 
             var se = new SingleSolutionExtractor(solver, data.NumOfTasks, data.NumOfWorkers, A, ts, tf, pte, pts, pft);
-
+            se.SolutionBuilder();
             // Dau ra tu day
             var outputList = new List<AlgorithmRawOutput>();
 
@@ -264,7 +260,7 @@ namespace AlgorithmLibrary.Solver
                 output.Genes = individual.Assign;
                 output.TotalExper = individual.TotalExper;
                 output.TotalSalary = individual.TotalSalary;
-
+                
                 outputList.Add(output);
             }
             return outputList;
