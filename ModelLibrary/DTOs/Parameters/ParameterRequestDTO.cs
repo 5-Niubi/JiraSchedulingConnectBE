@@ -40,6 +40,11 @@
         {
             get; set;
         }
+
+        public int? Optimizer
+        {
+            get; set;
+        }
     }
 }
 
