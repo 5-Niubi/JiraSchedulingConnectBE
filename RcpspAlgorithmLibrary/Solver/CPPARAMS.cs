@@ -11,7 +11,7 @@ namespace AlgorithmLibrary.Solver
         public static int THREADS = (int)Math.Floor(Environment.ProcessorCount / 1.5);
         public static string PRESOLVE = "true";
         public static string FORCE_SYMMETRY = "true";
-        public static string LOG_TO_CONSOLE = "true";
+        public static string LOG_TO_CONSOLE = "false";
         public static string ALL_SOLS = "false";
     }
 }
