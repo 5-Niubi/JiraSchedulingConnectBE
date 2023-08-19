@@ -15,6 +15,13 @@ namespace AlgorithmLibrary.Solver
     {
         public static List<AlgorithmRawOutput> Schedule(OutputToORDTO data)
         {
+            /// Pre-processing
+            var expers = GAHelper.TaskExperByWorker(data.WorkerExper, data.TaskExper, data.NumOfTasks, data.NumOfWorkers, data.NumOfSkills);
+            var taskWorkerPool = GAHelper.SuitableWorker(data.WorkerExper, data.TaskExper, data.NumOfTasks, data.NumOfWorkers, data.NumOfSkills);
+            var allTasks = Enumerable.Range(0, data.NumOfTasks);
+            var allWorkers = Enumerable.Range(0, data.NumOfWorkers);
+            var allDays = Enumerable.Range(0, data.Deadline);
+
             /// Unknowns
             var A = new Dictionary<(int, int), BoolVar>();
             var ts = new Dictionary<int, IntVar>();
@@ -29,25 +36,26 @@ namespace AlgorithmLibrary.Solver
                 $"num_workers:{CPPARAMS.THREADS};" +
                 $"enumerate_all_solutions:{CPPARAMS.ALL_SOLS};" +
                 $"log_search_progress:{CPPARAMS.LOG_TO_CONSOLE};" +
-                $"cp_model_presolve:{CPPARAMS.PRESOLVE};"
+                $"cp_model_presolve:{CPPARAMS.PRESOLVE};" +
+                $"max_time_in_seconds:{CPPARAMS.TIME_LIMIT}"
             };
 
-
             /// Unknowns Instantiation
-            for (int i = 0; i < data.NumOfTasks; i++)
+            foreach (var i in allTasks)
             {
-                for (int j = 0; j < data.NumOfWorkers; j++)
+                var pool = taskWorkerPool.ElementAt(i);
+                foreach (var j in pool)
                 {
                     A.Add((i, j), model.NewBoolVar($"A[{i}][{j}]"));
                 }
             }
 
-            for (int i = 0; i < data.NumOfTasks; ++i)
+            foreach (var i in allTasks)
             {
                 ts[i] = model.NewIntVar(1, data.Deadline, $"ts[{i}]");
                 tf[i] = model.NewIntVar(1, data.Deadline, $"tf[{i}]");
 
-                for (int j = 0; j < data.Deadline; j++)
+                foreach (var j in allDays)
                 {
                     V[(i, j)] = model.NewBoolVar($"V[{i}][{j}]");
                 }
@@ -55,8 +63,8 @@ namespace AlgorithmLibrary.Solver
 
 
             /// Holder variable for objective functions
-            var atw = new List<BoolVar>();
             var otw = new List<BoolVar>();
+            var atw = new List<BoolVar>();
             var pte = model.NewIntVarFromDomain(new Domain(0, data.NumOfSkills * data.NumOfTasks * 5), "pte");
             var pteList = new List<IntVar>();
             var pts = model.NewIntVarFromDomain(new Domain(0, data.Budget * 10), "pts");
@@ -67,90 +75,61 @@ namespace AlgorithmLibrary.Solver
             /// Convert to Integer Problem
             var dayEffort = Convert.ToInt32(data.BaseWorkingHour * 10);
             var taskEfforts = new int[data.NumOfTasks];
-            for (int i = 0; i < data.NumOfTasks; i++)
+            foreach (var i in allTasks)
             {
                 taskEfforts[i] = Convert.ToInt32(data.BaseWorkingHour * data.TaskDuration[i] * 10);
             }
 
             var workerEfforts = new int[data.NumOfWorkers, data.Deadline];
-            for (int i = 0; i < data.NumOfWorkers; i++)
+            foreach (var i in allWorkers)
             {
-                for (int j = 0; j < data.Deadline; j++)
+                foreach (var j in allDays)
                 {
                     workerEfforts[i, j] = Convert.ToInt32(data.WorkerWorkingHours[i, j] * 10);
                 }
             }
 
-            /// C01 -> 1 employee per task
-            for (int i = 0; i < data.NumOfTasks; i++)
-            {
-                for (int j = 0; j < data.NumOfWorkers; j++)
-                {
-                    otw.Add(A[(i, j)]);
-                    atw.Add(A[(i, j)]);
-                }
-                model.Add(LinearExpr.Sum(otw) == 1);
-                otw.Clear();
-            }
-            model.Add(LinearExpr.Sum(atw) == data.NumOfTasks);
-
-            /// C02 -> Employee proficiency level
-            for (int i = 0; i < data.NumOfTasks; i++)
-            {
-                for (int j = 0; j < data.NumOfWorkers; j++)
-                {
-                    for (int k = 0; k < data.NumOfSkills; k++)
-                    {
-                        model.Add(data.WorkerExper[j, k] - A[(i, j)] * data.TaskExper[i, k] >= 0);
-                    }
-                }
-            }
-
-            /// C03 -> Task adjacency
-            for (int i = 0; i < data.NumOfTasks - 1; i++)
-            {
-                for (int j = i + 1; j < data.NumOfTasks; j++)
-                {
-                    model.Add(data.TaskAdjacency[i, j] * (ts[j] - tf[i] - 1) >= 0);
-                }
-            }
-
-            /// C04 -> Employees multitasking prohibited
-            for (var i = 0; i < data.NumOfWorkers; i++)
+            /// C01 -> Employees multitasking prohibited
+            foreach (var i in allWorkers)
             {
                 for (var j = 0; j < data.NumOfTasks - 1; j++)
                 {
+                    var firstPool = taskWorkerPool.ElementAt(j);
                     for (var k = j + 1; k < data.NumOfTasks; k++)
                     {
-                        var fp = model.NewIntVarFromDomain(new Domain(0, data.Deadline), $"fp[{i}][{j}][{k}]");
-                        var sp = model.NewIntVarFromDomain(new Domain(0, data.Deadline), $"sp[{i}][{j}][{k}]");
+                        var secondPool = taskWorkerPool.ElementAt(k);
+                        if (firstPool.Contains(i) && secondPool.Contains(i))
+                        {
+                            var fp = model.NewIntVar(0, data.Deadline, $"fp[{i}][{j}][{k}]");
+                            var sp = model.NewIntVar(0, data.Deadline, $"sp[{i}][{j}][{k}]");
 
-                        var ffp = model.NewIntVarFromDomain(new Domain(0, data.Deadline), $"ffp[{i}][{j}][{k}]");
-                        model.AddMultiplicationEquality(ffp, A[(j, i)], tf[j]);
+                            var ffp = model.NewIntVar(0, data.Deadline, $"ffp[{i}][{j}][{k}]");
+                            model.AddMultiplicationEquality(ffp, A[(j, i)], tf[j]);
 
-                        var sfp = model.NewIntVarFromDomain(new Domain(0, data.Deadline), $"sfp[{i}][{j}][{k}]");
-                        model.AddMultiplicationEquality(sfp, A[(k, i)], tf[k]);
+                            var sfp = model.NewIntVar(0, data.Deadline, $"sfp[{i}][{j}][{k}]");
+                            model.AddMultiplicationEquality(sfp, A[(k, i)], tf[k]);
 
-                        model.AddMinEquality(fp, new[] { ffp, sfp });
+                            model.AddMinEquality(fp, new[] { ffp, sfp });
 
+                            var fsp = model.NewIntVar(0, data.Deadline, $"fsp[{i}][{j}][{k}]");
+                            model.AddMultiplicationEquality(fsp, A[(j, i)], ts[j]);
 
-                        var fsp = model.NewIntVarFromDomain(new Domain(0, data.Deadline), $"fsp[{i}][{j}][{k}]");
-                        model.AddMultiplicationEquality(fsp, A[(j, i)], ts[j]);
+                            var ssp = model.NewIntVar(0, data.Deadline, $"ssp[{i}][{j}][{k}]");
+                            model.AddMultiplicationEquality(ssp, A[(k, i)], ts[k]);
 
-                        var ssp = model.NewIntVarFromDomain(new Domain(0, data.Deadline), $"ssp[{i}][{j}][{k}]");
-                        model.AddMultiplicationEquality(ssp, A[(k, i)], ts[k]);
+                            model.AddMaxEquality(sp, new[] { fsp, ssp });
 
-                        model.AddMaxEquality(sp, new[] { fsp, ssp });
-
-                        model.Add(fp - sp <= 0);
+                            model.Add(fp - sp <= 0);
+                        }
                     }
                 }
             }
 
-            /// C00 -> Day in tasks
-            for (int i = 0; i < data.NumOfTasks; i++)
+            foreach (var i in allTasks)
             {
-                for (int j = 0; j < data.Deadline; j++)
+                var pool = taskWorkerPool.ElementAt(i);
+
+                foreach (var j in allDays)
                 {
                     var gt = model.NewBoolVar($"gt[{i}][{j}]");
                     var lt = model.NewBoolVar($"lt[{i}][{j}]");
@@ -164,15 +143,21 @@ namespace AlgorithmLibrary.Solver
                     model.Add(V[(i, j)] == 1).OnlyEnforceIf(bt);
                     model.Add(bt == 1).OnlyEnforceIf(V[(i, j)]);
 
-                    model.Add(bt + lt + gt == 1);
+                    model.AddExactlyOne(new[] { bt, lt, gt });
                 }
-            }
 
-            /// C05 -> Employee total efforts >= Task efforts
-            for (int i = 0; i < data.NumOfTasks; i++)
-            {
-                for (int j = 0; j < data.NumOfWorkers; j++)
+                for (int j = i + 1; j < data.NumOfTasks; j++)
                 {
+                    model.Add(data.TaskAdjacency[i, j] * (ts[j] - tf[i] - 1) >= 0);
+                }
+
+                foreach (var j in pool)
+                {
+                    /// C02 -> 1 employee per task
+                    atw.Add(A[(i, j)]);
+                    otw.Add(A[(i, j)]);
+
+                    /// C03 -> Employee total efforts >= Task efforts
                     var taskEffort = new List<IntVar>();
                     for (int k = 0; k < data.Deadline; k++)
                     {
@@ -182,52 +167,47 @@ namespace AlgorithmLibrary.Solver
                     }
                     model.Add(LinearExpr.Sum(taskEffort) >= taskEfforts[i]).OnlyEnforceIf(A[(i, j)]);
                     model.Add(LinearExpr.Sum(taskEffort) < taskEfforts[i] + dayEffort).OnlyEnforceIf(A[(i, j)]);
-                }
-            }
 
-            /// Estimated scheduling endtime
-            model.AddMaxEquality(pft, tf.Values);
 
-            /// Total scheduling experiences
-            var expers = GAHelper.TaskExperByWorker(data.WorkerExper, data.TaskExper, data.NumOfTasks, data.NumOfWorkers, data.NumOfSkills);
-            for (int i = 0; i < data.NumOfTasks; i++)
-            {
-                for (int j = 0; j < data.NumOfWorkers; j++)
-                {
+                    /// Total scheduling experiences
                     var tmpExp = model.NewIntVarFromDomain(new Domain(0, 5 * data.NumOfSkills), $"tmpExp[{j}][{i}]");
                     model.Add(tmpExp == A[(i, j)] * expers[i, j]);
                     pteList.Add(tmpExp);
-                }
-            }
-            model.Add(pte == LinearExpr.Sum(pteList));
 
-            /// Total hiring price
-            for (var i = 0; i < data.NumOfTasks; i++)
-            {
-                for (var j = 0; j < data.NumOfWorkers; j++)
-                {
+                    /// Total hiring price
                     var tmpSal = model.NewIntVarFromDomain(new Domain(0, data.Budget * 10), $"tmpSal[{j}][{i}]");
                     model.Add(tmpSal == A[(i, j)] * taskEfforts[i] * data.WorkerSalary[j]);
                     ptsList.Add(tmpSal);
                 }
+
+
+                model.Add(LinearExpr.Sum(otw) == 1);
+                otw.Clear();
             }
-
+            model.Add(pte == LinearExpr.Sum(pteList));
             model.Add(pts == LinearExpr.Sum(ptsList));
+            model.AddMaxEquality(pft, tf.Values);
 
-            /// C006 --> Total hiring price <= Initial budget
+            int w1 = 1;
+            int w2 = 0;
+            int w3 = 0;
 
             if (data.ObjectiveSelect[0] == true)
             {
-                model.Minimize(pft);
+                w1 = 20;
             }
             else if (data.ObjectiveSelect[1] == true)
             {
-                model.Maximize(pte);
+                w3 = 0;
+                w2 = 20;
             }
             else if (data.ObjectiveSelect[2] == true)
             {
-                model.Minimize(pts);
+                w2 = 0;
+                w3 = 20;
             }
+
+            model.Minimize(w1 * pft + w2 * pte + w3 * pts);
 
             // Running Solver
             var status = solver.Solve(model);
@@ -260,7 +240,7 @@ namespace AlgorithmLibrary.Solver
                 output.Genes = individual.Assign;
                 output.TotalExper = individual.TotalExper;
                 output.TotalSalary = individual.TotalSalary;
-                
+
                 outputList.Add(output);
             }
             return outputList;

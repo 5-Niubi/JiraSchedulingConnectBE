@@ -13,5 +13,6 @@ namespace AlgorithmLibrary.Solver
         public static string FORCE_SYMMETRY = "true";
         public static string LOG_TO_CONSOLE = "false";
         public static string ALL_SOLS = "false";
+        public static int TIME_LIMIT = 300;
     }
 }
