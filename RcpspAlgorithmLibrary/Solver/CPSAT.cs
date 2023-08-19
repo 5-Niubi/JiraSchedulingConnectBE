@@ -33,11 +33,13 @@ namespace AlgorithmLibrary.Solver
             var solver = new CpSolver
             {
                 StringParameters =
-                $"num_workers:{CPPARAMS.THREADS};" +
-                $"enumerate_all_solutions:{CPPARAMS.ALL_SOLS};" +
-                $"log_search_progress:{CPPARAMS.LOG_TO_CONSOLE};" +
-                $"cp_model_presolve:{CPPARAMS.PRESOLVE};" +
-                $"max_time_in_seconds:{CPPARAMS.TIME_LIMIT}"
+                $"num_workers:{CPPARAMS.THREADS};"
+                + $"enumerate_all_solutions:{CPPARAMS.ALL_SOLS};"
+                + $"log_search_progress:{CPPARAMS.LOG_TO_CONSOLE};"
+                + $"cp_model_presolve:{CPPARAMS.PRESOLVE};"
+                + $"max_time_in_seconds:{CPPARAMS.TIME_LIMIT};"
+                + $"subsolvers:\"no_lp\";"
+                + $"linearization_level:{CPPARAMS.LINEARIZATION_LEVEL}"
             };
 
             /// Unknowns Instantiation
@@ -65,11 +67,11 @@ namespace AlgorithmLibrary.Solver
             /// Holder variable for objective functions
             var otw = new List<BoolVar>();
             var atw = new List<BoolVar>();
-            var pte = model.NewIntVarFromDomain(new Domain(0, data.NumOfSkills * data.NumOfTasks * 5), "pte");
+            var pte = model.NewIntVar(0, data.NumOfSkills * data.NumOfTasks * 5, "pte");
             var pteList = new List<IntVar>();
-            var pts = model.NewIntVarFromDomain(new Domain(0, data.Budget * 10), "pts");
+            var pts = model.NewIntVar(0, data.Budget * 10, "pts");
             var ptsList = new List<IntVar>();
-            var pft = model.NewIntVarFromDomain(new Domain(0, data.Deadline), "pft");
+            var pft = model.NewIntVar(0, data.Deadline, "pft");
 
 
             /// Convert to Integer Problem
@@ -168,7 +170,6 @@ namespace AlgorithmLibrary.Solver
                     model.Add(LinearExpr.Sum(taskEffort) >= taskEfforts[i]).OnlyEnforceIf(A[(i, j)]);
                     model.Add(LinearExpr.Sum(taskEffort) < taskEfforts[i] + dayEffort).OnlyEnforceIf(A[(i, j)]);
 
-
                     /// Total scheduling experiences
                     var tmpExp = model.NewIntVarFromDomain(new Domain(0, 5 * data.NumOfSkills), $"tmpExp[{j}][{i}]");
                     model.Add(tmpExp == A[(i, j)] * expers[i, j]);
@@ -179,7 +180,6 @@ namespace AlgorithmLibrary.Solver
                     model.Add(tmpSal == A[(i, j)] * taskEfforts[i] * data.WorkerSalary[j]);
                     ptsList.Add(tmpSal);
                 }
-
 
                 model.Add(LinearExpr.Sum(otw) == 1);
                 otw.Clear();
@@ -194,7 +194,7 @@ namespace AlgorithmLibrary.Solver
 
             if (data.ObjectiveSelect[0] == true)
             {
-                w1 = 20;
+
             }
             else if (data.ObjectiveSelect[1] == true)
             {

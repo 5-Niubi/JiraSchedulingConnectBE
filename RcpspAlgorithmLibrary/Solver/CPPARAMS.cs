@@ -9,10 +9,12 @@ namespace AlgorithmLibrary.Solver
     public static class CPPARAMS
     {
         public static int THREADS = (int)Math.Floor(Environment.ProcessorCount / 1.5);
-        public static string PRESOLVE = "true";
-        public static string FORCE_SYMMETRY = "true";
-        public static string LOG_TO_CONSOLE = "false";
-        public static string ALL_SOLS = "false";
-        public static int TIME_LIMIT = 300;
+        public static bool PRESOLVE = true;
+        public static int SYMMETRY_LEVEL = 3;
+        public static bool FORCE_SYMMETRY = true;
+        public static bool LOG_TO_CONSOLE = true;
+        public static bool ALL_SOLS = false;
+        public static double TIME_LIMIT = 1800;
+        public static int LINEARIZATION_LEVEL = 0;
     }
 }
