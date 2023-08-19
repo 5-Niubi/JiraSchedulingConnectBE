@@ -19,6 +19,10 @@ namespace JiraSchedulingConnectAppService.Services
         public const string RequiredSkillNotValidMessage = "Skill Not Validate!";
         public const string RequiredSkillInputEmptyMessage = "Empty Required Skills";
 
+        public const string MilestoneNotFoundMessage = "Group task not exited";
+        public const string MilestoneNotEmptyMessage = "Group is not empty";
+
+
         public const string MissingMessage = "Missing Task!";
 
 
@@ -29,7 +33,7 @@ namespace JiraSchedulingConnectAppService.Services
         public const string ProjectNotFoundMessage = "Project Not Found!";
         public const string NotUniqueTaskNameMessage = "Task Name Is Exited!";
         public const string PredenceNotFoundMessage = "Predence Task  not Found!";
-        public const string MilestoneNotValidMessage = "Milestone Task's not valid!";
+        public const string MilestoneNotValidMessage = "Group Task's not valid!";
 
         private readonly WoTaasContext db;
         private readonly IMapper mapper;
@@ -463,6 +467,7 @@ namespace JiraSchedulingConnectAppService.Services
             // check all task setup precedence
             await _ValidateConfigTaskPrecedences(projectId, TaskPrecedenceTasksRequest);
 
+        
             // check precedence task is validate
             await _ValidateDAG(TaskPrecedenceTasksRequest);
 
@@ -489,6 +494,31 @@ namespace JiraSchedulingConnectAppService.Services
 
         }
 
+        //private async System.Threading.Tasks.Task _ValidateMilestoneUpdate(TaskUpdatedRequest taskUpdatedRequest)
+        //{
+        //    var jwt = new JWTManagerService(httpContext);
+        //    var cloudId = jwt.GetCurrentCloudId();
+
+        //    // validate milestone task  not empty
+        //    if (taskUpdatedRequest.MilestoneId == null)
+        //    {
+        //        throw new NotSuitableInputException(new TaskInputErrorDTO
+        //        {
+        //            TaskId = taskUpdatedRequest.Id,
+        //            MilestoneId = taskUpdatedRequest.MilestoneId,
+        //            Messages = MilestoneNotEmptyMessage
+        //        });
+        //    }
+
+        //    var milestoneId = await db.Milestones.FirstOrDefaultAsync(
+        //        t => t.Id == taskUpdatedRequest.MilestoneId
+        //        && t.ProjectId == taskUpdatedRequest.ProjectId);
+
+        //    if(milestoneId == null)
+        //    {
+        //        throw new NotSuitableInputException(MilestoneNotFoundMessage);
+        //    }
+        //}
 
         public async Task<bool> DeleteTask(int TaskId)
         {
@@ -719,11 +749,24 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async Task<bool> _ValidateMilestoneTask(ModelLibrary.DBModels.Task task)
         {
+            // validate milestone task  not empty
+            if(task.MilestoneId == null)
+            {
+                throw new NotSuitableInputException(new TaskInputErrorDTO
+                {
+                    TaskId = task.Id,
+                    MilestoneId = task.MilestoneId,
+                    Messages = MilestoneNotEmptyMessage
+                });
+            }
+
             // validate milestone task  project's 
             var existingMilestone = await db.Milestones.FirstOrDefaultAsync(
                 t => t.Id == task.MilestoneId
                 & t.ProjectId == task.ProjectId
                 );
+
+
 
             if (existingMilestone == null)
             {
@@ -969,9 +1012,9 @@ namespace JiraSchedulingConnectAppService.Services
                         );
                 }
 
-
-
             }
+
+
 
             if (Errors.Count != 0)
             {
