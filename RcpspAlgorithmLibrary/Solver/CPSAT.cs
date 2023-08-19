@@ -2,11 +2,6 @@
 using Google.OrTools.Sat;
 using Google.OrTools.Util;
 using ModelLibrary.DTOs.Algorithm;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UtilsLibrary.Exceptions;
 
 namespace AlgorithmLibrary.Solver
