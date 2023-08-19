@@ -5,7 +5,6 @@ IDE: Sử dụng Rider hay Visual Studio đều được
 
 Luồng logic:
 Models -> Services -> Controllers -> DTOs
-
 - Common:
 	- Các hằng số sẽ được khai báo trong Const. Lưu ý dùng readonly và viết hoa tên biến, phân tách bằng dấu "_"
 	- Các hàm util sẽ được khai báo trong Utils
