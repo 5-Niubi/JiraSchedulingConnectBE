@@ -55,7 +55,7 @@ namespace AlgorithmLibrary.Solver
                 result.TaskFinish[t] = Convert.ToInt32(solver.Value(taskFinish[t]));
                 for (int w = 0; w < numOfWorkers; ++w)
                 {
-                    if (solver.Value(A[(t, w)]) == 1)
+                    if (A.ContainsKey((t, w)) && solver.Value(A[(t, w)]) == 1)
                         result.Assign[t] = w;
                 }
             }

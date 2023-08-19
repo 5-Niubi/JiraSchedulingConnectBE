@@ -14,7 +14,7 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly HttpClient client;
         private readonly IConfiguration config;
 
-        private string baseUrl = "";
+        private string? baseUrl = null;
 
         public APIMicroserviceService(IHttpContextAccessor httpAccessor, IConfiguration config)
         {
@@ -28,9 +28,13 @@ namespace JiraSchedulingConnectAppService.Services
             Match match = pattern.Match(bearer);
             string token = match.Groups["token"].Value;
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            this.config = config;
+        }
 
+        public void SetDomain(string configObject)
+        {
             // Set avaiable algorithmServer
-            var baseUrlList = config.GetSection("Environment:AlgorithmServiceDomains").Get<string[]>();
+            var baseUrlList = config.GetSection(configObject).Get<string[]>();
             baseUrl = baseUrlList[0];
             client.BaseAddress = new Uri(baseUrl);
         }
