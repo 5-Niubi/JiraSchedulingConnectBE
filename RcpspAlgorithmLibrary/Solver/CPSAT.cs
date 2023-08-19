@@ -101,7 +101,7 @@ namespace AlgorithmLibrary.Solver
                 {
                     for (int k = 0; k < data.NumOfSkills; k++)
                     {
-                        model.Add(data.WorkerExper[j, k] - A[(i, j)] * data.TaskExper[j, k] >= 0);
+                        model.Add(data.WorkerExper[j, k] - A[(i, j)] * data.TaskExper[i, k] >= 0);
                     }
                 }
             }
