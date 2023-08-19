@@ -109,13 +109,24 @@ namespace JiraSchedulingConnectAppService.Services
                 UsageExecuteAlgorithm = (int)dailyUsage,
                 LimitedExecuteAlgorithm = LimitedExecuteAlgorithm,
                 IsAvailable = dailyUsage < LimitedExecuteAlgorithm ? 1 : 0
-
-
             };
             return output;
+        }
 
-
-
+        private async Task<string> GetDomainAlgorithmConfigString(int parameterId)
+        {
+            // Context will be disposed in thread so must be initialized here
+            WoTaasContext dbContext = new WoTaasContext();
+            var parameter = await dbContext.Parameters.Where(p => p.Id == parameterId).FirstAsync();
+            switch (parameter.Optimizer)
+            {
+                case Const.OPTIMIZER.GA:
+                    return "Environment:AlgorithmServiceDomains";
+                case Const.OPTIMIZER.SOLVER:
+                    return "Environment:SolverServiceDomains";
+                default:
+                    return "";
+            }
         }
 
 
@@ -157,7 +168,8 @@ namespace JiraSchedulingConnectAppService.Services
                 var thread = threadService.GetThreadModel(threadId);
                 try
                 {
-                    // Your thread processing logic goes here
+                    var configObject = await GetDomainAlgorithmConfigString(parameterId);
+                    apiMicro.SetDomain(configObject);
                     var response = await apiMicro
                       .Get($"/api/Algorithm/ExecuteAlgorithm?parameterId={parameterId}");
                     dynamic responseContent;
@@ -199,8 +211,6 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<EstimatedResultDTO> EstimateWorkforce(int projectId)
         {
-
-
             //try
             //{
 
@@ -221,6 +231,8 @@ namespace JiraSchedulingConnectAppService.Services
             // validate graph tasks is cycle
             await _ValidateDAG(TaskList);
 
+            // Need to provide config url 
+            apiMicro.SetDomain("Environment:AlgorithmServiceDomains");
             var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforce?projectId={projectId}");
             dynamic responseContent;
 
@@ -324,6 +336,8 @@ namespace JiraSchedulingConnectAppService.Services
                 var projectInDB = await db.Projects.FirstOrDefaultAsync(p => p.Id == projectId && p.CloudId == cloudId) ??
                 throw new NotFoundException($"Can not find project :{projectId}");
 
+                // Need to provide config url 
+                apiMicro.SetDomain("Environment:AlgorithmServiceDomains");
                 var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforceOverall?projectId={projectId}");
                 dynamic responseContent;
 
