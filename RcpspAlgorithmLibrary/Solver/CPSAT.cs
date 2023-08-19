@@ -13,6 +13,14 @@ namespace AlgorithmLibrary.Solver
 {
     public class CPSAT
     {
+        /// <summary>
+        /// Tuuned OR-tools CPSAT for high performance computing
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        /// <exception cref="ModelInvalidException"></exception>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="InfeasibleException"></exception>
         public static List<AlgorithmRawOutput> Schedule(OutputToORDTO data)
         {
             /// Pre-processing
