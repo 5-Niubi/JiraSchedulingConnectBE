@@ -35,6 +35,11 @@ namespace AlgorithmServiceServer.Controllers
                 var response = new ResponseMessageDTO(ex.Message);
                 return NotFound(response);
             }
+            catch (AlgorithmErrorException ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
             catch (Exception ex)
             {
                 var response = new ResponseMessageDTO(ex.Message);

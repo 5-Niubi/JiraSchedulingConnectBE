@@ -105,6 +105,8 @@ namespace AlgorithmLibrary
             int[,] workerSkillWithLevel = new int[WorkerList.Count, SkillList.Count]; // Matrix of skill level
             int[,] taskSkillWithLevel = new int[TaskList.Count, SkillList.Count]; // Matrix of skill level
             double[,] workerEffort = new double[WorkerList.Count, Deadline];
+            float[,] workerWorkingHours = new float[WorkerList.Count, Deadline];
+
             int[] workerSalary = new int[WorkerList.Count];
 
 
@@ -151,7 +153,6 @@ namespace AlgorithmLibrary
 
             for (int i = 0; i < WorkerList.Count; i++)
             {
-
                 //workerSkillWithLevel[i] = new int[SkillList.Count];
                 for (int j = 0; j < SkillList.Count; j++)
                 {
@@ -167,8 +168,10 @@ namespace AlgorithmLibrary
                 for (int j = 0; j < Deadline; j++)
                 {
                     double effort = 1;
+                    workerWorkingHours[i, j] = (float) BaseWorkingHours;
                     if (WorkerList[i].WorkingType == Const.WORKING_TYPE.PARTTIME)
                     {
+                        workerWorkingHours[i, j] = (float)workingEffort[k];
                         effort = Math.Round(workingEffort[k++] / BaseWorkingHours, 3);
                         if (effort > 1)
                             effort = 1;
@@ -221,6 +224,8 @@ namespace AlgorithmLibrary
             output.EquipmentFunction = equipmentFunction;
             output.EquipmentCost = equipmentCost;
             output.WorkerEffort = workerEffort;
+            output.WorkerWorkingHours = workerWorkingHours;
+            output.BaseWorkingHour = (float)BaseWorkingHours;
 
             output.ObjectiveSelect[0] = objtTime == null ? false : true;
             output.ObjectiveSelect[1] = objtCost == null ? false : true;

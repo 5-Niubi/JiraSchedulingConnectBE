@@ -33,8 +33,8 @@
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "environmentVariables": {},
       "publishAllPorts": true,
-      "sslPort": 5004,
-      "httpPort": 5003
+      "httpPort": 5003,
+      "sslPort": 5004
     }
   }
 }
