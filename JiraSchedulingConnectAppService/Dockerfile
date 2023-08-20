@@ -4,8 +4,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
 
-# Set the ASPNETCORE_ENVIRONMENT build argument (optional but recommended)
-ARG ASPNETCORE_ENVIRONMENT=Production
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
@@ -14,11 +12,7 @@ COPY ["RcpspAlgorithmLibrary/AlgorithmLibrary.csproj", "RcpspAlgorithmLibrary/"]
 RUN dotnet restore "JiraSchedulingConnectAppService/JiraSchedulingConnectAppService.csproj"
 COPY . .
 
-
-COPY ["SharedSettings/appsettings.json", "/src/JiraSchedulingConnectAppService/"]
-RUN if [ "$ASPNETCORE_ENVIRONMENT" != "Production" ]; then \
-        cp "SharedSettings/appsettings.$ASPNETCORE_ENVIRONMENT.json" "/src/JiraSchedulingConnectAppService/"; \
-    fi
+COPY ["SharedSettings", "JiraSchedulingConnectAppService/"]
 
 WORKDIR "/src/JiraSchedulingConnectAppService"
 RUN dotnet build "JiraSchedulingConnectAppService.csproj" -c Release -o /app/build

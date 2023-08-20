@@ -7,8 +7,7 @@ services:
       - internal-network
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-    args:
-      - ASPNETCORE_ENVIRONMENT=Production
+
 
   jiraschedulingconnectappservice:
     image: pham2604/5niubi_backend:${ALGO_IMAGE_TAG}
@@ -18,8 +17,6 @@ services:
       - "8443:80"
       - "80:80"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-    args:
       - ASPNETCORE_ENVIRONMENT=Production
 
     networks:
