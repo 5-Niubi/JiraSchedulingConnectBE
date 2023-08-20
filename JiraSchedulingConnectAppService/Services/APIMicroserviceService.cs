@@ -43,11 +43,14 @@ namespace JiraSchedulingConnectAppService.Services
         {
             int count = Const.RETRY_API_TIME;
             bool retry = false;
-            HttpResponseMessage respone;
+            HttpResponseMessage? respone = null;
             do
             {
-                respone = await client.GetAsync(url);
-                if (!respone.IsSuccessStatusCode)
+                try
+                {
+                    respone = await client.GetAsync(url);
+                }
+                catch (HttpRequestException)
                 {
                     retry = true;
                     if (count-- == 0)
@@ -56,10 +59,13 @@ namespace JiraSchedulingConnectAppService.Services
                     }
                 }
             } while (retry);
-            if (!respone.IsSuccessStatusCode)
+
+            if (!(respone?.IsSuccessStatusCode ?? false))
             {
-                throw new MicroServiceAPIException(await respone.Content.ReadAsStringAsync(),
-                    Const.MESSAGE.MICROSERVICE_API_ERROR);
+                throw new MicroServiceAPIException(
+                    await respone.Content.ReadAsStringAsync(),
+                    Const.MESSAGE.MICROSERVICE_API_ERROR,
+                    respone?.StatusCode);
             }
             return respone;
         }

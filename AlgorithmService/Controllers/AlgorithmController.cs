@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
+using System.Net;
 using UtilsLibrary.Exceptions;
 
 namespace AlgorithmServiceServer.Controllers
@@ -43,7 +44,7 @@ namespace AlgorithmServiceServer.Controllers
             catch (Exception ex)
             {
                 var response = new ResponseMessageDTO(ex.Message);
-                return BadRequest(response);
+                return StatusCode((int)HttpStatusCode.BadGateway, response);
             }
         }
     }

@@ -1,7 +1,9 @@
-﻿using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using com.sun.org.apache.bcel.@internal.classfile;
+using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
+using System.Net;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers
@@ -34,7 +36,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             {
                 var response = new ResponseMessageDTO(ex.Message);
                 response.Data = ex.mircoserviceResponse;
-                return BadRequest(response);
+                return StatusCode((int)(ex.httpCode ?? HttpStatusCode.InternalServerError), response);
             }
             catch (Exception ex)
             {
@@ -48,15 +50,19 @@ namespace JiraSchedulingConnectAppService.Controllers
         public async Task<IActionResult> GetEstimateWorkforce(int projectId)
         {
             try
-
             {
-
                 return Ok(await algorithmService.EstimateWorkforce(projectId));
             }
             catch (NotSuitableInputException ex)
             {
                 _Logger.LogError(ex.Message);
                 return BadRequest(ex.Errors);
+            }
+            catch (MicroServiceAPIException ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                response.Data = ex.mircoserviceResponse;
+                return StatusCode((int)(ex.httpCode ?? HttpStatusCode.InternalServerError), response);
             }
             catch (Exception ex)
             {
@@ -72,6 +78,12 @@ namespace JiraSchedulingConnectAppService.Controllers
             try
             {
                 return Ok(await algorithmService.GetEstimateOverallWorkforce(projectId));
+            }
+            catch (MicroServiceAPIException ex)
+            {
+                var response = new ResponseMessageDTO(ex.Message);
+                response.Data = ex.mircoserviceResponse;
+                return StatusCode((int)(ex.httpCode ?? HttpStatusCode.InternalServerError), response);
             }
             catch (Exception ex)
             {
