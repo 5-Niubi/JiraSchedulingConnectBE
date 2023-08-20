@@ -13,12 +13,10 @@ COPY ["AlgorithmService/AlgorithmServiceServer.csproj", "AlgorithmService/"]
 RUN dotnet restore "AlgorithmService/AlgorithmServiceServer.csproj"
 
 COPY . .
+COPY ["SharedSettings/", "AlgorithmService/"]
+
 WORKDIR "/src/AlgorithmService"
 
-COPY ["SharedSettings/appsettings.json", "/src/AlgorithmService/"]
-RUN if [ "$ASPNETCORE_ENVIRONMENT" != "Production" ]; then \
-        cp "SharedSettings/appsettings.$ASPNETCORE_ENVIRONMENT.json" "/src/AlgorithmService/"; \
-    fi
 
 RUN dotnet build "AlgorithmServiceServer.csproj" -c Release -o /app/build
 

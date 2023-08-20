@@ -14,11 +14,7 @@ COPY ["RcpspAlgorithmLibrary/AlgorithmLibrary.csproj", "RcpspAlgorithmLibrary/"]
 RUN dotnet restore "JiraSchedulingConnectAppService/JiraSchedulingConnectAppService.csproj"
 COPY . .
 
-
-COPY ["SharedSettings/appsettings.json", "/src/JiraSchedulingConnectAppService/"]
-RUN if [ "$ASPNETCORE_ENVIRONMENT" != "Production" ]; then \
-        cp "SharedSettings/appsettings.$ASPNETCORE_ENVIRONMENT.json" "/src/JiraSchedulingConnectAppService/"; \
-    fi
+COPY ["SharedSettings", "JiraSchedulingConnectAppService/"]
 
 WORKDIR "/src/JiraSchedulingConnectAppService"
 RUN dotnet build "JiraSchedulingConnectAppService.csproj" -c Release -o /app/build
