@@ -17,7 +17,6 @@ Models -> Services -> Controllers -> DTOs
 - DTO:
 	- Luôn sử dụng DTO trong việc tương tác với API, cả lúc lấy từ request lẫn lúc trả response
 	- Dùng AutoMapper để mapping giữa Model và DTO, khai báo các mapper trong Constructor của AutoMapperProfile.
-	
 ## Algorithm Class Lib: (RcpspAlgorithmLibrary)
 Project để thực hiện việc xử lý thuật toán.
 Tất cả các code logic của việc chạy thuật toán đều được xử lý ở đây, Sau đó sẽ trả về kết quả cuối cùng cho phía Web Api project.
