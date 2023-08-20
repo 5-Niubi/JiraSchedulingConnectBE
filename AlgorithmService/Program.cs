@@ -24,11 +24,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
 
-builder.Services.AddDbContext<JiraDemoContext>(opt => opt.UseSqlServer(
+builder.Services.AddDbContext<WoTaasContext>(opt => opt.UseSqlServer(
     builder.Configuration.GetConnectionString("DB")
     )
 );
@@ -43,7 +43,12 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IAlgorithmComputeService, AlgorithmComputeService>();
 builder.Services.AddTransient<IEstimateWorkforceService, EstimateWorkforcService>();
 
+
 var app = builder.Build();
+
+//app.Urls.Add("http://localhost:3000");
+//app.Urls.Add("http://localhost:80");
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

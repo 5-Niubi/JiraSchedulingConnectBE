@@ -4,27 +4,35 @@ using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Authentication;
 using System.Text;
 using System.Text.Json;
+using UtilsLibrary;
+using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
         private readonly HttpClient client;
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly IConfiguration config;
         private readonly HttpContext? http;
 
-        public AuthenticationService(JiraDemoContext db, IConfiguration config,
+        public AuthenticationService(WoTaasContext db, IConfiguration config,
             IHttpContextAccessor httpAcc)
         {
-            this.client = new HttpClient();
+            client = new HttpClient();
             this.db = db;
             this.config = config;
-            this.http = httpAcc.HttpContext;
+            http = httpAcc.HttpContext;
         }
 
-        async public Task<Object> InitAuthen(string code, string state)
+        async public Task<Object> InitAuthen(string code, string state, string? error, string? error_description)
         {
+
+            if (error != null || error_description != null)
+            {
+                throw new UnAuthorizedException(error_description);
+            }
+
             // Handle State
             db.Database.BeginTransaction();
             try
@@ -40,28 +48,42 @@ namespace JiraSchedulingConnectAppService.Services
                 var accessiableResourceResponseDTO = await GetUserAccessiableResource(reponseTokenFirstPhase.access_token);
 
                 var tokenFromDB = await db.AtlassianTokens
-                    .FirstOrDefaultAsync(e => e.CloudId == stateContextObject.cloudId && e.AccountInstalledId == stateContextObject.accountId);
+                    .FirstOrDefaultAsync(e => e.CloudId == stateContextObject.cloudId);
                 if (tokenFromDB == null)
                 {
+                    // Create new
                     var token = new AtlassianToken()
                     {
                         AccountInstalledId = stateContextObject?.accountId,
                         CloudId = stateContextObject?.cloudId,
                         AccessToken = reponseTokenFirstPhase.access_token,
-                        RefressToken = reponseTokenFirstPhase.refresh_token
+                        RefressToken = reponseTokenFirstPhase.refresh_token,
+                        Site = stateContextObject?.siteUrl,
+                        UserToken = Utils.RandomString(15)
                     };
-                    var tokenInserted = db.AtlassianTokens.Add(token).Entity;
-                    db.SaveChanges();
+
+                    var subscription = new Subscription()
+                    {
+                        PlanId = 1,
+                        CurrentPeriodStart = DateTime.Now,
+                        Token = Utils.RandomString(10)
+                    };
+
+                    token.Subscriptions.Add(subscription);
 
                     var firstAccount = new AccountRole()
                     {
                         AccountId = stateContextObject?.accountId,
-                        TokenId = tokenInserted.Id
                     };
-                    db.AccountRoles.Add(firstAccount);
+
+                    token.AccountRoles.Add(firstAccount);
+
+                    var tokenInserted = db.AtlassianTokens.Add(token).Entity;
                 }
                 else
                 {
+                    tokenFromDB.AccountInstalledId = stateContextObject?.accountId;
+                    // Update existed
                     tokenFromDB.AccessToken = reponseTokenFirstPhase.access_token;
                     tokenFromDB.RefressToken = reponseTokenFirstPhase.refresh_token;
                 }
@@ -78,10 +100,10 @@ namespace JiraSchedulingConnectAppService.Services
 
                 request.Content = content;
                 var response = await client.SendAsync(request);
-                response.EnsureSuccessStatusCode();
                 return reponseTokenFirstPhase;
             }
-            catch (Exception ex)
+
+            catch (Exception)
             {
                 db.Database.RollbackTransaction();
                 throw;
@@ -132,7 +154,6 @@ namespace JiraSchedulingConnectAppService.Services
 
             request.Content = content;
             var response = await client.SendAsync(request);
-
             var reponseAccessToken = JsonSerializer
                 .Deserialize<RepsoneAccessToken>(await response.Content.ReadAsStringAsync());
             return reponseAccessToken;
@@ -140,7 +161,6 @@ namespace JiraSchedulingConnectAppService.Services
 
         async private Task<AccessiableResourceResponseDTO[]?> GetUserAccessiableResource(string accessToken)
         {
-
             var request = new HttpRequestMessage(HttpMethod.Get, "https://api.atlassian.com/oauth/token/accessible-resources");
             request.Headers.Add("Authorization", $"Bearer {accessToken}");
 

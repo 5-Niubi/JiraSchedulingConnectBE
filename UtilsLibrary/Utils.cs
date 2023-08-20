@@ -1,12 +1,32 @@
-﻿using System.Dynamic;
+﻿using Microsoft.AspNetCore.Http;
+using System.Dynamic;
 
-namespace JiraSchedulingConnectAppService.Common
+namespace UtilsLibrary
 {
     public class Utils
     {
+        public static string GetSelfDomain(HttpContext http)
+        {
+            return $"{http.Request.Scheme}://{http.Request.Host.Value}";
+        }
+
+        //Hàm dùng để convert chữ tiếng việt có dấu thành chữ tiếng việt không dấu.
+        public static string ConvertVN(string chucodau)
+        {
+            const string FindText = "áàảãạâấầẩẫậăắằẳẵặđéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶĐÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÚÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴ";
+            const string ReplText = "aaaaaaaaaaaaaaaaadeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyAAAAAAAAAAAAAAAAADEEEEEEEEEEEIIIIIOOOOOOOOOOOOOOOOOUUUUUUUUUUUYYYYY";
+            int index = -1;
+            char[] arrChar = FindText.ToCharArray();
+            while ((index = chucodau.IndexOfAny(arrChar)) != -1)
+            {
+                int index2 = FindText.IndexOf(chucodau[index]);
+                chucodau = chucodau.Replace(chucodau[index], ReplText[index2]);
+            }
+            return chucodau;
+        }
         public static string RandomString(int length)
         {
-            Random random = new Random();
+            Random random = new();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
@@ -55,12 +75,18 @@ namespace JiraSchedulingConnectAppService.Common
 
                 int totalRecord = query.Count();
                 totalPage = (int)Math.Ceiling((decimal)totalRecord / Const.PAGING.NUMBER_RECORD_PAGE);
-
+                if (pageNumber > totalPage)
+                {
+                    pageNumber = totalPage;
+                    if (totalPage <= 0)
+                        pageNumber = 1;
+                }
                 IQueryable<T> queryResult = query.Skip(Const.PAGING.NUMBER_RECORD_PAGE * (pageNumber - 1))
                     .Take(Const.PAGING.NUMBER_RECORD_PAGE);
 
                 return (queryResult, totalPage, pageNumber, totalRecord);
             }
+
         }
 
         public static int PageIndexNormalize(int page)
@@ -79,6 +105,12 @@ namespace JiraSchedulingConnectAppService.Common
                 return 0;
             }
             return end?.Subtract((DateTime)start).TotalDays;
+        }
+
+        public static DateTime? MoveDayToEnd(DateTime? dateTime)
+        {
+            if(dateTime == null) return dateTime;
+            return ((DateTime) dateTime).AddHours(23).AddMinutes(59).AddSeconds(59);
         }
     }
 }

@@ -1,0 +1,68 @@
+﻿@page
+@model ResourceAssignAdmin.Pages.Upgrade.IndexModel
+@{
+    ViewData["Title"] = "Upgrade";
+}
+<div class="container py-3">
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="check" viewBox="0 0 16 16">
+            <title>Check</title>
+            <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"></path>
+        </symbol>
+    </svg>
+    <main>
+        <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+            <h1 class="display-4 fw-normal">Pricing</h1>
+            <p class="fs-5 text-muted"></p>
+        </div>
+        <div class="row row-cols-1 row-cols-md-3 mb-3 text-center justify-content-center">
+            <div class="col">
+                <div class="card mb-4 rounded-3 shadow-sm">
+                    <div class="card-header py-3">
+                        <h4 class="my-0 fw-normal">Free</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">$0<small class="text-muted fw-light">/year</small></h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>3 schedulings / day</li>
+                            <li>1 solution</li>
+                            <li>1 project</li>
+                        </ul>
+                        @if (ViewBag.CurrentSubscription.Id != 1)
+                        {
+                            <button type="button" class="w-100 btn btn-lg btn-outline-primary">Default</button>
+
+                        }
+                        else
+                        {
+                            <button type="button" class="w-100 btn btn-lg btn-outline-primary">You are in</button>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card mb-4 rounded-3 shadow-sm border-primary">
+                    <div class="card-header py-3 text-white bg-primary border-primary">
+                        <h4 class="my-0 fw-normal">@Model.PlanSubscriptions.Find(p => p.Id == 2).Name</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">$@Model.PlanSubscriptions.Find(p => p.Id == 2).Price<small class="text-muted fw-light">/year</small></h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>Unlimited scheduling</li>
+                            <li>Up to 10 solutions</li>
+                            <li>Unlimited project</li>
+                        </ul>
+                        @if (ViewBag.CurrentSubscription.Id != 2)
+                        {
+                            <a asp-page="Checkout" asp-route-token="@ViewBag.UserToken" asp-route-plan="2" class="w-100 btn btn-lg btn-primary">Upgrade now</a>
+                        }
+                        else
+                        {
+                            <button class="w-100 btn btn-lg btn-primary">You are in</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

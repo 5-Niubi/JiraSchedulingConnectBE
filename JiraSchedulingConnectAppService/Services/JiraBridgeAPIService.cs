@@ -1,10 +1,10 @@
-﻿using JiraSchedulingConnectAppService.Common;
-using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
+using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
@@ -13,7 +13,7 @@ namespace JiraSchedulingConnectAppService.Services
     {
         private readonly HttpClient client;
         private readonly IAuthenticationService authenticationService;
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly HttpContext http;
 
         private string cloudId = "";
@@ -21,22 +21,23 @@ namespace JiraSchedulingConnectAppService.Services
         public JiraBridgeAPIService(IHttpContextAccessor httpAccess,
             IAuthenticationService authenticationService)
         {
-            this.client = new HttpClient();
+            client = new HttpClient();
             client.Timeout = Timeout.InfiniteTimeSpan;
 
             this.authenticationService = authenticationService;
-            this.db = new JiraDemoContext();
-            this.http = httpAccess.HttpContext;
+            db = new WoTaasContext();
+            http = httpAccess.HttpContext;
 
             var jwt = new JWTManagerService(http);
             cloudId = jwt.GetCurrentCloudId();
 
-            if (cloudId != null) SetBaseURL();
+            if (cloudId != null)
+                SetBaseURL();
         }
 
         private void SetBaseURL()
         {
-            this.cloudId = cloudId.ToLower();
+            cloudId = cloudId.ToLower();
             string baseUrl = $"https://api.atlassian.com/ex/jira/{cloudId}/";
             client.BaseAddress = new Uri(baseUrl, UriKind.Absolute);
         }

@@ -1,21 +1,21 @@
 ﻿using UtilsLibrary.Exceptions;
 
-namespace RcpspAlgorithmLibrary.GA
+namespace AlgorithmLibrary.GA
 {
     public class GAHelper
     {
         public static int NUM_OF_POPULATION = 100;
-        public static int NUM_OF_GENARATION = 500;
+        public static int NUM_OF_GENARATION = 700;
         public static int NUM_OF_ELITE_CHOMOSOMES = 10;
         public static int TOURNAMET_SELECTION_SIZE = 10;
         public static double MUTATION_RATE = 0.1;
 
         public static List<List<int>> SuitableWorker(int[,] workerExper, int[,] taskExper, int numOfTasks, int numOfWorkers, int numOfSkills)
         {
-            List<List<int>> suitableWorkers = new List<List<int>>();
+            List<List<int>> suitableWorkers = new();
             for (int t = 0; t < numOfTasks; ++t)
             {
-                List<int> taskWorkers = new List<int>();
+                List<int> taskWorkers = new();
                 for (int w = 0; w < numOfWorkers; ++w)
                 {
                     bool ok = true;
@@ -34,7 +34,8 @@ namespace RcpspAlgorithmLibrary.GA
                 }
 
 
-                if (taskWorkers.Count == 0) throw new NoSuitableWorkerException("No Suitable Worker Was Found!");
+                if (taskWorkers.Count == 0)
+                    throw new NoSuitableWorkerException("No Suitable Worker Was Found!");
                 suitableWorkers.Add(taskWorkers);
             }
             return suitableWorkers;

@@ -1,8 +1,8 @@
-﻿using JiraSchedulingConnectAppService.Common;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using UtilsLibrary;
 
 namespace JiraSchedulingConnectAppService.Services
 {
@@ -13,18 +13,18 @@ namespace JiraSchedulingConnectAppService.Services
 
         public JWTManagerService(HttpContext? httpContext)
         {
-            this.context = httpContext;
+            context = httpContext;
         }
 
         public JWTManagerService(IConfiguration iconfiguration)
         {
-            this.configuration = iconfiguration;
+            configuration = iconfiguration;
         }
 
         public JWTManagerService(HttpContext? httpContext, IConfiguration iconfiguration)
         {
-            this.context = httpContext;
-            this.configuration = iconfiguration;
+            context = httpContext;
+            configuration = iconfiguration;
         }
 
         public string? Authenticate(string accountId, string cloudId)
@@ -38,7 +38,7 @@ namespace JiraSchedulingConnectAppService.Services
                 new Claim(Const.Claims.ACCOUNT_ID, accountId),
                 new Claim(Const.Claims.CLOUD_ID, cloudId)
             };
-            var tokenKey = Encoding.UTF8.GetBytes(configuration["JWT:Key"]);
+            var tokenKey = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
             var securityKey = new SymmetricSecurityKey(tokenKey);
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -62,7 +62,7 @@ namespace JiraSchedulingConnectAppService.Services
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                 new Claim(Const.Claims.CLOUD_ID, cloudId)
             };
-            var tokenKey = Encoding.UTF8.GetBytes(configuration["JWT:Key"]);
+            var tokenKey = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
             var securityKey = new SymmetricSecurityKey(tokenKey);
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -70,7 +70,7 @@ namespace JiraSchedulingConnectAppService.Services
                 issuer: configuration["Jwt:Issuer"],
                 audience: configuration["Jwt:Audience"],
                 claims,
-                expires: DateTime.Now.AddMinutes(10),
+                expires: DateTime.Now.AddMinutes(5),
                 signingCredentials: credentials
                 );
             var encodeToken = new JwtSecurityTokenHandler().WriteToken(token);
@@ -79,7 +79,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         public bool ValidateJwt(string token)
         {
-            string secretKey = configuration["JWT:Key"];
+            string secretKey = configuration["Jwt:Key"];
 
             // Define the validation parameters
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -101,7 +101,7 @@ namespace JiraSchedulingConnectAppService.Services
                     validationParameters, out SecurityToken validatedToken);
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Token validation failed
                 return false;
@@ -114,7 +114,7 @@ namespace JiraSchedulingConnectAppService.Services
             var identity = context?.User.Identity as ClaimsIdentity;
             if (identity != null)
             {
-                value = identity.FindFirst(claimName) == null? "" : identity.FindFirst(claimName).Value;
+                value = identity.FindFirst(claimName) == null ? "" : identity.FindFirst(claimName).Value;
             }
             return value;
         }

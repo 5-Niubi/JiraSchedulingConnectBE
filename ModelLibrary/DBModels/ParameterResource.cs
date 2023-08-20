@@ -1,4 +1,7 @@
-﻿namespace ModelLibrary.DBModels
+﻿using System;
+using System.Collections.Generic;
+
+namespace ModelLibrary.DBModels
 {
     public partial class ParameterResource
     {
@@ -11,7 +14,6 @@
         public DateTime? DeleteDatetime { get; set; }
 
         public virtual Parameter Parameter { get; set; } = null!;
-        public virtual Equipment Resource { get; set; } = null!;
-        public virtual Workforce ResourceNavigation { get; set; } = null!;
+        public virtual Workforce Resource { get; set; } = null!;
     }
 }

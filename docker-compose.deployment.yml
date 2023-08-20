@@ -1,0 +1,46 @@
+version: '3.4'
+
+services:
+  algorithmservice:
+    image: pham2604/5niubi_algo_service:${BACKEND_IMAGE_TAG}
+    networks:
+      - internal-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
+
+  jiraschedulingconnectappservice:
+    image: pham2604/5niubi_backend:${ALGO_IMAGE_TAG}
+  
+    ports:
+      - "5126:80"
+      - "8443:80"
+      - "80:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
+    networks:
+      - internal-network
+
+
+  admin_webapp:
+    image: pham2604/admin_webapp:${WEBAPP_IMAGE_TAG}
+    ports:
+      - "8080:80"
+      - "2096:80"
+
+  gateway_service:
+    image: pham2604/gateway_service:${GATEWAY_IMAGE_TAG}
+    ports:
+      - 443:443
+      - 1234:80
+      
+    command: /bin/sh -c "nginx -g 'daemon off;'"     
+
+
+networks:
+  internal-network:
+    driver: bridge
+
+
+    

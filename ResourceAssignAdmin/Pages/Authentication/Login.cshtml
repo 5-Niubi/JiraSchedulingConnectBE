@@ -1,0 +1,26 @@
+﻿@page
+@model ResourceAssignAdmin.Pages.Authentication.LoginModel
+@{
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-4 shadow-lg p-3 my-5 bg-body rounded">
+        <h4 class="mb-3">Login</h4>
+        <form id="formLogin" method="post">
+            <div class="mb-4">
+                <label for="inputEmail" class="form-label">Username</label>
+                <input asp-for=AdminAccount.Username type="text" class="form-control" id="inputEmail" />
+            </div>
+            <div class="mb-3">
+                <label for="inputPassword" class="form-label">Password</label>
+                <input asp-for=AdminAccount.Password type="password" class="form-control" id="inputPassword" />
+            </div>
+            <div class="mb-3">
+                <small id="textLoginError" class="form-text text-danger">
+                    @ViewData["errorMsg"]
+                </small>
+            </div>
+            <button type="submit" class="btn btn-primary my-3">Login</button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+﻿@page
+@model ResourceAssignAdmin.Pages.Subscription.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Subscription</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Subscription.Id" />
+            <div class="form-group">
+                <label asp-for="Subscription.AtlassianToken.UserToken" class="control-label"></label>
+                <input value="@ViewBag.UserToken" class="form-control" readonly disabled/>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.Plan" class="control-label"></label>
+                <input asp-for="Subscription.Plan.Name" class="form-control" readonly disabled/>
+                <span asp-validation-for="Subscription.PlanId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.CurrentPeriodStart" class="control-label"></label>
+                <input asp-for="Subscription.CurrentPeriodStart" class="form-control" />
+                <span asp-validation-for="Subscription.CurrentPeriodStart" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.CurrentPeriodEnd" class="control-label"></label>
+                <input asp-for="Subscription.CurrentPeriodEnd" class="form-control" />
+                <span asp-validation-for="Subscription.CurrentPeriodEnd" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.CancelAt" class="control-label"></label>
+                <input value="@Model.Subscription.CancelAt" class="form-control" readonly disabled/>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.CreateDatetime" class="control-label"></label>
+                <input value="@Model.Subscription.CreateDatetime" class="form-control" readonly disabled/>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -398,3 +398,14 @@ FodyWeavers.xsd
 *.sln.iml
 
 /private.txt
+elasticsearch-data/*
+
+AlgorithmService/appsettings.json
+AlgorithmService/appsettings.Production.json
+AlgorithmService/appsettings.Development.json
+ResourceAssignAdmin/appsettings.Development.json
+ResourceAssignAdmin/appsettings.json
+ResourceAssignAdmin/appsettings.Production.json
+JiraSchedulingConnectAppService/appsettings.json
+JiraSchedulingConnectAppService/appsettings.Production.json
+JiraSchedulingConnectAppService/appsettings.Development.json

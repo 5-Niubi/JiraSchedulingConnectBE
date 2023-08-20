@@ -1,11 +1,17 @@
 ﻿using ModelLibrary.DBModels;
 
-namespace AlgorithmServiceServer.DTOs.AlgorithmController
+namespace ModelLibrary.DTOs.Algorithm
 {
     public class InputToEstimatorDTO
     {
-        public List<ModelLibrary.DBModels.Task> TaskList { get; set; }
-        public List<Skill> SkillList { get; set; }
+        public List<DBModels.Task> TaskList
+        {
+            get; set;
+        }
+        public List<Skill> SkillList
+        {
+            get; set;
+        }
 
     }
 }

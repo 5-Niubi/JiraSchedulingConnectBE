@@ -1,9 +1,9 @@
-﻿using JiraSchedulingConnectAppService.Common;
-using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Services
@@ -14,7 +14,7 @@ namespace JiraSchedulingConnectAppService.Services
         private readonly HttpClient client;
         private readonly IConfiguration config;
 
-        private string baseUrl = "";
+        private string? baseUrl = null;
 
         public APIMicroserviceService(IHttpContextAccessor httpAccessor, IConfiguration config)
         {
@@ -24,20 +24,38 @@ namespace JiraSchedulingConnectAppService.Services
 
             var bearer = http.Request.Headers["Authorization"];
             bearer = bearer.IsNullOrEmpty() ? "Bearer " : bearer;
-            Regex pattern = new Regex(@"Bearer (?<token>[\w.]+)");
+            Regex pattern = new(@"Bearer (?<token>[\w.]+)");
             Match match = pattern.Match(bearer);
             string token = match.Groups["token"].Value;
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            this.config = config;
+        }
 
+        public void SetDomain(string configObject)
+        {
             // Set avaiable algorithmServer
-            var baseUrlList = config.GetSection("Environment:AlgorithmServiceDomains").Get<string[]>();
+            var baseUrlList = config.GetSection(configObject).Get<string[]>();
             baseUrl = baseUrlList[0];
             client.BaseAddress = new Uri(baseUrl);
         }
 
         async Task<HttpResponseMessage> IAPIMicroserviceService.Get(string url)
         {
-            var respone = await client.GetAsync(url);
+            int count = Const.RETRY_API_TIME;
+            bool retry = false;
+            HttpResponseMessage respone;
+            do
+            {
+                respone = await client.GetAsync(url);
+                if (!respone.IsSuccessStatusCode)
+                {
+                    retry = true;
+                    if (count-- == 0)
+                    {
+                        break;
+                    }
+                }
+            } while (retry);
             if (!respone.IsSuccessStatusCode)
             {
                 throw new MicroServiceAPIException(await respone.Content.ReadAsStringAsync(),

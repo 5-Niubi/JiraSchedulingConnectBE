@@ -1,7 +1,7 @@
 using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
-using ModelLibrary.DTOs.Parameters;
+using ModelLibrary.DTOs.Workforce;
 using UtilsLibrary.Exceptions;
 
 namespace JiraSchedulingConnectAppService.Controllers
@@ -12,10 +12,12 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class WorkforcesController : ControllerBase
     {
         private IWorkforcesService workforcesService;
-        public WorkforcesController(IWorkforcesService workforcesService)
+        private readonly ILoggerManager _Logger;
+        public WorkforcesController(IWorkforcesService workforcesService, ILoggerManager logger)
+
         {
 
-
+            _Logger = logger;
             this.workforcesService = workforcesService;
         }
 
@@ -25,6 +27,22 @@ namespace JiraSchedulingConnectAppService.Controllers
             try
             {
                 var response = await workforcesService.GetAllWorkforces(null);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetWorkforceScheduleByProject()
+        {
+            try
+            {
+                var response = await workforcesService.GetWorkforceScheduleByProject();
                 return Ok(response);
             }
             catch (Exception ex)
@@ -46,16 +64,15 @@ namespace JiraSchedulingConnectAppService.Controllers
             catch (NotSuitableInputException ex)
             {
 
+                _Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
-
-
             }
 
 
             catch (Exception ex)
             {
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -69,44 +86,64 @@ namespace JiraSchedulingConnectAppService.Controllers
                 var response = await workforcesService.GetWorkforceById(id);
                 return Ok(response);
             }
+
+            catch (NotSuitableInputException ex)
+            {
+                _Logger.LogWarning(ex.Message);
+                var response = ex.Errors;
+                return BadRequest(response);
+            }
+
             catch (Exception ex)
             {
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteWorkforce(string id)
+        public async Task<IActionResult> DeleteWorkforce(int id)
         {
             try
             {
-                var w = workforcesService.GetWorkforceById(id);
                 var response = await workforcesService.DeleteWorkforce(id);
                 return Ok(response);
             }
+
+            catch (NotSuitableInputException ex)
+            {
+                _Logger.LogWarning(ex.Message);
+                var response = ex.Errors;
+                return BadRequest(response);
+            }
+
             catch (Exception ex)
             {
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateWorkforce([FromBody] WorkforceDTORequest workforce)
+        public async Task<IActionResult> UpdateWorkforce([FromBody] WorkforceRequestDTO workforce)
         {
             try
             {
-                var w1 = workforcesService.GetWorkforceById(workforce.Id.ToString());
+                //var w1 = workforcesService.GetWorkforceById(workforce.Id.ToString());
                 var response = await workforcesService.UpdateWorkforce(workforce);
                 return Ok(response);
             }
-
+            catch (NotSuitableInputException ex)
+            {
+                _Logger.LogWarning(ex.Message);
+                var response = ex.Errors;
+                return BadRequest(response);
+            }
             catch (Exception ex)
             {
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

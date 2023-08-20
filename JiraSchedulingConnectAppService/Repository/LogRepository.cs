@@ -9,7 +9,7 @@ namespace JiraSchedulingConnectAppService.Repository
     {
         private const string TABLE = "LogS";
         private readonly string ConnectionString;
-        private readonly HashSet<int> transientSqlErrors = new HashSet<int>()
+        private readonly HashSet<int> transientSqlErrors = new()
         {
             -2, 258, 4060
         };
@@ -21,7 +21,7 @@ namespace JiraSchedulingConnectAppService.Repository
         }
         public async Task Insert(List<LogMessage> logMessages)
         {
-            DataTable table = new DataTable();
+            DataTable table = new();
             table.TableName = TABLE;
 
             table.Columns.Add(nameof(LogMessage.Timestamp), typeof(DateTimeOffset));

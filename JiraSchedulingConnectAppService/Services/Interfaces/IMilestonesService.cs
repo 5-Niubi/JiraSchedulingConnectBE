@@ -12,6 +12,6 @@ namespace JiraSchedulingConnectAppService.Services.Interfaces
         public Task<bool> DeleteMilestone(int Id);
 
         public Task<MilestoneDTO> CreateMilestone(MilestoneCreatedRequest milestoneRequest);
-
+        public Task<MilestoneDTO> UpdateMilestone(MilestoneDTO milestoneDTO);
     }
 }

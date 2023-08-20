@@ -12,11 +12,12 @@ namespace JiraSchedulingConnectAppService.Controllers
     public class ProjectsController : ControllerBase
     {
         private IProjectServices projectsService;
-        public ProjectsController(IProjectServices projectsService)
+        private readonly ILoggerManager _Logger;
+        public ProjectsController(IProjectServices projectsService, ILoggerManager logger)
+
         {
-
+            _Logger = logger;
             this.projectsService = projectsService;
-
         }
 
         [HttpGet]
@@ -46,7 +47,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -62,7 +63,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -78,7 +79,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -94,6 +95,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -109,6 +111,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

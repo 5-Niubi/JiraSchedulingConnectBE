@@ -1,7 +1,6 @@
 ﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ModelLibrary;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Milestones;
 
@@ -18,26 +17,23 @@ namespace JiraSchedulingConnectAppService.Controllers
         public MilestonesController(IMilestonesService milestonesService, ILoggerManager logger)
         {
 
-            this._Logger = logger;
+            _Logger = logger;
 
             this.milestonesService = milestonesService;
         }
+
 
         [HttpGet]
         async public Task<IActionResult> GetMilestones(int projectId)
         {
             try
             {
-
-                _Logger.LogWarning("ahihi");
-                this._Logger.LogError("HELLO WORLD");
                 var response = await milestonesService.GetMilestones(projectId);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -54,8 +50,24 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
+                _Logger.LogError(ex.Message);
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateMileStone([FromBody] MilestoneDTO milestoneDTO)
+        {
+            try
+            {
+                var response = await milestonesService.UpdateMilestone(milestoneDTO);
+                return Ok(response);
+            }
+
+            catch (Exception ex)
+            {
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -67,13 +79,12 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                await milestonesService.DeleteMilestone(id);
-                return Ok();
+                var response = await milestonesService.DeleteMilestone(id);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                this._Logger.LogError(ex.Message);
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

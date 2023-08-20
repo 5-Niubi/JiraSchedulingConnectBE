@@ -1,11 +1,11 @@
-﻿namespace RcpspAlgorithmLibrary.GA
+﻿namespace AlgorithmLibrary.GA
 
 {
     public class Data
     {
-        public int Budget;
+        public long? Budget;
         public int Deadline;
-        public int MaxSalary;
+        public long MaxSalary;
         public int MaxDeadline;
         public int MaxExper;
         public int NumOfWorkers;
@@ -13,18 +13,18 @@
         public int NumOfSkills;
         public int[] TaskDuration = new int[505];
         public int[,] TaskAdjacency = new int[505, 505];
-        public int[] WorkerSalary = new int[505];
+        public long[] WorkerSalary = new long[505];
         public double[,] TaskSimilarity = new double[505, 505];
         public int[,] TaskExperByWorker = new int[505, 505];
         public double weight1, weight2, weight3;
         public double[,] WorkerEffort = new double[505, 10005];
-        public List<List<int>> SuitableWorkers = new List<List<int>>();
+        public List<List<int>> SuitableWorkers = new();
 
-        public Data(int numOfTasks, int numOfSkills, int numOfWorkers, int[] TaskDuration, int[,] TaskAdjacency, int[] WorkerSalary, double[,] TaskSimilarity, double[,] WorkerEffort, int Budget, int Deadline, List<List<int>> SuitableWorkers, int[,] TaskExperByWorker)
+        public Data(int numOfTasks, int numOfSkills, int numOfWorkers, int[] TaskDuration, int[,] TaskAdjacency, long[] WorkerSalary, double[,] TaskSimilarity, double[,] WorkerEffort, long? Budget, int Deadline, List<List<int>> SuitableWorkers, int[,] TaskExperByWorker)
         {
-            this.NumOfTasks = numOfTasks;
-            this.NumOfSkills = numOfSkills;
-            this.NumOfWorkers = numOfWorkers;
+            NumOfTasks = numOfTasks;
+            NumOfSkills = numOfSkills;
+            NumOfWorkers = numOfWorkers;
             this.TaskAdjacency = TaskAdjacency;
             this.Budget = Budget;
             this.Deadline = Deadline;
@@ -38,7 +38,8 @@
 
         public void Setup() // get the limit max of sumsalary , deadline , exper ;
         {
-            for (int w = 0; w < NumOfWorkers; ++w) MaxSalary = Math.Max(MaxSalary, WorkerSalary[w]);
+            for (int w = 0; w < NumOfWorkers; ++w)
+                MaxSalary = Math.Max(MaxSalary, WorkerSalary[w]);
             for (int t = 0; t < NumOfTasks; ++t)
             {
                 MaxDeadline += TaskDuration[t];
@@ -55,19 +56,23 @@
                 }
                 MaxExper += taskExper;
             }
-            this.weight1 = 1;
-            this.weight2 = 1;
-            this.weight3 = 1;
+            weight1 = 1;
+            weight2 = 1;
+            weight3 = 1;
         }
 
-        public void ChangeWeights(int choice)
+        public void ChangeWeights(bool choice1, bool choice2, bool choice3)
         {
-            this.weight1 = 1;
-            this.weight2 = 1;
-            this.weight3 = 1;
-            if (choice == 1) this.weight1 *= 20;
-            else if (choice == 2) this.weight2 *= 20;
-            else if (choice == 3) this.weight3 *= 20;
+            weight1 = 1;
+            weight2 = 1;
+            weight3 = 1;
+
+            if (choice1)
+                weight1 *= 20;
+            if (choice2)
+                weight2 *= 20;
+            if (choice3)
+                weight3 *= 20;
         }
 
     }

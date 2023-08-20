@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ModelLibrary;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -12,11 +12,8 @@ namespace JiraSchedulingConnectAppService.Controllers
         private readonly ILoggerManager _Logger;
         public LogController(ILoggerManager logger)
         {
-
             _Logger = logger;
-
         }
-
 
         [HttpGet]
         public IActionResult Get()

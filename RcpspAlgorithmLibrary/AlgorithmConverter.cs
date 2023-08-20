@@ -1,31 +1,76 @@
-﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
-using AutoMapper;
+﻿using AutoMapper;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
 using ModelLibrary.DTOs.Algorithm.ScheduleResult;
 using System.Text.Json;
+using UtilsLibrary;
 
-namespace RcpspAlgorithmLibrary
+namespace AlgorithmLibrary
 {
     public class AlgorithmConverter
     {
         private readonly IMapper mapper;
 
-        public DateTime StartDate { get; private set; }
-        public int Deadline { get; private set; }
-        public int Budget { get; private set; }
+        public DateTime StartDate
+        {
+            get; private set;
+        }
+        public int Deadline
+        {
+            get; private set;
+        }
+        public long? Budget
+        {
+            get; private set;
+        }
 
-        public int NumOfTasks { get; private set; }
-        public int NumOfWorkers { get; private set; }
-        public int NumOfSkills { get; private set; }
-        public int NumOfEquipments { get; private set; }
-        public int NumOfFunctions { get; private set; }
+        public int NumOfTasks
+        {
+            get; private set;
+        }
+        public int NumOfWorkers
+        {
+            get; private set;
+        }
+        public int NumOfSkills
+        {
+            get; private set;
+        }
+        public int NumOfEquipments
+        {
+            get; private set;
+        }
+        public int NumOfFunctions
+        {
+            get; private set;
+        }
 
-        public List<ModelLibrary.DBModels.Task> TaskList { get; private set; }
-        public List<Workforce> WorkerList { get; private set; }
-        public List<Equipment> EquipmentList { get; private set; }
-        public List<Skill> SkillList { get; private set; }
-        public List<Function> FunctionList { get; private set; }
+        public double BaseWorkingHours
+        {
+            get; private set;
+        }
+
+        public List<ModelLibrary.DBModels.Task> TaskList
+        {
+            get; private set;
+        }
+        public List<Workforce> WorkerList
+        {
+            get; private set;
+        }
+        public List<Equipment> EquipmentList
+        {
+            get; private set;
+        }
+        public List<Skill> SkillList
+        {
+            get; private set;
+        }
+        public List<Function> FunctionList
+        {
+            get; private set;
+        }
+        private int? objtTime, objtCost, objtQuality;
 
         public AlgorithmConverter(InputToORDTO inputToOR, IMapper mapper)
         {
@@ -37,15 +82,20 @@ namespace RcpspAlgorithmLibrary
             NumOfEquipments = inputToOR.EquipmentList.Count;
             NumOfFunctions = inputToOR.FunctionList.Count;
 
-            this.TaskList = inputToOR.TaskList;
-            this.WorkerList = inputToOR.WorkerList;
-            this.EquipmentList = inputToOR.EquipmentList;
-            this.SkillList = inputToOR.SkillList;
-            this.FunctionList = inputToOR.FunctionList;
-            this.Deadline = inputToOR.Deadline;
-            this.Budget = inputToOR.Budget;
+            TaskList = inputToOR.TaskList;
+            WorkerList = inputToOR.WorkerList;
+            EquipmentList = inputToOR.EquipmentList;
+            SkillList = inputToOR.SkillList;
+            FunctionList = inputToOR.FunctionList;
+            Deadline = inputToOR.Deadline;
+            Budget = inputToOR.Budget;
             StartDate = inputToOR.StartDate;
 
+            objtTime = inputToOR.ObjectiveTime;
+            objtCost = inputToOR.ObjectiveCost;
+            objtQuality = inputToOR.ObjectiveQuality;
+
+            BaseWorkingHours = inputToOR.BaseWorkingHours;
         }
 
         public OutputToORDTO ToOR()
@@ -55,7 +105,9 @@ namespace RcpspAlgorithmLibrary
             int[,] workerSkillWithLevel = new int[WorkerList.Count, SkillList.Count]; // Matrix of skill level
             int[,] taskSkillWithLevel = new int[TaskList.Count, SkillList.Count]; // Matrix of skill level
             double[,] workerEffort = new double[WorkerList.Count, Deadline];
-            int[] workerSalary = new int[WorkerList.Count];
+            float[,] workerWorkingHours = new float[WorkerList.Count, Deadline];
+
+            long[] workerSalary = new long[WorkerList.Count];
 
 
             // Chua dung
@@ -71,8 +123,10 @@ namespace RcpspAlgorithmLibrary
                 taskDuration[i] = (int)TaskList[i].Duration;
                 for (int j = 0; j < TaskList.Count; j++)
                 {
-                    taskAdjacency[i, j] = (TaskList[i]
-                        .TaskPrecedenceTasks.Where(e => e.PrecedenceId == TaskList[j].Id) //TODO: re-confirm what vector embedding in taskAdjacency
+                    taskAdjacency[j, i] =
+                        (TaskList[i]
+                        .TaskPrecedenceTasks.Where(e => e.PrecedenceId == TaskList[j].Id)
+                        //TODO: re-confirm what vector embedding in taskAdjacency
                         .Count() > 0) ? 1 : 0;
                 }
 
@@ -99,7 +153,6 @@ namespace RcpspAlgorithmLibrary
 
             for (int i = 0; i < WorkerList.Count; i++)
             {
-
                 //workerSkillWithLevel[i] = new int[SkillList.Count];
                 for (int j = 0; j < SkillList.Count; j++)
                 {
@@ -114,9 +167,18 @@ namespace RcpspAlgorithmLibrary
                 int k = 0;
                 for (int j = 0; j < Deadline; j++)
                 {
-                    workerEffort[i, j] = workingEffort[k++];
+                    double effort = 1;
+                    workerWorkingHours[i, j] = (float) BaseWorkingHours;
+                    if (WorkerList[i].WorkingType == Const.WORKING_TYPE.PARTTIME)
+                    {
+                        workerWorkingHours[i, j] = (float)workingEffort[k];
+                        effort = Math.Round(workingEffort[k++] / BaseWorkingHours, 3);
+                        if (effort > 1)
+                            effort = 1;
+                    }
+                    workerEffort[i, j] = effort;
                     // reset k
-                    if (k >= workingEffort.Length)
+                    if (k >= (workingEffort?.Length ?? 0))
                     {
                         k = 0;
                     }
@@ -162,6 +224,12 @@ namespace RcpspAlgorithmLibrary
             output.EquipmentFunction = equipmentFunction;
             output.EquipmentCost = equipmentCost;
             output.WorkerEffort = workerEffort;
+            output.WorkerWorkingHours = workerWorkingHours;
+            output.BaseWorkingHour = (float)BaseWorkingHours;
+
+            output.ObjectiveSelect[0] = objtTime == null ? false : true;
+            output.ObjectiveSelect[1] = objtCost == null ? false : true;
+            output.ObjectiveSelect[2] = objtQuality == null ? false : true;
 
             // output.taskSimilarityGenerateInput = taskSimilarityGenerateInput;
 
@@ -176,21 +244,17 @@ namespace RcpspAlgorithmLibrary
                 var task = new TaskScheduleResultDTO();
                 task.id = TaskList[i].Id;
                 task.name = TaskList[i].Name;
-                task.duration = (int?)TaskList[i].Duration;
+                task.duration = taskEnd[i] - taskStart[i];
                 task.workforce = mapper.Map<WorkforceScheduleResultDTO>(WorkerList[taskWithWorker[i]]);
-                task.startDate = StartDate.AddDays(taskStart[i]);
-                task.endDate = StartDate.AddDays(taskEnd[i]);
+                task.startDate = StartDate.AddDays(taskStart[i]).AddDays(-1);
+                task.endDate = Utils.MoveDayToEnd(StartDate.AddDays(taskEnd[i] - 1)).Value.AddDays(-1);
+                task.mileStone = mapper.Map<MileStoneScheduleResultDTO>(TaskList[i].Milestone);
                 foreach (var taskPre in TaskList[i].TaskPrecedenceTasks)
                 {
                     task.taskIdPrecedences.Add(taskPre.PrecedenceId);
                 }
                 outPut.tasks.Add(task);
             }
-            //for (int i = 0; i < taskWithEquipment.Length; i++)
-            //{
-            //    outPut.tasks[i % EquipmentList.Count]
-            //        .equipmentId.Add(EquipmentList[taskWithEquipment[i]].Id);
-            //}
             return outPut;
         }
     }

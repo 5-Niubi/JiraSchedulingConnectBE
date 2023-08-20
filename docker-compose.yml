@@ -1,13 +1,14 @@
 version: '3.4'
-
 services:
   algorithmservice:
     image: ${DOCKER_REGISTRY-}algorithmservice
     build:
       context: .
       dockerfile: AlgorithmService/Dockerfile
-    ports:
-      - "5003:80"
+    networks:
+      - internal-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
   jiraschedulingconnectappservice:
     image: ${DOCKER_REGISTRY-}jiraschedulingconnectappservice
     build:
@@ -15,9 +16,12 @@ services:
       dockerfile: JiraSchedulingConnectAppService/Dockerfile
     ports:
       - "5126:80"
-
+      - "8443:80"
+      - "80:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     networks:
-      - elasticsearch-nw
-
+      - internal-network
 networks:
-  elasticsearch-nw:
+  internal-network:
+    driver: bridge

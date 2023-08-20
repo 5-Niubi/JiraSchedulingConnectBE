@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Remove="wwwroot\js\const.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<_ContentIncludedByDefault Remove="wwwroot\js\const.js" />
+	</ItemGroup>
+	<Target Name="CopyAppSettings" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="../SharedSettings/appsettings.json" DestinationFolder="./" SkipUnchangedFiles="true" />
+		<Copy SourceFiles="../SharedSettings/appsettings.Development.json" DestinationFolder="./" SkipUnchangedFiles="true" />
+		<Copy SourceFiles="../SharedSettings/appsettings.Production.json" DestinationFolder="./" SkipUnchangedFiles="true" />
+	</Target>
+
+	<ItemGroup>
+		<None Include="wwwroot\js\const.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Braintree" Version="5.18.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.20" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.20">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
+		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.15" />
+		<PackageReference Include="Quartz.AspNetCore" Version="3.6.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ModelLibrary\ModelLibrary.csproj" />
+		<ProjectReference Include="..\UtilsLibrary\UtilsLibrary.csproj" />
+	</ItemGroup>
+
+</Project>

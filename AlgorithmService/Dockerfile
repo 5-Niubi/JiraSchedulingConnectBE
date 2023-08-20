@@ -6,16 +6,19 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["AlgorithmService/AlgorithmService.csproj", "AlgorithmService/"]
-RUN dotnet restore "AlgorithmService/AlgorithmService.csproj"
+COPY ["AlgorithmService/AlgorithmServiceServer.csproj", "AlgorithmService/"]
+RUN dotnet restore "AlgorithmService/AlgorithmServiceServer.csproj"
+
 COPY . .
+COPY ["SharedSettings/", "AlgorithmService/"]
+
 WORKDIR "/src/AlgorithmService"
-RUN dotnet build "AlgorithmService.csproj" -c Release -o /app/build
+RUN dotnet build "AlgorithmServiceServer.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "AlgorithmService.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "AlgorithmServiceServer.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AlgorithmService.dll"]
+ENTRYPOINT ["dotnet", "AlgorithmServiceServer.dll"]

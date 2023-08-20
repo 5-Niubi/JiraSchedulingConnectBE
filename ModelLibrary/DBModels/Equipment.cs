@@ -1,11 +1,13 @@
-﻿namespace ModelLibrary.DBModels
+﻿using System;
+using System.Collections.Generic;
+
+namespace ModelLibrary.DBModels
 {
     public partial class Equipment
     {
         public Equipment()
         {
             EquipmentsFunctions = new HashSet<EquipmentsFunction>();
-            ParameterResources = new HashSet<ParameterResource>();
         }
 
         public int Id { get; set; }
@@ -19,6 +21,5 @@
         public DateTime? DeleteDatetime { get; set; }
 
         public virtual ICollection<EquipmentsFunction> EquipmentsFunctions { get; set; }
-        public virtual ICollection<ParameterResource> ParameterResources { get; set; }
     }
 }

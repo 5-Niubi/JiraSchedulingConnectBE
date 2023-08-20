@@ -1,13 +1,13 @@
-﻿using AlgorithmServiceServer.DTOs.AlgorithmController;
+﻿using AlgorithmLibrary;
+using AlgorithmLibrary.GA;
+using AlgorithmLibrary.Solver;
 using AlgorithmServiceServer.Services.Interfaces;
 using AutoMapper;
-using JiraSchedulingConnectAppService.Common;
 using Microsoft.EntityFrameworkCore;
 using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
-using Newtonsoft.Json;
-using RcpspAlgorithmLibrary;
-using RcpspAlgorithmLibrary.GA;
+using ModelLibrary.DTOs.Algorithm.ScheduleResult;
+using System.Text.Json;
 using UtilsLibrary;
 using UtilsLibrary.Exceptions;
 
@@ -15,10 +15,10 @@ namespace AlgorithmServiceServer.Services
 {
     public class AlgorithmComputeService : IAlgorithmComputeService
     {
-        private readonly JiraDemoContext db;
+        private readonly WoTaasContext db;
         private readonly HttpContext? http;
         private readonly IMapper mapper;
-        public AlgorithmComputeService(JiraDemoContext db, IHttpContextAccessor httpAccessor, IMapper mapper)
+        public AlgorithmComputeService(WoTaasContext db, IHttpContextAccessor httpAccessor, IMapper mapper)
         {
             this.db = db;
             http = httpAccessor.HttpContext;
@@ -37,21 +37,23 @@ namespace AlgorithmServiceServer.Services
             var projectFromDB = parameterEntity.Project;
             var parameterResources = await db.ParameterResources.Where(prs => prs.ParameterId == parameterId
                                     && prs.Type == Const.RESOURCE_TYPE.WORKFORCE)
-                                    .Include(pr => pr.ResourceNavigation).ThenInclude(w => w.WorkforceSkills).ToListAsync();
+                                    .Include(pr => pr.Resource).ThenInclude(w => w.WorkforceSkills).ToListAsync();
 
             var workerFromDB = new List<Workforce>();
-            parameterResources.ForEach(e => workerFromDB.Add(e.ResourceNavigation));
+            parameterResources.ForEach(e => workerFromDB.Add(e.Resource));
 
-            var taskFromDB = await db.Tasks.Where(t => t.ProjectId == parameterEntity.ProjectId)
-               .Include(t => t.TasksSkillsRequireds).Include(t => t.TaskPrecedenceTasks).ToListAsync();
+            var taskFromDB = await db.Tasks.Where(t => t.ProjectId == parameterEntity.ProjectId && t.IsDelete == false)
+               .Include(t => t.TasksSkillsRequireds).Include(t => t.TaskPrecedenceTasks)
+               .Include(t => t.Milestone).ToListAsync();
 
-            var skillFromDB = await db.Skills.Where(s => s.CloudId == cloudId).ToListAsync();
+            var skillFromDB = await db.Skills.Where(s => s.CloudId == cloudId && s.IsDelete == false).ToListAsync();
 
             inputTo.StartDate = (DateTime)parameterEntity.StartDate;
-            inputTo.Deadline = (int)Utils.GetDaysBeetween2Dates
+            var deadline = (int)Utils.GetDaysBeetween2Dates
                 (parameterEntity.StartDate, parameterEntity.Deadline);
+            inputTo.Deadline = (deadline == 0) ? 1 : deadline;
 
-            inputTo.Budget = (int)parameterEntity.Budget;
+            inputTo.Budget = parameterEntity.Budget;
             inputTo.WorkerList = workerFromDB;
 
             inputTo.TaskList = taskFromDB.ToList();
@@ -60,14 +62,33 @@ namespace AlgorithmServiceServer.Services
             inputTo.FunctionList = new List<Function>();
             inputTo.EquipmentList = new List<Equipment>();
 
+            inputTo.ObjectiveTime = parameterEntity.ObjectiveTime;
+            inputTo.ObjectiveCost = parameterEntity.ObjectiveCost;
+            inputTo.ObjectiveQuality = parameterEntity.ObjectiveQuality;
+            inputTo.BaseWorkingHours = projectFromDB?.BaseWorkingHour ?? Const.DEFAULT_BASE_WORKING_HOUR;
+
+            // Execute converter
             var converter = new AlgorithmConverter(inputTo, mapper);
-
             var outputToAlgorithm = converter.ToOR();
-            var ga = new GAExecution();
-            ga.SetParam(outputToAlgorithm);
-            var algorithmOutputRaws = ga.Run();
-            var algorithmOutputConverted = new List<OutputFromORDTO>();
 
+            List<AlgorithmRawOutput> algorithmOutputRaws = new();
+
+            switch (parameterEntity.Optimizer)
+            {
+                case Const.OPTIMIZER.GA:
+                    // Running with GA
+                    var ga = new GAExecution();
+                    ga.SetParam(outputToAlgorithm);
+                    algorithmOutputRaws = ga.Run();
+
+                    break;
+                case Const.OPTIMIZER.SOLVER:
+                    // Running with Solver
+                    algorithmOutputRaws = CPSAT.Schedule(outputToAlgorithm);
+                    break;
+            }
+
+            var algorithmOutputConverted = new List<OutputFromORDTO>();
             var scheduleResultDTOs = new List<ScheduleResultSolutionDTO>();
             await db.Database.BeginTransactionAsync();
             try
@@ -80,11 +101,13 @@ namespace AlgorithmServiceServer.Services
 
                     algOutConverted.timeFinish = algOutRaw.TimeFinish;
                     algOutConverted.totalExper = algOutRaw.TotalExper;
-                    algOutConverted.totalSalary = algOutRaw.TotalSalary;
+
+                    var totalSalary = CalculateTotalSalary(projectFromDB, algOutConverted);
+                    algOutConverted.totalSalary = totalSalary;
 
                     algorithmOutputConverted.Add(algOutConverted);
 
-                    var schedule = await InsertScheduleIntoDB(parameterId, algOutConverted);
+                    var schedule = await InsertScheduleIntoDB(parameterEntity, algOutConverted);
                     schedules.Add(schedule);
                 }
 
@@ -93,7 +116,7 @@ namespace AlgorithmServiceServer.Services
 
                 scheduleResultDTOs = mapper.Map<List<ScheduleResultSolutionDTO>>(schedules);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await db.Database.RollbackTransactionAsync();
                 throw;
@@ -106,19 +129,47 @@ namespace AlgorithmServiceServer.Services
         }
 
         private async Task<Schedule> InsertScheduleIntoDB(
-                int parameterId, OutputFromORDTO algOutConverted
+                Parameter parameter, OutputFromORDTO algOutConverted
             )
         {
             // Insert result into Schedules table
             var schedule = new Schedule();
-            schedule.ParameterId = parameterId;
+            schedule.ParameterId = parameter.Id;
+            schedule.Since = parameter.StartDate;
             schedule.Duration = algOutConverted.timeFinish;
             schedule.Cost = algOutConverted.totalSalary;
             schedule.Quality = algOutConverted.totalExper;
-            schedule.Tasks = JsonConvert.SerializeObject(algOutConverted.tasks);
+            schedule.Tasks = JsonSerializer.Serialize(algOutConverted.tasks);
 
             var scheduleSolution = await db.Schedules.AddAsync(schedule);
             return scheduleSolution.Entity;
+        }
+
+        private long CalculateTotalSalary(Project project, OutputFromORDTO algOutConverted)
+        {
+            var baseWorkingHour = project.BaseWorkingHour;
+
+            var workerSalaryDict = new Dictionary<WorkforceScheduleResultDTO, long>();
+            var tasks = algOutConverted.tasks;
+
+            // Filter all worker from tasks
+            foreach (var task in tasks)
+            {
+                if (workerSalaryDict.Keys.Where(t => task.workforce.id == t.id).Count() == 0)
+                {
+                    workerSalaryDict.Add(task.workforce, 0);
+                }
+            }
+
+            foreach (var wKey in workerSalaryDict.Keys)
+            {
+                var totalDurationOfWker = tasks.Where(t => t.workforce.id == wKey.id).Sum(t => t.duration);
+                var totalCostOfWker = totalDurationOfWker * (int)baseWorkingHour * wKey.unitSalary;
+                workerSalaryDict[wKey] = totalCostOfWker ?? 0;
+            }
+
+            var totalCost = workerSalaryDict.Values.Sum();
+            return totalCost;
         }
     }
 }

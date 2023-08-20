@@ -1,40 +1,71 @@
 ﻿using ModelLibrary.DTOs.Algorithm;
 
-namespace RcpspAlgorithmLibrary.GA
+namespace AlgorithmLibrary.GA
 {
     public class GAExecution
     {
         // --- Param ---
         public int Deadline;
-        public int Budget;
-        public int numOfTask { get; set; }
-        public int numOfPeople { get; set; }
-        public int numOfSkill { get; set; }
+        public long? Budget;
+        public int numOfTask
+        {
+            get; set;
+        }
+        public int numOfPeople
+        {
+            get; set;
+        }
+        public int numOfSkill
+        {
+            get; set;
+        }
 
         // taskDuration
-        public int[] durationTime { get; set; }
+        public int[] durationTime
+        {
+            get; set;
+        }
 
         // taskAdjacency
-        public int[,] adjacency { get; set; }
+        public int[,] adjacency
+        {
+            get; set;
+        }
 
         // task similarity (Chua dung)
-        public double[,] Z { get; set; }
+        public double[,] Z
+        {
+            get; set;
+        }
 
         // task exper (taskSkillWithLevel)
-        public int[,] R { get; set; }
+        public int[,] R
+        {
+            get; set;
+        }
 
         // worker exper (workerSkillWithLevel)
-        public int[,] K { get; set; }
+        public int[,] K
+        {
+            get; set;
+        }
 
         // worker effort (workerEffort)
-        public double[,] U { get; set; }
+        public double[,] U
+        {
+            get; set;
+        }
 
         // workerSalary
-        public int[] salaryEachTime { get; set; }
+        public long[] salaryEachTime
+        {
+            get; set;
+        }
         // ------
 
-        public List<List<int>> manAbleDo = new List<List<int>>();
+        public List<List<int>> manAbleDo = new();
         public int[,] Exper = new int[505, 505];
+        public bool[] objectiveChoice = new bool[3];
 
         public void SetParam(OutputToORDTO param)
         {
@@ -50,6 +81,8 @@ namespace RcpspAlgorithmLibrary.GA
             K = param.WorkerExper;
             U = param.WorkerEffort;
             salaryEachTime = param.WorkerSalary;
+
+            objectiveChoice = param.ObjectiveSelect;
         }
 
         private double[,] GenerateTaskSimilarityMatrix()
@@ -91,7 +124,7 @@ namespace RcpspAlgorithmLibrary.GA
                         }
 
                         var cosineSimilarity = dotProduct / (Math.Sqrt(norm1) * Math.Sqrt(norm2));
-                        taskSimilarityMatrix[t1, t2] = cosineSimilarity; ;
+                        taskSimilarityMatrix[t1, t2] = Math.Round(cosineSimilarity, 1);
                     }
                 }
             }
@@ -100,23 +133,21 @@ namespace RcpspAlgorithmLibrary.GA
 
         public List<AlgorithmRawOutput> Run()
         {
-
             // Calculate task similarity
             Z = GenerateTaskSimilarityMatrix();
             // Bat dau xu ly
             manAbleDo = GAHelper.SuitableWorker(K, R, numOfTask, numOfPeople, numOfSkill);
             Exper = GAHelper.TaskExperByWorker(K, R, numOfTask, numOfPeople, numOfSkill);
 
-            Data d = new Data(numOfTask, numOfSkill, numOfPeople, durationTime,
+            Data d = new(numOfTask, numOfSkill, numOfPeople, durationTime,
                 adjacency, salaryEachTime, Z, U, Budget, Deadline, manAbleDo, Exper);
             d.Setup();
-            d.ChangeWeights(4);
+            d.ChangeWeights(objectiveChoice[0], objectiveChoice[1], objectiveChoice[2]);
             Population population = new Population(GAHelper.NUM_OF_POPULATION).InitializePopulation(d);
-            GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
+            GeneticAlgorithm geneticAlgorithm = new();
             int numOfGen = 0;
             while (numOfGen < GAHelper.NUM_OF_GENARATION)
             {
-                Console.WriteLine(numOfGen);
                 population = geneticAlgorithm.Evolve(population, d);
                 population.SortChromosomesByFitness(d);
                 numOfGen++;
@@ -125,17 +156,25 @@ namespace RcpspAlgorithmLibrary.GA
             // Dau ra tu day
             var outputList = new List<AlgorithmRawOutput>();
 
-            for (int i = 0; i < 10; i++)
+            var chromosomeWithDistictFitness = population.Chromosomes
+                .GroupBy(c => c.Fitness).Select(c => c.First()).ToList();
+
+            var maxResult = 10;
+            if (maxResult > chromosomeWithDistictFitness.Count)
+            {
+                maxResult = chromosomeWithDistictFitness.Count;
+            }
+
+            for (int i = 0; i < maxResult; i++)
             {
                 var output = new AlgorithmRawOutput();
-                var individual = population.Chromosomes[i];
+                var individual = chromosomeWithDistictFitness[i];
                 output.TimeFinish = individual.TimeFinish;
                 output.TaskFinish = individual.TaskFinish;
                 output.TaskBegin = individual.TaskBegin;
                 output.Genes = individual.Genes;
                 output.TotalExper = individual.TotalExper;
                 output.TotalSalary = individual.TotalSalary;
-
 
                 outputList.Add(output);
             }

@@ -1,9 +1,9 @@
-﻿using JiraSchedulingConnectAppService.Common;
-using JiraSchedulingConnectAppService.Services.Interfaces;
+﻿using JiraSchedulingConnectAppService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary.DTOs;
 using ModelLibrary.DTOs.Skills;
+using UtilsLibrary;
 
 namespace JiraSchedulingConnectAppService.Controllers
 {
@@ -14,10 +14,11 @@ namespace JiraSchedulingConnectAppService.Controllers
     {
 
         private readonly ISkillsService skillsService;
-        public SkillsController(ISkillsService skillsService)
+        private readonly ILoggerManager _Logger;
+        public SkillsController(ISkillsService skillsService, ILoggerManager logger)
         {
 
-
+            _Logger = logger;
             this.skillsService = skillsService;
         }
 
@@ -31,7 +32,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -49,6 +50,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             catch (Exception ex)
             {
 
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -70,7 +72,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             }
             catch (Exception ex)
             {
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -81,12 +83,12 @@ namespace JiraSchedulingConnectAppService.Controllers
         {
             try
             {
-                await skillsService.DeleteSkill(id);
-                return Ok();
+                var response = await skillsService.DeleteSkill(id);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }

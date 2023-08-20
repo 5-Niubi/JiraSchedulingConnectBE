@@ -1,12 +1,13 @@
-﻿namespace RcpspAlgorithmLibrary
+using ModelLibrary.DTOs.PertSchedule;
+
+namespace AlgorithmLibrary
+
 {
     public class DirectedGraph
     {
         public int NumberOfNode;
         public int startNode;
-        private List<List<int>> graph = new List<List<int>>();
-
-
+        private List<List<int>> graph = new();
 
         public DirectedGraph(int startNode)
         {
@@ -14,17 +15,45 @@
 
         }
 
-        public List<List<int>> Graph { get => graph; set => graph = value; }
+        public List<List<int>> Graph
+        {
+            get => graph; set => graph = value;
+        }
 
         public void AddEdge(int u, int v)
         {
-            this.Graph[u].Add(v);
-
+            Graph[u].Add(v);
         }
 
-        public void LoadData(int[][] adjacencyMatrix)
+        public void LoadData(List<TaskPrecedencesTaskRequestDTO> TaskList)
         {
-            this.NumberOfNode = adjacencyMatrix.Length;
+
+            int[][] adjacencyMatrix = new int[TaskList.Count][]; // Boolean bin matrix
+
+
+            for (int i = 0; i < TaskList.Count; i++)
+            {
+
+                adjacencyMatrix[i] = new int[TaskList.Count];
+
+                for (int j = 0; j < TaskList.Count; j++)
+                {
+                    if (j != i)
+                    {
+                        adjacencyMatrix[i][j] = TaskList[i]
+                        .TaskPrecedences.Where(e => e == TaskList[j].TaskId)
+                        .Count() > 0 ? 1 : 0;
+                    }
+                    else
+                    {
+                        adjacencyMatrix[i][j] = 0;
+                    }
+
+                }
+            }
+
+            NumberOfNode = TaskList.Count;
+
 
             for (int i = 0; i < NumberOfNode; i++)
             {
@@ -38,7 +67,7 @@
                 {
                     if (adjacencyMatrix[j][i] == 1)
                     {
-                        this.AddEdge(i, j);
+                        AddEdge(i, j);
                     }
                 };
 
@@ -86,7 +115,7 @@
         }
 
 
-        private bool IsCycle(List<bool> visited, List<bool> path, int start)
+        public bool IsCycle(List<bool> visited, List<bool> path, int start)
         {
 
             if (path[start] == true)
@@ -121,12 +150,12 @@
 
         public bool IsDAG()
         {
-            List<bool> visited = new List<bool>(Enumerable.Repeat(false, this.NumberOfNode));
-            List<bool> path = new List<bool>(Enumerable.Repeat(false, this.NumberOfNode));
+            List<bool> visited = new(Enumerable.Repeat(false, NumberOfNode));
+            List<bool> path = new(Enumerable.Repeat(false, NumberOfNode));
 
 
 
-            if (IsCycle(visited, path, this.startNode))
+            if (IsCycle(visited, path, startNode))
             {
                 return false;
             }
@@ -135,6 +164,54 @@
             return true;
 
 
+        }
+
+        public void LoadDataV1(ModelLibrary.DBModels.Task[]? TaskList)
+        {
+            int[][] adjacencyMatrix = new int[TaskList.Length][]; // Boolean bin matrix
+
+
+            for (int i = 0; i < TaskList.Length; i++)
+            {
+
+                adjacencyMatrix[i] = new int[TaskList.Length];
+
+                for (int j = 0; j < TaskList.Length; j++)
+                {
+                    if (j != i)
+                    {
+                        adjacencyMatrix[i][j] = TaskList[i]
+                        .TaskPrecedenceTasks.Where(e => e.PrecedenceId == TaskList[j].Id)
+                        .Count() > 0 ? 1 : 0;
+                    }
+                    else
+                    {
+                        adjacencyMatrix[i][j] = 0;
+                    }
+
+                }
+            }
+
+            NumberOfNode = TaskList.Length;
+
+
+            for (int i = 0; i < NumberOfNode; i++)
+            {
+                Graph.Add(new List<int>());
+            }
+
+
+            for (int i = 0; i < NumberOfNode; i++)
+            {
+                for (int j = 0; j < NumberOfNode; j++)
+                {
+                    if (adjacencyMatrix[j][i] == 1)
+                    {
+                        AddEdge(i, j);
+                    }
+                };
+
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-﻿namespace RcpspAlgorithmLibrary.GA
+﻿namespace AlgorithmLibrary.GA
 
 {
     public class Chromosome
@@ -6,7 +6,7 @@
         private bool isFitnessChanged;
         private int[] genes;
         private double fitness;
-        private int totalSalary;
+        private long totalSalary;
         private int totalExper;
         private int timeFinish;
         private int[] taskBegin;
@@ -30,7 +30,7 @@
 
         public Chromosome InitializeChromosome(Data data)
         {
-            Random rand = new Random();
+            Random rand = new();
             for (int t = 0; t < data.NumOfTasks; ++t)
             {
                 int taskWorkers = data.SuitableWorkers.ElementAt(t).Count;
@@ -54,7 +54,7 @@
 
         public void RecalculateFitness(Data data)
         {
-            List<int> noPredecessors = new List<int>();
+            List<int> noPredecessors = new();
             int[] lastMan = new int[data.NumOfWorkers];
             int[] timeTask = new int[data.NumOfTasks];
             int[] totalWorkerEffort = new int[data.NumOfWorkers];
@@ -85,7 +85,8 @@
 
             for (int t = 0; t < data.NumOfTasks; ++t)
             {
-                if (dependencies[t] == 0) noPredecessors.Add(t);
+                if (dependencies[t] == 0)
+                    noPredecessors.Add(t);
             }
 
             while (noPredecessors.Count > 0)
@@ -103,27 +104,32 @@
                     }
                 }
                 start = Math.Max(start, lastMan[wt]);
-                if (start == 0) start = 1;
+                if (start == 0)
+                    start = 1;
                 int end = start;
                 double actualEffort = data.TaskDuration[np];
                 double similarityAssign = 0;
                 //
-                for (int i = 0; i < data.NumOfTasks; ++i)
-                {
-                    if (workerTask[i] == wt)
-                    {
-                        similarityAssign = MathF.Max((float)similarityAssign, (float)data.TaskSimilarity[i, np]);
-                    }
-                }
-                if (similarityAssign > 0.75) actualEffort *= 0.7;
-                else if (similarityAssign > 0.5) actualEffort *= 0.8;
-                else if (similarityAssign > 0.25) actualEffort *= 0.9;
+                //for (int i = 0; i < data.NumOfTasks; ++i)
+                //{
+                //    if (workerTask[i] == wt)
+                //    {
+                //        similarityAssign = MathF.Max((float)similarityAssign, (float)data.TaskSimilarity[i, np]);
+                //    }
+                //}
+                //if (similarityAssign > 0.75)
+                //    actualEffort *= 0.7;
+                //else if (similarityAssign > 0.5)
+                //    actualEffort *= 0.8;
+                //else if (similarityAssign > 0.25)
+                //    actualEffort *= 0.9;
                 while (end < data.Deadline)
                 {
 
                     actualEffort -= (data.WorkerEffort[wt, end]);
                     end++;
-                    if (actualEffort <= 0) break;
+                    if (actualEffort <= 0)
+                        break;
                 }
                 if (actualEffort > 0)
                 {
@@ -131,7 +137,8 @@
                 }
                 lastMan[wt] = end;
                 timeTask[np] = end;
-                if (workerStart[wt] == 0) workerStart[wt] = start;
+                if (workerStart[wt] == 0)
+                    workerStart[wt] = start;
                 workerFinish[wt] = Math.Max(workerFinish[wt], end);
                 totalWorkerEffort[wt] += (end - start);
                 for (int i = 0; i < data.NumOfTasks; ++i)
@@ -139,7 +146,8 @@
                     if (data.TaskAdjacency[np, i] == 1)
                     {
                         dependencies[i]--;
-                        if (dependencies[i] == 0) noPredecessors.Add(i);
+                        if (dependencies[i] == 0)
+                            noPredecessors.Add(i);
                     }
                 }
                 taskBegin[np] = start;
@@ -152,7 +160,7 @@
             }
         }
 
-        public int TotalSalary
+        public long TotalSalary
         {
             get => totalSalary;
         }

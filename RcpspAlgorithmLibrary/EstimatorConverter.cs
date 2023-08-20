@@ -1,26 +1,36 @@
-﻿using AlgorithmServiceServer;
-using AlgorithmServiceServer.DTOs.AlgorithmController;
-using ModelLibrary.DBModels;
+﻿using ModelLibrary.DBModels;
 using ModelLibrary.DTOs.Algorithm;
 
-namespace RcpspAlgorithmLibrary
+namespace AlgorithmLibrary
 {
     public class EstimatorConverter
     {
 
-        public int NumOfTasks { get; private set; }
-        public int NumOfSkills { get; private set; }
+        public int NumOfTasks
+        {
+            get; private set;
+        }
+        public int NumOfSkills
+        {
+            get; private set;
+        }
 
-        public List<ModelLibrary.DBModels.Task> TaskList { get; private set; }
-        public List<Skill> SkillList { get; private set; }
+        public List<ModelLibrary.DBModels.Task> TaskList
+        {
+            get; private set;
+        }
+        public List<Skill> SkillList
+        {
+            get; private set;
+        }
 
         public EstimatorConverter(InputToEstimatorDTO InputToEstimator)
         {
             NumOfTasks = InputToEstimator.TaskList.Count;
             NumOfSkills = InputToEstimator.SkillList.Count;
 
-            this.TaskList = InputToEstimator.TaskList;
-            this.SkillList = InputToEstimator.SkillList;
+            TaskList = InputToEstimator.TaskList;
+            SkillList = InputToEstimator.SkillList;
 
         }
 
@@ -86,13 +96,10 @@ namespace RcpspAlgorithmLibrary
 
         public WorkforceWithMilestoneDTO FromEs(int Id, List<int[]> WorkforceWithSkill)
         {
-
-
-
             //SkillOutputFromEstimatorDTO SkillOutput;
-            EstimatedResultDTO EstimatedResult = new EstimatedResultDTO();
+            EstimatedResultDTO EstimatedResult = new();
 
-            Dictionary<string, int> uniqueWorkersCount = new Dictionary<string, int>();
+            Dictionary<string, int> uniqueWorkersCount = new();
             // Convert WorkforceWithSkill to EstimatedResults
             for (int i = 0; i < WorkforceWithSkill.Count; i++)
             {
@@ -112,7 +119,7 @@ namespace RcpspAlgorithmLibrary
 
 
             WorkforceOutputFromEsDTO WorkforceOutput;
-            List<WorkforceOutputFromEsDTO> WorkforceOutputList = new List<WorkforceOutputFromEsDTO>();
+            List<WorkforceOutputFromEsDTO> WorkforceOutputList = new();
             int j = 0;
             foreach (KeyValuePair<string, int> kvp in uniqueWorkersCount)
             {
@@ -124,7 +131,7 @@ namespace RcpspAlgorithmLibrary
                               .ToList();
 
                 // mapping skill index with skill database
-                List<SkillOutputFromEstimatorDTO> SkillOutputList = new List<SkillOutputFromEstimatorDTO>();
+                List<SkillOutputFromEstimatorDTO> SkillOutputList = new();
                 for (int i = 0; i < SkillLevelList.Count; i++)
                 {
 

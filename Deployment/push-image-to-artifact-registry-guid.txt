@@ -1,0 +1,14 @@
+
+# Using a service account key
+cat /Users/pvm/Desktop/resourceassigndemo-5niubi-60bc123b8132.json | docker login -u _json_key --password-stdin \
+https://asia-southeast1-docker.pkg.dev
+
+# Docker Tag
+docker tag algorithmservice:latest asia-southeast1-docker.pkg.dev/resourceassigndemo-5niubi/algorithm-service:0.0.1
+
+# Docker Push with tag
+docker push asia-southeast1-docker.pkg.dev/resourceassigndemo-5niubi/algorithm-service:0.0.1
+
+
+# Docker pull with tag
+docker pull asia-southeast1-docker.pkg.dev/resourceassigndemo-5niubi/algorithm-service:0.0.1

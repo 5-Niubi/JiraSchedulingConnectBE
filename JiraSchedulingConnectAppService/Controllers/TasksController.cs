@@ -14,11 +14,11 @@ namespace JiraSchedulingConnectAppService.Controllers
 
     {
         private readonly ITasksService TasksService;
-
-        public TasksController(ITasksService tasksService)
+        private readonly ILoggerManager _Logger;
+        public TasksController(ITasksService tasksService, ILoggerManager logger)
         {
-
-            this.TasksService = tasksService;
+            _Logger = logger;
+            TasksService = tasksService;
         }
 
 
@@ -33,6 +33,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (NotSuitableInputException ex)
             {
+                _Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
             }
@@ -40,7 +41,7 @@ namespace JiraSchedulingConnectAppService.Controllers
             catch (Exception ex)
             {
 
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -58,7 +59,7 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (NotSuitableInputException ex)
             {
-
+                _Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
             }
@@ -66,10 +67,13 @@ namespace JiraSchedulingConnectAppService.Controllers
             catch (Exception ex)
             {
 
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
         }
+
+
 
 
         [HttpGet]
@@ -84,12 +88,13 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (NotSuitableInputException ex)
             {
-
+                _Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
             }
             catch (Exception ex)
             {
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -107,13 +112,13 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (NotSuitableInputException ex)
             {
-
+                _Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
             }
             catch (Exception ex)
             {
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
@@ -123,7 +128,6 @@ namespace JiraSchedulingConnectAppService.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateTask(TaskUpdatedRequest taskRequest)
         {
-
             try
             {
                 var resopnse = await TasksService.UpdateTask(taskRequest);
@@ -132,57 +136,95 @@ namespace JiraSchedulingConnectAppService.Controllers
 
             catch (NotSuitableInputException ex)
             {
-
+                _Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
             }
             catch (Exception ex)
             {
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
         }
 
-
-        [HttpPost]
-        public async Task<IActionResult> SaveTasks(TasksSaveRequest taskRequest)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteTask(int Id)
         {
-
             try
             {
-                var resopnse = await TasksService.SaveTasks(taskRequest);
+                var resopnse = await TasksService.DeleteTask(Id);
                 return Ok(resopnse);
             }
 
             catch (NotSuitableInputException ex)
             {
+                _Logger.LogWarning(ex.Message);
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError(ex.Message);
+                var response = new ResponseMessageDTO(ex.Message);
+                return BadRequest(response);
+            }
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> SaveTasks(TasksSaveRequest taskRequest)
+        {
+            try
+            {
+                var resopnse = await TasksService.SaveTasksPertChart(taskRequest);
+                return Ok(resopnse);
+            }
+
+            catch (NotSuitableInputException ex)
+            {
+                _Logger.LogWarning(ex.Message);
                 var response = ex.Errors;
                 return BadRequest(response);
             }
             catch (Exception ex)
             {
-
+                _Logger.LogError(ex.Message);
                 var response = new ResponseMessageDTO(ex.Message);
                 return BadRequest(response);
             }
         }
 
 
+        // TODO SAVE TASK REQUESTS FULL INFO
+        //[HttpPost]
+        //public async Task<IActionResult> SaveTasksV2(TasksSaveRequestV2 taskRequest)
+        //{
+
+        //    try
+        //    {
+        //        var resopnse = await TasksService.TasksSaveRequestV2(taskRequest);
+        //        return Ok(resopnse);
+        //    }
+
+        //    catch (NotSuitableInputException ex)
+        //    {
+        //        this._Logger.LogWarning(ex.Message);
+        //        var response = ex.Errors;
+        //        return BadRequest(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        this._Logger.LogError(ex.Message);
+        //        var response = new ResponseMessageDTO(ex.Message);
+        //        return BadRequest(response);
+        //    }
+        //}
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             return NoContent();
         }
-
-
-
-
-
-
-
     }
 }
 
