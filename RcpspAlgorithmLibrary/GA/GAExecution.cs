@@ -6,7 +6,7 @@ namespace AlgorithmLibrary.GA
     {
         // --- Param ---
         public int Deadline;
-        public int Budget;
+        public long? Budget;
         public int numOfTask
         {
             get; set;
@@ -57,7 +57,7 @@ namespace AlgorithmLibrary.GA
         }
 
         // workerSalary
-        public int[] salaryEachTime
+        public long[] salaryEachTime
         {
             get; set;
         }

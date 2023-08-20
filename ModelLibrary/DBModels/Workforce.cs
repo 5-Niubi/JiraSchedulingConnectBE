@@ -20,7 +20,7 @@ namespace ModelLibrary.DBModels
         public string? DisplayName { get; set; }
         public int? Active { get; set; }
         public string? CloudId { get; set; }
-        public double? UnitSalary { get; set; }
+        public long? UnitSalary { get; set; }
         public int? WorkingType { get; set; }
         public string? WorkingEffort { get; set; }
         public bool? IsDelete { get; set; }

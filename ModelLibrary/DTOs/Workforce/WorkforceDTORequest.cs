@@ -33,7 +33,7 @@ namespace ModelLibrary.DTOs.Workforce
         {
             get; set;
         }
-        public double? UnitSalary
+        public long? UnitSalary
         {
             get; set;
         }

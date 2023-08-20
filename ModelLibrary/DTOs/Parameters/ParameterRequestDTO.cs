@@ -10,7 +10,7 @@
         {
             get; set;
         }
-        public float Budget
+        public long Budget
         {
             get; set;
         }

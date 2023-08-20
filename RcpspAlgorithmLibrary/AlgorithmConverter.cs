@@ -19,7 +19,7 @@ namespace AlgorithmLibrary
         {
             get; private set;
         }
-        public int Budget
+        public long? Budget
         {
             get; private set;
         }
@@ -107,7 +107,7 @@ namespace AlgorithmLibrary
             double[,] workerEffort = new double[WorkerList.Count, Deadline];
             float[,] workerWorkingHours = new float[WorkerList.Count, Deadline];
 
-            int[] workerSalary = new int[WorkerList.Count];
+            long[] workerSalary = new long[WorkerList.Count];
 
 
             // Chua dung

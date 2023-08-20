@@ -38,7 +38,7 @@
         {
             get; set;
         }
-        public float? unitSalary
+        public long? unitSalary
         {
             get; set;
         }

@@ -6,7 +6,7 @@
         private bool isFitnessChanged;
         private int[] genes;
         private double fitness;
-        private int totalSalary;
+        private long totalSalary;
         private int totalExper;
         private int timeFinish;
         private int[] taskBegin;
@@ -160,7 +160,7 @@
             }
         }
 
-        public int TotalSalary
+        public long TotalSalary
         {
             get => totalSalary;
         }

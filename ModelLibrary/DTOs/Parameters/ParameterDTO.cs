@@ -10,7 +10,7 @@
         {
             get; set;
         }
-        public int? Budget
+        public long? Budget
         {
             get; set;
         }
