@@ -10,6 +10,8 @@ COPY ["AlgorithmService/AlgorithmServiceServer.csproj", "AlgorithmService/"]
 RUN dotnet restore "AlgorithmService/AlgorithmServiceServer.csproj"
 
 COPY . .
+COPY ["SharedSettings/", "AlgorithmService/"]
+
 WORKDIR "/src/AlgorithmService"
 RUN dotnet build "AlgorithmServiceServer.csproj" -c Release -o /app/build
 
