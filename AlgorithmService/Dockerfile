@@ -4,9 +4,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
 
-# Set the ASPNETCORE_ENVIRONMENT build argument
-ARG ASPNETCORE_ENVIRONMENT=Production
-
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["AlgorithmService/AlgorithmServiceServer.csproj", "AlgorithmService/"]
@@ -16,8 +13,6 @@ COPY . .
 COPY ["SharedSettings/", "AlgorithmService/"]
 
 WORKDIR "/src/AlgorithmService"
-
-
 RUN dotnet build "AlgorithmServiceServer.csproj" -c Release -o /app/build
 
 FROM build AS publish
