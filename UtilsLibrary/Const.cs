@@ -88,5 +88,11 @@
             public const int GA = 0;
             public const int SOLVER = 1;
         }
+
+        public static class CONFIG_ATTR
+        {
+            public const string GADOMAINS = "Environment:AlgorithmServiceGADomains";
+            public const string SOLVERDOMAINS = "Environment:SolverServiceDomains";
+        }
     }
 }

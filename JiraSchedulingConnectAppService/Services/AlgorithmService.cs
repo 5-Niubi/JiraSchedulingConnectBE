@@ -121,9 +121,9 @@ namespace JiraSchedulingConnectAppService.Services
             switch (parameter.Optimizer)
             {
                 case Const.OPTIMIZER.GA:
-                    return "Environment:AlgorithmServiceDomains";
+                    return Const.CONFIG_ATTR.GADOMAINS;
                 case Const.OPTIMIZER.SOLVER:
-                    return "Environment:SolverServiceDomains";
+                    return Const.CONFIG_ATTR.SOLVERDOMAINS;
                 default:
                     return "";
             }
@@ -232,7 +232,7 @@ namespace JiraSchedulingConnectAppService.Services
             await _ValidateDAG(TaskList);
 
             // Need to provide config url 
-            apiMicro.SetDomain("Environment:AlgorithmServiceDomains");
+            apiMicro.SetDomain(Const.CONFIG_ATTR.GADOMAINS);
             var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforce?projectId={projectId}");
             dynamic responseContent;
 
@@ -322,7 +322,7 @@ namespace JiraSchedulingConnectAppService.Services
             }
 
             return true;
-
+             
         }
 
         public async Task<EstimatedResultDTO> GetEstimateOverallWorkforce(int projectId)
@@ -337,7 +337,7 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new NotFoundException($"Can not find project :{projectId}");
 
                 // Need to provide config url 
-                apiMicro.SetDomain("Environment:AlgorithmServiceDomains");
+                apiMicro.SetDomain(Const.CONFIG_ATTR.GADOMAINS);
                 var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforceOverall?projectId={projectId}");
                 dynamic responseContent;
 
