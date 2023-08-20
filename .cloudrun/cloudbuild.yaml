@@ -13,7 +13,7 @@ steps:
         apt-get update 
         apt-get install -y jq 
         echo "COPY CONNECTIONSTRING TO APPSETTINGS.JSON" 
-        echo "$(jq '.ConnectionStrings.DB = "Server=${_SQL_DATABASE_HOST};Database=${_SQL_DATABASE_NAME};UserId=${_SQL_DATABASE_USERNAME};Password=${_SQL_DATABASE_PASSWORD};TrustServerCertificate=True"' SharedSettings/appsettings.Production.json)" > SharedSettings/appsettings.Production.json
+        echo "$(jq '.ConnectionStrings.DB = "Server=${_SQL_DATABASE_HOST};Database=${_SQL_DATABASE_NAME};User Id=${_SQL_DATABASE_USERNAME};Password=${_SQL_DATABASE_PASSWORD};TrustServerCertificate=True"' SharedSettings/appsettings.Production.json)" > SharedSettings/appsettings.Production.json
         cat SharedSettings/appsettings.Production.json
     entrypoint: bash
 
