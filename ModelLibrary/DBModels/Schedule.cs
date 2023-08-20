@@ -8,7 +8,7 @@ namespace ModelLibrary.DBModels
         public int Id { get; set; }
         public int? ParameterId { get; set; }
         public int? Duration { get; set; }
-        public int? Cost { get; set; }
+        public long? Cost { get; set; }
         public int? Quality { get; set; }
         public string? Tasks { get; set; }
         public int? Selected { get; set; }

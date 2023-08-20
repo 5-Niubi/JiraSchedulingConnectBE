@@ -13,7 +13,7 @@ namespace ModelLibrary.DTOs.Algorithm
         {
             get; set;
         }
-        public int? cost
+        public long? cost
         {
             get; set;
         }

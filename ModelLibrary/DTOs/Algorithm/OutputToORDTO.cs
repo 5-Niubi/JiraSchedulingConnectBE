@@ -6,7 +6,7 @@
         {
             get; set;
         }
-        public int Budget
+        public long? Budget
         {
             get; set;
         }
@@ -56,7 +56,7 @@
         {
             get; set;
         }
-        public int[] WorkerSalary
+        public long[] WorkerSalary
         {
             get; set;
         }

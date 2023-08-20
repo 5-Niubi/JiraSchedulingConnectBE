@@ -4,7 +4,7 @@ namespace ModelLibrary.DTOs.Algorithm
 {
     public class OutputFromORDTO
     {
-        public int totalSalary
+        public long totalSalary
         {
             get; set;
         } // Tong chi phi toi uu

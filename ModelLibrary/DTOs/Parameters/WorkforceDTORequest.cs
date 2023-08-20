@@ -28,7 +28,7 @@ namespace ModelLibrary.DTOs.Parameters
         {
             get; set;
         }
-        public double? UnitSalary
+        public long? UnitSalary
         {
             get; set;
         }

@@ -75,6 +75,7 @@ namespace ModelLibrary.DBModels
             modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
             modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
             modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
+
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");

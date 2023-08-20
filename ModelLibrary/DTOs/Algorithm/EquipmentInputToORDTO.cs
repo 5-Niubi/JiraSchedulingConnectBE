@@ -10,7 +10,7 @@
         {
             get; set;
         }
-        public int UnitPrice
+        public long UnitPrice
         {
             get; set;
         }
