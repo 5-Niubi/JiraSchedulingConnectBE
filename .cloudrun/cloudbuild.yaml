@@ -1,0 +1,36 @@
+steps:
+  # Step 1: Run a command in an Ubuntu environment
+  - name: ubuntu
+    args:
+      - echo
+      - hello world
+
+  # Step 2: Install jq and update appsettings.json
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - '-c'
+      - |
+        apt-get update 
+        apt-get install -y jq 
+        echo "COPY CONNECTIONSTRING TO APPSETTINGS.JSON" 
+        echo "$(jq '.ConnectionStrings.DB = "Server=${_SQL_DATABASE_HOST};Database=${_SQL_DATABASE_NAME};UserId=${_SQL_DATABASE_USERNAME};Password=${_SQL_DATABASE_PASSWORD};TrustServerCertificate=True"' SharedSettings/appsettings.Production.json)" > SharedSettings/appsettings.Production.json
+        cat SharedSettings/appsettings.Production.json
+    entrypoint: bash
+
+  # Step 3: Build the Docker image
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - '-t'
+      - >-
+        asia-southeast1-docker.pkg.dev/${PROJECT_ID}/algorithm-service-repo/algorithmservice:${SHORT_SHA}
+      - '-f'
+      - AlgorithmService/Dockerfile
+      - .
+
+  # Step 4: Push the Docker image with a version tag
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - >-
+        asia-southeast1-docker.pkg.dev/${PROJECT_ID}/algorithm-service-repo/algorithmservice:${SHORT_SHA}
