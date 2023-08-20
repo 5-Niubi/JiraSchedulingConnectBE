@@ -3,9 +3,9 @@
 {
     public class Data
     {
-        public int Budget;
+        public long? Budget;
         public int Deadline;
-        public int MaxSalary;
+        public long MaxSalary;
         public int MaxDeadline;
         public int MaxExper;
         public int NumOfWorkers;
@@ -13,14 +13,14 @@
         public int NumOfSkills;
         public int[] TaskDuration = new int[505];
         public int[,] TaskAdjacency = new int[505, 505];
-        public int[] WorkerSalary = new int[505];
+        public long[] WorkerSalary = new long[505];
         public double[,] TaskSimilarity = new double[505, 505];
         public int[,] TaskExperByWorker = new int[505, 505];
         public double weight1, weight2, weight3;
         public double[,] WorkerEffort = new double[505, 10005];
         public List<List<int>> SuitableWorkers = new();
 
-        public Data(int numOfTasks, int numOfSkills, int numOfWorkers, int[] TaskDuration, int[,] TaskAdjacency, int[] WorkerSalary, double[,] TaskSimilarity, double[,] WorkerEffort, int Budget, int Deadline, List<List<int>> SuitableWorkers, int[,] TaskExperByWorker)
+        public Data(int numOfTasks, int numOfSkills, int numOfWorkers, int[] TaskDuration, int[,] TaskAdjacency, long[] WorkerSalary, double[,] TaskSimilarity, double[,] WorkerEffort, long? Budget, int Deadline, List<List<int>> SuitableWorkers, int[,] TaskExperByWorker)
         {
             NumOfTasks = numOfTasks;
             NumOfSkills = numOfSkills;

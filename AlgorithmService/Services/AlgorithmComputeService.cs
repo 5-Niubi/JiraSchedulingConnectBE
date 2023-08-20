@@ -53,7 +53,7 @@ namespace AlgorithmServiceServer.Services
                 (parameterEntity.StartDate, parameterEntity.Deadline);
             inputTo.Deadline = (deadline == 0) ? 1 : deadline;
 
-            inputTo.Budget = (int)parameterEntity.Budget;
+            inputTo.Budget = parameterEntity.Budget;
             inputTo.WorkerList = workerFromDB;
 
             inputTo.TaskList = taskFromDB.ToList();
@@ -145,11 +145,11 @@ namespace AlgorithmServiceServer.Services
             return scheduleSolution.Entity;
         }
 
-        private int CalculateTotalSalary(Project project, OutputFromORDTO algOutConverted)
+        private long CalculateTotalSalary(Project project, OutputFromORDTO algOutConverted)
         {
             var baseWorkingHour = project.BaseWorkingHour;
 
-            var workerSalaryDict = new Dictionary<WorkforceScheduleResultDTO, int>();
+            var workerSalaryDict = new Dictionary<WorkforceScheduleResultDTO, long>();
             var tasks = algOutConverted.tasks;
 
             // Filter all worker from tasks
@@ -164,7 +164,7 @@ namespace AlgorithmServiceServer.Services
             foreach (var wKey in workerSalaryDict.Keys)
             {
                 var totalDurationOfWker = tasks.Where(t => t.workforce.id == wKey.id).Sum(t => t.duration);
-                var totalCostOfWker = totalDurationOfWker * (int)baseWorkingHour * (int)wKey.unitSalary;
+                var totalCostOfWker = totalDurationOfWker * (int)baseWorkingHour * wKey.unitSalary;
                 workerSalaryDict[wKey] = totalCostOfWker ?? 0;
             }
 

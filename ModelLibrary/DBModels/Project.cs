@@ -17,7 +17,7 @@ namespace ModelLibrary.DBModels
         public string? Name { get; set; }
         public string? AccountId { get; set; }
         public DateTime? StartDate { get; set; }
-        public double? Budget { get; set; }
+        public long? Budget { get; set; }
         public string? BudgetUnit { get; set; }
         public DateTime? Deadline { get; set; }
         public double? ObjectiveTime { get; set; }

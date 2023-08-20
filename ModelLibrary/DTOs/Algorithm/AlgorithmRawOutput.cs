@@ -2,7 +2,7 @@
 {
     public class AlgorithmRawOutput
     {
-        public int TotalSalary
+        public long TotalSalary
         {
             get; set;
         } // Tong chi phi toi uu

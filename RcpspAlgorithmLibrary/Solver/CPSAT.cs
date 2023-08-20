@@ -72,7 +72,7 @@ namespace AlgorithmLibrary.Solver
             var atw = new List<BoolVar>();
             var pte = model.NewIntVar(0, data.NumOfSkills * data.NumOfTasks * 5, "pte");
             var pteList = new List<IntVar>();
-            var pts = model.NewIntVar(0, data.Budget * 10, "pts");
+            var pts = model.NewIntVar(0, data.Budget?? 0 * 10, "pts");
             var ptsList = new List<IntVar>();
             var pft = model.NewIntVar(0, data.Deadline, "pft");
 
@@ -179,7 +179,7 @@ namespace AlgorithmLibrary.Solver
                     pteList.Add(tmpExp);
 
                     /// Total hiring price
-                    var tmpSal = model.NewIntVarFromDomain(new Domain(0, data.Budget * 10), $"tmpSal[{j}][{i}]");
+                    var tmpSal = model.NewIntVarFromDomain(new Domain(0, data.Budget?? 0 * 10), $"tmpSal[{j}][{i}]");
                     model.Add(tmpSal == A[(i, j)] * taskEfforts[i] * data.WorkerSalary[j]);
                     ptsList.Add(tmpSal);
                 }

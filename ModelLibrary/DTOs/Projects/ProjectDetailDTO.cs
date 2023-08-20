@@ -27,7 +27,7 @@
             get; set;
         }
 
-        public double? Budget
+        public long? Budget
         {
             get; set;
         }
