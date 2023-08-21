@@ -1,4 +1,5 @@
 ﻿using AlgorithmTestProject;
 
-ORRunner.Run();
+//ORRunner.Run();
+GARunner.Run();
 
