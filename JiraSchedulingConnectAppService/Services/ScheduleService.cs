@@ -64,8 +64,6 @@ namespace JiraSchedulingConnectAppService.Services
         public async Task<PagingResponseDTO<SchedulesListResDTO>> GetSchedules(int parameterId, int? page)
         {
             var query = db.Schedules.Where(s => s.ParameterId == parameterId && s.IsDelete == false);
-
-
             int totalPage = 0, totalRecord = 0;
             if (page != null)
             {
