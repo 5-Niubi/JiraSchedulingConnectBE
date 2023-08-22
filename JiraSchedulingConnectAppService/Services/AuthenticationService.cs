@@ -121,8 +121,8 @@ namespace JiraSchedulingConnectAppService.Services
             var exchangeTokenDTO = new ExchangeAccessTokenDTO
             {
                 grant_type = "authorization_code",
-                client_id = "wDzzxAZSrrM9DtPwZ295BMT3YoFR6KeD",
-                client_secret = "ATOAtGENwZ61eAzU1RL-zw2t1e66ITe2XsF-Nj_-SNYuhQZuyDVeA82EytqZf5xUQebU1B2E2744",
+                client_id = config["ConnectAppKey:CliendId"],
+                client_secret = config["ConnectAppKey:ClientSecret"],
                 code = code,
                 redirect_uri = $"{domain}/Authentication/Callback",
             };
@@ -144,8 +144,8 @@ namespace JiraSchedulingConnectAppService.Services
             var exchangeTokenDTO = new RequestExchangeAccessAndRefeshTokenDTO
             {
                 grant_type = "refresh_token",
-                client_id = "wDzzxAZSrrM9DtPwZ295BMT3YoFR6KeD",
-                client_secret = "ATOAtGENwZ61eAzU1RL-zw2t1e66ITe2XsF-Nj_-SNYuhQZuyDVeA82EytqZf5xUQebU1B2E2744",
+                client_id = config["ConnectAppKey:CliendId"],
+                client_secret = config["ConnectAppKey:ClientSecret"],
                 refresh_token = refreshToken,
             };
             var jsonExchangeDTO = JsonSerializer.Serialize(exchangeTokenDTO);
