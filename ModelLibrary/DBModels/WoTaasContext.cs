@@ -52,7 +52,6 @@ namespace ModelLibrary.DBModels
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
             modelBuilder.Entity<AccountRole>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
             modelBuilder.Entity<AdminAccount>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
             modelBuilder.Entity<AtlassianToken>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
@@ -75,7 +74,6 @@ namespace ModelLibrary.DBModels
             modelBuilder.Entity<TasksSkillsRequired>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
             modelBuilder.Entity<Workforce>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
             modelBuilder.Entity<WorkforceSkill>().HasQueryFilter(e => e.IsDelete == Const.DELETE_STATE.NOT_DELETE);
-
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.ToTable("account_roles");

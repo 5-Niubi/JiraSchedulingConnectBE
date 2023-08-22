@@ -15,6 +15,7 @@ namespace AlgorithmLibrary.Solver
         public static bool LOG_TO_CONSOLE = true;
         public static bool ALL_SOLS = false;
         public static double TIME_LIMIT = 1800;
+        public static string SUB_SOLVER = "no_lp";
         public static int LINEARIZATION_LEVEL = 0;
     }
 }

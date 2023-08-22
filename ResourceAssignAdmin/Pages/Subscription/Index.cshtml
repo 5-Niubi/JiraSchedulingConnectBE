@@ -9,7 +9,7 @@
 
 <div class="row">
     <p class="col-2">
-        <a asp-page="Create">Create New</a>
+        <a asp-page="Create" class="btn btn-primary">Create New</a>
     </p>
 </div>
 <div class="row">
@@ -50,7 +50,7 @@
         </div>
     </div>
     <div class="col-2">
-        <button class="btn btn-light" id="searchBtn">Search</button>
+        <button class="btn btn-outline-secondary" id="searchBtn">Search</button>
     </div>
 </div>
 
@@ -102,7 +102,7 @@
                 </td>            
                 <td>
                     @if (item.CancelAt == null) {
-                        <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a>
+                        <a asp-page="./Edit" class="btn btn-light" asp-route-id="@item.Id">Edit</a>
                     }
                     @*| <a asp-page="./Details" asp-route-id="@item.Id">Details</a>*@             
                 </td>

@@ -21,20 +21,11 @@ namespace AlgorithmServiceServer.Services
             http = httpAccessor.HttpContext;
         }
 
-
-
         public void PrepareDataFromDB(int projectId)
         {
-
-
             var taskFromDB = db.Tasks.Where(t => t.ProjectId == projectId)
                 .Include(t => t.TaskPrecedenceTasks).Include(t => t.TasksSkillsRequireds);
-
-
             int taskSize = taskFromDB.Count();
-
-
-
             foreach (var task in taskFromDB)
             {
                 var duration = task.Duration;
@@ -45,11 +36,8 @@ namespace AlgorithmServiceServer.Services
             }
         }
 
-
-
         public async Task<EstimatedResultDTO> Execute(int projectId)
         {
-
             var cloudId = new JWTManagerService(http).GetCurrentCloudId();
 
             var projectFromDB = await db.Projects
@@ -113,8 +101,6 @@ namespace AlgorithmServiceServer.Services
 
         public async Task<EstimatedResultDTO> ExecuteOverall(int projectId)
         {
-
-
             var WorkforceOutputList = new List<WorkforceOutputFromEsDTO>();
 
             var cloudId = new JWTManagerService(http).GetCurrentCloudId();
@@ -138,7 +124,6 @@ namespace AlgorithmServiceServer.Services
             if (taskFromDB.Count == 0)
             {
                 throw new NotSuitableInputException(EmptyTaskInProjectMessage);
-
             }
 
             var inputToEstimator = new InputToEstimatorDTO();
@@ -148,7 +133,6 @@ namespace AlgorithmServiceServer.Services
             // convert from input data (db) -> input estimator's
             var converter = new EstimatorConverter(inputToEstimator);
             var outputToEstimator = converter.ToEs();
-
 
             var TaskDuration = outputToEstimator.TaskDuration;
             var TaskExper = outputToEstimator.TaskExper;
@@ -167,8 +151,6 @@ namespace AlgorithmServiceServer.Services
             {
                 List<int[]> result = Results[milestoneId];
                 overallResults.AddRange(result);
-
-
             }
 
             // Post processing
@@ -180,7 +162,6 @@ namespace AlgorithmServiceServer.Services
             estimatedResultDTO.WorkforceWithMilestoneList = newList;
 
             return estimatedResultDTO;
-
 
         }
     }
