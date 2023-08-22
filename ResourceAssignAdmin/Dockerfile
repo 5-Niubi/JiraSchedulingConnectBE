@@ -8,6 +8,10 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["ResourceAssignAdmin/ResourceAssignAdmin.csproj", "ResourceAssignAdmin/"]
 RUN dotnet restore "ResourceAssignAdmin/ResourceAssignAdmin.csproj"
+
+COPY . .
+COPY ["SharedSettings/", "ResourceAssignAdmin/"]
+
 COPY . .
 WORKDIR "/src/ResourceAssignAdmin"
 RUN dotnet build "ResourceAssignAdmin.csproj" -c Release -o /app/build
