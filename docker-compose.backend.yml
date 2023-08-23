@@ -1,0 +1,29 @@
+version: '3.4'
+
+services:
+  jiraschedulingconnectappservice:
+    image: pham2604/5niubi_backend:${IMAGE_TAG}
+  
+    ports:
+      - "5126:80"
+      - "8443:80"
+      - "80:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+
+    networks:
+      - internal-network
+
+  gateway_service:
+    image: pham2604/gateway_service:${IMAGE_TAG}
+    ports:
+      - 443:443
+      - 1234:80   
+    command: /bin/sh -c "nginx -g 'daemon off;'"     
+
+networks:
+  internal-network:
+    driver: bridge
+
+
+    
