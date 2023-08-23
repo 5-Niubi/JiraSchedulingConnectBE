@@ -1,4 +1,4 @@
-name: Deployment Pipeline
+name: CI/CD Default Workflow 
 on:
   push:
     branches: 
