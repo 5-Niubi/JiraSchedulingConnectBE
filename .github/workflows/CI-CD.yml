@@ -129,7 +129,7 @@ jobs:
       url: http://dev-backend.ai4cert.com
     steps:
       - name: Show variables
-      - run: echo "ASPNETCORE_ENVIRONMENT" + $ASPNETCORE_ENVIRONMENT
+        run: echo "ASPNETCORE_ENVIRONMENT" + $ASPNETCORE_ENVIRONMENT
       # - name: Setup SSH To Connect Server
       #   run: |
       #     install -m 600 -D /dev/null ~/.ssh/id_rsa
