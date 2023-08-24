@@ -7,7 +7,8 @@ namespace UtilsLibrary
     {
         public static string GetSelfDomain(HttpContext http)
         {
-            return $"{http.Request.Scheme}://{http.Request.Host.Value}";
+            //return $"{http.Request.Scheme}://{http.Request.Host.Value}";
+            return $"https://{http.Request.Host.Value}";
         }
 
         //Hàm dùng để convert chữ tiếng việt có dấu thành chữ tiếng việt không dấu.
