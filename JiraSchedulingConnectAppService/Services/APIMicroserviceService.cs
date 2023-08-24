@@ -21,18 +21,24 @@ namespace JiraSchedulingConnectAppService.Services
             http = httpAccessor.HttpContext;
             client = new HttpClient();
             client.Timeout = Timeout.InfiniteTimeSpan;
+            SetBearer();
 
+            this.config = config;
+        }
+
+        private void SetBearer()
+        {
             var bearer = http.Request.Headers["Authorization"];
             bearer = bearer.IsNullOrEmpty() ? "Bearer " : bearer;
             Regex pattern = new(@"Bearer (?<token>[\w.]+)");
             Match match = pattern.Match(bearer);
             string token = match.Groups["token"].Value;
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            this.config = config;
         }
 
         public void SetDomain(string configObject)
         {
+            //SetBearer();
             // Set avaiable algorithmServer
             var baseUrlList = config.GetSection(configObject).Get<string[]>();
             baseUrl = baseUrlList[0];
