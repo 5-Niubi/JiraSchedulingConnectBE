@@ -16,6 +16,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       
+      
       - name: Set appsettings.json Variable Substitution
         uses: microsoft/variable-substitution@v1
         with:
@@ -119,7 +120,7 @@ jobs:
 
   deploy-to-staging:
     name:  Staging | Deploy Backend Service
-    if: github.event.ref == 'ref/heads/main'
+    if: github.event.ref == 'refs/heads/main'
     needs: [
       build-backend-service, 
       build-admin-service,
@@ -159,7 +160,7 @@ jobs:
 
   deploy-to-production:
     name:  Production | Deploy Backend Service
-    if: github.event.ref == 'ref/heads/main'
+    if: github.event.ref == 'refs/heads/main'
     needs: [
       deploy-to-staging
       ]
