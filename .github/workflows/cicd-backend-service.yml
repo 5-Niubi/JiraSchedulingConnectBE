@@ -1,0 +1,196 @@
+name: CICD Services Workflow
+on:
+  push:
+    branches: [ "main", "debug_cicd"]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-backend-service:
+    name: Build API Backend Service
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Set appsettings.json Variable Substitution
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: 'SharedSettings/appsettings.json'
+        env:
+          BraintreeGateway.MerchantId: ${{ secrets.BRAINTREE_GATEWAY_MERCHANTID }}
+          BraintreeGateway.PublicKey: ${{ secrets.BRAINTREE_GATEWAY_PUBLICKEY }}
+          BraintreeGateway.PrivateKey: ${{ secrets.BRAINTREE_GATEWAY_PRIVATEKEY }}
+          Environment.Appname: ${{ secrets.ENVIRONMENT_APP_NAME }}
+          Environment.SelfDomain: ${{ secrets.ENVIRONMENT_SELF_DOMAIN }}
+          Environment.AlgorithmServiceGADomains: ${{ secrets.ENVIRONMENT_ALGORITHM_SERVICE_GA_DOMAINS }}
+          Environment.SolverServiceDomains: ${{ secrets.ENVIRONMENT_SOLVER_SERVICE_DOMAINS }}
+          ConnectAppKey.CliendId: ${{ secrets.CONNECT_APP_KEY_CLIEND_ID }}
+          ConnectAppKey.ClientSecret: ${{ secrets.CONNECT_APP_KEY_CLIENT_SECRET }}
+          ConnectionStrings.DB: ${{ secrets.SQL_CONNECTION_STRING }}
+          Jwt.Key: ${{ secrets.JWT_KEY }}
+    
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: "JiraSchedulingConnectAppService/Dockerfile"
+          push: true
+          tags: ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:${{ github.sha }}, ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:dev-latest
+          
+          labels: ${{ steps.meta.outputs.labels }}
+  
+
+  build-admin-service:
+    name: Build Admin service
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Set appsettings.json Variable Substitution
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: 'SharedSettings/appsettings.json'
+        env:
+          Environment.Appname: ${{ secrets.ENVIRONMENT_APP_NAME }}
+          ConnectionStrings.DB: ${{ secrets.SQL_CONNECTION_STRING }}
+          Jwt.Key: ${{ secrets.JWT_KEY }}
+
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: "ResourceAssignAdmin/Dockerfile"
+          push: true
+          tags: ${{ vars.REGISTRY }}/${{ vars.ADMIN_WEBAPP_IMAGE }}:${{ github.sha }} ,  ${{ vars.REGISTRY }}/${{ vars.ADMIN_WEBAPP_IMAGE }}:dev-latest
+          labels: ${{ steps.meta.outputs.labels }}
+
+
+  build-gateway-service:
+    name: Build Gateway service
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Extract metadata for the Docker image
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ vars.REGISTRY }}/gateway_service
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: GatewayAppService/.
+          file: "GatewayAppService/Dockerfile"
+          push: true
+          tags: ${{ vars.REGISTRY }}/gateway_service:${{ github.sha }},  ${{ vars.REGISTRY }}/gateway_service:dev-latest
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy-to-staging:
+    name:  Staging | Deploy Backend Service
+    if: github.event.ref == 'ref/heads/main'
+    needs: [
+      build-backend-service, 
+      build-admin-service,
+      build-gateway-service
+      ]
+    runs-on: ubuntu-latest
+
+    environment:
+      name: Staging
+      url:  https://staging-be.ai4cert.com
+    steps:
+      - name: Setup SSH To Connect Server
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+      
+      - name: Connect & Pull & Deploy
+        run: |
+         
+          branch_name=$(echo "${GITHUB_REF#refs/heads/}")
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "if [ ! -d BE_REPO ]; then
+              git clone https://github.com/5-Niubi/JiraSchedulingConnectBE.git BE_REPO
+            fi \
+          && cd BE_REPO \
+          && git checkout $branch_name && git pull \
+          && BACKEND_REPOSITORY="pham2604/5niubi_backend" \
+          GATEWAY_REPOSITORY="pham2604/gateway_service" \
+          ADMIN_REPOSITORY="pham2604/admin_webapp" \
+          ASPNETCORE_ENVIRONMENT=${{ vars.ASPNETCORE_ENVIRONMENT }} \
+          VERSION=${{ github.sha }} \
+          docker compose -f docker-compose.backend.yml up -d \
+          && sudo docker image prune -a --force && exit"
+      
+      - name: cleanup
+        run: rm -rf ~/.ssh
+
+  deploy-to-production:
+    name:  Production | Deploy Backend Service
+    if: github.event.ref == 'ref/heads/main'
+    needs: [
+      deploy-to-staging
+      ]
+
+    runs-on: ubuntu-latest
+    environment:
+      name: Production
+      url: https://production-be.ai4cert.com
+    steps:
+      
+      - name: Setup SSH To Connect Server
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+      
+      - name: Connect & Pull & Deploy
+        run: |
+          branch_name=$(echo "${GITHUB_REF#refs/heads/}")
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "if [ ! -d BE_REPO ]; then
+              git clone https://github.com/5-Niubi/JiraSchedulingConnectBE.git BE_REPO
+            fi \
+          && cd BE_REPO \
+          && git checkout $branch_name && git pull \
+          && sudo BACKEND_REPOSITORY="pham2604/5niubi_backend" \
+          GATEWAY_REPOSITORY="pham2604/gateway_service" \
+          ADMIN_REPOSITORY="pham2604/admin_webapp" \
+          ASPNETCORE_ENVIRONMENT=${{ vars.ASPNETCORE_ENVIRONMENT }} \
+          VERSION=${{ github.sha }} \
+          docker-compose -f docker-compose.backend.yml up -d \
+          && sudo docker image prune -a --force && exit"
+      
+      - name: cleanup
+        run: rm -rf ~/.ssh

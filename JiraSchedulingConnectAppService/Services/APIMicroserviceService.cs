@@ -34,8 +34,7 @@ namespace JiraSchedulingConnectAppService.Services
         public void SetDomain(string configObject)
         {
             // Set avaiable algorithmServer
-            var baseUrlList = config.GetSection(configObject).Get<string[]>();
-            baseUrl = baseUrlList[0];
+            var baseUrl = config.GetSection(configObject).Get<string>();
             client.BaseAddress = new Uri(baseUrl);
         }
 

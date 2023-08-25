@@ -1,0 +1,33 @@
+version: '3.4'
+services:
+  backend_service:
+    image: ${BACKEND_REPOSITORY}:${VERSION}
+    ports:
+      - "5126:80"
+      - "8443:80"
+      - "80:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+
+    networks:
+      - internal-network
+
+  admin_service:
+    image: ${ADMIN_REPOSITORY}:${VERSION}
+    ports:
+      - "8080:80"
+      - "2096:80"
+
+  gateway_service:
+    image: ${GATEWAY_REPOSITORY}:${VERSION}
+    ports:
+      - 443:443
+      - 1234:80 
+    command: /bin/sh -c "nginx -g 'daemon off;'"     
+
+networks:
+  internal-network:
+    driver: bridge
+
+
+    
