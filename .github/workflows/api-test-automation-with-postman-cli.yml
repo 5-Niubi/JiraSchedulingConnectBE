@@ -1,4 +1,4 @@
-name: CICD Services Workflow
+name: Automated API tests using Postman CLI
 on:
   push:
     branches: [ "main", "debug_test_automation"]
@@ -6,25 +6,15 @@ on:
     branches: [ "main" ]
 
 jobs:
-  run-api-tests:
+  automated-api-tests:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Install Postman CLI
         run: |
           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-          echo "🤖 Verifying Postman CLI install.."
-
-      - name: Verify Postman CLI install
+      - name: Login to Postman CLI
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+      - name: Run API tests
         run: |
-          postman -v
-          echo "💯 Postman CLI installed."
-
-      - name: Postman CLI Login
-        run: |
-          postman login --with-api-key PMAK-64e8eaa1727ce94e18d960b7-93fa643b92da360fbc42a78548aea72dfe
-
-      - name: Run Test Collections
-        run: |
-          postman collection run 22303980-e10b19fb-a5b1-4d57-83b2-e5ea2392ad6f -e 28333090-75f0a011-7892-466d-999f-845a79cc9cc9 -i 22303980-747e1e43-f90c-4510-b48a-bf6ff0e1fee9
-
-
+          postman collection run "22303980-e10b19fb-a5b1-4d57-83b2-e5ea2392ad6f" -e "28333090-bf419cae-814d-4918-9b8a-8c73ee15f2fc"
