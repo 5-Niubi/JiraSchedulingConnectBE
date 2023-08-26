@@ -293,7 +293,9 @@ jobs:
     name: API Algorithm Service Testing
     runs-on: ubuntu-latest
     needs: [
-      deploy-common-algo-service
+      deploy-common-algo-service,
+      deploy-ortool-algo-service,
+
       ]
     steps:
       - uses: actions/checkout@v3
