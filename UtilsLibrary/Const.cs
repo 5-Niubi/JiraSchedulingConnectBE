@@ -94,5 +94,10 @@
             public const string GADOMAINS = "Environment:AlgorithmServiceGADomains";
             public const string SOLVERDOMAINS = "Environment:SolverServiceDomains";
         }
+
+        public static class SCHEDULE
+        {
+            public const string DEFAULT_TITLE = "";
+        }
     }
 }

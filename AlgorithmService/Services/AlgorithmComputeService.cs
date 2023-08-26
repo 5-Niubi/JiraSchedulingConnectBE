@@ -140,7 +140,7 @@ namespace AlgorithmServiceServer.Services
             schedule.Cost = algOutConverted.totalSalary;
             schedule.Quality = algOutConverted.totalExper;
             schedule.Tasks = JsonSerializer.Serialize(algOutConverted.tasks);
-
+            schedule.Title = Const.SCHEDULE.DEFAULT_TITLE;
             var scheduleSolution = await db.Schedules.AddAsync(schedule);
             return scheduleSolution.Entity;
         }
