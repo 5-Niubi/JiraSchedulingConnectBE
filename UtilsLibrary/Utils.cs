@@ -1,10 +1,21 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Dynamic;
+using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
 
 namespace UtilsLibrary
 {
     public class Utils
     {
+        public static string ExtractBearerFromContext(HttpContext httpContext)
+        {
+            var bearer = httpContext.Request.Headers["Authorization"].FirstOrDefault();
+            bearer = bearer == null? "Bearer " : bearer;
+            Regex pattern = new(@"Bearer (?<token>[\w.]+)");
+            Match match = pattern.Match(bearer);
+            string token = match.Groups["token"].Value;
+            return token;
+        }
         public static string GetSelfDomain(HttpContext http)
         {
             //return $"{http.Request.Scheme}://{http.Request.Host.Value}";

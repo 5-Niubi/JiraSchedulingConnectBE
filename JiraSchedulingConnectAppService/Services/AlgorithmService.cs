@@ -149,19 +149,17 @@ namespace JiraSchedulingConnectAppService.Services
             return dailyUsage;
         }
 
-
-
         public ThreadStartDTO ExecuteAlgorithm(int parameterId)
         {
-
+            string? bearer = Utils.ExtractBearerFromContext(httpContext);
             string threadId = ThreadService.CreateThreadId();
             threadId = threadService.StartThread(threadId,
-                async () => await ProcessTestConverterThread(threadId, parameterId));
+                async () => await ProcessTestConverterThread(threadId, parameterId, bearer));
 
             return new ThreadStartDTO(threadId);
         }
 
-        private async System.Threading.Tasks.Task ProcessTestConverterThread(string threadId, int parameterId)
+        private async System.Threading.Tasks.Task ProcessTestConverterThread(string threadId, int parameterId, string? bearer)
         {
             try
             {
@@ -169,7 +167,7 @@ namespace JiraSchedulingConnectAppService.Services
                 try
                 {
                     var configObject = await GetDomainAlgorithmConfigString(parameterId);
-                    apiMicro.SetDomain(configObject);
+                    apiMicro.SetDomain(configObject, bearer);
                     var response = await apiMicro
                       .Get($"/api/Algorithm/ExecuteAlgorithm?parameterId={parameterId}");
                     dynamic responseContent;
@@ -232,7 +230,7 @@ namespace JiraSchedulingConnectAppService.Services
             await _ValidateDAG(TaskList);
 
             // Need to provide config url 
-            apiMicro.SetDomain(Const.CONFIG_ATTR.GADOMAINS);
+            apiMicro.SetDomain(Const.CONFIG_ATTR.GADOMAINS, null);
             var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforce?projectId={projectId}");
             dynamic responseContent;
 
@@ -337,7 +335,7 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new NotFoundException($"Can not find project :{projectId}");
 
                 // Need to provide config url 
-                apiMicro.SetDomain(Const.CONFIG_ATTR.GADOMAINS);
+                apiMicro.SetDomain(Const.CONFIG_ATTR.GADOMAINS, null);
                 var response = await apiMicro.Get($"/api/WorkforceEstimator/GetEstimateWorkforceOverall?projectId={projectId}");
                 dynamic responseContent;
 
