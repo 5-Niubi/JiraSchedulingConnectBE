@@ -10,9 +10,9 @@ WORKDIR /src
 COPY ["JiraSchedulingConnectAppService/JiraSchedulingConnectAppService.csproj", "JiraSchedulingConnectAppService/"]
 COPY ["RcpspAlgorithmLibrary/AlgorithmLibrary.csproj", "RcpspAlgorithmLibrary/"]
 RUN dotnet restore "JiraSchedulingConnectAppService/JiraSchedulingConnectAppService.csproj"
-COPY . .
 
-COPY ["SharedSettings", "JiraSchedulingConnectAppService/"]
+COPY . .
+# COPY ["SharedSettings", "JiraSchedulingConnectAppService/"]
 
 WORKDIR "/src/JiraSchedulingConnectAppService"
 RUN dotnet build "JiraSchedulingConnectAppService.csproj" -c Release -o /app/build
