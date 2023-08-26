@@ -1,7 +1,7 @@
 name: CICD Services Workflow
 on:
   push:
-    branches: [ "main", "debug_cicd",  "debug_test_automation", "debug_cicd_algorithm"]
+    branches: [ "main", "debug_cicd_config",  "debug_test_automation", "debug_cicd_algorithm"]
   pull_request:
     branches: [ "main" ]
 
@@ -82,17 +82,17 @@ jobs:
           username: _json_key
           password: ${{ secrets.GOOGLE_CREDENTIALS }}
       
-    - name: Build and push
-        uses: docker/build-push-action@v4
-        env:
-          CLOUD_ARTIFACT_REPO: "wotaas"
-          IMAGE_VERSION: dev-latest
-        with:
-          context: .
-          file: "ResourceAssignAdmin/Dockerfile"
-          push: true
-          tags:  ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ vars.ADMIN_WEBAPP_IMAGE }}:${{ github.sha }}, ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ vars.ADMIN_WEBAPP_IMAGE }}:${{env.IMAGE_VERSION}}
-          labels: ${{ steps.meta.outputs.labels }}
+      - name: Build and push
+          uses: docker/build-push-action@v4
+          env:
+            CLOUD_ARTIFACT_REPO: "wotaas"
+            IMAGE_VERSION: dev-latest
+          with:
+            context: .
+            file: "ResourceAssignAdmin/Dockerfile"
+            push: true
+            tags:  ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ vars.ADMIN_WEBAPP_IMAGE }}:${{ github.sha }}, ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ vars.ADMIN_WEBAPP_IMAGE }}:${{env.IMAGE_VERSION}}
+            labels: ${{ steps.meta.outputs.labels }}
 
       # - name: Build and push
       #   uses: docker/build-push-action@v4
