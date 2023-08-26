@@ -70,7 +70,7 @@ namespace JiraSchedulingConnectAppService.Services
                 var exitedskill = await db.Skills.FirstOrDefaultAsync(s => s.Id == skill.Id && s.CloudId == cloudId && s.IsDelete == false);
 
                 // Validate exited skill
-                if (skill == null)
+                if (exitedskill == null)
                 {
                     throw new Exception(NotFoundMessage);
                 }
