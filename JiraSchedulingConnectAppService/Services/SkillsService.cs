@@ -91,9 +91,6 @@ namespace JiraSchedulingConnectAppService.Services
                 // Update
                 db.Update(exitedskill);
                 await db.SaveChangesAsync();
-
-
-
                 return skillDTO;
 
             }
