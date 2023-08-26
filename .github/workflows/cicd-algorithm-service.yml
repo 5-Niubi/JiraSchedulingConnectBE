@@ -33,6 +33,8 @@ jobs:
         tags:  ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ vars.ALGO_SERVICE_IMAGE }}:${{ github.sha }}, ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ vars.ALGO_SERVICE_IMAGE }}:${{env.IMAGE_VERSION}}
         labels: ${{ steps.meta.outputs.labels }}
 
+  
+
   deploy-algo-service:
     name: Deploy Algorithm serivce to Cloud run
     runs-on: ubuntu-latest
