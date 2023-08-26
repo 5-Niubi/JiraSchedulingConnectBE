@@ -78,7 +78,7 @@ namespace JiraSchedulingConnectAppService.Services
                 var skillName = await db.Skills.FirstOrDefaultAsync(
                     s => s.Name.ToLower() == skill.Name.Trim().ToLower()
                     && s.CloudId == cloudId
-                    && s.Id == exitedskill.Id
+                    && s.Id != exitedskill.Id
                     && s.IsDelete == false);
 
                 if(skillName != null)
@@ -91,9 +91,6 @@ namespace JiraSchedulingConnectAppService.Services
                 // Update
                 db.Update(exitedskill);
                 await db.SaveChangesAsync();
-
-
-
                 return skillDTO;
 
             }
