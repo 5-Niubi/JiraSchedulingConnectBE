@@ -32,7 +32,7 @@ namespace AlgorithmLibrary.Solver
             var V = new Dictionary<(int, int), BoolVar>();
 
             /// Pre-configuration
-            var maxTime = (data.NumOfTasks > 100) ? 1200 : 600;
+            var maxTime = (data.NumOfTasks >= 100) ? 1000 : 600;
             var model = new CpModel();
             var solver = new CpSolver
             {
@@ -44,7 +44,6 @@ namespace AlgorithmLibrary.Solver
                 + $"max_time_in_seconds:{maxTime};"
                 + $"subsolvers:\"no_lp\";"
                 + $"linearization_level:0;"
-                + $"random_seed:{29}"
             };
 
             /// Unknowns Instantiation
@@ -157,19 +156,14 @@ namespace AlgorithmLibrary.Solver
             {
                 foreach (var j in allDays)
                 {
-                    var gt = model.NewBoolVar($"gt[{i}, {j}]");
-                    var lt = model.NewBoolVar($"lt[{i}, {j}]");
                     var bt = model.NewBoolVar($"lt[{i}, {j}]");
 
-                    model.Add(j <= tf[i]).OnlyEnforceIf(new[] { bt, lt.Not(), gt.Not() });
-                    model.Add(j >= ts[i]).OnlyEnforceIf(new[] { bt, lt.Not(), gt.Not() });
-                    model.Add(j > tf[i]).OnlyEnforceIf(new[] { gt, lt.Not(), bt.Not() });
-                    model.Add(j < ts[i]).OnlyEnforceIf(new[] { lt, lt.Not(), gt.Not() });
+                    model.Add(j <= tf[i]).OnlyEnforceIf(bt);
+                    model.Add(j >= ts[i]).OnlyEnforceIf(bt);
 
                     model.Add(V[(i, j)] == 1).OnlyEnforceIf(bt);
-                    model.Add(bt == 1).OnlyEnforceIf(V[(i, j)]);
+                    model.Add(V[(i, j)] == 0).OnlyEnforceIf(bt.Not());
 
-                    model.AddExactlyOne(new[] { bt, lt, gt });
                 }
             }
 
@@ -195,7 +189,7 @@ namespace AlgorithmLibrary.Solver
                     pteList.Add(tmpExp);
 
                     /// C06 -> Total hiring price
-                    var tmpSal = model.NewIntVar(0, data.Deadline, $"tmpSal[{j}][{i}]");
+                    var tmpSal = model.NewIntVar(0, data.Budget?? 0, $"tmpSal[{j}][{i}]");
                     model.Add(tmpSal == A[(i, j)] * taskEfforts[i] * data.WorkerSalary[j]);
                     ptsList.Add(tmpSal);
                 }
