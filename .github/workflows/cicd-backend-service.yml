@@ -8,8 +8,12 @@ on:
 jobs:
   
   test-security-basic:
+    name:  Security Test Automation
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
 
-    name: Build API Backend Service
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
