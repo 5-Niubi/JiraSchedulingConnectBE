@@ -9,7 +9,7 @@ namespace UtilsLibrary
     {
         public static string ExtractBearerFromContext(HttpContext httpContext)
         {
-            var bearer = httpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var bearer = httpContext.Request.Headers["Authorization"].Where(e => e.StartsWith("Bearer")).FirstOrDefault();
             bearer = bearer == null? "Bearer " : bearer;
             Regex pattern = new(@"Bearer (?<token>[\w.]+)");
             Match match = pattern.Match(bearer);
