@@ -2,7 +2,7 @@ name: CICD Developing
 on:
   push:
     branches: [  "debug_cicd_config"]
-    
+
 jobs:
   build-backend-service:
     name: Build API Backend Service
@@ -30,6 +30,7 @@ jobs:
           ConnectAppKey.ClientSecret: ${{ secrets.CONNECT_APP_KEY_CLIENT_SECRET }}
           ConnectionStrings.DB: ${{ secrets.SQL_CONNECTION_STRING }}
           Jwt.Key: ${{ secrets.JWT_KEY }}
+          IMAGE_VERSION: dev-latest
     
 
       - name: Login to GAR
