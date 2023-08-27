@@ -33,7 +33,8 @@ namespace JiraSchedulingConnectAppService.Services
         public async Task<PagingResponseDTO<SchedulesListResDTO>> GetSchedulesByProject(int projectId, int? page)
         {
             var query = db.Schedules.Include(s => s.Parameter)
-                .Where(s => s.Parameter.ProjectId == projectId && s.IsDelete == false);
+                .Where(s => s.Parameter.ProjectId == projectId && s.IsDelete == false)
+                .OrderByDescending(s => s.CreateDatetime).AsQueryable();
 
             int totalPage = 0, totalRecord = 0;
             if (page != null)
@@ -46,7 +47,7 @@ namespace JiraSchedulingConnectAppService.Services
                 page = 0;
             }
 
-            var schedule = await query.OrderByDescending(s => s.CreateDatetime).Take(Const.THRESHOLE_RECORD).ToListAsync();
+            var schedule = await query.Take(Const.THRESHOLE_RECORD).ToListAsync();
             var scheduleDTO = mapper.Map<List<SchedulesListResDTO>>(schedule);
 
             var pagingRespone = new PagingResponseDTO<SchedulesListResDTO>()
@@ -63,7 +64,8 @@ namespace JiraSchedulingConnectAppService.Services
 
         public async Task<PagingResponseDTO<SchedulesListResDTO>> GetSchedules(int parameterId, int? page)
         {
-            var query = db.Schedules.Where(s => s.ParameterId == parameterId && s.IsDelete == false);
+            var query = db.Schedules.Where(s => s.ParameterId == parameterId && s.IsDelete == false)
+                .OrderByDescending(s => s.CreateDatetime).AsQueryable();
             int totalPage = 0, totalRecord = 0;
             if (page != null)
             {
@@ -75,7 +77,7 @@ namespace JiraSchedulingConnectAppService.Services
                 page = 0;
             }
 
-            var schedule = await query.OrderByDescending(s => s.CreateDatetime).Take(Const.THRESHOLE_RECORD).ToListAsync();
+            var schedule = await query.Take(Const.THRESHOLE_RECORD).ToListAsync();
             var scheduleDTO = mapper.Map<List<SchedulesListResDTO>>(schedule);
 
             var pagingRespone = new PagingResponseDTO<SchedulesListResDTO>()
@@ -146,7 +148,7 @@ namespace JiraSchedulingConnectAppService.Services
 
             schedule.Title = ScheduleUpdatedRequest.Title != null ? ScheduleUpdatedRequest.Title : schedule.Title;
             schedule.Desciption = ScheduleUpdatedRequest.Desciption != null ? ScheduleUpdatedRequest.Desciption : schedule.Desciption;
-            var ScheduleSolutionEntity  = db.Schedules.Update(schedule);
+            var ScheduleSolutionEntity = db.Schedules.Update(schedule);
             await db.SaveChangesAsync();
 
             var ScheduleUpdatedResponse = mapper.Map<ScheduleResponseDTO>(ScheduleSolutionEntity.Entity);
