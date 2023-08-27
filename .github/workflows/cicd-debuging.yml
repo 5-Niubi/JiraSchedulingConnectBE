@@ -166,6 +166,9 @@ jobs:
      
 
 
+      - name: Login Docker by Google Credentials
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "echo "${{ secrets.GOOGLE_CREDENTIALS }}" | docker login -u _json_key --password-stdin https://${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}"
 
 
       - name: Connect & Pull & Deploy
@@ -175,7 +178,6 @@ jobs:
               git clone https://github.com/5-Niubi/JiraSchedulingConnectBE.git BE_REPO
             fi \
           && cd BE_REPO \
-          && echo "${{ secrets.GOOGLE_CREDENTIALS }}" | docker login -u _json_key --password-stdin https://${{ secrets.GOOGLE_ARTIFACT_REGISTRY }} \
           && git checkout $branch_name && git pull \
           && BACKEND_REPOSITORY="pham2604/5niubi_backend" \
           GATEWAY_REPOSITORY="${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ env.GATEWAY_SERIVCE_IMAGE }}:${{env.IMAGE_VERSION}}" \
