@@ -20,6 +20,9 @@ namespace JiraSchedulingConnectAppService.Services
 
         public const string EffortNotValidMessage = "Effort Is Not Validated!!!";
         public const string EffortElementNotValidMessage = "Effort must only have 7 elements!!!";
+
+        public const string EffortTotalNotValidMessage = "Total Effort must > 0!!!";
+
         public const string SkillNotFoundVaMessage = "Skill Workforce Is Not Found!!!";
         public const string SkillLevelNotValidateMessage = "Skill Level Workforce is not validate!!!";
         public const string NotUniqueSkillNameMessage = "Skill Name Must Unique!!!";
@@ -131,6 +134,16 @@ namespace JiraSchedulingConnectAppService.Services
             // working effort
             var WorkingEfforts = WorkforceRequest.WorkingEfforts;
 
+            if (WorkingEfforts.Sum() <= 0)
+            {
+                throw new NotSuitableInputException(
+                        new WorkforceInputErrorDTO()
+                        {
+                            Messages = EffortTotalNotValidMessage
+                        }
+                    ); 
+
+            }
             if (WorkingEfforts.Count != 7)
             {
 
@@ -142,26 +155,9 @@ namespace JiraSchedulingConnectAppService.Services
                     );
             }
 
-            //for (int i = 0; i < WorkingEfforts.Count; i++)
-            //{
-            //    if (WorkingEfforts[i] < 0 || WorkingEfforts[i] > BaseWorkingHour)
-            //    {
-            //        EffortErrors.Add(new WorkingEffortErrorDTO
-            //        {
-            //            DayIndex = i,
-            //            Effort = WorkingEfforts[i],
-            //            Message = EffortNotValidMessage
-            //        });
-            //    }
+           
 
-            //}
-
-            if (EffortErrors.Count != 0)
-            {
-                throw new NotSuitableInputException(
-                    EffortErrors
-                    );
-            }
+       
 
 
             return true;
