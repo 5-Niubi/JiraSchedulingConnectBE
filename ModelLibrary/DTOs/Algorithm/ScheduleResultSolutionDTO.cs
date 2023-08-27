@@ -48,5 +48,9 @@ namespace ModelLibrary.DTOs.Algorithm
         {
             get; set;
         }
+        public DateTime? createDatetime
+        {
+            get; set;
+        }
     }
 }
