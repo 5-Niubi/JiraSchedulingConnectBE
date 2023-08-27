@@ -148,6 +148,7 @@ jobs:
               git clone https://github.com/5-Niubi/JiraSchedulingConnectBE.git BE_REPO
             fi \
           && cd BE_REPO \
+          && git fetch \
           && git checkout $branch_name && git pull \
           && BACKEND_REPOSITORY="pham2604/5niubi_backend" \
           GATEWAY_REPOSITORY="pham2604/gateway_service" \
@@ -204,6 +205,7 @@ jobs:
               git clone https://github.com/5-Niubi/JiraSchedulingConnectBE.git BE_REPO
             fi \
           && cd BE_REPO \
+          && git fetch \
           && git checkout $branch_name && git pull \
           && sudo BACKEND_REPOSITORY="pham2604/5niubi_backend" \
           GATEWAY_REPOSITORY="pham2604/gateway_service" \
