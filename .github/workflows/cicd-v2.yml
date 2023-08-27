@@ -141,11 +141,8 @@ jobs:
   
   deploy-to-staging:
     name:  Staging | Deploy Backend Service
-    if: github.event.ref == 'refs/heads/debug_cicd_config'
     needs: [
-      # automated-api-algorithm-tests,
-      # build-backend-service, 
-      # build-gateway-service
+    
       ]
     runs-on: ubuntu-latest
 
@@ -159,15 +156,9 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
       
-      # - name: Login to GAR
-      #   uses: docker/login-action@v2
-      #   with:
-      #     registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}
-      #     username: _json_key
-      #     password: ${{ secrets.GOOGLE_CREDENTIALS }}
-
       - name: Connect & Pull & Deploy
         run: |
+         
           branch_name=$(echo "${GITHUB_REF#refs/heads/}")
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "if [ ! -d BE_REPO ]; then
               git clone https://github.com/5-Niubi/JiraSchedulingConnectBE.git BE_REPO
