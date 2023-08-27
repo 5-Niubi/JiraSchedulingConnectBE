@@ -35,9 +35,9 @@ jobs:
       - name: Login to GAR
         uses: docker/login-action@v2
         with:
-          registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY_BASE64 }}
+          registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}
           username: _json_key_base64
-          password: ${{ secrets.GOOGLE_CREDENTIALS }}
+          password: ${{ secrets.GOOGLE_CREDENTIALS_BASE64 }}
         
       - name: Build and push
         uses: docker/build-push-action@v4
@@ -86,7 +86,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}
-          username: _json_key_basa64
+          username: _json_key_base64
           password: ${{ secrets.GOOGLE_CREDENTIALS_BASE64 }}
     
       - name: Build and push
@@ -111,9 +111,9 @@ jobs:
       - name: Login to GAR
         uses: docker/login-action@v2
         with:
-          registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY_BASE64 }}
+          registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY}}
           username: _json_key_base64
-          password: ${{ secrets.GOOGLE_CREDENTIALS }}
+          password: ${{ secrets.GOOGLE_CREDENTIALS_BASE64 }}
         
       - name: Build and push
         uses: docker/build-push-action@v4
