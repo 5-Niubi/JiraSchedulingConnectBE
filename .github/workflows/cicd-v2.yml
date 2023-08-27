@@ -13,15 +13,27 @@ jobs:
   deploy-to-staging-111:
     name: Deploy Backend Service to Staging
     runs-on: ubuntu-20.04
+     environment:
+      name: Staging
+      url:  https://staging-be.ai4cert.com
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: Setup SSH
+      - name: Setup SSH To Connect Server
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_rsa
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+      
+      - name: Connect & Pull & Deploy
+        run: |
+         
+          branch_name=$(echo "${GITHUB_REF#refs/heads/}")
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "if [ ! -d BE_REPO ]; then
+              git clone https://github.com/5-Niubi/JiraSchedulingConnectBE.git BE_REPO
+            fi \
+          && exit"
+      
+      - name: cleanup
+        run: rm -rf ~/.ssh
         
       # - name: Deploy Backend
       #   run: |
