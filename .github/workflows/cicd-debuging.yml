@@ -7,7 +7,8 @@ jobs:
   build-backend-service:
     name: Build API Backend Service
     runs-on: ubuntu-latest
-
+    if: github.event.ref == 'refs/heads/backennd'
+    
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
