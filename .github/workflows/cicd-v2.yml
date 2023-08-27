@@ -13,7 +13,7 @@ jobs:
   deploy-to-staging-111:
     name: Deploy Backend Service to Staging
     runs-on: ubuntu-20.04
-     environment:
+    environment:
       name: Staging
       url:  https://staging-be.ai4cert.com
     steps:
