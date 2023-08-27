@@ -20,9 +20,14 @@ namespace JiraSchedulingConnectAppService.Services
 
         public const string EffortNotValidMessage = "Effort Is Not Validated!!!";
         public const string EffortElementNotValidMessage = "Effort must only have 7 elements!!!";
+
+        public const string EffortTotalNotValidMessage = "Total Effort must > 0!!!";
+
         public const string SkillNotFoundVaMessage = "Skill Workforce Is Not Found!!!";
         public const string SkillLevelNotValidateMessage = "Skill Level Workforce is not validate!!!";
         public const string NotUniqueSkillNameMessage = "Skill Name Must Unique!!!";
+        public const string NotEmptyAccountIdMessage = "AccountID is not null or empty";
+        public const string NotEmptyEmailMessage = "Email is not null or empty";
 
         private readonly WoTaasContext db;
         private readonly IMapper mapper;
@@ -129,6 +134,16 @@ namespace JiraSchedulingConnectAppService.Services
             // working effort
             var WorkingEfforts = WorkforceRequest.WorkingEfforts;
 
+            if (WorkingEfforts.Sum() <= 0)
+            {
+                throw new NotSuitableInputException(
+                        new WorkforceInputErrorDTO()
+                        {
+                            Messages = EffortTotalNotValidMessage
+                        }
+                    ); 
+
+            }
             if (WorkingEfforts.Count != 7)
             {
 
@@ -140,26 +155,9 @@ namespace JiraSchedulingConnectAppService.Services
                     );
             }
 
-            //for (int i = 0; i < WorkingEfforts.Count; i++)
-            //{
-            //    if (WorkingEfforts[i] < 0 || WorkingEfforts[i] > BaseWorkingHour)
-            //    {
-            //        EffortErrors.Add(new WorkingEffortErrorDTO
-            //        {
-            //            DayIndex = i,
-            //            Effort = WorkingEfforts[i],
-            //            Message = EffortNotValidMessage
-            //        });
-            //    }
+           
 
-            //}
-
-            if (EffortErrors.Count != 0)
-            {
-                throw new NotSuitableInputException(
-                    EffortErrors
-                    );
-            }
+       
 
 
             return true;
@@ -210,6 +208,7 @@ namespace JiraSchedulingConnectAppService.Services
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
             //validate new skills
+
             await _ValidateCreatedWorkforceProperties(workforceRequest);
 
             //validate new skills
@@ -254,6 +253,17 @@ namespace JiraSchedulingConnectAppService.Services
             var cloudId = jwt.GetCurrentCloudId();
             // email not exited
 
+            if (workforceRequest.AccountId == null || workforceRequest.AccountId.Trim() == "")
+            {
+                throw new Exception(NotEmptyAccountIdMessage);
+            }
+
+            if (workforceRequest.Email == null || workforceRequest.Email.Trim() == "")
+            {
+                throw new Exception(NotEmptyEmailMessage);
+            }
+
+
             var existingWorkforceWithEmail = await db.Workforces.FirstOrDefaultAsync(
                 w => w.Email == workforceRequest.Email
                 && w.CloudId == cloudId
@@ -268,6 +278,9 @@ namespace JiraSchedulingConnectAppService.Services
                 w => w.AccountId == workforceRequest.AccountId
                 && w.CloudId == cloudId
                 && w.IsDelete == false);
+
+
+        
 
             if (existingWorkforceWithAccountId != null)
             {
@@ -297,6 +310,16 @@ namespace JiraSchedulingConnectAppService.Services
         {
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
+
+            if (workforceRequest.AccountId == null || workforceRequest.AccountId.Trim() == "")
+            {
+                throw new Exception(NotEmptyAccountIdMessage);
+            }
+
+            if (workforceRequest.Email == null || workforceRequest.Email.Trim() == "")
+            {
+                throw new Exception(NotEmptyEmailMessage);
+            }
 
             // email not exited
             var existingWorkforceWithEmail = await db.Workforces.FirstOrDefaultAsync(w => w.Email == workforceRequest.Email && w.Id != workforceRequest.Id);

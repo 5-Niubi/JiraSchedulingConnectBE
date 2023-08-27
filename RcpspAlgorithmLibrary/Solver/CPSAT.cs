@@ -143,7 +143,7 @@ namespace AlgorithmLibrary.Solver
 
             for (int i = 0; i < data.NumOfTasks; i++)
             {
-                for (int j = 0; i < data.NumOfTasks; i++)
+                for (int j = 0; j < data.NumOfTasks; j++)
                 {
                     if (data.TaskAdjacency[i, j] == 1)
                     {
@@ -221,8 +221,8 @@ namespace AlgorithmLibrary.Solver
             model.Add(pts == LinearExpr.Sum(ptsList));
 
             int w1 = 1;
-            int w2 = 0;
-            int w3 = 0;
+            int w2 = 1;
+            int w3 = 1;
 
             if (data.ObjectiveSelect[0] == true)
             {
@@ -230,16 +230,14 @@ namespace AlgorithmLibrary.Solver
             }
             else if (data.ObjectiveSelect[1] == true)
             {
-                w3 = 0;
                 w2 = 20;
             }
             else if (data.ObjectiveSelect[2] == true)
             {
-                w2 = 0;
                 w3 = 20;
             }
 
-            model.Minimize(w1 * pft + w2 * pte + w3 * pts); // linear-weighted sum
+            model.Minimize(w1 * pft + w2 * pts + w3 * pte); // linear-weighted sum
 
             // Running Solver
             var status = solver.Solve(model);

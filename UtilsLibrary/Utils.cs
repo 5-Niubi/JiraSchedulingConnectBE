@@ -7,10 +7,24 @@ namespace UtilsLibrary
 {
     public class Utils
     {
+        public static int GetDayOfWeek(DateTime dt)
+        {
+            var rawDay = (int)dt.DayOfWeek;
+            if (rawDay == 0)
+            {
+                rawDay = 7;
+            }
+            else
+            {
+                rawDay--;
+            }
+            return rawDay;
+        }
+
         public static string ExtractBearerFromContext(HttpContext httpContext)
         {
             var bearer = httpContext.Request.Headers["Authorization"].Where(e => e.StartsWith("Bearer")).FirstOrDefault();
-            bearer = bearer == null? "Bearer " : bearer;
+            bearer = bearer == null ? "Bearer " : bearer;
             Regex pattern = new(@"Bearer (?<token>[\w.]+)");
             Match match = pattern.Match(bearer);
             string token = match.Groups["token"].Value;
@@ -121,8 +135,9 @@ namespace UtilsLibrary
 
         public static DateTime? MoveDayToEnd(DateTime? dateTime)
         {
-            if(dateTime == null) return dateTime;
-            return ((DateTime) dateTime).AddHours(23).AddMinutes(59).AddSeconds(59);
+            if (dateTime == null)
+                return dateTime;
+            return ((DateTime)dateTime).AddHours(23).AddMinutes(59).AddSeconds(59);
         }
     }
 }
