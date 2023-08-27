@@ -175,7 +175,6 @@ jobs:
             fi \
           && cd BE_REPO \
           && git checkout $branch_name && git pull \
-          && ${{ secrets.GOOGLE_CREDENTIALS }} | docker login -u _json_key --password-stdin  ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }} \
           && BACKEND_REPOSITORY="pham2604/5niubi_backend" \
           GATEWAY_REPOSITORY="${{ vars.REGISTRY }}/gateway_service:dev-latest \
           ADMIN_REPOSITORY="pham2604/admin_webapp" \
