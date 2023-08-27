@@ -104,8 +104,8 @@
                     }
                 }
                 start = Math.Max(start, lastMan[wt]);
-                if (start == 0)
-                    start = 1;
+                //if (start == 0)
+                //    start = 1;
                 int end = start;
                 double actualEffort = data.TaskDuration[np];
                 double similarityAssign = 0;
@@ -135,6 +135,7 @@
                 {
                     end += (int)(actualEffort + 0.9);
                 }
+                end--;
                 lastMan[wt] = end;
                 timeTask[np] = end;
                 if (workerStart[wt] == 0)
