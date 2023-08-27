@@ -128,7 +128,7 @@ jobs:
       build-admin-service,
       build-gateway-service
       ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     environment:
       name: Staging
