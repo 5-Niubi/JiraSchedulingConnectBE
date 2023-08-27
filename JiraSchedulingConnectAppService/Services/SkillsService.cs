@@ -14,6 +14,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         public const string NotFoundMessage = "Skill Not Found!!!";
         public const string NotUniqueSkillNameMessage = "Skill Name Must Unique!!!";
+        public const string NotEmptySkillNameMessage = "Skill Name Is Not Empty!!!";
 
         private readonly ModelLibrary.DBModels.WoTaasContext db;
         private readonly IMapper mapper;
@@ -61,30 +62,35 @@ namespace JiraSchedulingConnectAppService.Services
 
                 var skill = mapper.Map<Skill>(skillDTO);
 
+                if(skill.Name == null)
+                {
+                    throw new Exception(NotEmptySkillNameMessage);
+                }
+
                 var exitedskill = await db.Skills.FirstOrDefaultAsync(s => s.Id == skill.Id && s.CloudId == cloudId && s.IsDelete == false);
-                var exitedName = await db.Skills.FirstOrDefaultAsync(s => s.Name == skillDTO.Name && s.CloudId == cloudId && s.IsDelete == false);
 
                 // Validate exited skill
-                if (skill == null)
+                if (exitedskill == null)
                 {
                     throw new Exception(NotFoundMessage);
                 }
 
-                // Validate unique name skill
-                if (exitedName != null)
+                var skillName = await db.Skills.FirstOrDefaultAsync(
+                    s => s.Name.ToLower() == skill.Name.Trim().ToLower()
+                    && s.CloudId == cloudId
+                    && s.Id != exitedskill.Id
+                    && s.IsDelete == false);
+
+                if(skillName != null)
                 {
                     throw new Exception(NotUniqueSkillNameMessage);
                 }
 
-                exitedskill.Name = skillDTO.Name;
-                exitedskill.Description = skillDTO.Description;
 
+                exitedskill.Name = skill.Name.Trim();
                 // Update
                 db.Update(exitedskill);
                 await db.SaveChangesAsync();
-
-
-
                 return skillDTO;
 
             }
@@ -106,7 +112,10 @@ namespace JiraSchedulingConnectAppService.Services
                 var jwt = new JWTManagerService(httpContext);
                 var cloudId = jwt.GetCurrentCloudId();
 
-                var exitedName = await db.Skills.FirstOrDefaultAsync(s => s.Name == skillRequest.Name && s.CloudId == cloudId && s.IsDelete == false);
+                var exitedName = await db.Skills.FirstOrDefaultAsync(
+                    s => s.Name.ToLower() == skillRequest.Name.Trim().ToLower()
+                    && s.CloudId == cloudId
+                    && s.IsDelete == false);
 
                 // Validate unique name skill
                 if (exitedName != null)
@@ -114,7 +123,9 @@ namespace JiraSchedulingConnectAppService.Services
                     throw new Exception(NotUniqueSkillNameMessage);
                 }
 
+               
                 var skill = mapper.Map<ModelLibrary.DBModels.Skill>(skillRequest);
+                skill.Name = skill.Name.Trim();
                 skill.CloudId = cloudId;
 
                 var SkillCreatedEntity = await db.Skills.AddAsync(skill);

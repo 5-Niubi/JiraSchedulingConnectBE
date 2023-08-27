@@ -1,7 +1,7 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: algorithmservice
+  name: common-algorithmservice
   namespace: 'niubi-396316'
   labels:
     cloud.googleapis.com/location: asia-southeast1
@@ -10,12 +10,12 @@ spec:
   template:
     metadata:
       annotations:
-        autoscaling.knative.dev/maxScale: '6'
-        autoscaling.knative.dev/minScale: '0'
+        autoscaling.knative.dev/maxScale: '50'
+        autoscaling.knative.dev/minScale: '1'
         run.googleapis.com/client-name: cloud-console
       
     spec:
-      containerConcurrency: 5
+      containerConcurrency: 10
       containers:
       - image: asia-southeast1-docker.pkg.dev/niubi-396316/wotaas/5niubi_algo_service:dev-latest
         ports:
@@ -23,8 +23,8 @@ spec:
           name: http1
         resources:
           limits:
-            cpu: 8000m
-            memory: 32Gi
+            cpu: 2000m
+            memory: 1Gi
         startupProbe:
           failureThreshold: 1
           periodSeconds: 240
