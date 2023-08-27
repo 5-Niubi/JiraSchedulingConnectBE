@@ -244,10 +244,10 @@ namespace AlgorithmLibrary
                 var task = new TaskScheduleResultDTO();
                 task.id = TaskList[i].Id;
                 task.name = TaskList[i].Name;
-                task.duration = taskEnd[i] - taskStart[i];
+                task.duration = taskEnd[i] - taskStart[i] + 1;
                 task.workforce = mapper.Map<WorkforceScheduleResultDTO>(WorkerList[taskWithWorker[i]]);
                 task.startDate = StartDate.AddDays(taskStart[i]).AddDays(-1);
-                task.endDate = Utils.MoveDayToEnd(StartDate.AddDays(taskEnd[i] - 1)).Value.AddDays(-1);
+                task.endDate = Utils.MoveDayToEnd(StartDate.AddDays(taskEnd[i])).Value.AddDays(-1);
                 task.mileStone = mapper.Map<MileStoneScheduleResultDTO>(TaskList[i].Milestone);
                 foreach (var taskPre in TaskList[i].TaskPrecedenceTasks)
                 {
