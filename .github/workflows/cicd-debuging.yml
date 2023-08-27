@@ -157,18 +157,12 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
       
-      - name: Login to GAR
-        uses: docker/login-action@v2
-        
-        with:
-          registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}
-          username: _json_key
-          password: ${{ secrets.GOOGLE_CREDENTIALS }}
-        
       - name: Connect & Pull & Deploy
         env:
           CLOUD_ARTIFACT_REPO: "wotaas"
+          GATEWAY_SERIVCE_IMAGE: "gateway_service"
           IMAGE_VERSION: dev-latest
+          GOOGLE_CLOUD_PROJECT: "niubi-396316"
 
         run: |
           branch_name=$(echo "${GITHUB_REF#refs/heads/}")
