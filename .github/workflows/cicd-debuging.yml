@@ -4,146 +4,135 @@ on:
     branches: [  "debug_cicd_config"]
 
 jobs:
-  # build-backend-service:
-  #   name: Build API Backend Service
-  #   runs-on: ubuntu-latest
+  build-backend-service:
+    name: Build API Backend Service
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout Repo
-  #       uses: actions/checkout@v2
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v2
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
       
-  #     - name: Set appsettings.json Variable Substitution
-  #       uses: microsoft/variable-substitution@v1
-  #       with:
-  #         files: 'SharedSettings/appsettings.json'
-  #       env:
-  #         BraintreeGateway.MerchantId: ${{ secrets.BRAINTREE_GATEWAY_MERCHANTID }}
-  #         BraintreeGateway.PublicKey: ${{ secrets.BRAINTREE_GATEWAY_PUBLICKEY }}
-  #         BraintreeGateway.PrivateKey: ${{ secrets.BRAINTREE_GATEWAY_PRIVATEKEY }}
-  #         Environment.Appname: ${{ secrets.ENVIRONMENT_APP_NAME }}
-  #         Environment.SelfDomain: ${{ secrets.ENVIRONMENT_SELF_DOMAIN }}
-  #         Environment.AlgorithmServiceGADomains: ${{ secrets.ENVIRONMENT_ALGORITHM_SERVICE_GA_DOMAINS }}
-  #         Environment.SolverServiceDomains: ${{ secrets.ENVIRONMENT_SOLVER_SERVICE_DOMAINS }}
-  #         ConnectAppKey.CliendId: ${{ secrets.CONNECT_APP_KEY_CLIEND_ID }}
-  #         ConnectAppKey.ClientSecret: ${{ secrets.CONNECT_APP_KEY_CLIENT_SECRET }}
-  #         ConnectionStrings.DB: ${{ secrets.SQL_CONNECTION_STRING }}
-  #         Jwt.Key: ${{ secrets.JWT_KEY }}
+      - name: Set appsettings.json Variable Substitution
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: 'SharedSettings/appsettings.json'
+        env:
+          BraintreeGateway.MerchantId: ${{ secrets.BRAINTREE_GATEWAY_MERCHANTID }}
+          BraintreeGateway.PublicKey: ${{ secrets.BRAINTREE_GATEWAY_PUBLICKEY }}
+          BraintreeGateway.PrivateKey: ${{ secrets.BRAINTREE_GATEWAY_PRIVATEKEY }}
+          Environment.Appname: ${{ secrets.ENVIRONMENT_APP_NAME }}
+          Environment.SelfDomain: ${{ secrets.ENVIRONMENT_SELF_DOMAIN }}
+          Environment.AlgorithmServiceGADomains: ${{ secrets.ENVIRONMENT_ALGORITHM_SERVICE_GA_DOMAINS }}
+          Environment.SolverServiceDomains: ${{ secrets.ENVIRONMENT_SOLVER_SERVICE_DOMAINS }}
+          ConnectAppKey.CliendId: ${{ secrets.CONNECT_APP_KEY_CLIEND_ID }}
+          ConnectAppKey.ClientSecret: ${{ secrets.CONNECT_APP_KEY_CLIENT_SECRET }}
+          ConnectionStrings.DB: ${{ secrets.SQL_CONNECTION_STRING }}
+          Jwt.Key: ${{ secrets.JWT_KEY }}
     
-  #     - name: Log in to Docker Hub
-  #       uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-  #       with:
-  #         username: ${{ secrets.DOCKER_USERNAME }}
-  #         password: ${{ secrets.DOCKER_PASSWORD }}
 
-  #     - name: Build and push
-  #       uses: docker/build-push-action@v4
-  #       with:
-  #         context: .
-  #         file: "JiraSchedulingConnectAppService/Dockerfile"
-  #         push: true
-  #         tags: ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:${{ github.sha }}, ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:dev-latest
+      - name: Login to GAR
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY_BASE64 }}
+          username: _json_key_base64
+          password: ${{ secrets.GOOGLE_CREDENTIALS }}
+        
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        env:
+          IMAGE_VERSION: dev-latest
+        with:
+          context: .
+          file: "JiraSchedulingConnectAppService/Dockerfile"
+          push: true
+          tags:  ${{ secrets.GAR_BACKEND_SERVICE_IMAGE }}:${{ env.IMAGE_VERSION }}, ${{ secrets.GAR_BACKEND_SERVICE_IMAGE }}:${{ github.sha }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: "JiraSchedulingConnectAppService/Dockerfile"
+          push: true
+          tags: ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:${{ github.sha }}, ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:dev-latest
           
-  #         labels: ${{ steps.meta.outputs.labels }}
+          labels: ${{ steps.meta.outputs.labels }}
   
 
-  # build-admin-service:
-  #   name: Build Admin service
-  #   runs-on: ubuntu-latest
+  build-admin-service:
+    name: Build Admin service
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout Repo
-  #       uses: actions/checkout@v2
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v2
-     
-  #     # - name: Log in to Docker Hub
-  #     #   uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-  #     #   with:
-  #     #     username: ${{ secrets.DOCKER_USERNAME }}
-  #     #     password: ${{ secrets.DOCKER_PASSWORD }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+  
       
-  #     - name: Set appsettings.json Variable Substitution
-  #       uses: microsoft/variable-substitution@v1
-  #       with:
-  #         files: 'SharedSettings/appsettings.json'
-  #       env:
-  #         Environment.Appname: ${{ secrets.ENVIRONMENT_APP_NAME }}
-  #         ConnectionStrings.DB: ${{ secrets.SQL_CONNECTION_STRING }}
-  #         Jwt.Key: ${{ secrets.JWT_KEY }}
-      
-  #     - uses: 'google-github-actions/auth@v1'
-  #       with:
-  #         credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
-
-  #     - name: Login to GAR
-  #       uses: docker/login-action@v2
-  #       with:
-  #         registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}
-  #         username: _json_key
-  #         password: ${{ secrets.GOOGLE_CREDENTIALS }}
-      
-  #     - name: Build and push
-  #       uses: docker/build-push-action@v4
-  #       env:
-  #         CLOUD_ARTIFACT_REPO: "wotaas"
-  #         IMAGE_VERSION: dev-latest
-  #       with:
-  #         context: .
-  #         file: "ResourceAssignAdmin/Dockerfile"
-  #         push: true
-  #         tags:  ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ vars.ADMIN_WEBAPP_IMAGE }}:${{ github.sha }}, ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ vars.ADMIN_WEBAPP_IMAGE }}:${{env.IMAGE_VERSION}}
-  #         labels: ${{ steps.meta.outputs.labels }}
-
-      # - name: Build and pus
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     context: .
-      #     file: "ResourceAssignAdmin/Dockerfile"
-      #     push: true
-      #     tags: ${{ vars.REGISTRY }}/${{ vars.ADMIN_WEBAPP_IMAGE }}:${{ github.sha }} ,  ${{ vars.REGISTRY }}/${{ vars.ADMIN_WEBAPP_IMAGE }}:dev-latest
-      #     labels: ${{ steps.meta.outputs.labels }}
+      - name: Set appsettings.json Variable Substitution
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: 'SharedSettings/appsettings.json'
+        env:
+          Environment.Appname: ${{ secrets.ENVIRONMENT_APP_NAME }}
+          ConnectionStrings.DB: ${{ secrets.SQL_CONNECTION_STRING }}
+          Jwt.Key: ${{ secrets.JWT_KEY }}
+    
+      - name: Login to GAR
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}
+          username: _json_key
+          password: ${{ secrets.GOOGLE_CREDENTIALS }}
+    
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        env:
+          IMAGE_VERSION: dev-latest
+        with:
+          context: GatewayAppService/.
+          file: "GatewayAppService/Dockerfile"
+          push: true
+          tags:  ${{ secrets.GAR_ADMIN_SERVICE_IMAGE }}:${{ env.IMAGE_VERSION }}, ${{ secrets.GAR_ADMIN_SERVICE_IMAGE }}:${{ github.sha }}
+          labels: ${{ steps.meta.outputs.labels }}
 
 
-  # build-gateway-service:
-  #   name: Build & Push Gateway Service
-  #   runs-on: ubuntu-latest
+  build-gateway-service:
+    name: Build & Push Gateway Service
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout Repo
-  #       uses: actions/checkout@v2
-  #     - uses: 'google-github-actions/auth@v1'
-  #       with:
-  #         credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
-      
-  #     - name: Login to GAR
-  #       uses: docker/login-action@v2
-  #       with:
-  #         registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}
-  #         username: _json_key
-  #         password: ${{ secrets.GOOGLE_CREDENTIALS }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Login to GAR
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY_BASE64 }}
+          username: _json_key_base65
+          password: ${{ secrets.GOOGLE_CREDENTIALS }}
         
-  #     - name: Build and push
-  #       uses: docker/build-push-action@v4
-  #       env:
-  #         CLOUD_ARTIFACT_REPO: "wotaas"
-  #         GATEWAY_SERIVCE_IMAGE: "gateway_service"
-  #         IMAGE_VERSION: dev-latest
-  #       with:
-  #         context: GatewayAppService/.
-  #         file: "GatewayAppService/Dockerfile"
-  #         push: true
-  #         tags:  ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ env.GATEWAY_SERIVCE_IMAGE }}:${{ github.sha }}, ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ env.GATEWAY_SERIVCE_IMAGE }}:${{env.IMAGE_VERSION}}
-  #         labels: ${{ steps.meta.outputs.labels }}
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        env:
+          IMAGE_VERSION: dev-latest
+        with:
+          context: GatewayAppService/.
+          file: "GatewayAppService/Dockerfile"
+          push: true
+          tags:  ${{ secrets.GAR_GATEWAY_SERVICE_IMAGE }}:${{ env.IMAGE_VERSION }}, ${{ secrets.GAR_GATEWAY_SERVICE_IMAGE }}:${{ github.sha }}
+          labels: ${{ steps.meta.outputs.labels }}
   
   deploy-to-staging:
     name:  Staging | Deploy Backend Service
     if: github.event.ref == 'refs/heads/main' || github.event.ref == 'refs/heads/debug_cicd_config'
     needs: [
-      # automated-api-algorithm-tests,
-      # build-backend-service, 
-      # build-gateway-service
+      automated-api-algorithm-tests,
+      build-backend-service, 
+      build-gateway-service
       ]
     runs-on: ubuntu-latest
 
@@ -156,25 +145,22 @@ jobs:
           install -m 600 -D /dev/null ~/.ssh/id_rsa
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
-      
+
       - name: Connect & Pull & Deploy
         env:
-          CLOUD_ARTIFACT_REPO: "wotaas"
-          GATEWAY_SERIVCE_IMAGE: "gateway_service"
           IMAGE_VERSION: dev-latest
-          GOOGLE_CLOUD_PROJECT: "niubi-396316"
-
         run: |
           branch_name=$(echo "${GITHUB_REF#refs/heads/}")
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "if [ ! -d BE_REPO ]; then
               git clone https://github.com/5-Niubi/JiraSchedulingConnectBE.git BE_REPO
             fi \
+          && echo  ${{ secrets.GOOGLE_ARTIFACT_REGISTRY_BASE64 }} | docker login -u KEY-TYPE --password-stdin https://${{ secrets.GOOGLE_ARTIFACT_REGISTRY }} \
           && cd BE_REPO \
           && git checkout $branch_name \
           && git pull \
-          && BACKEND_REPOSITORY="pham2604/5niubi_backend" \
-          GATEWAY_REPOSITORY="${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ env.GATEWAY_SERIVCE_IMAGE }}" \
-          ADMIN_REPOSITORY="pham2604/admin_webapp" \
+          && BACKEND_REPOSITORY="${{ secrets.GAR_BACKEND_SERVICE_IMAGE }}" \
+          GATEWAY_REPOSITORY="${{ secrets.GAR_ADMIN_SERVICE_IMAGE }}" \
+          ADMIN_REPOSITORY=${{ secrets.GAR_ADMIN_SERVICE_IMAGE }}" \
           ASPNETCORE_ENVIRONMENT=${{ vars.ASPNETCORE_ENVIRONMENT }} \
           VERSION="dev-latest" \
           docker compose -f docker-compose.backend.yml up -d \
@@ -226,13 +212,15 @@ jobs:
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "if [ ! -d BE_REPO ]; then
               git clone https://github.com/5-Niubi/JiraSchedulingConnectBE.git BE_REPO
             fi \
+          && echo  ${{ secrets.GOOGLE_ARTIFACT_REGISTRY_BASE64 }} | docker login -u KEY-TYPE --password-stdin https://${{ secrets.GOOGLE_ARTIFACT_REGISTRY }} \
           && cd BE_REPO \
-          && git checkout $branch_name && git pull \
-          && sudo BACKEND_REPOSITORY="pham2604/5niubi_backend" \
-          GATEWAY_REPOSITORY= ${{ vars.REGISTRY }}/gateway_service:dev-latest \
-          ADMIN_REPOSITORY="pham2604/admin_webapp" \
+          && git checkout $branch_name \
+          && git pull \
+          && BACKEND_REPOSITORY="${{ secrets.GAR_BACKEND_SERVICE_IMAGE }}" \
+          GATEWAY_REPOSITORY="${{ secrets.GAR_ADMIN_SERVICE_IMAGE }}" \
+          ADMIN_REPOSITORY=${{ secrets.GAR_ADMIN_SERVICE_IMAGE }}" \
           ASPNETCORE_ENVIRONMENT=${{ vars.ASPNETCORE_ENVIRONMENT }} \
-          VERSION=${{ github.sha }} \
+          VERSION="dev-latest" \
           docker-compose -f docker-compose.backend.yml up -d \
           && sudo docker image prune -a --force && exit"
       
