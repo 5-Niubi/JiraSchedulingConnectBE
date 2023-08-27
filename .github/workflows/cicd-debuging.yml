@@ -175,10 +175,8 @@ jobs:
               git clone https://github.com/5-Niubi/JiraSchedulingConnectBE.git BE_REPO
             fi \
           && cd BE_REPO \
-          && docker login --username=_json_key --password-stdin <<< "${{ secrets.GOOGLE_CREDENTIALS }}" \
-
+          && echo "${{ secrets.KEY_FILE_CONTENT }}" | docker login -u _json_key --password-stdin https://${{ secrets.GOOGLE_ARTIFACT_REGISTRY }} \
           && git checkout $branch_name && git pull \
-          && echo ${{ secrets.GOOGLE_CREDENTIALS }} | docker login -u _json_key --password-stdin  ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }} \
           && BACKEND_REPOSITORY="pham2604/5niubi_backend" \
           GATEWAY_REPOSITORY="${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ env.GATEWAY_SERIVCE_IMAGE }}:${{env.IMAGE_VERSION}}" \
           ADMIN_REPOSITORY="pham2604/admin_webapp" \
