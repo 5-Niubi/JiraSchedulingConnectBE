@@ -129,19 +129,13 @@ namespace JiraSchedulingConnectAppService.Services
 
         private async Task<bool> _ValidateWorkforceEfforts(WorkforceRequestDTO WorkforceRequest)
         {
-            var EffortErrors = new List<WorkingEffortErrorDTO>();
 
             // working effort
             var WorkingEfforts = WorkforceRequest.WorkingEfforts;
 
             if (WorkingEfforts.Sum() <= 0)
             {
-                throw new NotSuitableInputException(
-                        new WorkforceInputErrorDTO()
-                        {
-                            Messages = EffortTotalNotValidMessage
-                        }
-                    ); 
+                throw new Exception(EffortTotalNotValidMessage);
 
             }
             if (WorkingEfforts.Count != 7)
@@ -253,10 +247,7 @@ namespace JiraSchedulingConnectAppService.Services
             var cloudId = jwt.GetCurrentCloudId();
             // email not exited
 
-            if (workforceRequest.AccountId == null || workforceRequest.AccountId.Trim() == "")
-            {
-                throw new Exception(NotEmptyAccountIdMessage);
-            }
+           
 
             if (workforceRequest.Email == null || workforceRequest.Email.Trim() == "")
             {
@@ -274,17 +265,17 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new DuplicateException($"Email '{workforceRequest.Email}' is already in use.");
             }
 
-            var existingWorkforceWithAccountId = await db.Workforces.FirstOrDefaultAsync(
+            if (workforceRequest.AccountId != null)
+            {
+                var existingWorkforceWithAccountId = await db.Workforces.FirstOrDefaultAsync(
                 w => w.AccountId == workforceRequest.AccountId
                 && w.CloudId == cloudId
                 && w.IsDelete == false);
 
-
-        
-
-            if (existingWorkforceWithAccountId != null)
-            {
-                throw new DuplicateException($"AccountId '{workforceRequest.AccountId}' is already in use.");
+                if (existingWorkforceWithAccountId != null)
+                {
+                    throw new DuplicateException($"AccountId '{workforceRequest.AccountId}' is already in use.");
+                }
             }
 
 
@@ -311,10 +302,6 @@ namespace JiraSchedulingConnectAppService.Services
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
 
-            if (workforceRequest.AccountId == null || workforceRequest.AccountId.Trim() == "")
-            {
-                throw new Exception(NotEmptyAccountIdMessage);
-            }
 
             if (workforceRequest.Email == null || workforceRequest.Email.Trim() == "")
             {
@@ -328,14 +315,17 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new DuplicateException($"Email '{workforceRequest.Email}' is already in use.");
             }
 
-            var existingWorkforceWithAccountId = await db.Workforces.FirstOrDefaultAsync(
+            if (workforceRequest.AccountId != null)
+            {
+                var existingWorkforceWithAccountId = await db.Workforces.FirstOrDefaultAsync(
                 w => w.AccountId == workforceRequest.AccountId
                 && w.CloudId == cloudId
                 && w.IsDelete == false);
 
-            if (existingWorkforceWithEmail != null)
-            {
-                throw new DuplicateException($"AccountId '{workforceRequest.AccountId}' is already in use.");
+                if (existingWorkforceWithAccountId != null)
+                {
+                    throw new DuplicateException($"AccountId '{workforceRequest.AccountId}' is already in use.");
+                }
             }
 
             // working type in [0 or 1]
