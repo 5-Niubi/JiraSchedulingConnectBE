@@ -106,36 +106,36 @@ jobs:
       #     labels: ${{ steps.meta.outputs.labels }}
 
 
-  build-gateway-service:
-    name: Build & Push Gateway Service
-    runs-on: ubuntu-latest
+  # build-gateway-service:
+  #   name: Build & Push Gateway Service
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v2
-      - uses: 'google-github-actions/auth@v1'
-        with:
-          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+  #   steps:
+  #     - name: Checkout Repo
+  #       uses: actions/checkout@v2
+  #     - uses: 'google-github-actions/auth@v1'
+  #       with:
+  #         credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
       
-      - name: Login to GAR
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}
-          username: _json_key
-          password: ${{ secrets.GOOGLE_CREDENTIALS }}
+  #     - name: Login to GAR
+  #       uses: docker/login-action@v2
+  #       with:
+  #         registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}
+  #         username: _json_key
+  #         password: ${{ secrets.GOOGLE_CREDENTIALS }}
         
-      - name: Build and push
-        uses: docker/build-push-action@v4
-        env:
-          CLOUD_ARTIFACT_REPO: "wotaas"
-          GATEWAY_SERIVCE_IMAGE: "gateway_service"
-          IMAGE_VERSION: dev-latest
-        with:
-          context: GatewayAppService/.
-          file: "GatewayAppService/Dockerfile"
-          push: true
-          tags:  ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ env.GATEWAY_SERIVCE_IMAGE }}:${{ github.sha }}, ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ env.GATEWAY_SERIVCE_IMAGE }}:${{env.IMAGE_VERSION}}
-          labels: ${{ steps.meta.outputs.labels }}
+  #     - name: Build and push
+  #       uses: docker/build-push-action@v4
+  #       env:
+  #         CLOUD_ARTIFACT_REPO: "wotaas"
+  #         GATEWAY_SERIVCE_IMAGE: "gateway_service"
+  #         IMAGE_VERSION: dev-latest
+  #       with:
+  #         context: GatewayAppService/.
+  #         file: "GatewayAppService/Dockerfile"
+  #         push: true
+  #         tags:  ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ env.GATEWAY_SERIVCE_IMAGE }}:${{ github.sha }}, ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.CLOUD_ARTIFACT_REPO }}/${{ env.GATEWAY_SERIVCE_IMAGE }}:${{env.IMAGE_VERSION}}
+  #         labels: ${{ steps.meta.outputs.labels }}
   
   deploy-to-staging:
     name:  Staging | Deploy Backend Service
@@ -143,7 +143,7 @@ jobs:
     needs: [
       # automated-api-algorithm-tests,
       # build-backend-service, 
-      build-gateway-service
+      # build-gateway-service
       ]
     runs-on: ubuntu-latest
 
@@ -163,6 +163,10 @@ jobs:
       #     registry: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}
       #     username: _json_key
       #     password: ${{ secrets.GOOGLE_CREDENTIALS }}
+     
+      - name: Authenticate with Google Artifact Registry
+        run: |
+          echo "${{ secrets.GOOGLE_CREDENTIALS }}" | docker login -u _json_key --password-stdin "https://$DOCKER_REGISTRY_HOST"
 
       - name: Connect & Pull & Deploy
         run: |
@@ -172,6 +176,8 @@ jobs:
               git clone https://github.com/5-Niubi/JiraSchedulingConnectBE.git BE_REPO
             fi \
           && cd BE_REPO \
+
+
           && git checkout $branch_name && git pull \
           && echo ${{ secrets.GOOGLE_CREDENTIALS }} | docker login -u _json_key --password-stdin  ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }} \
           && BACKEND_REPOSITORY="pham2604/5niubi_backend" \
