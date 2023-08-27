@@ -145,9 +145,9 @@ namespace AlgorithmLibrary.Solver
             {
                 for (int j = 0; j < data.NumOfTasks; j++)
                 {
-                    if (data.TaskAdjacency[i, j] == 1)
+                    if (data.TaskAdjacency[j, i] == 1)
                     {
-                        dependencyGraph[j].Add(tf[i]);
+                        dependencyGraph[i].Add(tf[j]); // vua doi i thanh j
                     }
                 }
             }
