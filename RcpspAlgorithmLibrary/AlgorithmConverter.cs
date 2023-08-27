@@ -164,7 +164,7 @@ namespace AlgorithmLibrary
                     JsonSerializer.Deserialize<double[]>(WorkerList[i].WorkingEffort);
                 //workerEffort[i] = new double[Deadline];
 
-                int k = 0;
+                int k = Utils.GetDayOfWeek(StartDate);
                 for (int j = 0; j < Deadline; j++)
                 {
                     double effort = 1;
