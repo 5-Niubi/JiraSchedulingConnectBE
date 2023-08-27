@@ -170,7 +170,7 @@ jobs:
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "if [ ! -d BE_REPO ]; then
               git clone https://github.com/5-Niubi/JiraSchedulingConnectBE.git BE_REPO
             fi \
-          && echo '${{ secrets.GOOGLE_CREDENTIALS_BASE64 }}' | docker login -u _json_key --password-stdin https://${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}" \
+          && echo '${{ secrets.GOOGLE_CREDENTIALS_BASE64 }}' | docker login -u _json_key --password-stdin https://${{ secrets.GOOGLE_ARTIFACT_REGISTRY }} \
           && cd BE_REPO \
           && git checkout $branch_name && git pull \
           && BACKEND_REPOSITORY="pham2604/5niubi_backend" \
