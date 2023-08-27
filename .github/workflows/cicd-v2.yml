@@ -141,9 +141,7 @@ jobs:
   
   deploy-to-staging:
     name:  Staging | Deploy Backend Service
-    needs: [
-    
-      ]
+ 
     runs-on: ubuntu-latest
 
     environment:
