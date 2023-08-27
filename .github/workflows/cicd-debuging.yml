@@ -148,8 +148,8 @@ jobs:
           && git checkout $branch_name \
           && git pull \
           && BACKEND_REPOSITORY="${{ secrets.GAR_BACKEND_SERVICE_IMAGE }}" \
-          GATEWAY_REPOSITORY="${{ secrets.GAR_ADMIN_SERVICE_IMAGE }}" \
-          ADMIN_REPOSITORY=${{ secrets.GAR_ADMIN_SERVICE_IMAGE }}" \
+          GATEWAY_REPOSITORY="${{ secrets.GAR_GATEWAY_SERVICE_IMAGE }}" \
+          ADMIN_REPOSITORY="${{ secrets.GAR_ADMIN_SERVICE_IMAGE }}" \
           ASPNETCORE_ENVIRONMENT=${{ vars.ASPNETCORE_ENVIRONMENT }} \
           VERSION="dev-latest" \
           docker compose -f docker-compose.backend.yml up -d \
@@ -206,8 +206,8 @@ jobs:
           && git checkout $branch_name \
           && git pull \
           && BACKEND_REPOSITORY="${{ secrets.GAR_BACKEND_SERVICE_IMAGE }}" \
-          GATEWAY_REPOSITORY="${{ secrets.GAR_ADMIN_SERVICE_IMAGE }}" \
-          ADMIN_REPOSITORY=${{ secrets.GAR_ADMIN_SERVICE_IMAGE }}" \
+          GATEWAY_REPOSITORY="${{ secrets.GAR_GATEWAY_SERVICE_IMAGE }}" \
+          ADMIN_REPOSITORY= "${{ secrets.GAR_ADMIN_SERVICE_IMAGE }}" \
           ASPNETCORE_ENVIRONMENT=${{ vars.ASPNETCORE_ENVIRONMENT }} \
           VERSION="dev-latest" \
           docker-compose -f docker-compose.backend.yml up -d \
