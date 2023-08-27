@@ -141,7 +141,7 @@ jobs:
   
   deploy-to-staging:
     name:  Staging | Deploy Backend Service
-    if: github.event.ref == 'refs/heads/debug_cicd_config'
+    # if: github.event.ref == 'refs/heads/debug_cicd_config'
     needs: [
       # automated-api-algorithm-tests,
       # build-backend-service, 
