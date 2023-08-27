@@ -77,7 +77,6 @@ jobs:
           ConnectionStrings.DB: ${{ secrets.SQL_CONNECTION_STRING }}
           Jwt.Key: ${{ secrets.JWT_KEY }}
 
-
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
