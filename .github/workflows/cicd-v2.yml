@@ -1,4 +1,4 @@
-name: CICD Services Workflow
+name: CICD Developing
 on:
   push:
     branches: [  "debug_cicd_config"]
