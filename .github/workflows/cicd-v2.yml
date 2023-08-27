@@ -6,6 +6,37 @@ on:
     branches: ["debug_cicd_config"]
 
 jobs:
+  deploy-to-staging:
+    name: Deploy Backend Service to Staging
+    runs-on: ubuntu-latest
+
+    env:
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      ASPNETCORE_ENVIRONMENT: staging
+      
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup SSH
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+          # mkdir -p ~/.ssh
+          # echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          # chmod 600 ~/.ssh/id_rsa
+          # ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+      # - name: Deploy Backend
+      #   run: |
+      #     branch_name=$(echo "${GITHUB_REF#refs/heads/}")
+      #     ssh "$SSH_USER@$SSH_HOST" "bash -s" < deploy-script.sh
+      
+      # - name: cleanup
+      #   run: rm -rf ~/.ssh
+
   # build-backend-service:
   #   name: Build API Backend Service
   #   runs-on: ubuntu-latest
@@ -138,38 +169,6 @@ jobs:
   #         push: true
   #         tags: ${{ vars.REGISTRY }}/gateway_service:${{ github.sha }},  ${{ vars.REGISTRY }}/gateway_service:dev-latest
   #         labels: ${{ steps.meta.outputs.labels }}
-  
-  deploy-to-staging:
-    name: Deploy Backend Service to Staging
-    runs-on: ubuntu-latest
-
-    env:
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-      SSH_USER: ${{ secrets.SSH_USER }}
-      SSH_HOST: ${{ secrets.SSH_HOST }}
-      ASPNETCORE_ENVIRONMENT: staging
-      
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: Setup SSH
-        run: |
-          install -m 600 -D /dev/null ~/.ssh/id_rsa
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
-          # mkdir -p ~/.ssh
-          # echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          # chmod 600 ~/.ssh/id_rsa
-          # ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
-      # - name: Deploy Backend
-      #   run: |
-      #     branch_name=$(echo "${GITHUB_REF#refs/heads/}")
-      #     ssh "$SSH_USER@$SSH_HOST" "bash -s" < deploy-script.sh
-      
-      # - name: cleanup
-      #   run: rm -rf ~/.ssh
-
   # automated-api-tests:
   #   name: Staging | API Testing
   #   runs-on: ubuntu-latest
