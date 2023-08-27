@@ -158,19 +158,17 @@ jobs:
           install -m 600 -D /dev/null ~/.ssh/id_rsa
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
-
           # mkdir -p ~/.ssh
           # echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           # chmod 600 ~/.ssh/id_rsa
           # ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
-
-      - name: Deploy Backend
-        run: |
-          branch_name=$(echo "${GITHUB_REF#refs/heads/}")
-          ssh "$SSH_USER@$SSH_HOST" "bash -s" < deploy-script.sh
+      # - name: Deploy Backend
+      #   run: |
+      #     branch_name=$(echo "${GITHUB_REF#refs/heads/}")
+      #     ssh "$SSH_USER@$SSH_HOST" "bash -s" < deploy-script.sh
       
-      - name: cleanup
-        run: rm -rf ~/.ssh
+      # - name: cleanup
+      #   run: rm -rf ~/.ssh
 
   # automated-api-tests:
   #   name: Staging | API Testing
