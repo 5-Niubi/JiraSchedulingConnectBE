@@ -162,7 +162,7 @@ jobs:
 
   automated-api-tests:
     name: Staging | API Testing
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: [
       deploy-to-staging
       ]
