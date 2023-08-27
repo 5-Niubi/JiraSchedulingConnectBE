@@ -2,7 +2,7 @@ name: CICD Developing
 on:
   push:
     branches: [  "debug_cicd_config"]
-
+    
 jobs:
   build-backend-service:
     name: Build API Backend Service
@@ -45,7 +45,7 @@ jobs:
           context: .
           file: "JiraSchedulingConnectAppService/Dockerfile"
           push: true
-          tags: ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:${{ github.sha }}, ${{ vars.REGISTRY }}/${{ vars.BE_SERVICE_IMAGE }}:dev-latest
+          tags: ${{ secrets.GAR_BACKEND_SERVICE_IMAGE }}:${{ env.IMAGE_VERSION }}, ${{ secrets.GAR_BACKEND_SERVICE_IMAGE }}:${{ github.sha }}
           
           labels: ${{ steps.meta.outputs.labels }}
   
