@@ -149,7 +149,6 @@ jobs:
           && git fetch \
           && git checkout $branch_name \
           && git pull \
-
           && BACKEND_REPOSITORY="pham2604/5niubi_backend" \
           GATEWAY_REPOSITORY="pham2604/gateway_service" \
           ADMIN_REPOSITORY="pham2604/admin_webapp" \
@@ -265,6 +264,7 @@ jobs:
 
   deploy-common-algo-service:
     name: Deploy Common Algorithm serivce to Cloud run
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     needs: [
       build-algo-service
@@ -280,6 +280,7 @@ jobs:
 
   deploy-ortool-algo-service:
     name: Deploy Ortool Algorithm serivce to Cloud run
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     needs: [
       build-algo-service
@@ -296,6 +297,7 @@ jobs:
   automated-api-algorithm-tests:
     name: API Algorithm Service Testing
     runs-on: ubuntu-latest
+    
     needs: [
       deploy-common-algo-service,
       deploy-ortool-algo-service,
