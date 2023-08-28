@@ -88,6 +88,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
                 exitedskill.Name = skill.Name.Trim();
+                //exitedskill.Description = skill.Description;
                 // Update
                 db.Update(exitedskill);
                 await db.SaveChangesAsync();
