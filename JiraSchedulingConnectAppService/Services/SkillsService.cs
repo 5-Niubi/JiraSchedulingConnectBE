@@ -12,9 +12,9 @@ namespace JiraSchedulingConnectAppService.Services
     public class SkillsService : ISkillsService
     {
 
-        public const string NotFoundMessage = "Skill Not Found!!!";
-        public const string NotUniqueSkillNameMessage = "Skill Name Must Unique!!!";
-        public const string NotEmptySkillNameMessage = "Skill Name Is Not Empty!!!";
+        public const string NotFoundMessage = "Skill Not Found: The requested skill could not be located!";
+        public const string NotUniqueSkillNameMessage = "Skill Name Must Be Unique: Another skill with the same name already exists!";
+        public const string NotEmptySkillNameMessage = "Skill Name Is Not Empty: Please provide a name for the skill!";
 
         private readonly ModelLibrary.DBModels.WoTaasContext db;
         private readonly IMapper mapper;
@@ -62,7 +62,7 @@ namespace JiraSchedulingConnectAppService.Services
 
                 var skill = mapper.Map<Skill>(skillDTO);
 
-                if(skill.Name == null)
+                if(skill.Name == null || skill.Name.Trim() == "")
                 {
                     throw new Exception(NotEmptySkillNameMessage);
                 }
@@ -88,6 +88,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
                 exitedskill.Name = skill.Name.Trim();
+                exitedskill.Description = skill.Description;
                 // Update
                 db.Update(exitedskill);
                 await db.SaveChangesAsync();
@@ -118,9 +119,9 @@ namespace JiraSchedulingConnectAppService.Services
                     && s.IsDelete == false);
 
                 // Validate unique name skill
-                if (exitedName != null)
+                if (exitedName != null || skillRequest.Name.Trim() == "")
                 {
-                    throw new Exception(NotUniqueSkillNameMessage);
+                    throw new Exception(NotEmptySkillNameMessage);
                 }
 
                
