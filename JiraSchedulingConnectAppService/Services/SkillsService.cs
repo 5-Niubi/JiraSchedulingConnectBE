@@ -62,7 +62,7 @@ namespace JiraSchedulingConnectAppService.Services
 
                 var skill = mapper.Map<Skill>(skillDTO);
 
-                if(skill.Name == null)
+                if(skill.Name == null || skill.Name.Trim() == "")
                 {
                     throw new Exception(NotEmptySkillNameMessage);
                 }
@@ -88,6 +88,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
                 exitedskill.Name = skill.Name.Trim();
+                //exitedskill.Description = skill.Description;
                 // Update
                 db.Update(exitedskill);
                 await db.SaveChangesAsync();
@@ -118,7 +119,7 @@ namespace JiraSchedulingConnectAppService.Services
                     && s.IsDelete == false);
 
                 // Validate unique name skill
-                if (exitedName != null)
+                if (exitedName != null || skillRequest.Name.Trim() == "")
                 {
                     throw new Exception(NotUniqueSkillNameMessage);
                 }

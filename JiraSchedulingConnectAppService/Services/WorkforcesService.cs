@@ -21,6 +21,7 @@ namespace JiraSchedulingConnectAppService.Services
         public const string EffortNotValidMessage = "Effort Is Not Validated!!!";
         public const string EffortElementNotValidMessage = "Effort must only have 7 elements!!!";
 
+
         public const string EffortTotalNotValidMessage = "Total Effort must > 0!!!";
 
         public const string SkillNotFoundVaMessage = "Skill Workforce Is Not Found!!!";
@@ -134,20 +135,24 @@ namespace JiraSchedulingConnectAppService.Services
             var WorkingEfforts = WorkforceRequest.WorkingEfforts;
 
             if (WorkingEfforts.Sum() <= 0)
+
             {
                 throw new Exception(EffortTotalNotValidMessage);
 
             }
             if (WorkingEfforts.Count != 7)
-            {
 
+            {
                 throw new NotSuitableInputException(
                         new WorkforceInputErrorDTO()
                         {
-                            Messages = EffortElementNotValidMessage
+                            Messages = EffortTNotValidMessage
                         }
                     );
+
+
             }
+    
 
            
 
@@ -247,6 +252,7 @@ namespace JiraSchedulingConnectAppService.Services
             var cloudId = jwt.GetCurrentCloudId();
             // email not exited
 
+
            
 
             if (workforceRequest.Email == null || workforceRequest.Email.Trim() == "")
@@ -276,6 +282,7 @@ namespace JiraSchedulingConnectAppService.Services
                 {
                     throw new DuplicateException($"AccountId '{workforceRequest.AccountId}' is already in use.");
                 }
+
             }
 
 
@@ -301,6 +308,7 @@ namespace JiraSchedulingConnectAppService.Services
         {
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
+
 
 
             if (workforceRequest.Email == null || workforceRequest.Email.Trim() == "")
