@@ -168,7 +168,8 @@ namespace AlgorithmServiceServer.Services
                 workerSalaryDict[wKey] = totalCostOfWker ?? 0;
             }
 
-            var totalCost = workerSalaryDict.Values.Sum();
+            //var totalCost = workerSalaryDict.Values.Sum();
+            var totalCost = algOutConverted.totalSalary;
             return totalCost;
         }
     }
