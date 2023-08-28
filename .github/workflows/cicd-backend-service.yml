@@ -147,7 +147,7 @@ jobs:
             fi \
           && cd BE_REPO \
           && git fetch \
-          && git checkout $branch_name 
+          && git checkout $branch_name \
           && git pull \
           && BACKEND_REPOSITORY="pham2604/5niubi_backend" \
           GATEWAY_REPOSITORY="pham2604/gateway_service" \
