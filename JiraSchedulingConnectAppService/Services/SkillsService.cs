@@ -121,7 +121,7 @@ namespace JiraSchedulingConnectAppService.Services
                 // Validate unique name skill
                 if (exitedName != null || skillRequest.Name.Trim() == "")
                 {
-                    throw new Exception(NotUniqueSkillNameMessage);
+                    throw new Exception(NotEmptySkillNameMessage);
                 }
 
                
