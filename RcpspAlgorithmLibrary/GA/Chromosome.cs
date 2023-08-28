@@ -135,7 +135,7 @@
                 {
                     end += (int)(actualEffort + 0.9);
                 }
-                end--;
+                end--; 
                 lastMan[wt] = end;
                 timeTask[np] = end;
                 if (workerStart[wt] == 0)
