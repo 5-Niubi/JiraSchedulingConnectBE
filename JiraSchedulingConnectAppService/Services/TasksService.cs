@@ -21,7 +21,7 @@ namespace JiraSchedulingConnectAppService.Services
 
         public const string MilestoneNotFoundMessage = "Group Not Found: The group task's milestone does not exist";
         public const string MilestoneNotEmptyMessage = "Group Not Empty: The group task's milestone is not empty.";
-
+        public const string TaskNameValidateLengthMessage = "Task name should not exceed 100 characters";
 
         public const string MissingMessage = "Task Missing: The specified task could not be found.";
 
@@ -144,6 +144,11 @@ namespace JiraSchedulingConnectAppService.Services
 
             }
 
+            if(task.Name.Count() > 100)
+            {
+                Messages += TaskNameValidateLengthMessage;
+            }
+
             if (task.Duration == 0 || task.Duration < 0)
             {
                 Messages += "Duration is not validate. Duration must > 0 \n";
@@ -263,6 +268,16 @@ namespace JiraSchedulingConnectAppService.Services
                 t => t.Id == changingTask.Id
                 && t.IsDelete == false
                 && t.ProjectId == changingTask.ProjectId);
+
+
+            if (taskRequest.Name.Count() > 100)
+            {
+                throw new NotSuitableInputException(new TaskInputErrorDTO
+                {
+                    TaskId = changingTask.Id,
+                    Messages = TaskNameValidateLengthMessage
+                });
+            }
 
             if (oldTask == null)
             {
