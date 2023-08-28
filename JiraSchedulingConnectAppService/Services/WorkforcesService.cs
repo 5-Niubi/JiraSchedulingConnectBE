@@ -15,19 +15,16 @@ namespace JiraSchedulingConnectAppService.Services
 {
     public class WorkforcesService : IWorkforcesService
     {
-        public const string WorkforceTypeNotValidMessage = "Workforce Type Is Not Validated!!!";
-        public const string WorkforceNotFoundMessage = "Workforce Is Not Found!!!";
-
-        public const string EffortNotValidMessage = "Effort Is Not Validated!!!";
-        public const string EffortElementNotValidMessage = "Effort must only have 7 elements!!!";
-
-        public const string EffortTotalNotValidMessage = "Total Effort must > 0!!!";
-
-        public const string SkillNotFoundVaMessage = "Skill Workforce Is Not Found!!!";
-        public const string SkillLevelNotValidateMessage = "Skill Level Workforce is not validate!!!";
-        public const string NotUniqueSkillNameMessage = "Skill Name Must Unique!!!";
-        public const string NotEmptyAccountIdMessage = "AccountID is not null or empty";
-        public const string NotEmptyEmailMessage = "Email is not null or empty";
+        public const string WorkforceTypeNotValidMessage = "Invalid Workforce Type: The provided workforce type is not valid.";
+        public const string WorkforceNotFoundMessage = "Workforce Not Found: The requested workforce could not be found.";
+        public const string EffortNotValidMessage = "Invalid Effort Value: The provided effort value is not valid.";
+        public const string EffortElementNotValidMessage = "Effort Must Have Exactly 7 Elements: Please provide a list of exactly 7 effort elements.";
+        public const string EffortTotalNotValidMessage = "Total Effort Must Be Greater Than 0: The sum of effort values must be greater than zero.";
+        public const string SkillNotFoundVaMessage = "Skill Workforce Not Found: The specified skill workforce is not found";
+        public const string SkillLevelNotValidateMessage = "Invalid Skill Level for Workforce: The provided skill level for the workforce is not valid.";
+        public const string NotUniqueSkillNameMessage = "Skill Name Must Be Unique: Another skill with the same name already exists.";
+        public const string NotEmptyAccountIdMessage = "Account ID Should Not Be Empty: Please provide a valid account ID.";
+        public const string NotEmptyEmailMessage = "Email Should Not Be Empty: Please provide a valid email address.";
 
         private readonly WoTaasContext db;
         private readonly IMapper mapper;
@@ -134,20 +131,24 @@ namespace JiraSchedulingConnectAppService.Services
             var WorkingEfforts = WorkforceRequest.WorkingEfforts;
 
             if (WorkingEfforts.Sum() <= 0)
+
             {
                 throw new Exception(EffortTotalNotValidMessage);
 
             }
             if (WorkingEfforts.Count != 7)
-            {
 
+            {
                 throw new NotSuitableInputException(
                         new WorkforceInputErrorDTO()
                         {
-                            Messages = EffortElementNotValidMessage
+                            Messages = EffortTotalNotValidMessage
                         }
                     );
+
+
             }
+    
 
            
 
@@ -247,6 +248,7 @@ namespace JiraSchedulingConnectAppService.Services
             var cloudId = jwt.GetCurrentCloudId();
             // email not exited
 
+
            
 
             if (workforceRequest.Email == null || workforceRequest.Email.Trim() == "")
@@ -276,6 +278,7 @@ namespace JiraSchedulingConnectAppService.Services
                 {
                     throw new DuplicateException($"AccountId '{workforceRequest.AccountId}' is already in use.");
                 }
+
             }
 
 
@@ -301,6 +304,7 @@ namespace JiraSchedulingConnectAppService.Services
         {
             var jwt = new JWTManagerService(httpContext);
             var cloudId = jwt.GetCurrentCloudId();
+
 
 
             if (workforceRequest.Email == null || workforceRequest.Email.Trim() == "")
