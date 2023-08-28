@@ -99,11 +99,12 @@ namespace AlgorithmServiceServer.Services
                     var algOutConverted = converter.FromOR(algOutRaw.Genes,
                         new int[0], algOutRaw.TaskBegin, algOutRaw.TaskFinish);
 
-                    algOutConverted.timeFinish = algOutRaw.TimeFinish;
+                    algOutConverted.timeFinish = algOutRaw.TimeFinish + 1;
                     algOutConverted.totalExper = algOutRaw.TotalExper;
+                    algOutConverted.totalSalary = algOutRaw.TotalSalary;
 
-                    var totalSalary = CalculateTotalSalary(projectFromDB, algOutConverted);
-                    algOutConverted.totalSalary = totalSalary;
+                    //var totalSalary = CalculateTotalSalary(projectFromDB, algOutConverted);
+                    //algOutConverted.totalSalary = totalSalary;
 
                     algorithmOutputConverted.Add(algOutConverted);
 
@@ -168,8 +169,7 @@ namespace AlgorithmServiceServer.Services
                 workerSalaryDict[wKey] = totalCostOfWker ?? 0;
             }
 
-            //var totalCost = workerSalaryDict.Values.Sum();
-            var totalCost = algOutConverted.totalSalary;
+            var totalCost = workerSalaryDict.Values.Sum();
             return totalCost;
         }
     }
