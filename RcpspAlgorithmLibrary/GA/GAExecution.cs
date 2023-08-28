@@ -66,6 +66,7 @@ namespace AlgorithmLibrary.GA
         public List<List<int>> manAbleDo = new();
         public int[,] Exper = new int[505, 505];
         public bool[] objectiveChoice = new bool[3];
+        private float baseWorkingHours;
 
         public void SetParam(OutputToORDTO param)
         {
@@ -83,6 +84,7 @@ namespace AlgorithmLibrary.GA
             salaryEachTime = param.WorkerSalary;
 
             objectiveChoice = param.ObjectiveSelect;
+            baseWorkingHours = param.BaseWorkingHour;
         }
 
         private double[,] GenerateTaskSimilarityMatrix()
@@ -169,12 +171,12 @@ namespace AlgorithmLibrary.GA
             {
                 var output = new AlgorithmRawOutput();
                 var individual = chromosomeWithDistictFitness[i];
-                output.TimeFinish = individual.TimeFinish - 1; // duration doi ra 1 ngay
+                output.TimeFinish = individual.TimeFinish;
                 output.TaskFinish = individual.TaskFinish;
                 output.TaskBegin = individual.TaskBegin;
                 output.Genes = individual.Genes;
                 output.TotalExper = individual.TotalExper;
-                output.TotalSalary = individual.TotalSalary;
+                output.TotalSalary = individual.TotalSalary;  
 
                 outputList.Add(output);
             }

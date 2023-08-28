@@ -56,7 +56,7 @@ namespace AlgorithmLibrary.Solver
             var maxPTE = data.NumOfSkills * data.NumOfTasks * 5;
             var pte = model.NewIntVar(0, maxPTE, "pte");
             var pteList = new List<IntVar>();
-            var pts = model.NewIntVar(0, data.Budget.Value, "pts");
+            var pts = model.NewIntVar(0, data.Budget?? 0 * 10, "pts");
             var ptsList = new List<IntVar>();
             var pft = model.NewIntVar(0, data.Deadline, "pft");
 
@@ -69,8 +69,8 @@ namespace AlgorithmLibrary.Solver
                     A.Add((i, j), model.NewBoolVar($"A[{i}][{j}]"));
                 }
 
-                ts[i] = model.NewIntVar(1, data.Deadline, $"ts[{i}]");
-                tf[i] = model.NewIntVar(1, data.Deadline, $"tf[{i}]");
+                ts[i] = model.NewIntVar(0, data.Deadline, $"ts[{i}]");
+                tf[i] = model.NewIntVar(0, data.Deadline, $"tf[{i}]");
                 model.Add(tf[i] >= ts[i]);
                 model.Add(pft >= tf[i]);
 
@@ -203,6 +203,12 @@ namespace AlgorithmLibrary.Solver
                         model.AddMultiplicationEquality(wde, new LinearExpr[] { A[(i, j)], V[(i, k)] * workerEfforts[j, k] });
                         taskEffort.Add(wde);
                     }
+                    var tmpEffort = model.NewIntVar(0, taskEfforts[i] + dayEffort, $"tmpEffort[{i}][{j}]");
+                    //model.Add(tmpEffort == LinearExpr.Sum(taskEffort));
+
+                    //model.Add(tmpEffort >= taskEfforts[i]).OnlyEnforceIf(A[(i, j)]);
+                    //model.Add(tmpEffort < taskEfforts[i] + dayEffort).OnlyEnforceIf(A[(i, j)]);
+
                     model.Add(LinearExpr.Sum(taskEffort) >= taskEfforts[i]).OnlyEnforceIf(A[(i, j)]);
                     model.Add(LinearExpr.Sum(taskEffort) <= taskEfforts[i] + dayEffort).OnlyEnforceIf(A[(i, j)]);
 
@@ -212,8 +218,10 @@ namespace AlgorithmLibrary.Solver
                     pteList.Add(tmpExp);
 
                     /// C06 -> Total hiring price
-                    var tmpSal = model.NewIntVar(0, data.Budget.Value, $"tmpSal[{j}][{i}]");
-                    model.Add(tmpSal == A[(i, j)] * taskEfforts[i] * data.WorkerSalary[j]);
+                    var actualDuration = model.NewIntVar(0, data.Deadline, $"ad[{j}][{i}]");
+                    model.Add(actualDuration == (tf[i] - ts[i] + 1));
+                    var tmpSal = model.NewIntVar(0, data.Budget?? 0 * 10, $"tmpSal[{j}][{i}]");
+                    model.AddMultiplicationEquality(tmpSal, A[(i, j)], actualDuration * data.WorkerSalary[j]);
                     ptsList.Add(tmpSal);
                 }
             }
@@ -234,7 +242,7 @@ namespace AlgorithmLibrary.Solver
             }
             else if (data.ObjectiveSelect[2] == true)
             {
-                w3 = 20;
+                w3 = -20;
             }
 
             model.Minimize(w1 * pft + w2 * pts + w3 * pte); // linear-weighted sum
