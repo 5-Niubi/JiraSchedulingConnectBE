@@ -11,8 +11,8 @@ namespace JiraSchedulingConnectAppService.Services
     public class MilestonesService : IMilestonesService
     {
 
-        public const string NotFoundMessage = "Milestone Not Found!!!";
-        public const string NotValidateDeleteMilestone = "Exited Tasks in Milestone, Can't Delete this Milestone";
+        public const string NotFoundMessage = "Group Not Found: The specified group could not be located.";
+        public const string NotValidateDeleteMilestone = "Tasks Exist in Group: Unable to delete this group as there are tasks associated with it.";
 
         private readonly ModelLibrary.DBModels.WoTaasContext db;
         private readonly IMapper mapper;

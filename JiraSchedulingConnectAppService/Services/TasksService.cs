@@ -12,28 +12,27 @@ namespace JiraSchedulingConnectAppService.Services
 {
     public class TasksService : ITasksService
     {
-        public const string TaskNotFoundMessage = "Task Not Found!";
+        public const string TaskNotFoundMessage = "Task Not Found: The specified task could not be located in the system.";
 
-        public const string SkillNotFoundMessage = "Skill Not Found!";
-        public const string LevelSkillNotValidMessage = "Level Skill Not Valid!";
-        public const string RequiredSkillNotValidMessage = "Skill Not Validate!";
-        public const string RequiredSkillInputEmptyMessage = "Empty Required Skills";
+        public const string SkillNotFoundMessage = "Skill Not Found: The requested skill could not be found";
+        public const string LevelSkillNotValidMessage = "Invalid Skill Level: The provided skill level is not valid.";
+        public const string RequiredSkillNotValidMessage = "Invalid Required Skill: The specified skill is not valid.";
+        public const string RequiredSkillInputEmptyMessage = "Required Skills Empty: Please ensure at least one required skill is provided.";
 
-        public const string MilestoneNotFoundMessage = "Group task not exited";
-        public const string MilestoneNotEmptyMessage = "Group is not empty";
-
-
-        public const string MissingMessage = "Missing Task!";
+        public const string MilestoneNotFoundMessage = "Group Not Found: The group task's milestone does not exist";
+        public const string MilestoneNotEmptyMessage = "Group Not Empty: The group task's milestone is not empty.";
 
 
-        public const string PrecedenceMissingTaskMessage = "Task Not Set Precedence!";
-        public const string PrecedenceIsCycleMessage = "Tasks be cycle!";
-        public const string RequiredSkillMissingTaskMessage = "Task Not Set Required SKill!";
+        public const string MissingMessage = "Task Missing: The specified task could not be found.";
 
-        public const string ProjectNotFoundMessage = "Project Not Found!";
-        public const string NotUniqueTaskNameMessage = "Task Name Is Exited!";
-        public const string PredenceNotFoundMessage = "Predence Task  not Found!";
-        public const string MilestoneNotValidMessage = "Group Task's not valid!";
+        public const string PrecedenceMissingTaskMessage = "Task Precedence Missing: The task order has not been defined.";
+        public const string PrecedenceIsCycleMessage = "Task Cycle Detected: There is a circular dependency among tasks";
+        public const string RequiredSkillMissingTaskMessage = "Required Skill Missing: The necessary skill for this task is missing";
+
+        public const string ProjectNotFoundMessage = "Project Not Found: The requested project does not exist!";
+        public const string NotUniqueTaskNameMessage = "Task Name Already Exists: A task with the same name already exists.";
+        public const string PredenceNotFoundMessage = "Preceding Task Not Found: The task that is supposed to precede could not be located.";
+        public const string MilestoneNotValidMessage = "Invalid Group Task: The Group does not exist!";
 
         private readonly WoTaasContext db;
         private readonly IMapper mapper;

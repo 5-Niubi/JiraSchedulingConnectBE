@@ -12,9 +12,9 @@ namespace JiraSchedulingConnectAppService.Services
     public class SkillsService : ISkillsService
     {
 
-        public const string NotFoundMessage = "Skill Not Found!!!";
-        public const string NotUniqueSkillNameMessage = "Skill Name Must Unique!!!";
-        public const string NotEmptySkillNameMessage = "Skill Name Is Not Empty!!!";
+        public const string NotFoundMessage = "Skill Not Found: The requested skill could not be located!";
+        public const string NotUniqueSkillNameMessage = "Skill Name Must Be Unique: Another skill with the same name already exists!";
+        public const string NotEmptySkillNameMessage = "Skill Name Is Not Empty: Please provide a name for the skill!";
 
         private readonly ModelLibrary.DBModels.WoTaasContext db;
         private readonly IMapper mapper;
