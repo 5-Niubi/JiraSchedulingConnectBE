@@ -164,7 +164,7 @@ namespace AlgorithmLibrary
                     JsonSerializer.Deserialize<double[]>(WorkerList[i].WorkingEffort);
                 //workerEffort[i] = new double[Deadline];
 
-                int k = 0;
+                int k = Utils.GetDayOfWeek(StartDate);
                 for (int j = 0; j < Deadline; j++)
                 {
                     double effort = 1;
@@ -244,10 +244,10 @@ namespace AlgorithmLibrary
                 var task = new TaskScheduleResultDTO();
                 task.id = TaskList[i].Id;
                 task.name = TaskList[i].Name;
-                task.duration = taskEnd[i] - taskStart[i];
+                task.duration = taskEnd[i] - taskStart[i] + 1;
                 task.workforce = mapper.Map<WorkforceScheduleResultDTO>(WorkerList[taskWithWorker[i]]);
-                task.startDate = StartDate.AddDays(taskStart[i]).AddDays(-1);
-                task.endDate = Utils.MoveDayToEnd(StartDate.AddDays(taskEnd[i] - 1)).Value.AddDays(-1);
+                task.startDate = StartDate.AddDays(taskStart[i] - 1);
+                task.endDate = Utils.MoveDayToEnd(StartDate.AddDays(taskEnd[i] - 1));
                 task.mileStone = mapper.Map<MileStoneScheduleResultDTO>(TaskList[i].Milestone);
                 foreach (var taskPre in TaskList[i].TaskPrecedenceTasks)
                 {

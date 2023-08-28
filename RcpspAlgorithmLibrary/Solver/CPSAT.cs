@@ -31,8 +31,14 @@ namespace AlgorithmLibrary.Solver
             var tf = new Dictionary<int, IntVar>();
             var V = new Dictionary<(int, int), BoolVar>();
 
+            // Check for number of tasks
+            if (data.NumOfTasks > 100 && data.NumOfWorkers >= 15)
+            {
+                throw new Exception("Expected a large model, read the description for contact info.");
+            }
+
             /// Pre-configuration
-            var maxTime = (data.NumOfTasks > 100) ? 1200 : 600;
+            var maxTime = (data.NumOfTasks >= 100) ? 600 : 400;
             var model = new CpModel();
             var solver = new CpSolver
             {
@@ -44,8 +50,15 @@ namespace AlgorithmLibrary.Solver
                 + $"max_time_in_seconds:{maxTime};"
                 + $"subsolvers:\"no_lp\";"
                 + $"linearization_level:0;"
-                + $"random_seed:{29}"
             };
+
+            /// Holder variable for objective functions
+            var maxPTE = data.NumOfSkills * data.NumOfTasks * 5;
+            var pte = model.NewIntVar(0, maxPTE, "pte");
+            var pteList = new List<IntVar>();
+            var pts = model.NewIntVar(0, data.Budget ?? 0, "pts");
+            var ptsList = new List<IntVar>();
+            var pft = model.NewIntVar(0, data.Deadline, "pft");
 
             /// Unknowns Instantiation
             foreach (var i in allTasks)
@@ -58,28 +71,21 @@ namespace AlgorithmLibrary.Solver
 
                 ts[i] = model.NewIntVar(1, data.Deadline, $"ts[{i}]");
                 tf[i] = model.NewIntVar(1, data.Deadline, $"tf[{i}]");
+                model.Add(tf[i] >= ts[i]);
+                model.Add(pft >= tf[i]);
 
                 foreach (var j in allDays)
                 {
                     V[(i, j)] = model.NewBoolVar($"V[{i}][{j}]");
                 }
             }
-            var maxPTE = data.NumOfSkills * data.NumOfTasks * 5;
-
-            /// Holder variable for objective functions
-            var pte = model.NewIntVar(0, maxPTE, "pte");
-            var pteList = new List<IntVar>();
-            var pts = model.NewIntVar(0, data.Budget ?? 0, "pts");
-            var ptsList = new List<IntVar>();
-            var pft = model.NewIntVar(0, data.Deadline, "pft");
-
 
             /// Convert to Integer Problem
             var dayEffort = Convert.ToInt32(data.BaseWorkingHour * 10);
             var taskEfforts = new int[data.NumOfTasks];
             foreach (var i in allTasks)
             {
-                taskEfforts[i] = Convert.ToInt32(data.BaseWorkingHour * data.TaskDuration[i] * 10);
+                taskEfforts[i] = Convert.ToInt32(dayEffort * data.TaskDuration[i]);
             }
 
             var workerEfforts = new int[data.NumOfWorkers, data.Deadline];
@@ -128,12 +134,28 @@ namespace AlgorithmLibrary.Solver
             }
 
             // C02 -> Task precendences contraints
-            for (int i = 0; i < data.NumOfTasks - 1; i++)
+            var dependencyGraph = new Dictionary<int, List<IntVar>>();
+            for (int i = 0; i < data.NumOfTasks; i++)
             {
-                for (int j = i + 1; j < data.NumOfTasks; j++)
+                dependencyGraph[i] = new List<IntVar>();
+            }
+
+
+            for (int i = 0; i < data.NumOfTasks; i++)
+            {
+                for (int j = 0; j < data.NumOfTasks; j++)
                 {
-                    model.Add(data.TaskAdjacency[i, j] * (ts[j] - tf[i] - 1) >= 0);
+                    if (data.TaskAdjacency[j, i] == 1)
+                    {
+                        dependencyGraph[i].Add(tf[j]); // vua doi i thanh j
+                    }
                 }
+            }
+
+            for (int i = 0; i < data.NumOfTasks; i++)
+            {
+                foreach (var j in dependencyGraph[i])
+                    model.Add(ts[i] >= j + 1);
             }
 
             // C03 -> One employee per task
@@ -157,19 +179,14 @@ namespace AlgorithmLibrary.Solver
             {
                 foreach (var j in allDays)
                 {
-                    var gt = model.NewBoolVar($"gt[{i}, {j}]");
-                    var lt = model.NewBoolVar($"lt[{i}, {j}]");
                     var bt = model.NewBoolVar($"lt[{i}, {j}]");
 
-                    model.Add(j <= tf[i]).OnlyEnforceIf(new[] { bt, lt.Not(), gt.Not() });
-                    model.Add(j >= ts[i]).OnlyEnforceIf(new[] { bt, lt.Not(), gt.Not() });
-                    model.Add(j > tf[i]).OnlyEnforceIf(new[] { gt, lt.Not(), bt.Not() });
-                    model.Add(j < ts[i]).OnlyEnforceIf(new[] { lt, lt.Not(), gt.Not() });
+                    model.Add(j <= tf[i]).OnlyEnforceIf(bt);
+                    model.Add(j >= ts[i]).OnlyEnforceIf(bt);
 
                     model.Add(V[(i, j)] == 1).OnlyEnforceIf(bt);
-                    model.Add(bt == 1).OnlyEnforceIf(V[(i, j)]);
+                    model.Add(V[(i, j)] == 0).OnlyEnforceIf(bt.Not());
 
-                    model.AddExactlyOne(new[] { bt, lt, gt });
                 }
             }
 
@@ -187,7 +204,7 @@ namespace AlgorithmLibrary.Solver
                         taskEffort.Add(wde);
                     }
                     model.Add(LinearExpr.Sum(taskEffort) >= taskEfforts[i]).OnlyEnforceIf(A[(i, j)]);
-                    model.Add(LinearExpr.Sum(taskEffort) < taskEfforts[i] + dayEffort).OnlyEnforceIf(A[(i, j)]);
+                    model.Add(LinearExpr.Sum(taskEffort) <= taskEfforts[i] + dayEffort).OnlyEnforceIf(A[(i, j)]);
 
                     /// C05 -> Total scheduling experiences
                     var tmpExp = model.NewIntVar(0, maxPTE, $"tmpExp[{j}][{i}]");
@@ -195,18 +212,17 @@ namespace AlgorithmLibrary.Solver
                     pteList.Add(tmpExp);
 
                     /// C06 -> Total hiring price
-                    var tmpSal = model.NewIntVar(0, data.Deadline, $"tmpSal[{j}][{i}]");
+                    var tmpSal = model.NewIntVar(0, data.Budget?? 0, $"tmpSal[{j}][{i}]");
                     model.Add(tmpSal == A[(i, j)] * taskEfforts[i] * data.WorkerSalary[j]);
                     ptsList.Add(tmpSal);
                 }
             }
             model.Add(pte == LinearExpr.Sum(pteList));
             model.Add(pts == LinearExpr.Sum(ptsList));
-            model.AddMaxEquality(pft, tf.Values);
 
             int w1 = 1;
-            int w2 = 0;
-            int w3 = 0;
+            int w2 = 1;
+            int w3 = 1;
 
             if (data.ObjectiveSelect[0] == true)
             {
@@ -214,16 +230,14 @@ namespace AlgorithmLibrary.Solver
             }
             else if (data.ObjectiveSelect[1] == true)
             {
-                w3 = 0;
                 w2 = 20;
             }
             else if (data.ObjectiveSelect[2] == true)
             {
-                w2 = 0;
                 w3 = 20;
             }
 
-            model.Minimize(w1 * pft + w2 * pte + w3 * pts); // linear-weighted sum
+            model.Minimize(w1 * pft + w2 * pts + w3 * pte); // linear-weighted sum
 
             // Running Solver
             var status = solver.Solve(model);

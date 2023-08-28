@@ -118,7 +118,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
   deploy-to-staging:
     name:  Staging | Deploy Backend Service
-    if: github.event.ref == 'refs/heads/main'
+    # if:  startsWith(github.ref, 'refs/heads/fixbug')
     needs: [
       automated-api-algorithm-tests,
 
@@ -126,7 +126,7 @@ jobs:
       build-admin-service,
       build-gateway-service
       ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     environment:
       name: Staging
@@ -149,6 +149,7 @@ jobs:
           && git fetch \
           && git checkout $branch_name 
           && git pull \
+
           && BACKEND_REPOSITORY="pham2604/5niubi_backend" \
           GATEWAY_REPOSITORY="pham2604/gateway_service" \
           ADMIN_REPOSITORY="pham2604/admin_webapp" \
@@ -162,7 +163,7 @@ jobs:
 
   automated-api-tests:
     name: Staging | API Testing
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: [
       deploy-to-staging
       ]

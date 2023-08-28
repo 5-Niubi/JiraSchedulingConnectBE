@@ -30,5 +30,21 @@
         {
             get; set;
         }
+        public string? title
+        {
+            get; set;
+        }
+        public string? desciption
+        {
+            get; set;
+        }
+        public int? type
+        {
+            get; set;
+        }
+        public DateTime? createDatetime
+        {
+            get; set;
+        }
     }
 }

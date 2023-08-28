@@ -3,6 +3,7 @@ on:
 
   push:
     branches: [ "main"]
+
   pull_request:
     branches: [ "main" ]
 jobs:
@@ -70,4 +71,4 @@ jobs:
           postman collection run 22303980-e10b19fb-a5b1-4d57-83b2-e5ea2392ad6f -e 28333090-bf419cae-814d-4918-9b8a-8c73ee15f2fc -i 22303980-180eea1d-ecc2-4728-98f3-6c2b63130289
 
 
-  
+ 

@@ -140,7 +140,7 @@ namespace AlgorithmServiceServer.Services
             schedule.Cost = algOutConverted.totalSalary;
             schedule.Quality = algOutConverted.totalExper;
             schedule.Tasks = JsonSerializer.Serialize(algOutConverted.tasks);
-
+            schedule.Title = Const.SCHEDULE.DEFAULT_TITLE;
             var scheduleSolution = await db.Schedules.AddAsync(schedule);
             return scheduleSolution.Entity;
         }
@@ -168,7 +168,8 @@ namespace AlgorithmServiceServer.Services
                 workerSalaryDict[wKey] = totalCostOfWker ?? 0;
             }
 
-            var totalCost = workerSalaryDict.Values.Sum();
+            //var totalCost = workerSalaryDict.Values.Sum();
+            var totalCost = algOutConverted.totalSalary;
             return totalCost;
         }
     }
