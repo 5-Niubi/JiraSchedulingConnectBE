@@ -100,7 +100,7 @@
                 {
                     if (data.TaskAdjacency[t, np] == 1)
                     {
-                        start = Math.Max(start, timeTask[t]);
+                        start = Math.Max(start, timeTask[t] + 1);
                     }
                 }
                 start = Math.Max(start, lastMan[wt]);
