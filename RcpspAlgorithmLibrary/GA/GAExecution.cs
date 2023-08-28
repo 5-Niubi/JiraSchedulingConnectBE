@@ -169,7 +169,7 @@ namespace AlgorithmLibrary.GA
             {
                 var output = new AlgorithmRawOutput();
                 var individual = chromosomeWithDistictFitness[i];
-                output.TimeFinish = individual.TimeFinish;
+                output.TimeFinish = individual.TimeFinish - 1; // duration doi ra 1 ngay
                 output.TaskFinish = individual.TaskFinish;
                 output.TaskBegin = individual.TaskBegin;
                 output.Genes = individual.Genes;
