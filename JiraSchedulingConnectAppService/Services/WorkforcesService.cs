@@ -152,17 +152,7 @@ namespace JiraSchedulingConnectAppService.Services
 
 
             }
-            if (WorkingEfforts.Count != 7)
-            {
-
-                throw new NotSuitableInputException(
-                        new WorkforceInputErrorDTO()
-                        {
-                            Messages = EffortElementNotValidMessage
-                        }
-                    );
-            }
-
+    
 
            
 
