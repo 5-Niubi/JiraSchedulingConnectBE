@@ -56,7 +56,7 @@ namespace AlgorithmLibrary.Solver
             var maxPTE = data.NumOfSkills * data.NumOfTasks * 5;
             var pte = model.NewIntVar(0, maxPTE, "pte");
             var pteList = new List<IntVar>();
-            var pts = model.NewIntVar(0, data.Budget ?? 0, "pts");
+            var pts = model.NewIntVar(0, data.Budget.Value, "pts");
             var ptsList = new List<IntVar>();
             var pft = model.NewIntVar(0, data.Deadline, "pft");
 
@@ -212,7 +212,7 @@ namespace AlgorithmLibrary.Solver
                     pteList.Add(tmpExp);
 
                     /// C06 -> Total hiring price
-                    var tmpSal = model.NewIntVar(0, data.Budget?? 0, $"tmpSal[{j}][{i}]");
+                    var tmpSal = model.NewIntVar(0, data.Budget.Value, $"tmpSal[{j}][{i}]");
                     model.Add(tmpSal == A[(i, j)] * taskEfforts[i] * data.WorkerSalary[j]);
                     ptsList.Add(tmpSal);
                 }
