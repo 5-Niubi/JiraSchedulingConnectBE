@@ -17,13 +17,9 @@ namespace JiraSchedulingConnectAppService.Services
     {
         public const string WorkforceTypeNotValidMessage = "Workforce Type Is Not Validated!!!";
         public const string WorkforceNotFoundMessage = "Workforce Is Not Found!!!";
-
         public const string EffortNotValidMessage = "Effort Is Not Validated!!!";
         public const string EffortElementNotValidMessage = "Effort must only have 7 elements!!!";
-
-
         public const string EffortTotalNotValidMessage = "Total Effort must > 0!!!";
-
         public const string SkillNotFoundVaMessage = "Skill Workforce Is Not Found!!!";
         public const string SkillLevelNotValidateMessage = "Skill Level Workforce is not validate!!!";
         public const string NotUniqueSkillNameMessage = "Skill Name Must Unique!!!";
@@ -146,7 +142,7 @@ namespace JiraSchedulingConnectAppService.Services
                 throw new NotSuitableInputException(
                         new WorkforceInputErrorDTO()
                         {
-                            Messages = EffortTNotValidMessage
+                            Messages = EffortTotalNotValidMessage
                         }
                     );
 
