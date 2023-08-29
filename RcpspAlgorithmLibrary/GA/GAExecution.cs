@@ -240,7 +240,3 @@ namespace AlgorithmLibrary.GA
 
 }
 
-
-
-}
-
