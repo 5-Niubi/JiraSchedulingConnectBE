@@ -38,7 +38,7 @@ namespace AlgorithmLibrary.Solver
             }
 
             /// Pre-configuration
-            var maxTime = (data.NumOfTasks >= 100) ? 600 : 400;
+            var maxTime = (data.NumOfTasks >= 100) ? 600 : 250;
             var model = new CpModel();
             var solver = new CpSolver
             {
