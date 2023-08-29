@@ -203,6 +203,7 @@ namespace AlgorithmLibrary.Solver
                         model.AddMultiplicationEquality(wde, new LinearExpr[] { A[(i, j)], V[(i, k)] * workerEfforts[j, k] });
                         taskEffort.Add(wde);
                     }
+
                     var tmpEffort = model.NewIntVar(0, taskEfforts[i] + dayEffort, $"tmpEffort[{i}][{j}]");
                     //model.Add(tmpEffort == LinearExpr.Sum(taskEffort));
 
@@ -212,16 +213,15 @@ namespace AlgorithmLibrary.Solver
                     model.Add(LinearExpr.Sum(taskEffort) >= taskEfforts[i]).OnlyEnforceIf(A[(i, j)]);
                     model.Add(LinearExpr.Sum(taskEffort) <= taskEfforts[i] + dayEffort).OnlyEnforceIf(A[(i, j)]);
 
+
                     /// C05 -> Total scheduling experiences
                     var tmpExp = model.NewIntVar(0, maxPTE, $"tmpExp[{j}][{i}]");
                     model.Add(tmpExp == A[(i, j)] * expers[i, j]);
                     pteList.Add(tmpExp);
 
                     /// C06 -> Total hiring price
-                    var actualDuration = model.NewIntVar(0, data.Deadline, $"ad[{j}][{i}]");
-                    model.Add(actualDuration == (tf[i] - ts[i] + 1));
-                    var tmpSal = model.NewIntVar(0, data.Budget ?? 0 * 10, $"tmpSal[{j}][{i}]");
-                    model.AddMultiplicationEquality(tmpSal, A[(i, j)], actualDuration * data.WorkerSalary[j]);
+                    var tmpSal = model.NewIntVarFromDomain(new Domain(0, data.Budget ?? 0 * 10), $"tmpSal[{j}][{i}]");
+                    model.Add(tmpSal == A[(i, j)] * taskEfforts[i] * data.WorkerSalary[j]);
                     ptsList.Add(tmpSal);
                 }
             }
@@ -277,7 +277,7 @@ namespace AlgorithmLibrary.Solver
                 output.TaskBegin = individual.TaskBegin;
                 output.Genes = individual.Assign;
                 output.TotalExper = individual.TotalExper;
-                output.TotalSalary = individual.TotalSalary;
+                output.TotalSalary = individual.TotalSalary / 10;
 
                 outputList.Add(output);
             }
