@@ -184,6 +184,63 @@ namespace AlgorithmLibrary.GA
             return outputList;
         }
 
+        public List<AlgorithmRawOutput> RunV1()
+        {
+            // Calculate task similarity
+            Z = GenerateTaskSimilarityMatrix();
+            // Bat dau xu ly
+            manAbleDo = GAHelper.SuitableWorker(K, R, numOfTask, numOfPeople, numOfSkill);
+            Exper = GAHelper.TaskExperByWorker(K, R, numOfTask, numOfPeople, numOfSkill);
+
+            Data d = new(numOfTask, numOfSkill, numOfPeople, durationTime,
+                adjacency, salaryEachTime, Z, U, Budget, Deadline, manAbleDo, Exper);
+            d.Setup();
+            d.ChangeWeights(objectiveChoice[0], objectiveChoice[1], objectiveChoice[2]);
+            Population population = new Population(5000).InitializePopulation(d);
+            GeneticAlgorithm geneticAlgorithm = new();
+            int numOfGen = 0;
+            while (numOfGen < GAHelper.NUM_OF_GENARATION)
+            {
+                population = geneticAlgorithm.Evolve(population, d);
+                population.SortChromosomesByFitness(d);
+                numOfGen++;
+            }
+
+            // Dau ra tu day
+            var outputList = new List<AlgorithmRawOutput>();
+
+            var chromosomeWithDistictFitness = population.Chromosomes
+                .GroupBy(c => c.Fitness).Select(c => c.First()).ToList();
+
+            var maxResult = 10;
+            if (maxResult > chromosomeWithDistictFitness.Count)
+            {
+                maxResult = chromosomeWithDistictFitness.Count;
+            }
+
+            for (int i = 0; i < maxResult; i++)
+            {
+                var output = new AlgorithmRawOutput();
+                var individual = chromosomeWithDistictFitness[i];
+                output.TimeFinish = individual.TimeFinish;
+                output.TaskFinish = individual.TaskFinish;
+                output.TaskBegin = individual.TaskBegin;
+                output.Genes = individual.Genes;
+                output.TotalExper = individual.TotalExper;
+                output.TotalSalary = individual.TotalSalary;
+
+                outputList.Add(output);
+            }
+
+            return outputList;
+        }
+
     }
+
+
+}
+
+
+
 }
 

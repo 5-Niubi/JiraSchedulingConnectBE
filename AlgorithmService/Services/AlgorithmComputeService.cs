@@ -84,7 +84,9 @@ namespace AlgorithmServiceServer.Services
                     break;
                 case Const.OPTIMIZER.SOLVER:
                     // Running with Solver
-                    algorithmOutputRaws = CPSAT.Schedule(outputToAlgorithm);
+                    var ortool = new GAExecution();
+                    ortool.SetParam(outputToAlgorithm);
+                    algorithmOutputRaws = ortool.RunV1();
                     break;
             }
 
