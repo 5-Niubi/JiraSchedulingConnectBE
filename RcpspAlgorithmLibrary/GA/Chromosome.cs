@@ -104,8 +104,8 @@
                     }
                 }
                 start = Math.Max(start, lastMan[wt]);
-                if (start == 0)
-                    start = 1;
+                //if (start == 0)
+                //    start = 1;
                 int end = start;
                 double actualEffort = data.TaskDuration[np];
                 double similarityAssign = 0;
@@ -141,7 +141,10 @@
                 if (workerStart[wt] == 0)
                     workerStart[wt] = start;
                 workerFinish[wt] = Math.Max(workerFinish[wt], end);
-                totalWorkerEffort[wt] += (end - start);
+
+                //totalWorkerEffort[wt] += (end - start + 1 + actualEffort);
+                totalWorkerEffort[wt] += (end - start + 1);
+
                 for (int i = 0; i < data.NumOfTasks; ++i)
                 {
                     if (data.TaskAdjacency[np, i] == 1)

@@ -1,4 +1,4 @@
-﻿using AlgorithmLibrary.GA;
+using AlgorithmLibrary.GA;
 using Google.OrTools.Sat;
 using Google.OrTools.Util;
 using ModelLibrary.DTOs.Algorithm;
