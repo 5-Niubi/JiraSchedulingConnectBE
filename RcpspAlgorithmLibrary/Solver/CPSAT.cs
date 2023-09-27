@@ -1,4 +1,4 @@
-﻿using AlgorithmLibrary.GA;
+using AlgorithmLibrary.GA;
 using Google.OrTools.Sat;
 using Google.OrTools.Util;
 using ModelLibrary.DTOs.Algorithm;
@@ -16,7 +16,7 @@ namespace AlgorithmLibrary.Solver
         /// <exception cref="ModelInvalidException"></exception>
         /// <exception cref="Exception"></exception>
         /// <exception cref="InfeasibleException"></exception>
-        public static List<AlgorithmRawOutput> Schedule(OutputToORDTO data)
+        public static List<AlgorithmRawOutput> Scheduler(OutputToORDTO data)
         {
             /// Pre-processing
             var expers = GAHelper.TaskExperByWorker(data.WorkerExper, data.TaskExper, data.NumOfTasks, data.NumOfWorkers, data.NumOfSkills);
@@ -38,7 +38,7 @@ namespace AlgorithmLibrary.Solver
             }
 
             /// Pre-configuration
-            var maxTime = (data.NumOfTasks >= 100) ? 600 : 400;
+            var maxTime = (data.NumOfTasks >= 100) ? 600 : 250;
             var model = new CpModel();
             var solver = new CpSolver
             {
@@ -56,7 +56,7 @@ namespace AlgorithmLibrary.Solver
             var maxPTE = data.NumOfSkills * data.NumOfTasks * 5;
             var pte = model.NewIntVar(0, maxPTE, "pte");
             var pteList = new List<IntVar>();
-            var pts = model.NewIntVar(0, data.Budget?? 0 * 10, "pts");
+            var pts = model.NewIntVar(0, data.Budget ?? 0 * 10, "pts");
             var ptsList = new List<IntVar>();
             var pft = model.NewIntVar(0, data.Deadline, "pft");
 
@@ -203,6 +203,7 @@ namespace AlgorithmLibrary.Solver
                         model.AddMultiplicationEquality(wde, new LinearExpr[] { A[(i, j)], V[(i, k)] * workerEfforts[j, k] });
                         taskEffort.Add(wde);
                     }
+
                     var tmpEffort = model.NewIntVar(0, taskEfforts[i] + dayEffort, $"tmpEffort[{i}][{j}]");
                     //model.Add(tmpEffort == LinearExpr.Sum(taskEffort));
 
@@ -212,16 +213,15 @@ namespace AlgorithmLibrary.Solver
                     model.Add(LinearExpr.Sum(taskEffort) >= taskEfforts[i]).OnlyEnforceIf(A[(i, j)]);
                     model.Add(LinearExpr.Sum(taskEffort) <= taskEfforts[i] + dayEffort).OnlyEnforceIf(A[(i, j)]);
 
+
                     /// C05 -> Total scheduling experiences
                     var tmpExp = model.NewIntVar(0, maxPTE, $"tmpExp[{j}][{i}]");
                     model.Add(tmpExp == A[(i, j)] * expers[i, j]);
                     pteList.Add(tmpExp);
 
                     /// C06 -> Total hiring price
-                    var actualDuration = model.NewIntVar(0, data.Deadline, $"ad[{j}][{i}]");
-                    model.Add(actualDuration == (tf[i] - ts[i] + 1));
-                    var tmpSal = model.NewIntVar(0, data.Budget?? 0 * 10, $"tmpSal[{j}][{i}]");
-                    model.AddMultiplicationEquality(tmpSal, A[(i, j)], actualDuration * data.WorkerSalary[j]);
+                    var tmpSal = model.NewIntVarFromDomain(new Domain(0, data.Budget ?? 0 * 10), $"tmpSal[{j}][{i}]");
+                    model.Add(tmpSal == A[(i, j)] * taskEfforts[i] * data.WorkerSalary[j]);
                     ptsList.Add(tmpSal);
                 }
             }
@@ -277,6 +277,60 @@ namespace AlgorithmLibrary.Solver
                 output.TaskBegin = individual.TaskBegin;
                 output.Genes = individual.Assign;
                 output.TotalExper = individual.TotalExper;
+                output.TotalSalary = individual.TotalSalary / 10;
+
+                outputList.Add(output);
+            }
+            return outputList;
+        }
+        public static List<AlgorithmRawOutput> Schedule(OutputToORDTO data)
+        {
+            Heuristic hr = new Heuristic();
+            var z = new double[500, 500];
+            var manAbleDo = GAHelper.SuitableWorker(data.WorkerExper, data.TaskExper, data.NumOfTasks, data.NumOfWorkers, data.NumOfSkills);
+            var Exper = GAHelper.TaskExperByWorker(data.WorkerExper, data.TaskExper, data.NumOfTasks, data.NumOfWorkers, data.NumOfSkills);
+
+            Data d = new Data(data.NumOfTasks, data.NumOfSkills, data.NumOfWorkers, data.TaskDuration, data.TaskAdjacency, data.WorkerSalary, z, data.WorkerEffort, data.Budget, data.Deadline, manAbleDo, Exper);
+
+            d.Setup();
+
+
+            if (data.ObjectiveSelect[0] == true)
+            {
+                d.weight1 = 20;
+            }
+            else if (data.ObjectiveSelect[1] == true)
+            {
+                d.weight2 = 20;
+            }
+            else if (data.ObjectiveSelect[2] == true)
+            {
+                d.weight3 = 20;
+            }
+
+
+            Population population = new Population(5000).InitializePopulation(d);
+            int numOfGen = 0;
+            while (numOfGen < GAHelper.NUM_OF_GENARATION)
+            {
+
+                population = hr.Evolve(population, d);
+                population.SortChromosomesByFitness(d);
+                numOfGen++;
+            }
+            Chromosome best = population.Chromosomes[0];
+            // Dau ra tu day
+            var outputList = new List<AlgorithmRawOutput>();
+
+            for (int i = 0; i < 1; i++)
+            {
+                var output = new AlgorithmRawOutput();
+                var individual = best;
+                output.TimeFinish = individual.TimeFinish;
+                output.TaskFinish = individual.TaskFinish;
+                output.TaskBegin = individual.TaskBegin;
+                output.Genes = individual.Genes;
+                output.TotalExper = individual.TotalExper;
                 output.TotalSalary = individual.TotalSalary;
 
                 outputList.Add(output);
@@ -284,4 +338,86 @@ namespace AlgorithmLibrary.Solver
             return outputList;
         }
     }
+
+    public class Heuristic
+    {
+        public Population Evolve(Population population, Data data)
+        {
+            return MutatePopulation(CrossoverrPopulation(population, data), data);
+        }
+        private Population CrossoverrPopulation(Population population, Data data)
+        {
+            Population crossoverPopulation = new Population(population.Chromosomes.Length);
+            for (int e = 0; e < GAHelper.NUM_OF_ELITE_CHOMOSOMES; ++e)
+            {
+                crossoverPopulation.Chromosomes[e] = population.Chromosomes[e];
+            }
+            for (int e1 = GAHelper.NUM_OF_ELITE_CHOMOSOMES; e1 < population.Chromosomes.Length; ++e1)
+            {
+                Chromosome chromosome1 = SelectTournamentPopulation(population, data).Chromosomes[0];
+                Chromosome chromosome2 = SelectTournamentPopulation(population, data).Chromosomes[0];
+                crossoverPopulation.Chromosomes[e1] = CrossoverChromosome(chromosome1, chromosome2, data);
+            }
+            return crossoverPopulation;
+        }
+        private Population MutatePopulation(Population population, Data data)
+        {
+            Population mutatePopulation = new Population(population.Chromosomes.Length);
+            for (int e = 0; e < GAHelper.NUM_OF_ELITE_CHOMOSOMES; ++e)
+            {
+                mutatePopulation.Chromosomes[e] = population.Chromosomes[e];
+            }
+            for (int e = GAHelper.NUM_OF_ELITE_CHOMOSOMES; e < population.Chromosomes.Length; ++e)
+            {
+
+                mutatePopulation.Chromosomes[e] = MutateChromosome(population.Chromosomes[e], data);
+
+
+            }
+            return mutatePopulation;
+        }
+
+        private Chromosome CrossoverChromosome(Chromosome chromosome1, Chromosome chromosome2, Data data)
+        {
+            Random rand = new Random();
+            Chromosome crossChromosome = new Chromosome(data);
+            for (int e = 0; e < chromosome1.Genes.Length; ++e)
+            {
+                if (rand.NextDouble() < 0.5) crossChromosome.Genes[e] = chromosome1.Genes[e];
+                else crossChromosome.Genes[e] = chromosome2.Genes[e];
+            }
+            return crossChromosome;
+        }
+
+        private Chromosome MutateChromosome(Chromosome chromosome, Data data)
+        {
+            Random rand = new Random();
+            Chromosome mutateChromosome = new Chromosome(data);
+            for (int wt = 0; wt < chromosome.Genes.Length; ++wt)
+            {
+                if (rand.NextDouble() < GAHelper.MUTATION_RATE)
+                {
+                    int z = data.SuitableWorkers.ElementAt(wt).Count;
+                    int c = (int)(rand.NextDouble() * z);
+                    mutateChromosome.Genes[wt] = data.SuitableWorkers.ElementAt(wt).ElementAt(c);
+                }
+                else mutateChromosome.Genes[wt] = chromosome.Genes[wt];
+            }
+            return mutateChromosome;
+        }
+
+        private Population SelectTournamentPopulation(Population population, Data data)
+        {
+            Random rand = new Random();
+            Population tournamentPopulation = new Population(GAHelper.TOURNAMET_SELECTION_SIZE);
+            for (int x = 0; x < GAHelper.TOURNAMET_SELECTION_SIZE; ++x)
+            {
+                int c = (int)(rand.NextDouble() * population.Chromosomes.Length);
+                tournamentPopulation.Chromosomes[x] = population.Chromosomes[c];
+            }
+            tournamentPopulation.SortChromosomesByFitness(data);
+            return tournamentPopulation;
+        }
+    }
+
 }
