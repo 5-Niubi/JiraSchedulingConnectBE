@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ModelLibrary.DBModels;
 
@@ -11,9 +12,10 @@ using ModelLibrary.DBModels;
 namespace ModelLibrary.Migrations
 {
     [DbContext(typeof(WoTaasContext))]
-    partial class WoTaasContextModelSnapshot : ModelSnapshot
+    [Migration("20230927130154_UpdateLatest")]
+    partial class UpdateLatest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
