@@ -20,7 +20,7 @@ namespace JiraSchedulingConnectAppService.Services
         {
             http = httpAccessor.HttpContext;
             client = new HttpClient();
-            client.Timeout = TimeSpan.FromMinutes(5);
+            client.Timeout = Timeout.InfiniteTimeSpan;
             this.config = config;
         }
 
